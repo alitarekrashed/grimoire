@@ -1,0 +1,10 @@
+export interface Equipment {
+  name: string
+  description: string
+  price: string // refactor to allow multiple types of currencies?
+  bulk: string // enum?
+  level: number
+  source: string // should allow for book + pages?
+  category: string // enum e.g. Adventuring Gear
+  hands: string // enum? one-handed, two-handed, no hands?
+}

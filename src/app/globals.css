@@ -25,3 +25,8 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+/* .SeparatorRoot[data-orientation='horizontal'] {
+  height: 1px;
+  width: 100%;
+} */
