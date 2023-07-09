@@ -3,31 +3,34 @@
 import { Equipment } from '@/models/equipment'
 import { roboto_serif } from '@/utils/fonts'
 import * as Separator from '@radix-ui/react-separator'
+import CardLabel from './card-label'
+import CardHeader from './card-header'
 
 export default function EquipmentCard({ value }: { value: Equipment }) {
   return (
     <div
       className={`grid grid-cols-1 w-128 p-3 border border-slate-400 rounded bg-slate-800 shadow-slate-400 shadow	 ${roboto_serif.className}`}
     >
-      <div className="grid grid-cols-2 justify-between text-xl font-semibold">
-        <div className="justify-self-start">{value.name}</div>
-        <div className="justify-self-end">Item {value.level}</div>
-      </div>
+      <CardHeader
+        name={value.name}
+        type="Item"
+        level={value.level}
+      ></CardHeader>
       <div className="text-sm">
         <div>
           <p>
-            <span className="font-medium">Source:</span> {value.source}
+            <CardLabel label="Source" value={value.source}></CardLabel>
           </p>
         </div>
         <div>
           <p>
-            <span className="font-medium">Price:</span> {value.price}
+            <CardLabel label="Price" value={value.price}></CardLabel>
           </p>
         </div>
         <div>
           <div>
-            <span className="font-medium">Bulk:</span> {value.bulk};{' '}
-            <span className="font-medium">Hands:</span> {value.hands}
+            <CardLabel label="Bulk" value={value.bulk}></CardLabel>;&nbsp;
+            <CardLabel label="Hands" value={value.hands}></CardLabel>
           </div>
         </div>
       </div>
