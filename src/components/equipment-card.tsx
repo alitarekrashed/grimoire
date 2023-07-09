@@ -19,11 +19,6 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
       <div className="text-sm">
         <div>
           <p>
-            <CardLabel label="Source" value={value.source}></CardLabel>
-          </p>
-        </div>
-        <div>
-          <p>
             <CardLabel label="Price" value={value.price}></CardLabel>
           </p>
         </div>
@@ -39,6 +34,10 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
         style={{ margin: '15px 0' }}
       />
       <div className="text-xs">{value.description}</div>
+      <br />
+      <p className="text-[9px] italic justify-self-end">
+        <span>Source:</span> {value.source}
+      </p>
     </div>
   )
 }
