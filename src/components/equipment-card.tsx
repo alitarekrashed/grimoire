@@ -7,9 +7,8 @@ import * as Separator from '@radix-ui/react-separator'
 export default function EquipmentCard({ value }: { value: Equipment }) {
   return (
     <div
-      className={`grid grid-cols-1 w-128 p-3 border border-slate-400 rounded bg-slate-800 ${roboto_serif.className}`}
+      className={`grid grid-cols-1 w-128 p-3 border border-slate-400 rounded bg-slate-800 shadow-slate-400 shadow	 ${roboto_serif.className}`}
     >
-      {/* style header!!! */}
       <div className="grid grid-cols-2 justify-between text-xl font-semibold">
         <div className="justify-self-start">{value.name}</div>
         <div className="justify-self-end">Item {value.level}</div>
@@ -22,7 +21,6 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
         </div>
         <div>
           <p>
-            {' '}
             <span className="font-medium">Price:</span> {value.price}
           </p>
         </div>
