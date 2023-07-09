@@ -1,6 +1,6 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { dm_serif_display } from './utils/fonts'
+import { dm_serif_display } from '../utils/fonts'
 
 export const metadata: Metadata = {
   title: 'grimoire',
