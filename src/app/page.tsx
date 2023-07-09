@@ -1,7 +1,5 @@
-'use client'
-
+import EquipmentCard from '@/components/equipment-card'
 import { Equipment } from '@/models/equipment'
-import * as Separator from '@radix-ui/react-separator'
 
 export default function Home() {
   const magnifyingGlass: Equipment = {
@@ -23,28 +21,7 @@ export default function Home() {
       </div>
       <div>
         <div className="container mx-auto mt-6">
-          <div className="grid grid-cols-1 w-128">
-            {/* style header!!! */}
-            <div className="grid grid-cols-2 justify-between">
-              <div className="justify-self-start">{magnifyingGlass.name}</div>
-              <div className="justify-self-end">
-                Item {magnifyingGlass.level}
-              </div>
-            </div>
-            <div>
-              <p>Source: {magnifyingGlass.source}</p>
-            </div>
-            <div>
-              <div>
-                Bulk: {magnifyingGlass.bulk}; Hands: {magnifyingGlass.hands}
-              </div>
-            </div>
-            <Separator.Root
-              className="w-full bg-zinc-600	h-px"
-              style={{ margin: '15px 0' }}
-            />
-            <div>{magnifyingGlass.description}</div>
-          </div>
+          <EquipmentCard value={magnifyingGlass}></EquipmentCard>
         </div>
       </div>
     </main>
