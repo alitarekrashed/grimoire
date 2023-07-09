@@ -14,7 +14,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={dm_serif_display.className}>{children}</body>
+      <body
+        className={`${dm_serif_display.className} h-screen bg-gradient-to-t from-gray-700 via-gray-900 to-black`}
+      >
+        {children}
+      </body>
     </html>
   )
 }

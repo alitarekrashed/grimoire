@@ -1,7 +1,7 @@
 export default function Home() {
   return (
     <main>
-      <div className="flex justify-center pt-5 ">
+      <div className="flex justify-center pt-5">
         <p className="text-5xl">grimoire</p>
       </div>
       <div>
