@@ -1,10 +1,7 @@
+import { Equipment } from '@/models/equipment'
 import EquipmentCard from './equipment-card'
 
-export default function EquipmentCardList({
-  value,
-}: {
-  value: EquipmentCard[]
-}) {
+export default function EquipmentCardList({ value }: { value: Equipment[] }) {
   return (
     <div>
       <div className="container mx-auto">
