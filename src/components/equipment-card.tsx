@@ -7,6 +7,7 @@ import CardLabel from './card-label'
 import CardHeader from './card-header'
 import Traits from './traits-display'
 import Activation from './activation-display'
+import SourceDisplay from './source-display'
 
 export default function EquipmentCard({ value }: { value: Equipment }) {
   return (
@@ -33,9 +34,7 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
         <EquipmentTypesList value={value.types}></EquipmentTypesList>
       </div>
       <br />
-      <p className="text-[9px] italic justify-self-end">
-        <span>Source:</span> {value.source}
-      </p>
+      <SourceDisplay value={value.source}></SourceDisplay>
     </div>
   )
 }

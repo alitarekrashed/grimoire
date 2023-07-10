@@ -8,7 +8,10 @@ export default function Home() {
       'This quality handheld lens gives you a +1 item bonus to Perception checks to notice minute details of documents, fabric, and the like.',
     price: '40 gp',
     level: 3,
-    source: 'Core Rulebook (288)',
+    source: {
+      title: 'Core Rulebook',
+      page: '288',
+    },
     category: 'Adventuring Gear',
     hands: '1',
   }
@@ -21,7 +24,10 @@ export default function Home() {
     price: '3 gp',
     bulk: 'L',
     level: 1,
-    source: "Advanced Player's Guide (258)",
+    source: {
+      title: "Advanced Player's Guide",
+      page: '258',
+    },
     category: 'Potion',
     usage: 'held in 1 hand',
     traits: ['consumable', 'magical', 'potion', 'transmutation'],
@@ -35,7 +41,10 @@ export default function Home() {
     name: 'Healing Potion',
     description:
       "A healing potion is a vial of a ruby-red liquid that imparts a tingling sensation as the drinker's wounds heal rapidly. When you drink a healing potion, you regain the listed number of Hit Points.",
-    source: 'Core Rulebook (563)',
+    source: {
+      title: 'Core Rulebook',
+      page: '563',
+    },
     category: 'Potion',
     usage: 'held in 1 hand',
     traits: [

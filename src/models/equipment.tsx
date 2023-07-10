@@ -2,7 +2,7 @@
 export interface Equipment {
   name: string
   description: string
-  source: string // should allow for book + pages?
+  source: Source
   category: string // enum e.g. Adventuring Gear
   price?: string // refactor to allow multiple types of currencies?
   level?: number
@@ -15,6 +15,11 @@ export interface Equipment {
     action: string // enum?
   }
   types?: EquipmentVariantType[]
+}
+
+export interface Source {
+  title: string
+  page?: string
 }
 
 export interface EquipmentVariantType {
