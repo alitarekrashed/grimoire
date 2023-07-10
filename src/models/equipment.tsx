@@ -1,3 +1,4 @@
+// TODO really need to add an id here and update iterator keys to use that id
 export interface Equipment {
   name: string
   description: string

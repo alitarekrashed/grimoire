@@ -1,4 +1,4 @@
-import EquipmentCard from '@/components/equipment-card'
+import EquipmentCardList from '@/components/equipment-card-list'
 import { Equipment } from '@/models/equipment'
 
 export default function Home() {
@@ -13,7 +13,7 @@ export default function Home() {
     hands: '1',
   }
 
-  // TODO can i do a popover for 'fleeing' in the description?
+  // TODO can i do a popover for 'fleeing' in
   const potionOfExpeditiousRetreat: Equipment = {
     name: 'Potion of Expeditious Retreat',
     description:
@@ -36,16 +36,9 @@ export default function Home() {
       <div className="flex justify-center pt-5">
         <p className="text-5xl">grimoire</p>
       </div>
-      <div>
-        <div className="container mx-auto mt-6">
-          <div className="pb-4">
-            <EquipmentCard value={magnifyingGlass}></EquipmentCard>
-          </div>
-          <div>
-            <EquipmentCard value={potionOfExpeditiousRetreat}></EquipmentCard>
-          </div>
-        </div>
-      </div>
+      <EquipmentCardList
+        value={[magnifyingGlass, potionOfExpeditiousRetreat]}
+      ></EquipmentCardList>
     </main>
   )
 }
