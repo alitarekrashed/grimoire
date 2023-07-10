@@ -5,8 +5,8 @@ import { roboto_serif } from '@/utils/fonts'
 import * as Separator from '@radix-ui/react-separator'
 import CardLabel from './card-label'
 import CardHeader from './card-header'
-import Traits from './traits'
-import Activation from './activation'
+import Traits from './traits-display'
+import Activation from './activation-display'
 
 export default function EquipmentCard({ value }: { value: Equipment }) {
   return (
