@@ -15,6 +15,7 @@ export interface Equipment {
     action: string // enum?
   }
   types?: EquipmentVariantType[]
+  rarity?: string // enum?
 }
 
 export interface Currency {

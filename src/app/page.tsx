@@ -120,6 +120,7 @@ export default function Home() {
           'Your melee Strikes ignore the Hardness of objects with a Hardness of 10 or less.',
       },
     ],
+    rarity: 'uncommon',
   }
 
   return (

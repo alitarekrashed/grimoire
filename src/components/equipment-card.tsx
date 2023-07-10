@@ -19,7 +19,9 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
         type="Item"
         level={value.level ?? value.types?.map((val) => val.level)}
       ></CardHeader>
-      {value.traits && <Traits value={value.traits}></Traits>}
+      {value.traits && (
+        <Traits rarity={value.rarity} traits={value.traits}></Traits>
+      )}
       <div className="text-sm">
         <PriceLabel value={value.price}></PriceLabel>
         <OptionalFields value={value}></OptionalFields>
@@ -123,8 +125,9 @@ export function EquipmentTypesList({
               }
               valueClassName="italic"
             ></CardLabel>
-            &nbsp;
-            <CardLabel label="Level" value={`${value.level}`}></CardLabel>&nbsp;
+            ;&nbsp;
+            <CardLabel label="Level" value={`${value.level}`}></CardLabel>
+            ;&nbsp;
             <PriceLabel value={value.price}></PriceLabel>
           </div>
           <div>{value.description}</div>
