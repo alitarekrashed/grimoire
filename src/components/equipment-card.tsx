@@ -93,7 +93,7 @@ export function EquipmentTypesList({
 }) {
   return value ? (
     <div>
-      {value.map((val, idx) => (
+      {value.map((val) => (
         <div key={val.name}>
           <Separator.Root
             className="w-full bg-slate-400	h-px"
