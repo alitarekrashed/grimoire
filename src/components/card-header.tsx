@@ -8,8 +8,8 @@ export default function CardHeader({
   level: number
 }) {
   return (
-    <div className="grid grid-cols-2 justify-between text-xl font-semibold">
-      <div className="justify-self-start">{name}</div>
+    <div className="grid grid-cols-4 justify-between text-xl font-semibold">
+      <div className="col-span-3 justify-self-start">{name}</div>
       <div className="justify-self-end">
         {type} {level}
       </div>
