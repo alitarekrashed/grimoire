@@ -1,6 +1,6 @@
 'use client'
 
-import { Equipment, EquipmentVariantType } from '@/models/equipment'
+import { Currency, Equipment, EquipmentVariantType } from '@/models/equipment'
 import { roboto_serif } from '@/utils/fonts'
 import * as Separator from '@radix-ui/react-separator'
 import CardLabel from './card-label'
@@ -50,10 +50,20 @@ export function ActivationLabel({ value }: { value: any }) {
   )
 }
 
-export function PriceLabel({ value }: { value: string | undefined }) {
+export function PriceLabel({ value }: { value: Currency[] | undefined }) {
+  let monetaryValue = ''
+  if (value) {
+    value.forEach((element, index) => {
+      if (index > 0) {
+        monetaryValue = monetaryValue.concat(', ')
+      }
+      monetaryValue = monetaryValue.concat(`${element.value} ${element.type}`)
+    })
+  }
+
   return value ? (
     <div>
-      <CardLabel label="Price" value={value}></CardLabel>
+      <CardLabel label="Price" value={monetaryValue}></CardLabel>
     </div>
   ) : (
     <></>
@@ -106,7 +116,7 @@ export function EquipmentTypesList({
             ></CardLabel>
             ;&nbsp;
             <CardLabel label="Level" value={`${val.level}`}></CardLabel>;&nbsp;
-            <CardLabel label="Price" value={val.price}></CardLabel>
+            <PriceLabel value={val.price}></PriceLabel>
           </div>
           <div>{val.description}</div>
         </div>

@@ -4,7 +4,7 @@ export interface Equipment {
   description: string
   source: Source
   category: string // enum e.g. Adventuring Gear
-  price?: string // refactor to allow multiple types of currencies?
+  price?: Currency[] // refactor to allow multiple types of currencies?
   level?: number
   bulk?: string // enum?
   hands?: string // enum? one-handed, two-handed, no hands?
@@ -17,6 +17,11 @@ export interface Equipment {
   types?: EquipmentVariantType[]
 }
 
+export interface Currency {
+  value: number
+  type: string // enum: gp, sp, cp, pp
+}
+
 export interface Source {
   title: string
   page?: string
@@ -24,7 +29,7 @@ export interface Source {
 
 export interface EquipmentVariantType {
   name: string
-  price: string
+  price: Currency[]
   level: number
   description: string
 }

@@ -6,7 +6,7 @@ export default function Home() {
     name: 'Magnifying glass',
     description:
       'This quality handheld lens gives you a +1 item bonus to Perception checks to notice minute details of documents, fabric, and the like.',
-    price: '40 gp',
+    price: [{ value: 40, type: 'gp' }],
     level: 3,
     source: {
       title: 'Core Rulebook',
@@ -21,7 +21,7 @@ export default function Home() {
     name: 'Potion of Expeditious Retreat',
     description:
       'The stopper for a potion of expeditious retreat is crafted to easily snap open in dire circumstances. When you drink this potion, you become fleeing for 1 minute, and you gain a +40-foot status bonus to all your Speeds for the duration as long as you are fleeing. You immediately Stride.    ',
-    price: '3 gp',
+    price: [{ value: 3, type: 'gp' }],
     bulk: 'L',
     level: 1,
     source: {
@@ -63,31 +63,31 @@ export default function Home() {
     types: [
       {
         name: 'minor',
-        price: '4 gp',
+        price: [{ value: 4, type: 'gp' }],
         level: 1,
         description: 'The potion restores 1d8 Hit Points',
       },
       {
         name: 'lesser',
-        price: '12 gp',
+        price: [{ value: 12, type: 'gp' }],
         level: 3,
         description: 'The potion restores 2d8 + 5 Hit Points',
       },
       {
         name: 'moderate',
-        price: '50 gp',
+        price: [{ value: 50, type: 'gp' }],
         level: 6,
         description: 'The potion restores 3d8 + 10 Hit Points',
       },
       {
         name: 'greater',
-        price: '400 gp',
+        price: [{ value: 400, type: 'gp' }],
         level: 12,
         description: 'The potion restores 6d8 + 20 Hit Points',
       },
       {
         name: 'major',
-        price: '5,000 gp',
+        price: [{ value: 5000, type: 'gp' }],
         level: 18,
         description: 'The potion restores 8d8 + 30 Hit Points',
       },
