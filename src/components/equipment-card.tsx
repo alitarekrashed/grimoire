@@ -1,6 +1,6 @@
 'use client'
 
-import { Equipment } from '@/models/equipment'
+import { Equipment, EquipmentVariantType } from '@/models/equipment'
 import { roboto_serif } from '@/utils/fonts'
 import * as Separator from '@radix-ui/react-separator'
 import CardLabel from './card-label'
@@ -16,21 +16,22 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
       <CardHeader
         name={value.name}
         type="Item"
-        level={value.level}
+        level={value.level ?? value.types?.map((val) => val.level)}
       ></CardHeader>
       {value.traits && <Traits value={value.traits}></Traits>}
       <div className="text-sm">
-        <div>
-          <CardLabel label="Price" value={value.price}></CardLabel>
-        </div>
+        <PriceLabel value={value.price}></PriceLabel>
         <OptionalFields value={value}></OptionalFields>
         <ActivationLabel value={value.activation}></ActivationLabel>
       </div>
       <Separator.Root
         className="w-full bg-slate-400	h-px"
-        style={{ margin: '15px 0' }}
+        style={{ margin: '10px 0' }}
       />
-      <div className="text-xs">{value.description}</div>
+      <div className="text-xs">
+        <div>{value.description}</div>
+        <EquipmentTypesList value={value.types}></EquipmentTypesList>
+      </div>
       <br />
       <p className="text-[9px] italic justify-self-end">
         <span>Source:</span> {value.source}
@@ -50,24 +51,69 @@ export function ActivationLabel({ value }: { value: any }) {
   )
 }
 
+export function PriceLabel({ value }: { value: string | undefined }) {
+  return value ? (
+    <div>
+      <CardLabel label="Price" value={value}></CardLabel>
+    </div>
+  ) : (
+    <></>
+  )
+}
+
+// TODO add equipment id to key here?
 export function OptionalFields({ value }: { value: Equipment }) {
   let optionalFields = []
   if (value.hands) {
     optionalFields.length > 0 && optionalFields.push('; ')
     optionalFields.push(
-      <CardLabel label="Hands" value={value.hands}></CardLabel>
+      <CardLabel key="Hands" label="Hands" value={value.hands}></CardLabel>
     )
   }
   if (value.usage) {
     optionalFields.length > 0 && optionalFields.push('; ')
     optionalFields.push(
-      <CardLabel label="Usage" value={value.usage}></CardLabel>
+      <CardLabel key="Usage" label="Usage" value={value.usage}></CardLabel>
     )
   }
   if (value.bulk) {
     optionalFields.length > 0 && optionalFields.push('; ')
-    optionalFields.push(<CardLabel label="Bulk" value={value.bulk}></CardLabel>)
+    optionalFields.push(
+      <CardLabel key="Bulk" label="Bulk" value={value.bulk}></CardLabel>
+    )
   }
 
   return optionalFields
+}
+
+export function EquipmentTypesList({
+  value,
+}: {
+  value: EquipmentVariantType[] | undefined
+}) {
+  return value ? (
+    <div>
+      {value.map((val, idx) => (
+        <div key={val.name}>
+          <Separator.Root
+            className="w-full bg-slate-400	h-px"
+            style={{ margin: '10px 0' }}
+          />
+          <div className="inline-flex mb-1">
+            <CardLabel
+              label="Type"
+              value={val.name}
+              valueClassName="italic"
+            ></CardLabel>
+            ;&nbsp;
+            <CardLabel label="Level" value={`${val.level}`}></CardLabel>;&nbsp;
+            <CardLabel label="Price" value={val.price}></CardLabel>
+          </div>
+          <div>{val.description}</div>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <></>
+  )
 }
