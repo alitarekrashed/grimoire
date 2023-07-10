@@ -2,7 +2,7 @@
 export interface Equipment {
   name: string
   description: string
-  source: Source
+  source: Source // should this store an array? for items appearing in multiple sources?
   category: string // enum e.g. Adventuring Gear
   price?: Currency[] // refactor to allow multiple types of currencies?
   level?: number

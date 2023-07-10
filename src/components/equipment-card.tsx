@@ -31,7 +31,10 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
       />
       <div className="text-xs">
         <div>{value.description}</div>
-        <EquipmentTypesList value={value.types}></EquipmentTypesList>
+        <EquipmentTypesList
+          itemName={value.name}
+          variants={value.types}
+        ></EquipmentTypesList>
       </div>
       <br />
       <SourceDisplay value={value.source}></SourceDisplay>
@@ -96,14 +99,16 @@ export function OptionalFields({ value }: { value: Equipment }) {
 }
 
 export function EquipmentTypesList({
-  value,
+  itemName,
+  variants,
 }: {
-  value: EquipmentVariantType[] | undefined
+  itemName: string
+  variants: EquipmentVariantType[] | undefined
 }) {
-  return value ? (
+  return variants ? (
     <div>
-      {value.map((val) => (
-        <div key={val.name}>
+      {variants.map((value) => (
+        <div key={value.name}>
           <Separator.Root
             className="w-full bg-slate-400	h-px"
             style={{ margin: '10px 0' }}
@@ -111,14 +116,18 @@ export function EquipmentTypesList({
           <div className="inline-flex mb-1">
             <CardLabel
               label="Type"
-              value={val.name}
+              value={
+                value.name
+                  ? `${value.name} ${itemName.toLowerCase()}`
+                  : `${itemName.toLowerCase()}`
+              }
               valueClassName="italic"
             ></CardLabel>
-            ;&nbsp;
-            <CardLabel label="Level" value={`${val.level}`}></CardLabel>;&nbsp;
-            <PriceLabel value={val.price}></PriceLabel>
+            &nbsp;
+            <CardLabel label="Level" value={`${value.level}`}></CardLabel>&nbsp;
+            <PriceLabel value={value.price}></PriceLabel>
           </div>
-          <div>{val.description}</div>
+          <div>{value.description}</div>
         </div>
       ))}
     </div>

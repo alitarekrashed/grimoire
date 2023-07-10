@@ -94,13 +94,46 @@ export default function Home() {
     ],
   }
 
+  const rhinocerousMask: Equipment = {
+    name: 'Rhinocerous Mask',
+    description:
+      'Covered with thick armor and bearing a thicker horn, a rhinoceros mask grants you increased momentum. If you Stride at least 10 feet, your next melee Strike before the end of your turn ignores the Hardness of objects with a Hardness of 5 or less. If the object has more than Hardness 5, the mask grants no benefit.    ',
+    source: {
+      title: 'Treasure Vault',
+      page: '155',
+    },
+    usage: 'worn mask',
+    category: 'Worn Item',
+    traits: ['invested', 'magical', 'transmutation'],
+    types: [
+      {
+        price: [{ value: 90, type: 'gp' }],
+        level: 4,
+        name: '',
+        description: '',
+      },
+      {
+        price: [{ value: 425, type: 'gp' }],
+        level: 8,
+        name: 'greater',
+        description:
+          'Your melee Strikes ignore the Hardness of objects with a Hardness of 10 or less.',
+      },
+    ],
+  }
+
   return (
     <main>
-      <div className="flex justify-center pt-5">
+      <div className="flex justify-center pt-5 mb-4">
         <p className="text-5xl">grimoire</p>
       </div>
       <EquipmentCardList
-        value={[magnifyingGlass, potionOfExpeditiousRetreat, healingPotion]}
+        value={[
+          magnifyingGlass,
+          potionOfExpeditiousRetreat,
+          healingPotion,
+          rhinocerousMask,
+        ]}
       ></EquipmentCardList>
     </main>
   )
