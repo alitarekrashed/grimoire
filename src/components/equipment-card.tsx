@@ -3,15 +3,13 @@
 import { Currency, Equipment, EquipmentVariantType } from '@/models/equipment'
 import { roboto_serif } from '@/utils/fonts'
 import * as Separator from '@radix-ui/react-separator'
-import CardLabel from './card-label'
-import CardHeader from './card-header'
-import Traits from './traits-display'
-import Activation from './activation-display'
-import SourceDisplay from './source-display'
-import ConditionDisplay from './condition-display'
-import { describe } from 'node:test'
-import { renderToStaticMarkup, renderToString } from 'react-dom/server'
 import React from 'react'
+import Activation from './activation-display'
+import CardHeader from './card-header'
+import CardLabel from './card-label'
+import ConditionDisplay from './condition-display'
+import SourceDisplay from './source-display'
+import Traits from './traits-display'
 
 export default function EquipmentCard({ value }: { value: Equipment }) {
   // eventually should this come from the API?
