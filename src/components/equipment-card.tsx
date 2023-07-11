@@ -8,11 +8,44 @@ import CardHeader from './card-header'
 import Traits from './traits-display'
 import Activation from './activation-display'
 import SourceDisplay from './source-display'
+import ConditionDisplay from './condition-display'
+import { describe } from 'node:test'
+import { renderToStaticMarkup, renderToString } from 'react-dom/server'
+import React from 'react'
 
 export default function EquipmentCard({ value }: { value: Equipment }) {
+  // eventually should this come from the API?
+  let conditionMap: any = {
+    fleeing: {
+      name: 'fleeing',
+      description:
+        "You're forced to run away due to fear or some other compulsion. On your turn, you must spend each of your actions trying to escape the source of the fleeing condition as expediently as possible (such as by using move actions to flee, or opening doors barring your escape). The source is usually the effect or caster that gave you the condition, though some effects might define something else as the source. You can't Delay or Ready while fleeing.",
+      source: {
+        title: 'Core Rulebook',
+        page: '620',
+      },
+    },
+  }
+
+  let result: string | any[] = value.description
+  if (value.description.includes('@condition:')) {
+    const key = value.description.split('@condition:')[1].split(' ')[0] // this is pretty hacky
+    let descriptionTokens: any[] = value.description.split(`@condition:${key}`)
+
+    result = []
+    for (var i = 0; i < descriptionTokens.length; i++) {
+      let mapping = [
+        descriptionTokens[i],
+        i !== descriptionTokens.length - 1 &&
+          React.createElement(ConditionDisplay, { value: conditionMap[key] }),
+      ]
+      result = result.concat(mapping)
+    }
+  }
+
   return (
     <div
-      className={`grid grid-cols-1 w-144 p-3 border border-slate-400 rounded bg-slate-800 shadow-slate-400 shadow	 ${roboto_serif.className}`}
+      className={`grid grid-cols-1 w-144 p-3 border border-slate-400 rounded bg-slate-800 shadow-slate-400 shadow ${roboto_serif.className}`}
     >
       <CardHeader
         name={value.name}
@@ -32,7 +65,7 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
         style={{ margin: '10px 0' }}
       />
       <div className="text-xs">
-        <div>{value.description}</div>
+        <div>{result}</div>
         <EquipmentTypesList
           itemName={value.name}
           variants={value.types}
