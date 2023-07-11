@@ -51,6 +51,7 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
       <div className="text-xs">
         <div>
           {/* TODO This allows the descriptions be html-like but comes at the risk of injection attacks... need to revist */}
+          {/* TODO look into: https://www.npmjs.com/package/react-sanitized-html */}
           {description.map((value, index) => {
             return isString(value) ? (
               <span
