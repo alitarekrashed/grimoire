@@ -4,7 +4,7 @@ import { retrieveCondition } from './condition.service'
 import React from 'react'
 import Condition from '@/models/condition'
 
-export function parseDescription(description: any[]) {
+export function parseDescription(description: any[]): Promise<any[]> {
   return (async () => {
     let tokenizedDescription = [...description]
     for (let i = 0; i < tokenizedDescription.length; i++) {
