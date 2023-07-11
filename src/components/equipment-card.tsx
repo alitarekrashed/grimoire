@@ -18,7 +18,7 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
 
   const fetchConditions = () => {
     ;(async () => {
-      let updated: any[] = await tokenizeDescriptionForConditions(description)
+      let updated: any[] = await tokenizeDescription(description)
       setDescription(updated)
     })()
   }
@@ -61,14 +61,14 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
   )
 }
 
-export function tokenizeDescriptionForConditions(description: any[]) {
+export function tokenizeDescription(description: any[]) {
   return (async () => {
     let tokenizedDescription = [...description]
     for (let i = 0; i < tokenizedDescription.length; i++) {
       let currentPart = tokenizedDescription[i]
 
       if (isString(currentPart) && currentPart.includes('@condition:')) {
-        const brokenUpDescription = await updateDescription(currentPart)
+        const brokenUpDescription = await tokenizeForConditions(currentPart)
         tokenizedDescription.splice(i, 1, ...brokenUpDescription)
       }
     }
@@ -76,10 +76,11 @@ export function tokenizeDescriptionForConditions(description: any[]) {
   })()
 }
 
-export function updateDescription(currentPart: string): Promise<any[]> {
+// need to refactor these methods more and also handle the case where the condition might have a word or punctuation at the end...
+export function tokenizeForConditions(currentPart: string): Promise<any[]> {
   return (async () => {
-    const key = currentPart.split('@condition:')[1].split(' ')[0] // this is pretty hacky
-    let tokens: any[] = currentPart.split(`@condition:${key}`)
+    const key = currentPart.split('@condition:')[1].match(/^[^@]*/)![0]
+    let tokens: any[] = currentPart.split(`@condition:${key}@`)
     const condition: Condition = await retrieveCondition(key)
     let newParts: any[] = []
     for (let j = 0; j < tokens.length; j++) {
@@ -101,48 +102,12 @@ export function retrieveCondition(key: string): Promise<Condition> {
   return (async () => {
     const condition = await (
       await fetch(`http://localhost:3000/api/conditions/${key}`, {
-        cache: 'no-store',
+        next: { revalidate: 10 },
       })
     ).json()
     return condition
   })()
 }
-
-// export function tokenizeDescriptionForConditions(
-//   description: any[],
-//   setter: (value: any) => void
-// ) {
-//   let tokenizedDescription = [...description]
-//   for (let i = 0; i < tokenizedDescription.length; i++) {
-//     let currentPart = tokenizedDescription[i]
-
-//     if (isString(currentPart) && currentPart.includes('@condition:')) {
-//       const key = currentPart.split('@condition:')[1].split(' ')[0] // this is pretty hacky
-//       let tokens: any[] = currentPart.split(`@condition:${key}`)
-
-//       fetch(`http://localhost:3000/api/conditions/${key}`, {
-//         cache: 'no-store',
-//       })
-//         .then((response) => response.json())
-// .then((condition: Condition) => {
-//   let newParts: any[] = []
-//   for (let j = 0; j < tokens.length; j++) {
-//     let mapping: any[] = [tokens[j]]
-//     j !== tokens.length - 1 &&
-//       mapping.push(
-//         React.createElement(ConditionDisplay, {
-//           value: condition,
-//           key: condition.identifier,
-//         })
-//       )
-//     newParts = newParts.concat(mapping)
-//   }
-//   tokenizedDescription.splice(i, 1, ...newParts)
-//   setter(tokenizedDescription)
-//         })
-//     }
-//   }
-// }
 
 // TODO better type
 export function ActivationLabel({ value }: { value: any }) {
