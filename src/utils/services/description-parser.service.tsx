@@ -11,7 +11,9 @@ export function parseDescription(description: any[]): Promise<any[]> {
       let currentPart = tokenizedDescription[i]
 
       if (isString(currentPart) && currentPart.includes('@condition:')) {
-        const brokenUpDescription = await tokenizeForConditions(currentPart)
+        const brokenUpDescription = await createComponentsForConditions(
+          currentPart
+        )
         tokenizedDescription.splice(i, 1, ...brokenUpDescription)
       }
     }
@@ -19,7 +21,7 @@ export function parseDescription(description: any[]): Promise<any[]> {
   })()
 }
 
-function tokenizeForConditions(currentPart: string): Promise<any[]> {
+function createComponentsForConditions(currentPart: string): Promise<any[]> {
   return (async () => {
     const key = currentPart.split('@condition:')[1].match(/^[^@]*/)![0]
     let tokens: any[] = currentPart.split(`@condition:${key}@`)
