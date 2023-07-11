@@ -3,16 +3,32 @@
 import { Currency, Equipment, EquipmentVariantType } from '@/models/equipment'
 import { roboto_serif } from '@/utils/fonts'
 import * as Separator from '@radix-ui/react-separator'
-import CardLabel from './card-label'
-import CardHeader from './card-header'
-import Traits from './traits-display'
+import { isString } from 'lodash'
+import { useEffect, useState } from 'react'
 import Activation from './activation-display'
+import CardHeader from './card-header'
+import CardLabel from './card-label'
 import SourceDisplay from './source-display'
+import Traits from './traits-display'
+import { parseDescription } from '@/utils/services/description-parser.service'
 
 export default function EquipmentCard({ value }: { value: Equipment }) {
+  const [description, setDescription] = useState([value.description])
+
+  const parseDescriptionForRendering = () => {
+    ;(async () => {
+      let updated: any[] = await parseDescription(description)
+      setDescription(updated)
+    })()
+  }
+
+  useEffect(() => {
+    parseDescriptionForRendering()
+  }, [])
+
   return (
     <div
-      className={`grid grid-cols-1 w-144 p-3 border border-slate-400 rounded bg-slate-800 shadow-slate-400 shadow	 ${roboto_serif.className}`}
+      className={`grid grid-cols-1 w-144 p-3 border border-slate-400 rounded bg-slate-800 shadow-slate-400 shadow ${roboto_serif.className}`}
     >
       <CardHeader
         name={value.name}
@@ -32,7 +48,20 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
         style={{ margin: '10px 0' }}
       />
       <div className="text-xs">
-        <div>{value.description}</div>
+        <div>
+          {/* TODO This allows the descriptions be html-like but comes at the risk of injection attacks... need to revist */}
+          {/* TODO look into: https://www.npmjs.com/package/react-sanitized-html */}
+          {description.map((value, index) => {
+            return isString(value) ? (
+              <span
+                key={index}
+                dangerouslySetInnerHTML={{ __html: value }}
+              ></span>
+            ) : (
+              <span key={index}>{value}</span>
+            )
+          })}
+        </div>
         <EquipmentTypesList
           itemName={value.name}
           variants={value.types}

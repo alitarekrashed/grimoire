@@ -18,6 +18,8 @@ export default async function EquipmentCardList() {
 }
 
 export async function getEquipment(): Promise<Equipment[]> {
-  const res = await fetch('http://localhost:3000/api/equipment')
+  const res = await fetch('http://localhost:3000/api/equipment', {
+    cache: 'no-store',
+  })
   return (await res.json()).data as Equipment[]
 }

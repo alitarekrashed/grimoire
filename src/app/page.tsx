@@ -1,5 +1,4 @@
 import EquipmentCardList from '@/components/equipment-card-list'
-import { Equipment } from '@/models/equipment'
 
 export default function Home() {
   return (
