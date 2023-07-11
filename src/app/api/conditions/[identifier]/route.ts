@@ -6,7 +6,7 @@ export async function GET(
   { params }: { params: { identifier: string } }
 ) {
   const allConditions = await (
-    await fetch('http://localhost:3000/api/conditions')
+    await fetch('http://localhost:3000/api/conditions', { cache: 'no-store' })
   ).json()
   const data = allConditions.find(
     (condition: Condition) => condition.identifier === params.identifier

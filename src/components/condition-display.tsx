@@ -1,10 +1,11 @@
 'use client'
 
-import * as Tooltip from '@radix-ui/react-tooltip'
 import Condition from '@/models/condition'
-import styles from './condition-display.module.css'
 import { roboto_serif } from '@/utils/fonts'
+import * as Tooltip from '@radix-ui/react-tooltip'
+import styles from './condition-display.module.css'
 
+// TODO eventually the display should be clickable and allow the user to go to a page for the condition?
 export default function ConditionDisplay({ value }: { value: Condition }) {
   return (
     <>

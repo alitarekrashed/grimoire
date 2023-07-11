@@ -1,4 +1,4 @@
-import { Equipment } from '@/models/equipment'
+import Condition from '@/models/condition'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
@@ -17,10 +17,20 @@ const allConditions: Condition[] = [
     },
   },
   {
+    identifier: 'dazzled',
+    name: 'dazzled',
+    description:
+      'Your eyes are overstimulated. If vision is your only precise sense, all creatures and objects are @condition:concealed@ from you.',
+    source: {
+      title: 'Core Rulebook',
+      page: '619',
+    },
+  },
+  {
     identifier: 'blinded',
     name: 'blinded',
     description:
-      "You can't see. All normal terrain is difficult terrain to you. You can't detect anything using vision. You automatically critically fail Perception checks that require you to be able to see, and if vision is your only precise sense, you take a –4 status penalty to Perception checks. You are immune to visual effects. Blinded overrides dazzled.",
+      "You can't see. All normal terrain is difficult terrain to you. You can't detect anything using vision. You automatically critically fail Perception checks that require you to be able to see, and if vision is your only precise sense, you take a –4 status penalty to Perception checks. You are immune to visual effects. Blinded overrides @condition:dazzled@.",
     source: {
       title: 'Core Rulebook',
       page: '618',
