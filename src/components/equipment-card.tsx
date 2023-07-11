@@ -3,7 +3,7 @@
 import { Currency, Equipment, EquipmentVariantType } from '@/models/equipment'
 import { roboto_serif } from '@/utils/fonts'
 import * as Separator from '@radix-ui/react-separator'
-import React from 'react'
+import React, { use, useEffect, useState } from 'react'
 import Activation from './activation-display'
 import CardHeader from './card-header'
 import CardLabel from './card-label'
@@ -12,34 +12,44 @@ import SourceDisplay from './source-display'
 import Traits from './traits-display'
 
 export default function EquipmentCard({ value }: { value: Equipment }) {
-  // eventually should this come from the API?
-  let conditionMap: any = {
-    fleeing: {
-      name: 'fleeing',
-      description:
-        "You're forced to run away due to fear or some other compulsion. On your turn, you must spend each of your actions trying to escape the source of the fleeing condition as expediently as possible (such as by using move actions to flee, or opening doors barring your escape). The source is usually the effect or caster that gave you the condition, though some effects might define something else as the source. You can't Delay or Ready while fleeing.",
-      source: {
-        title: 'Core Rulebook',
-        page: '620',
-      },
-    },
-  }
+  const [description, setDescription]: [
+    string | any[],
+    Dispatch<SetStateAction<string | any[]>>,
+  ] = useState(value.description)
 
-  let result: string | any[] = value.description
-  if (value.description.includes('@condition:')) {
-    const key = value.description.split('@condition:')[1].split(' ')[0] // this is pretty hacky
-    let descriptionTokens: any[] = value.description.split(`@condition:${key}`)
+  const fetchConditions = () => {
+    let newDescription: string | any[] = description
+    if (newDescription.includes('@condition:')) {
+      const key = newDescription.split('@condition:')[1].split(' ')[0] // this is pretty hacky
+      let descriptionTokens: any[] = newDescription.split(`@condition:${key}`)
 
-    result = []
-    for (var i = 0; i < descriptionTokens.length; i++) {
-      let mapping = [
-        descriptionTokens[i],
-        i !== descriptionTokens.length - 1 &&
-          React.createElement(ConditionDisplay, { value: conditionMap[key] }),
-      ]
-      result = result.concat(mapping)
+      fetch('http://localhost:3000/api/conditions', {
+        cache: 'no-store',
+      })
+        .then((response) => {
+          return response.json()
+        })
+        .then((data) => {
+          newDescription = []
+          for (var i = 0; i < descriptionTokens.length; i++) {
+            let mapping: string[] = [
+              descriptionTokens[i],
+              i !== descriptionTokens.length - 1 &&
+                React.createElement(ConditionDisplay, {
+                  value: data.data[key],
+                  key: data.data[key].name, // should be id really
+                }),
+            ]
+            newDescription = newDescription.concat(mapping)
+          }
+          setDescription(newDescription)
+        })
     }
   }
+
+  useEffect(() => {
+    fetchConditions()
+  }, [])
 
   return (
     <div
@@ -63,7 +73,7 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
         style={{ margin: '10px 0' }}
       />
       <div className="text-xs">
-        <div>{result}</div>
+        <div>{description}</div>
         <EquipmentTypesList
           itemName={value.name}
           variants={value.types}
