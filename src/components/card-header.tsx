@@ -16,7 +16,7 @@ export default function CardHeader({
 
   return (
     <div className="grid grid-cols-4 justify-between text-xl font-semibold">
-      <div className="col-span-3 justify-self-start">{name}</div>
+      <div className="col-span-3 justify-self-start capitalize">{name}</div>
       <div className="justify-self-end">
         {type} {displayLevel}
       </div>

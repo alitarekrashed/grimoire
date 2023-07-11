@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
   const magnifyingGlass: Equipment = {
-    name: 'Magnifying glass',
+    name: 'magnifying glass',
     description:
       'This quality handheld lens gives you a +1 item bonus to Perception checks to notice minute details of documents, fabric, and the like.',
     price: [{ value: 40, type: 'gp' }],
@@ -17,9 +17,9 @@ export async function GET(request: Request) {
   }
 
   const potionOfExpeditiousRetreat: Equipment = {
-    name: 'Potion of Expeditious Retreat',
+    name: 'potion of expeditious retreat',
     description:
-      'The stopper for a potion of expeditious retreat is crafted to easily snap open in dire circumstances. When you drink this potion, you become @condition:fleeing@ for 1 minute, and you gain a +40-foot status bonus to all your Speeds for the duration as long as you are fleeing. You immediately Stride.',
+      'The stopper for a <i>potion of expeditious retreat</i> is crafted to easily snap open in dire circumstances. When you drink this potion, you become @condition:fleeing@ for 1 minute, and you gain a +40-foot status bonus to all your Speeds for the duration as long as you are fleeing. You immediately Stride.',
     price: [{ value: 3, type: 'gp' }],
     bulk: 'L',
     level: 1,
@@ -37,7 +37,7 @@ export async function GET(request: Request) {
   }
 
   const healingPotion: Equipment = {
-    name: 'Healing Potion',
+    name: 'healing potion',
     description:
       "A <i>healing potion</i> is a vial of a ruby-red liquid that imparts a tingling sensation as the drinker's wounds heal rapidly. When you drink a <i>healing potion</i>, you regain the listed number of Hit Points.",
     source: {
@@ -94,7 +94,7 @@ export async function GET(request: Request) {
   }
 
   const rhinocerousMask: Equipment = {
-    name: 'Rhinocerous Mask',
+    name: 'rhinocerous mask',
     description:
       'Covered with thick armor and bearing a thicker horn, a rhinoceros mask grants you increased momentum. If you Stride at least 10 feet, your next melee Strike before the end of your turn ignores the Hardness of objects with a Hardness of 5 or less. If the object has more than Hardness 5, the mask grants no benefit.    ',
     source: {
