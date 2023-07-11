@@ -1,30 +1,29 @@
 'use client'
 
-import Condition from '@/models/condition'
 import { Currency, Equipment, EquipmentVariantType } from '@/models/equipment'
 import { roboto_serif } from '@/utils/fonts'
 import * as Separator from '@radix-ui/react-separator'
 import { isString } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Activation from './activation-display'
 import CardHeader from './card-header'
 import CardLabel from './card-label'
-import ConditionDisplay from './condition-display'
 import SourceDisplay from './source-display'
 import Traits from './traits-display'
+import { parseDescription } from '@/utils/services/description-parser.service'
 
 export default function EquipmentCard({ value }: { value: Equipment }) {
   const [description, setDescription] = useState([value.description])
 
-  const fetchConditions = () => {
+  const parseDescriptionForRendering = () => {
     ;(async () => {
-      let updated: any[] = await tokenizeDescription(description)
+      let updated: any[] = await parseDescription(description)
       setDescription(updated)
     })()
   }
 
   useEffect(() => {
-    fetchConditions()
+    parseDescriptionForRendering()
   }, [])
 
   return (
@@ -72,54 +71,6 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
       <SourceDisplay value={value.source}></SourceDisplay>
     </div>
   )
-}
-
-export function tokenizeDescription(description: any[]) {
-  return (async () => {
-    let tokenizedDescription = [...description]
-    for (let i = 0; i < tokenizedDescription.length; i++) {
-      let currentPart = tokenizedDescription[i]
-
-      if (isString(currentPart) && currentPart.includes('@condition:')) {
-        const brokenUpDescription = await tokenizeForConditions(currentPart)
-        tokenizedDescription.splice(i, 1, ...brokenUpDescription)
-      }
-    }
-    return tokenizedDescription
-  })()
-}
-
-// need to refactor these methods more and also handle the case where the condition might have a word or punctuation at the end...
-export function tokenizeForConditions(currentPart: string): Promise<any[]> {
-  return (async () => {
-    const key = currentPart.split('@condition:')[1].match(/^[^@]*/)![0]
-    let tokens: any[] = currentPart.split(`@condition:${key}@`)
-    const condition: Condition = await retrieveCondition(key)
-    let newParts: any[] = []
-    for (let j = 0; j < tokens.length; j++) {
-      let mapping: any[] = [tokens[j]]
-      j !== tokens.length - 1 &&
-        mapping.push(
-          React.createElement(ConditionDisplay, {
-            value: condition,
-            key: condition.identifier,
-          })
-        )
-      newParts = newParts.concat(mapping)
-    }
-    return newParts
-  })()
-}
-
-export function retrieveCondition(key: string): Promise<Condition> {
-  return (async () => {
-    const condition = await (
-      await fetch(`http://localhost:3000/api/conditions/${key}`, {
-        cache: 'no-store',
-      })
-    ).json()
-    return condition
-  })()
 }
 
 // TODO better type
