@@ -1,16 +1,23 @@
 import { Equipment } from '@/models/equipment'
 import EquipmentCard from './equipment-card'
 
-export default function EquipmentCardList({ value }: { value: Equipment[] }) {
+export default async function EquipmentCardList() {
+  let equipment: Equipment[] = await getEquipment()
+
   return (
     <div>
       <div className="container mx-auto">
-        {value.map((val) => (
-          <div key={val.name} className="pb-4">
-            <EquipmentCard value={val}></EquipmentCard>
+        {equipment.map((value) => (
+          <div key={value.name} className="pb-4">
+            <EquipmentCard value={value}></EquipmentCard>
           </div>
         ))}
       </div>
     </div>
   )
+}
+
+export async function getEquipment(): Promise<Equipment[]> {
+  const res = await fetch('http://localhost:3000/api/equipment')
+  return (await res.json()).data as Equipment[]
 }
