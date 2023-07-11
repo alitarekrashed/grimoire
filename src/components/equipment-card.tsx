@@ -10,6 +10,7 @@ import CardLabel from './card-label'
 import ConditionDisplay from './condition-display'
 import SourceDisplay from './source-display'
 import Traits from './traits-display'
+import Condition from '@/models/condition'
 
 export default function EquipmentCard({ value }: { value: Equipment }) {
   const [description, setDescription]: [
@@ -23,21 +24,21 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
       const key = newDescription.split('@condition:')[1].split(' ')[0] // this is pretty hacky
       let descriptionTokens: any[] = newDescription.split(`@condition:${key}`)
 
-      fetch('http://localhost:3000/api/conditions', {
+      fetch(`http://localhost:3000/api/conditions/${key}`, {
         cache: 'no-store',
       })
         .then((response) => {
           return response.json()
         })
-        .then((data) => {
+        .then((condition: Condition) => {
           newDescription = []
           for (var i = 0; i < descriptionTokens.length; i++) {
             let mapping: string[] = [
               descriptionTokens[i],
               i !== descriptionTokens.length - 1 &&
                 React.createElement(ConditionDisplay, {
-                  value: data.data[key],
-                  key: data.data[key].name, // should be id really
+                  value: condition,
+                  key: condition.identifier,
                 }),
             ]
             newDescription = newDescription.concat(mapping)
