@@ -39,7 +39,7 @@ export async function GET(request: Request) {
   const healingPotion: Equipment = {
     name: 'Healing Potion',
     description:
-      "A healing potion is a vial of a ruby-red liquid that imparts a tingling sensation as the drinker's wounds heal rapidly. When you drink a healing potion, you regain the listed number of Hit Points.",
+      "A <i>healing potion</i> is a vial of a ruby-red liquid that imparts a tingling sensation as the drinker's wounds heal rapidly. When you drink a <i>healing potion</i>, you regain the listed number of Hit Points.",
     source: {
       title: 'Core Rulebook',
       page: '563',
