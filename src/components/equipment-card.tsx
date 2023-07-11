@@ -1,51 +1,26 @@
 'use client'
 
+import Condition from '@/models/condition'
 import { Currency, Equipment, EquipmentVariantType } from '@/models/equipment'
 import { roboto_serif } from '@/utils/fonts'
 import * as Separator from '@radix-ui/react-separator'
-import React, { use, useEffect, useState } from 'react'
+import { isString } from 'lodash'
+import React, { useEffect, useState } from 'react'
 import Activation from './activation-display'
 import CardHeader from './card-header'
 import CardLabel from './card-label'
 import ConditionDisplay from './condition-display'
 import SourceDisplay from './source-display'
 import Traits from './traits-display'
-import Condition from '@/models/condition'
 
 export default function EquipmentCard({ value }: { value: Equipment }) {
-  const [description, setDescription]: [
-    string | any[],
-    Dispatch<SetStateAction<string | any[]>>,
-  ] = useState(value.description)
+  const [description, setDescription] = useState([value.description])
 
   const fetchConditions = () => {
-    let newDescription: string | any[] = description
-    if (newDescription.includes('@condition:')) {
-      const key = newDescription.split('@condition:')[1].split(' ')[0] // this is pretty hacky
-      let descriptionTokens: any[] = newDescription.split(`@condition:${key}`)
-
-      fetch(`http://localhost:3000/api/conditions/${key}`, {
-        cache: 'no-store',
-      })
-        .then((response) => {
-          return response.json()
-        })
-        .then((condition: Condition) => {
-          newDescription = []
-          for (var i = 0; i < descriptionTokens.length; i++) {
-            let mapping: string[] = [
-              descriptionTokens[i],
-              i !== descriptionTokens.length - 1 &&
-                React.createElement(ConditionDisplay, {
-                  value: condition,
-                  key: condition.identifier,
-                }),
-            ]
-            newDescription = newDescription.concat(mapping)
-          }
-          setDescription(newDescription)
-        })
-    }
+    ;(async () => {
+      let updated: any[] = await tokenizeDescriptionForConditions(description)
+      setDescription(updated)
+    })()
   }
 
   useEffect(() => {
@@ -85,6 +60,89 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
     </div>
   )
 }
+
+export function tokenizeDescriptionForConditions(description: any[]) {
+  return (async () => {
+    let tokenizedDescription = [...description]
+    for (let i = 0; i < tokenizedDescription.length; i++) {
+      let currentPart = tokenizedDescription[i]
+
+      if (isString(currentPart) && currentPart.includes('@condition:')) {
+        const brokenUpDescription = await updateDescription(currentPart)
+        tokenizedDescription.splice(i, 1, ...brokenUpDescription)
+      }
+    }
+    return tokenizedDescription
+  })()
+}
+
+export function updateDescription(currentPart: string): Promise<any[]> {
+  return (async () => {
+    const key = currentPart.split('@condition:')[1].split(' ')[0] // this is pretty hacky
+    let tokens: any[] = currentPart.split(`@condition:${key}`)
+    const condition: Condition = await retrieveCondition(key)
+    let newParts: any[] = []
+    for (let j = 0; j < tokens.length; j++) {
+      let mapping: any[] = [tokens[j]]
+      j !== tokens.length - 1 &&
+        mapping.push(
+          React.createElement(ConditionDisplay, {
+            value: condition,
+            key: condition.identifier,
+          })
+        )
+      newParts = newParts.concat(mapping)
+    }
+    return newParts
+  })()
+}
+
+export function retrieveCondition(key: string): Promise<Condition> {
+  return (async () => {
+    const condition = await (
+      await fetch(`http://localhost:3000/api/conditions/${key}`, {
+        cache: 'no-store',
+      })
+    ).json()
+    return condition
+  })()
+}
+
+// export function tokenizeDescriptionForConditions(
+//   description: any[],
+//   setter: (value: any) => void
+// ) {
+//   let tokenizedDescription = [...description]
+//   for (let i = 0; i < tokenizedDescription.length; i++) {
+//     let currentPart = tokenizedDescription[i]
+
+//     if (isString(currentPart) && currentPart.includes('@condition:')) {
+//       const key = currentPart.split('@condition:')[1].split(' ')[0] // this is pretty hacky
+//       let tokens: any[] = currentPart.split(`@condition:${key}`)
+
+//       fetch(`http://localhost:3000/api/conditions/${key}`, {
+//         cache: 'no-store',
+//       })
+//         .then((response) => response.json())
+// .then((condition: Condition) => {
+//   let newParts: any[] = []
+//   for (let j = 0; j < tokens.length; j++) {
+//     let mapping: any[] = [tokens[j]]
+//     j !== tokens.length - 1 &&
+//       mapping.push(
+//         React.createElement(ConditionDisplay, {
+//           value: condition,
+//           key: condition.identifier,
+//         })
+//       )
+//     newParts = newParts.concat(mapping)
+//   }
+//   tokenizedDescription.splice(i, 1, ...newParts)
+//   setter(tokenizedDescription)
+//         })
+//     }
+//   }
+// }
 
 // TODO better type
 export function ActivationLabel({ value }: { value: any }) {
