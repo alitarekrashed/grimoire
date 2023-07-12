@@ -1,15 +1,20 @@
 'use client'
 
 import { Equipment } from '@/models/equipment'
+import { useState } from 'react'
 import EquipmentCardList from './equipment-card-list'
 import EquipmentGrid from './equipment-grid'
-import { useEffect, useState } from 'react'
 
 export default function EquipmentDisplay() {
   const [cards, setCards] = useState<Equipment[]>([])
 
   function displayCard(item: Equipment) {
-    setCards((cards) => [...cards, item])
+    setCards((cards) => {
+      if (cards.indexOf(item) === -1) {
+        return [...cards, item]
+      }
+      return cards
+    })
   }
 
   return (
