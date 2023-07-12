@@ -157,7 +157,7 @@ export function EquipmentTypesList({
               label="Type"
               value={
                 value.name
-                  ? `${value.name} ${itemName.toLowerCase()}`
+                  ? `${itemName.toLowerCase()}, ${value.name}`
                   : `${itemName.toLowerCase()}`
               }
               valueClassName="italic"
