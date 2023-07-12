@@ -1,9 +1,11 @@
 import { Equipment } from '@/models/equipment'
 import EquipmentCard from './equipment-card'
 
-export default async function EquipmentCardList() {
-  let equipment: Equipment[] = []
-
+export default function EquipmentCardList({
+  equipment,
+}: {
+  equipment: Equipment[]
+}) {
   return (
     <div>
       <div>
