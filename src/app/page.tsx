@@ -1,4 +1,4 @@
-import EquipmentCardList from '@/components/equipment-card-list'
+import EquipmentDisplay from '@/components/equipment-display'
 
 export default function Home() {
   return (
@@ -6,7 +6,7 @@ export default function Home() {
       <div className="flex justify-center pt-5 mb-4">
         <h1 className="text-5xl">grimoire</h1>
       </div>
-      <EquipmentCardList></EquipmentCardList>
+      <EquipmentDisplay></EquipmentDisplay>
     </main>
   )
 }
