@@ -1,4 +1,5 @@
 import EquipmentCardList from '@/components/equipment-card-list'
+import EquipmentGrid from '@/components/equipment-grid'
 
 export default function Home() {
   return (
@@ -7,7 +8,9 @@ export default function Home() {
         <h1 className="text-5xl">grimoire</h1>
       </div>
       <div className="grid grid-cols-2">
-        <div className="pl-5">equipment list will go here</div>
+        <div className="pl-5">
+          <EquipmentGrid></EquipmentGrid>
+        </div>
         <div>
           <EquipmentCardList></EquipmentCardList>
         </div>
