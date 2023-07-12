@@ -14,7 +14,7 @@ export default function EquipmentGrid() {
       field: 'level',
       filter: true,
       sort: 'asc' as SortDirection,
-      maxWidth: '90',
+      maxWidth: 90,
       flex: 1,
     },
     { field: 'name', filter: true, flex: 1 },
@@ -25,14 +25,9 @@ export default function EquipmentGrid() {
       filter: true,
       valueFormatter: (value: any): string => value.data.rarity ?? 'common',
       flex: 1,
-      maxWidth: '150',
+      maxWidth: 150,
     },
   ])
-
-  // access API from event object
-  let onGridReady = (e: GridReadyEvent) => {
-    console.log('grid is ready'!)
-  }
 
   // Example load data from server
   useEffect(() => {
@@ -48,9 +43,8 @@ export default function EquipmentGrid() {
 
   return (
     <>
-      <div className="ag-theme-alpine-dark w-11/12 h-full">
+      <div className="ag-theme-alpine-dark w-11/12 h-screen">
         <AgGridReact
-          onGridReady={onGridReady} // register event listener
           rowData={rowData} // Row Data for Rows
           columnDefs={columnDefs} // Column Defs for Columns
           animateRows={true} // Optional - set to 'true' to have rows animate when sorted

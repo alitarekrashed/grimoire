@@ -2,11 +2,11 @@ import { Equipment } from '@/models/equipment'
 import EquipmentCard from './equipment-card'
 
 export default async function EquipmentCardList() {
-  let equipment: Equipment[] = await getEquipment()
+  let equipment: Equipment[] = []
 
   return (
     <div>
-      <div className="container mx-auto">
+      <div>
         {equipment.map((value) => (
           <div key={value.name} className="pb-4">
             <EquipmentCard value={value}></EquipmentCard>
@@ -15,11 +15,4 @@ export default async function EquipmentCardList() {
       </div>
     </div>
   )
-}
-
-export async function getEquipment(): Promise<Equipment[]> {
-  const res = await fetch('http://localhost:3000/api/equipment', {
-    cache: 'no-store',
-  })
-  return (await res.json()) as Equipment[]
 }
