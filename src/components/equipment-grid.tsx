@@ -19,6 +19,7 @@ export default function EquipmentGrid() {
     },
     { field: 'name', filter: true, flex: 1 },
     { field: 'category', filter: true, flex: 1 },
+    { field: 'source.title', headerName: 'Source', filter: true, flex: 1 },
     {
       field: 'rarity',
       filter: true,
