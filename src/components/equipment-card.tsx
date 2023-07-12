@@ -11,6 +11,8 @@ import CardLabel from './card-label'
 import SourceDisplay from './source-display'
 import Traits from './traits-display'
 import { parseDescription } from '@/utils/services/description-parser.service'
+import * as Collapsible from '@radix-ui/react-collapsible'
+import styles from './equipment-card.module.css'
 
 export default function EquipmentCard({ value }: { value: Equipment }) {
   const [description, setDescription] = useState([value.description])
@@ -38,45 +40,51 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
         roboto_serif.className
       }`}
     >
-      <CardHeader
-        name={value.name}
-        type="Item"
-        level={value.level ?? value.types?.map((val) => val.level)}
-      ></CardHeader>
-      {value.traits && (
-        <Traits rarity={value.rarity} traits={value.traits}></Traits>
-      )}
-      <div className="text-sm">
-        <PriceLabel value={value.price}></PriceLabel>
-        <OptionalFields value={value}></OptionalFields>
-        <ActivationLabel value={value.activation}></ActivationLabel>
-      </div>
-      <Separator.Root
-        className="w-full bg-slate-400	h-px"
-        style={{ margin: '10px 0' }}
-      />
-      <div className="text-xs">
-        <div>
-          {/* TODO This allows the descriptions be html-like but comes at the risk of injection attacks... need to revist */}
-          {/* TODO look into: https://www.npmjs.com/package/react-sanitized-html */}
-          {description.map((value, index) => {
-            return isString(value) ? (
-              <span
-                key={index}
-                dangerouslySetInnerHTML={{ __html: value }}
-              ></span>
-            ) : (
-              <span key={index}>{value}</span>
-            )
-          })}
-        </div>
-        <EquipmentTypesList
-          itemName={value.name}
-          variants={value.types}
-        ></EquipmentTypesList>
-      </div>
-      <br />
-      <SourceDisplay value={value.source}></SourceDisplay>
+      <Collapsible.Root defaultOpen={true}>
+        <Collapsible.Trigger className="w-full">
+          <CardHeader
+            name={value.name}
+            type="Item"
+            level={value.level ?? value.types?.map((val) => val.level)}
+          ></CardHeader>
+        </Collapsible.Trigger>
+        <Collapsible.Content className={`${styles.cardContent}`}>
+          {value.traits && (
+            <Traits rarity={value.rarity} traits={value.traits}></Traits>
+          )}
+          <div className="text-sm">
+            <PriceLabel value={value.price}></PriceLabel>
+            <OptionalFields value={value}></OptionalFields>
+            <ActivationLabel value={value.activation}></ActivationLabel>
+          </div>
+          <Separator.Root
+            className="w-full bg-slate-400	h-px"
+            style={{ margin: '10px 0' }}
+          />
+          <div className="text-xs">
+            <div>
+              {/* TODO This allows the descriptions be html-like but comes at the risk of injection attacks... need to revist */}
+              {/* TODO look into: https://www.npmjs.com/package/react-sanitized-html */}
+              {description.map((value, index) => {
+                return isString(value) ? (
+                  <span
+                    key={index}
+                    dangerouslySetInnerHTML={{ __html: value }}
+                  ></span>
+                ) : (
+                  <span key={index}>{value}</span>
+                )
+              })}
+            </div>
+            <EquipmentTypesList
+              itemName={value.name}
+              variants={value.types}
+            ></EquipmentTypesList>
+          </div>
+          <br />
+          <SourceDisplay value={value.source}></SourceDisplay>
+        </Collapsible.Content>
+      </Collapsible.Root>
     </div>
   )
 }
