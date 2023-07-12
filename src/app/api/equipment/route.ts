@@ -2,7 +2,11 @@ import { Equipment } from '@/models/equipment'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
-  const magnifyingGlass: Equipment = {
+  return NextResponse.json(allEquipment)
+}
+
+const allEquipment: Equipment[] = [
+  {
     name: 'magnifying glass',
     description:
       'This quality handheld lens gives you a +1 item bonus to Perception checks to notice minute details of documents, fabric, and the like.',
@@ -14,9 +18,8 @@ export async function GET(request: Request) {
     },
     category: 'Adventuring Gear',
     hands: '1',
-  }
-
-  const potionOfExpeditiousRetreat: Equipment = {
+  },
+  {
     name: 'potion of expeditious retreat',
     description:
       'The stopper for a <i>potion of expeditious retreat</i> is crafted to easily snap open in dire circumstances. When you drink this potion, you become @condition:fleeing@ for 1 minute, and you gain a +40-foot status bonus to all your Speeds for the duration as long as you are fleeing. You immediately Stride.',
@@ -34,9 +37,8 @@ export async function GET(request: Request) {
       numActions: 1,
       action: 'Interact',
     },
-  }
-
-  const healingPotion: Equipment = {
+  },
+  {
     name: 'healing potion',
     description:
       "A <i>healing potion</i> is a vial of a ruby-red liquid that imparts a tingling sensation as the drinker's wounds heal rapidly. When you drink a <i>healing potion</i>, you regain the listed number of Hit Points.",
@@ -91,9 +93,8 @@ export async function GET(request: Request) {
         description: 'The potion restores 8d8 + 30 Hit Points',
       },
     ],
-  }
-
-  const rhinocerousMask: Equipment = {
+  },
+  {
     name: 'rhinocerous mask',
     description:
       'Covered with thick armor and bearing a thicker horn, a <i>rhinoceros mask</i> grants you increased momentum. If you Stride at least 10 feet, your next melee Strike before the end of your turn ignores the Hardness of objects with a Hardness of 5 or less. If the object has more than Hardness 5, the mask grants no benefit.    ',
@@ -120,14 +121,5 @@ export async function GET(request: Request) {
       },
     ],
     rarity: 'uncommon',
-  }
-
-  const data = [
-    magnifyingGlass,
-    potionOfExpeditiousRetreat,
-    healingPotion,
-    rhinocerousMask,
-  ]
-
-  return NextResponse.json({ data })
-}
+  },
+]
