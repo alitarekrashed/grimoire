@@ -14,6 +14,7 @@ import { parseDescription } from '@/utils/services/description-parser.service'
 
 export default function EquipmentCard({ value }: { value: Equipment }) {
   const [description, setDescription] = useState([value.description])
+  const [fadeIn, setFadeIn] = useState(false)
 
   const parseDescriptionForRendering = () => {
     ;(async () => {
@@ -24,11 +25,18 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
 
   useEffect(() => {
     parseDescriptionForRendering()
+    setTimeout(() => {
+      setFadeIn(() => true)
+    }, 1)
   }, [])
 
   return (
     <div
-      className={`grid grid-cols-1 w-144 p-3 border border-slate-400 rounded bg-slate-800 shadow-slate-400 shadow ${roboto_serif.className}`}
+      className={`transition-opacity duration-1000 ${
+        fadeIn ? 'opacity-100' : 'opacity-0'
+      } grid grid-cols-1 w-144 p-3 border border-slate-400 rounded bg-slate-800 shadow-slate-400 shadow ${
+        roboto_serif.className
+      }`}
     >
       <CardHeader
         name={value.name}
