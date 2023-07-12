@@ -7,8 +7,8 @@ export default function Home() {
       <div className="flex justify-center pt-5 mb-4">
         <h1 className="text-5xl">grimoire</h1>
       </div>
-      <div className="grid grid-cols-2">
-        <div className="pl-5">
+      <div className="grid grid-cols-5">
+        <div className="pl-5 col-span-3">
           <EquipmentGrid></EquipmentGrid>
         </div>
         <div>
