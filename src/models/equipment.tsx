@@ -1,5 +1,6 @@
 // TODO really need to add an id here and update iterator keys to use that id
 export interface Equipment {
+  id: string
   name: string
   description: string
   source: Source // should this store an array? for items appearing in multiple sources?

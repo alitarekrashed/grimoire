@@ -11,6 +11,7 @@ export default function EquipmentGrid() {
   const [columnDefs, setColumnDefs] = useState([
     { field: 'name', filter: true },
     { field: 'category', filter: true },
+    { field: 'level', filter: true },
   ])
 
   // Example load data from server

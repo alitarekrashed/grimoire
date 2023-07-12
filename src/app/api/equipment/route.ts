@@ -1,12 +1,35 @@
-import { Equipment } from '@/models/equipment'
+import { Equipment, EquipmentVariantType } from '@/models/equipment'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
-  return NextResponse.json(allEquipment)
+  const equipment: Equipment[] = [...allEquipment]
+  for (let i = 0; i < equipment.length; i++) {
+    let item = equipment[i]
+
+    // converts an item with variants into their own standalone items.
+    if (item.types && item.types.length > 0) {
+      const variants: Equipment[] = item.types.map(
+        (variant: EquipmentVariantType) => {
+          return {
+            ...item,
+            ...variant,
+            name: variant.name + ' ' + item.name,
+            description:
+              item.description + '<br /><br />' + variant.description,
+            types: [],
+          }
+        }
+      )
+      equipment.splice(i, 1, ...variants)
+    }
+  }
+
+  return NextResponse.json(equipment)
 }
 
 const allEquipment: Equipment[] = [
   {
+    id: '1',
     name: 'magnifying glass',
     description:
       'This quality handheld lens gives you a +1 item bonus to Perception checks to notice minute details of documents, fabric, and the like.',
@@ -20,6 +43,7 @@ const allEquipment: Equipment[] = [
     hands: '1',
   },
   {
+    id: '2',
     name: 'potion of expeditious retreat',
     description:
       'The stopper for a <i>potion of expeditious retreat</i> is crafted to easily snap open in dire circumstances. When you drink this potion, you become @condition:fleeing@ for 1 minute, and you gain a +40-foot status bonus to all your Speeds for the duration as long as you are fleeing. You immediately Stride.',
@@ -39,6 +63,7 @@ const allEquipment: Equipment[] = [
     },
   },
   {
+    id: '3',
     name: 'healing potion',
     description:
       "A <i>healing potion</i> is a vial of a ruby-red liquid that imparts a tingling sensation as the drinker's wounds heal rapidly. When you drink a <i>healing potion</i>, you regain the listed number of Hit Points.",
@@ -95,6 +120,7 @@ const allEquipment: Equipment[] = [
     ],
   },
   {
+    id: '4',
     name: 'rhinocerous mask',
     description:
       'Covered with thick armor and bearing a thicker horn, a <i>rhinoceros mask</i> grants you increased momentum. If you Stride at least 10 feet, your next melee Strike before the end of your turn ignores the Hardness of objects with a Hardness of 5 or less. If the object has more than Hardness 5, the mask grants no benefit.    ',
