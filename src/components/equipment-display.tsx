@@ -10,10 +10,16 @@ export default function EquipmentDisplay() {
 
   function displayCard(item: Equipment) {
     setCards((cards) => {
-      if (cards.indexOf(item) === -1) {
+      let index: number = cards.indexOf(item)
+      if (index === -1) {
         return [item, ...cards]
+      } else {
+        // this shifts the selected card to the top... maybe unnecessary?
+        let shiftedCards = cards.slice()
+        shiftedCards.splice(index, 1)
+        shiftedCards.unshift(item)
+        return shiftedCards
       }
-      return cards
     })
   }
 
