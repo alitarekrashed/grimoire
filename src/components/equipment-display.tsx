@@ -11,7 +11,7 @@ export default function EquipmentDisplay() {
   function displayCard(item: Equipment) {
     setCards((cards) => {
       if (cards.indexOf(item) === -1) {
-        return [...cards, item]
+        return [item, ...cards]
       }
       return cards
     })
