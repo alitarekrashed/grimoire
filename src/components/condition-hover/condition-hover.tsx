@@ -3,11 +3,11 @@
 import Condition from '@/models/condition'
 import { roboto_serif } from '@/utils/fonts'
 import * as HoverCard from '@radix-ui/react-hover-card'
-import styles from './condition-display.module.css'
-import { ParsedDescription } from './parsed-description.tsx/parsed-description'
+import styles from './condition-hover.module.css'
+import { ParsedDescription } from '../parsed-description/parsed-description'
 
 // TODO eventually the display should be clickable and allow the user to go to a page for the condition?
-export default function ConditionDisplay({ value }: { value: Condition }) {
+export default function ConditionHover({ value }: { value: Condition }) {
   return (
     <>
       <HoverCard.Root openDelay={200} closeDelay={100}>

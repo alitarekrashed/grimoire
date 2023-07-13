@@ -1,8 +1,8 @@
-import ConditionDisplay from '@/components/condition-display'
 import { isString } from 'lodash'
 import { retrieveCondition } from './condition.service'
 import React from 'react'
 import Condition from '@/models/condition'
+import ConditionHover from '@/components/condition-hover/condition-hover'
 
 export function parseDescription(description: any[]): Promise<any[]> {
   return (async () => {
@@ -31,7 +31,7 @@ function createComponentsForConditions(currentPart: string): Promise<any[]> {
       let mapping: any[] = [tokens[j]]
       j !== tokens.length - 1 &&
         mapping.push(
-          React.createElement(ConditionDisplay, {
+          React.createElement(ConditionHover, {
             value: condition,
             key: condition.identifier,
           })

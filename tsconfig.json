@@ -28,6 +28,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
+    "src/components/parsed-description",
+    "src/components/card-display-list",
     "src/components/parsed-description"
   ],
   "exclude": ["node_modules"]
