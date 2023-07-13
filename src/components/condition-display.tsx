@@ -6,6 +6,7 @@ import * as HoverCard from '@radix-ui/react-hover-card'
 import styles from './condition-display.module.css'
 import { useEffect, useState } from 'react'
 import { parseDescription } from '@/utils/services/description-parser.service'
+import { isString } from 'lodash'
 
 // TODO eventually the display should be clickable and allow the user to go to a page for the condition?
 export default function ConditionDisplay({ value }: { value: Condition }) {
@@ -37,7 +38,18 @@ export default function ConditionDisplay({ value }: { value: Condition }) {
             <div
               className={`${styles.hoverCardContent} w-128 text-xs bg-slate-600 shadow-slate-400 shadow ${roboto_serif.className}`}
             >
-              {description}
+              {/* TODO This allows the descriptions be html-like but comes at the risk of injection attacks... need to revist */}
+              {/* TODO look into: https://www.npmjs.com/package/react-sanitized-html */}
+              {description.map((value, index) => {
+                return isString(value) ? (
+                  <span
+                    key={index}
+                    dangerouslySetInnerHTML={{ __html: value }}
+                  ></span>
+                ) : (
+                  <span key={index}>{value}</span>
+                )
+              })}
             </div>
 
             <HoverCard.Arrow className="fill-slate-600" />
