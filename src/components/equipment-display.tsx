@@ -25,11 +25,11 @@ export default function EquipmentDisplay() {
   }
 
   return (
-    <div className="grid grid-cols-5">
+    <div className="h-full grid grid-cols-5">
       <div className="pl-5 col-span-3">
         <EquipmentGrid onSelectedItem={handleSelectedCard}></EquipmentGrid>
       </div>
-      <div>
+      <div className="overflow-x-auto col-span-2">
         <EquipmentCardList equipment={cards}></EquipmentCardList>
       </div>
     </div>

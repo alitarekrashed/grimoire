@@ -7,7 +7,7 @@ export default function EquipmentCardList({
   equipment: Equipment[]
 }) {
   return (
-    <div>
+    <div className="h-full w-full">
       <div>
         {equipment.map((value) => (
           <div key={value.name} className="pb-4">
