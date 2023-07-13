@@ -1,35 +1,18 @@
-/* styles.css */
-.conditionTooltipContent {
+.hoverCardContent {
   border-radius: 4px;
   padding: 10px 15px;
-  animation-duration: 0.6s;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-}
-.conditionTooltipContent[data-side='top'] {
-  animation-name: slideUp;
-}
-.conditionTooltipContent[data-side='bottom'] {
-  animation-name: slideDown;
+
+  transform-origin: var(--radix-hover-card-content-transform-origin);
+  animation: scaleIn 0.2s ease-out;
 }
 
-@keyframes slideDown {
+@keyframes scaleIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: scale(0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+    transform: scale(1);
   }
 }
