@@ -53,7 +53,7 @@ export default function EquipmentGrid({
 
   return (
     <>
-      <div className="ag-theme-alpine-dark w-11/12 h-full">
+      <div className="ag-theme-alpine-dark h-full drop-shadow-md">
         <AgGridReact
           ref={gridRef}
           rowData={rowData} // Row Data for Rows
