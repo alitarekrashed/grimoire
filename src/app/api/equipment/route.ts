@@ -13,7 +13,7 @@ export async function GET(request: Request) {
           return {
             ...item,
             ...variant,
-            name: variant.name + ' ' + item.name,
+            name: variant.name ? item.name + ', ' + variant.name : item.name,
             description:
               item.description + '<br /><br />' + variant.description,
             types: [],

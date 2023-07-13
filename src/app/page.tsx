@@ -2,11 +2,13 @@ import EquipmentDisplay from '@/components/equipment-display'
 
 export default function Home() {
   return (
-    <main>
-      <div className="flex justify-center pt-5 mb-4">
-        <h1 className="text-5xl">grimoire</h1>
+    <main className="h-screen">
+      <div className="h-1/6 flex justify-center ">
+        <h1 className="pt-5 mb-4 text-5xl">grimoire</h1>
       </div>
-      <EquipmentDisplay></EquipmentDisplay>
+      <div className="h-5/6">
+        <EquipmentDisplay></EquipmentDisplay>
+      </div>
     </main>
   )
 }

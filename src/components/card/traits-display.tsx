@@ -15,7 +15,7 @@ export default function Traits({
   )
 }
 
-export function Rarity({ rarity }: { rarity: string }) {
+function Rarity({ rarity }: { rarity: string }) {
   let background = 'bg-slate-500'
   if (rarity === 'uncommon') {
     background = 'bg-orange-600'
@@ -24,7 +24,7 @@ export function Rarity({ rarity }: { rarity: string }) {
   return <Trait backgroundColor={background} trait={rarity}></Trait>
 }
 
-export function Trait({
+function Trait({
   trait,
   backgroundColor,
 }: {

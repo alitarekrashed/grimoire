@@ -6,3 +6,7 @@ export const dm_serif_display = DM_Serif_Display({
   subsets: ['latin'],
 })
 export const roboto_serif = Roboto_Serif({ subsets: ['latin'] })
+export const roboto_serif_italic = Roboto_Serif({
+  subsets: ['latin'],
+  style: 'italic',
+})

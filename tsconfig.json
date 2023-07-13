@@ -23,6 +23,15 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/components/parsed-description",
+    "src/components/card-display-list",
+    "src/components/parsed-description",
+    "src/components/card"
+  ],
   "exclude": ["node_modules"]
 }
