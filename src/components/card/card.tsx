@@ -5,11 +5,10 @@ import { roboto_serif } from '@/utils/fonts'
 import * as Collapsible from '@radix-ui/react-collapsible'
 import * as Separator from '@radix-ui/react-separator'
 import { useEffect, useState } from 'react'
-import CardHeader from '../card-header'
 import { ParsedDescription } from '../parsed-description/parsed-description'
-import SourceDisplay from '../source-display'
-import Traits from '../traits-display'
 import styles from './card.module.css'
+import Traits from './traits-display'
+import SourceDisplay from './source-display'
 
 export interface CardData {
   name: string
@@ -75,6 +74,32 @@ export default function Card({
           <SourceDisplay value={data.source}></SourceDisplay>
         </Collapsible.Content>
       </Collapsible.Root>
+    </div>
+  )
+}
+
+function CardHeader({
+  name,
+  type,
+  level,
+}: {
+  name: string
+  type: string
+  level: number | number[] | undefined
+}) {
+  let displayLevel: string = '' + level
+  if (Array.isArray(level)) {
+    level.sort((a, b) => a - b)
+    displayLevel = '' + level[0]
+    displayLevel = level.length > 1 ? displayLevel.concat('+') : displayLevel
+  }
+
+  return (
+    <div className="grid grid-cols-4 justify-between text-xl font-semibold">
+      <div className="col-span-3 justify-self-start capitalize">{name}</div>
+      <div className="justify-self-end">
+        {type} {displayLevel}
+      </div>
     </div>
   )
 }
