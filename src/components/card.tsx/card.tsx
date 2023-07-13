@@ -2,12 +2,11 @@
 
 import { Source } from '@/models/equipment'
 import { roboto_serif } from '@/utils/fonts'
-import { parseDescription } from '@/utils/services/description-parser.service'
 import * as Collapsible from '@radix-ui/react-collapsible'
 import * as Separator from '@radix-ui/react-separator'
-import { isString } from 'lodash'
 import { useEffect, useState } from 'react'
 import CardHeader from '../card-header'
+import { ParsedDescription } from '../parsed-description.tsx/parsed-description'
 import SourceDisplay from '../source-display'
 import Traits from '../traits-display'
 import styles from './card.module.css'
@@ -33,18 +32,9 @@ export default function Card({
   attributes: any
   additionalContent: any
 }) {
-  const [description, setDescription] = useState([data.description])
   const [fadeIn, setFadeIn] = useState(false)
 
-  const parseDescriptionForRendering = () => {
-    ;(async () => {
-      let updated: any[] = await parseDescription(description)
-      setDescription(updated)
-    })()
-  }
-
   useEffect(() => {
-    parseDescriptionForRendering()
     setTimeout(() => {
       setFadeIn(() => true)
     }, 1)
@@ -76,20 +66,9 @@ export default function Card({
             style={{ margin: '10px 0' }}
           />
           <div className="text-xs">
-            <div>
-              {/* TODO This allows the descriptions be html-like but comes at the risk of injection attacks... need to revist */}
-              {/* TODO look into: https://www.npmjs.com/package/react-sanitized-html */}
-              {description.map((value, index) => {
-                return isString(value) ? (
-                  <span
-                    key={index}
-                    dangerouslySetInnerHTML={{ __html: value }}
-                  ></span>
-                ) : (
-                  <span key={index}>{value}</span>
-                )
-              })}
-            </div>
+            <ParsedDescription
+              description={data.description}
+            ></ParsedDescription>
             {additionalContent}
           </div>
           <br />

@@ -32,7 +32,7 @@ const allEquipment: Equipment[] = [
     id: '1',
     name: 'magnifying glass',
     description:
-      'This @condition:clumsy@ quality handheld lens gives you a +1 item bonus to Perception checks to notice minute details of documents, fabric, and the like.',
+      'This quality handheld lens gives you a +1 item bonus to Perception checks to notice minute details of documents, fabric, and the like.',
     price: [{ value: 40, type: 'gp' }],
     level: 3,
     source: {
