@@ -6,7 +6,7 @@ import * as Separator from '@radix-ui/react-separator'
 import { useEffect, useState } from 'react'
 import Activation from './activation-display'
 import CardLabel from './card-label'
-import Card from './card.tsx/card'
+import Card from './card/card'
 
 export default function EquipmentCard({ value }: { value: Equipment }) {
   const [description, setDescription] = useState([value.description])
