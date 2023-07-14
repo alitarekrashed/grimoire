@@ -4,9 +4,9 @@ import { Currency, Equipment, EquipmentVariantType } from '@/models/equipment'
 import { parseDescription } from '@/utils/services/description-parser.service'
 import * as Separator from '@radix-ui/react-separator'
 import { useEffect, useState } from 'react'
-import Activation from './card/activation-display'
-import Card from './card/card'
-import CardLabel from './card/card-label'
+import Activation from '../card/activation-display'
+import Card from '../card/card'
+import CardLabel from '../card/card-label'
 
 export default function EquipmentCard({ value }: { value: Equipment }) {
   const [description, setDescription] = useState([value.description])

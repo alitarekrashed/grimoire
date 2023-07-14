@@ -2,9 +2,9 @@
 
 import { Equipment } from '@/models/equipment'
 import { useEffect, useState } from 'react'
-import CardDisplayList from './card-display-list/card-display-list'
 import EquipmentCard from './equipment-card'
-import SelectableGrid from './selectable-grid/selectable-grid'
+import SelectableGrid from '../selectable-grid/selectable-grid'
+import CardDisplayList from '../card-display-list/card-display-list'
 
 export default function EquipmentDisplay() {
   const [equipment, setEquipment] = useState([])

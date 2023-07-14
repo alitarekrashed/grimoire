@@ -1,4 +1,4 @@
-import EquipmentDisplay from '@/components/equipment-display'
+import EquipmentDisplay from '@/components/equipment/equipment-display'
 
 export default function EquipmentPage() {
   return (
