@@ -7,24 +7,10 @@ import { useEffect, useState } from 'react'
 import Activation from '../card/activation-display'
 import Card from '../card/card'
 import CardLabel from '../card/card-label'
+import { ParsedDescription } from '../parsed-description/parsed-description'
 
 export default function EquipmentCard({ value }: { value: Equipment }) {
-  const [description, setDescription] = useState([value.description])
   const [fadeIn, setFadeIn] = useState(false)
-
-  const parseDescriptionForRendering = () => {
-    ;(async () => {
-      let updated: any[] = await parseDescription(description)
-      setDescription(updated)
-    })()
-  }
-
-  useEffect(() => {
-    parseDescriptionForRendering()
-    setTimeout(() => {
-      setFadeIn(() => true)
-    }, 1)
-  }, [])
 
   const attributes = (
     <div className="text-sm">
@@ -137,7 +123,11 @@ function EquipmentTypesList({
             ;&nbsp;
             <PriceLabel value={value.price}></PriceLabel>
           </div>
-          <div>{value.description}</div>
+          <div className="text-xs">
+            <ParsedDescription
+              description={value.description}
+            ></ParsedDescription>
+          </div>
         </div>
       ))}
     </div>
