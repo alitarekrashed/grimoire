@@ -43,8 +43,15 @@ export default function EquipmentPage() {
       <SplitViewDisplay
         columnDefs={columnDefs}
         entities={equipment}
-        buildCard={(equipment: Equipment) => (
-          <EquipmentCard value={equipment} collapsible={true}></EquipmentCard>
+        buildCard={(
+          equipment: Equipment,
+          removedHandler: (equipment: Equipment) => void
+        ) => (
+          <EquipmentCard
+            value={equipment}
+            collapsible={true}
+            onRemoved={removedHandler}
+          ></EquipmentCard>
         )}
       ></SplitViewDisplay>
     </div>

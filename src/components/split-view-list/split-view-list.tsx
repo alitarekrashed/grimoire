@@ -15,7 +15,7 @@ export default function SplitViewDisplay<T extends { id: string }>({
 }: {
   columnDefs: any[]
   entities: T[]
-  buildCard: (entity: T) => ReactNode
+  buildCard: (entity: T, closedHandler: (item: T) => void) => ReactNode
   gridSize?: number
 }) {
   const [cards, setCards] = useState<T[]>([])
@@ -61,7 +61,7 @@ export default function SplitViewDisplay<T extends { id: string }>({
     })
   }
 
-  function handleClosed(item: T) {
+  function handleRemoved(item: T) {
     setCards((cards) => {
       let index = cards.indexOf(item)
       if (index > -1) {
@@ -70,13 +70,6 @@ export default function SplitViewDisplay<T extends { id: string }>({
         return newCards
       }
       return cards
-    })
-  }
-
-  const buildCardWithClosedHandler: (entity: T) => ReactNode = (entity: T) => {
-    let component: ReactNode = buildCard(entity)
-    return React.cloneElement(component as React.ReactElement<any>, {
-        onRemoved: handleClosed,
     })
   }
 
@@ -100,7 +93,7 @@ export default function SplitViewDisplay<T extends { id: string }>({
         <CardDisplayList
           children={cards.map((value) => (
             <div key={value.id} className="pb-4">
-              {buildCardWithClosedHandler(value)}
+              {buildCard(value, handleRemoved)}
             </div>
           ))}
         ></CardDisplayList>

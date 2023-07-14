@@ -2,6 +2,7 @@
 
 import ConditionCard from '@/components/conditions/condition-card'
 import SplitViewDisplay from '@/components/split-view-list/split-view-list'
+import Condition from '@/models/condition'
 import { useEffect, useState } from 'react'
 
 export default function ConditionsPage() {
@@ -26,11 +27,15 @@ export default function ConditionsPage() {
       <SplitViewDisplay
         columnDefs={columnDefs}
         entities={conditions}
-        buildCard={(condition: Condition) => (
+        buildCard={(
+          condition: Condition,
+          onRemoved: (condition: Condition) => void
+        ) => (
           <ConditionCard
             value={condition}
             contentTextSizeClassName="sm"
             collapsible={true}
+            onRemoved={onRemoved}
           ></ConditionCard>
         )}
         gridSize={1}
