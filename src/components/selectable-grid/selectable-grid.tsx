@@ -1,6 +1,5 @@
 'use client'
 
-import { Equipment } from '@/models/equipment'
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import { AgGridReact } from 'ag-grid-react' // the AG Grid React Component
@@ -11,7 +10,7 @@ export default function SelectableGrid({
   rowData,
   columnDefs,
 }: {
-  onSelectedItem: (item: Equipment) => void
+  onSelectedItem: (item: any) => void
   rowData: any[]
   columnDefs: any[]
 }) {

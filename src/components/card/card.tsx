@@ -28,8 +28,8 @@ export default function Card({
 }: {
   data: CardData
   type: string
-  attributes: any
-  additionalContent: any
+  attributes?: any
+  additionalContent?: any
 }) {
   const [fadeIn, setFadeIn] = useState(false)
 
@@ -43,7 +43,7 @@ export default function Card({
     <div
       className={`transition-opacity duration-1000 ${
         fadeIn ? 'opacity-100' : 'opacity-0'
-      } grid grid-cols-1 w-144 p-3 border border-slate-400 rounded bg-slate-800 shadow-slate-400 drop-shadow-md ${
+      } grid grid-cols-1 p-3 border border-slate-400 rounded bg-slate-800 shadow-slate-400 drop-shadow-md ${
         roboto_serif.className
       }`}
     >
@@ -52,7 +52,7 @@ export default function Card({
           <CardHeader
             name={data.name}
             type={type}
-            level={data.level ?? data.types?.map((val) => val.level)}
+            level={data.level ?? data.types?.map((val) => val.level) ?? null}
           ></CardHeader>
         </Collapsible.Trigger>
         <Collapsible.Content className={`${styles.cardContent}`}>
@@ -87,7 +87,7 @@ function CardHeader({
   type: string
   level: number | number[] | undefined
 }) {
-  let displayLevel: string = '' + level
+  let displayLevel: string = level ? '' + level : ''
   if (Array.isArray(level)) {
     level.sort((a, b) => a - b)
     displayLevel = '' + level[0]

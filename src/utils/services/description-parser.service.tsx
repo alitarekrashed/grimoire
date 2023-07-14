@@ -2,7 +2,7 @@ import { isString } from 'lodash'
 import { retrieveCondition } from './condition.service'
 import React from 'react'
 import Condition from '@/models/condition'
-import ConditionHover from '@/components/condition-hover/condition-hover'
+import ConditionHover from '@/components/conditions/condition-hover'
 
 export function parseDescription(description: any[]): Promise<any[]> {
   return (async () => {
