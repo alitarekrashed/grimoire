@@ -69,7 +69,7 @@ export default function Card({
           )}
           {attributes}
           <Separator.Root
-            className="w-full bg-slate-400	h-px"
+            className="w-full bg-stone-400	h-px"
             style={{ margin: '10px 0' }}
           />
           <div

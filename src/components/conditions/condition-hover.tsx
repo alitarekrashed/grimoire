@@ -23,13 +23,13 @@ export default function ConditionHover({ value }: { value: Condition }) {
         <HoverCard.Portal>
           <HoverCard.Content>
             <div
-              className={`${styles.hoverCardContent} w-128 text-xs bg-slate-600 shadow-slate-400 shadow ${roboto_serif.className}`}
+              className={`${styles.hoverCardContent} w-128 text-xs bg-stone-600 shadow-stone-400 shadow ${roboto_serif.className}`}
             >
               <ParsedDescription
                 description={value.description}
               ></ParsedDescription>
             </div>
-            <HoverCard.Arrow className="fill-slate-600" />
+            <HoverCard.Arrow className="fill-stone-600" />
           </HoverCard.Content>
         </HoverCard.Portal>
       </HoverCard.Root>

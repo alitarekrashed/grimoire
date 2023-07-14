@@ -16,7 +16,7 @@ export default function Traits({
 }
 
 function Rarity({ rarity }: { rarity: string }) {
-  let background = 'bg-slate-500'
+  let background = 'bg-stone-500'
   if (rarity === 'uncommon') {
     background = 'bg-orange-600'
   }
@@ -33,8 +33,8 @@ function Trait({
 }) {
   return (
     <span
-      className={`border border-slate-400 rounded ${
-        backgroundColor ? backgroundColor : 'bg-slate-600'
+      className={`border border-stone-400 rounded ${
+        backgroundColor ? backgroundColor : 'bg-stone-600'
       }  p-0.5 mr-2`}
     >
       {trait}

@@ -114,7 +114,7 @@ function EquipmentTypesList({
       {variants.map((value) => (
         <div key={value.name}>
           <Separator.Root
-            className="w-full bg-slate-400	h-px"
+            className="w-full bg-stone-400	h-px"
             style={{ margin: '10px 0' }}
           />
           <div className="inline-flex mb-1">

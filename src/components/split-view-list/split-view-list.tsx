@@ -79,7 +79,7 @@ export default function SplitViewDisplay<T extends { id: string }>({
   return (
     <div className="h-full grid grid-cols-5 gap-x-4">
       <div
-        className={`bg-neutral-800 p-3 rounded col-span-${columnsForGrid} shadow-slate-200 drop-shadow-md`}
+        className={`bg-neutral-800 p-3 rounded col-span-${columnsForGrid} shadow-stone-200 drop-shadow-md`}
       >
         <SelectableGrid
           rowData={entities}
@@ -88,7 +88,7 @@ export default function SplitViewDisplay<T extends { id: string }>({
         ></SelectableGrid>
       </div>
       <div
-        className={`h-full bg-neutral-800 p-3 rounded overflow-y-scroll col-span-${columnsForCardsDisplay} shadow-slate-200 drop-shadow-md`}
+        className={`h-full bg-neutral-800 p-3 rounded overflow-y-scroll col-span-${columnsForCardsDisplay} shadow-stone-200 drop-shadow-md`}
       >
         <CardDisplayList
           children={cards.map((value) => (
