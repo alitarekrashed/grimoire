@@ -52,7 +52,9 @@ export default function Card({
           <CardHeader
             name={data.name}
             type={type}
-            level={data.level ?? data.types?.map((val) => val.level) ?? null}
+            level={
+              data.level ?? data.types?.map((val) => val.level) ?? undefined
+            }
           ></CardHeader>
         </Collapsible.Trigger>
         <Collapsible.Content className={`${styles.cardContent}`}>
