@@ -19,7 +19,7 @@ export default function RootLayout({
         className={`${dm_serif_display.className} bg-gradient-to-t from-stone-950 to-stone-900 min-h-screen flex wrap flex-col`}
       >
         <div className="grid grid-cols-1 pt-5 w-full">
-          <h1 className="text-5xl mb-4 flex self-center justify-self-center">
+          <h1 className="text-4xl mb-4 flex self-center justify-self-center">
             grimoire
           </h1>
           <div
