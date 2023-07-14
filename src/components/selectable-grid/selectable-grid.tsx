@@ -10,14 +10,14 @@ export default function SelectableGrid({
   rowData,
   columnDefs,
 }: {
-  onSelectedItem: (item: any) => void
+  onSelectedItem: (item: any[]) => void
   rowData: any[]
   columnDefs: any[]
 }) {
   const gridRef: LegacyRef = useRef()
   const onSelectionChanged = useCallback(() => {
     const selectedRows = gridRef!.current.api.getSelectedRows()
-    onSelectedItem(selectedRows[0])
+    onSelectedItem(selectedRows)
   }, [])
 
   return (

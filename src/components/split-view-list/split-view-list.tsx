@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import CardDisplayList from '../card-display-list/card-display-list'
 import SelectableGrid from '../selectable-grid/selectable-grid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -23,33 +23,39 @@ export default function SplitViewDisplay<T extends { id: string }>({
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const current = new URLSearchParams(Array.from(searchParams.entries()))
-  for (const key of current.keys()) {
-    const foundEntity = entities.find((value) => value.id === key)
-    if (foundEntity && cards.includes(foundEntity) === false) {
-      console.log(foundEntity)
-      handleSelectedCard(foundEntity)
-    }
-  }
-
-  function handleSelectedCard(item: T) {
-    setCards((cards) => {
-      let index: number = cards.indexOf(item)
-
-      let updatedIds = cards.concat([item]).map((val) => val.id)
-      const query = `?${updatedIds.join('&')}`
-      router.push(`${pathname}${query}`)
-
-      if (index === -1) {
-        return [item, ...cards]
-      } else {
-        // this shifts the selected card to the top... maybe unnecessary?
-        // what if it autoscrolled to their position???
-        let shiftedCards = cards.slice()
-        shiftedCards.splice(index, 1)
-        shiftedCards.unshift(item)
-        return shiftedCards
+  useEffect(() => {
+    const current = new URLSearchParams(Array.from(searchParams.entries()))
+    let foundEntities: T[] = []
+    for (const key of current.keys()) {
+      const foundEntity = entities.find((value) => value.id === key)
+      if (foundEntity && foundEntities.includes(foundEntity) === false) {
+        foundEntities.push(foundEntity)
       }
+    }
+    setCards(foundEntities)
+  }, [entities])
+
+  function handleSelectedCard(items: T[]) {
+    setCards((cards) => {
+      let newCards = [...cards]
+
+      items.forEach((item) => {
+        let index: number = cards.indexOf(item)
+        if (index === -1) {
+          newCards = [item, ...cards]
+        } else {
+          // this shifts the selected card to the top... maybe unnecessary?
+          // what if it autoscrolled to their position???
+          let shiftedCards = cards.slice()
+          shiftedCards.splice(index, 1)
+          shiftedCards.unshift(item)
+          newCards = shiftedCards
+        }
+      })
+
+      const query = `?${newCards.map((val) => val.id).join('&')}`
+      router.replace(`${pathname}${query}`)
+      return newCards
     })
   }
 
