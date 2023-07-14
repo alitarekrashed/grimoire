@@ -10,7 +10,7 @@ export default function SelectableGrid({
   rowData,
   columnDefs,
 }: {
-  onSelectedItem: (item: any[]) => void
+  onSelectedItem: (item: any) => void
   rowData: any[]
   columnDefs: any[]
 }) {

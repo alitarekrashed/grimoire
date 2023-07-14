@@ -76,7 +76,7 @@ export default function SplitViewDisplay<T extends { id: string }>({
   const buildCardWithClosedHandler: (entity: T) => ReactNode = (entity: T) => {
     let component: ReactNode = buildCard(entity)
     return React.cloneElement(component as React.ReactElement<any>, {
-      onClosed: handleClosed,
+        onRemoved: handleClosed,
     })
   }
 

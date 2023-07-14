@@ -27,7 +27,7 @@ export default function Card({
   additionalContent,
   contentTextSizeClassName,
   collapsible,
-  onClosed,
+  onRemoved,
 }: {
   data: CardData
   type: string
@@ -35,7 +35,7 @@ export default function Card({
   additionalContent?: any
   contentTextSizeClassName?: string
   collapsible?: boolean
-  onClosed?: (item: CardData) => {}
+  onRemoved?: (item: CardData) => {}
 }) {
   const [fadeIn, setFadeIn] = useState(false)
 
@@ -86,10 +86,10 @@ export default function Card({
           </div>
           <br />
           <div className="flex justify-between align-middle text-[10px]">
-            {onClosed && (
+            {onRemoved && (
               <button
                 className="border rounded-md border-slate-500 p-1 hover:bg-slate-400"
-                onClick={() => onClosed(data)}
+                onClick={() => onRemoved(data)}
               >
                 Remove
               </button>

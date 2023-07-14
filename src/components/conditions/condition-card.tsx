@@ -8,12 +8,12 @@ export default function ConditionCard({
   value,
   contentTextSizeClassName,
   collapsible,
-  onClosed,
+  onRemoved,
 }: {
   value: Condition
   contentTextSizeClassName?: string
   collapsible?: boolean
-  onClosed?: (item: CardData) => {}
+  onRemoved?: (item: CardData) => {}
 }) {
   const [fadeIn, setFadeIn] = useState(false)
 
@@ -23,7 +23,7 @@ export default function ConditionCard({
       contentTextSizeClassName={contentTextSizeClassName}
       type="Condition"
       collapsible={collapsible}
-      onClosed={onClosed}
+      onRemoved={onRemoved}
     ></Card>
   )
 }
