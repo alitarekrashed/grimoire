@@ -8,6 +8,7 @@ export default function ConditionsPage() {
   const [conditions, setConditions] = useState([])
   const [columnDefs, setColumnDefs] = useState([
     { field: 'name', filter: true, flex: 1 },
+    { field: 'id', hide: true },
   ])
 
   useEffect(() => {

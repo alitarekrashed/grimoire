@@ -17,6 +17,7 @@ export async function GET(request: Request) {
             return {
               ...item,
               ...variant,
+              id: item.id + '_' + variant.name,
               name: variant.name ? item.name + ', ' + variant.name : item.name,
               description:
                 item.description + '<br /><br />' + variant.description,
