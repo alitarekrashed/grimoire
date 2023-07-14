@@ -4,11 +4,19 @@ import { Currency, Equipment, EquipmentVariantType } from '@/models/equipment'
 import * as Separator from '@radix-ui/react-separator'
 import { useState } from 'react'
 import Activation from '../card/activation-display'
-import Card from '../card/card'
+import Card, { CardData } from '../card/card'
 import CardLabel from '../card/card-label'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 
-export default function EquipmentCard({ value }: { value: Equipment }) {
+export default function EquipmentCard({
+  value,
+  collapsible,
+  onRemoved,
+}: {
+  value: Equipment
+  collapsible?: boolean
+  onRemoved?: (item: CardData) => void
+}) {
   const [fadeIn, setFadeIn] = useState(false)
 
   const attributes = (
@@ -32,6 +40,8 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
       type="Item"
       attributes={attributes}
       additionalContent={additionalContent}
+      collapsible={collapsible}
+      onRemoved={onRemoved}
     ></Card>
   )
 }

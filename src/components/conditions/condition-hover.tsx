@@ -8,6 +8,7 @@ import { ParsedDescription } from '../parsed-description/parsed-description'
 import Link from 'next/link'
 
 // TODO eventually the display should be clickable and allow the user to go to a page for the condition?
+// TODO maybe this should open a modal instead of a link to a new page
 export default function ConditionHover({ value }: { value: Condition }) {
   return (
     <>

@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useState } from 'react'
 import CardDisplayList from '../card-display-list/card-display-list'
 import SelectableGrid from '../selectable-grid/selectable-grid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import React from 'react'
 
 //TODO this should become id instead of name
 export default function SplitViewDisplay<T extends { id: string }>({
@@ -14,7 +15,7 @@ export default function SplitViewDisplay<T extends { id: string }>({
 }: {
   columnDefs: any[]
   entities: T[]
-  buildCard: (entity: T) => ReactNode
+  buildCard: (entity: T, closedHandler: (item: T) => void) => ReactNode
   gridSize?: number
 }) {
   const [cards, setCards] = useState<T[]>([])
@@ -35,27 +36,40 @@ export default function SplitViewDisplay<T extends { id: string }>({
     setCards(foundEntities)
   }, [entities])
 
-  function handleSelectedCard(items: T[]) {
+  useEffect(() => {
+    const query = `?${cards.map((val) => val.id).join('&')}`
+    router.replace(`${pathname}${query}`)
+  }, [cards])
+
+  function handleSelectedCard(item: T) {
     setCards((cards) => {
       let newCards = [...cards]
 
-      items.forEach((item) => {
-        let index: number = cards.indexOf(item)
-        if (index === -1) {
-          newCards = [item, ...cards]
-        } else {
-          // this shifts the selected card to the top... maybe unnecessary?
-          // what if it autoscrolled to their position???
-          let shiftedCards = cards.slice()
-          shiftedCards.splice(index, 1)
-          shiftedCards.unshift(item)
-          newCards = shiftedCards
-        }
-      })
+      let index: number = cards.indexOf(item)
+      if (index === -1) {
+        newCards = [item, ...cards]
+      } else {
+        // this shifts the selected card to the top... maybe unnecessary?
+        // what if it autoscrolled to their position???
+        let shiftedCards = cards.slice()
+        shiftedCards.splice(index, 1)
+        shiftedCards.unshift(item)
+        newCards = shiftedCards
+      }
 
-      const query = `?${newCards.map((val) => val.id).join('&')}`
-      router.replace(`${pathname}${query}`)
       return newCards
+    })
+  }
+
+  function handleRemoved(item: T) {
+    setCards((cards) => {
+      let index = cards.indexOf(item)
+      if (index > -1) {
+        const newCards = cards.slice()
+        newCards.splice(index, 1)
+        return newCards
+      }
+      return cards
     })
   }
 
@@ -79,7 +93,7 @@ export default function SplitViewDisplay<T extends { id: string }>({
         <CardDisplayList
           children={cards.map((value) => (
             <div key={value.id} className="pb-4">
-              {buildCard(value)}
+              {buildCard(value, handleRemoved)}
             </div>
           ))}
         ></CardDisplayList>
