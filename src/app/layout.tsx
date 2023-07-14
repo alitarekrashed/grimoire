@@ -16,19 +16,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${dm_serif_display.className} bg-stone-800 min-h-screen flex wrap flex-col`}
+        className={`${dm_serif_display.className} bg-gradient-to-t from-stone-950 to-stone-900 min-h-screen flex wrap flex-col`}
       >
         <div className="grid grid-cols-1 pt-5 w-full">
           <h1 className="text-5xl mb-4 flex self-center justify-self-center">
             grimoire
           </h1>
-          <div className={`mb-4 ${ysabeau.className} flex self-center justify-self-center`}>
-          <Navbar></Navbar>
-
+          <div
+            className={`mb-4 ${ysabeau.className} flex self-center justify-self-center`}
+          >
+            <Navbar></Navbar>
           </div>
         </div>
 
-        <div className="grow relative">{children}</div>
+        <div className="h-5/6 grow relative">{children}</div>
       </body>
     </html>
   )
