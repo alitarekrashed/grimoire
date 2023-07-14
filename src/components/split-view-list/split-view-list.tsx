@@ -41,23 +41,21 @@ export default function SplitViewDisplay<T extends { id: string }>({
     router.replace(`${pathname}${query}`)
   }, [cards])
 
-  function handleSelectedCard(items: T[]) {
+  function handleSelectedCard(item: T) {
     setCards((cards) => {
       let newCards = [...cards]
 
-      items.forEach((item) => {
-        let index: number = cards.indexOf(item)
-        if (index === -1) {
-          newCards = [item, ...cards]
-        } else {
-          // this shifts the selected card to the top... maybe unnecessary?
-          // what if it autoscrolled to their position???
-          let shiftedCards = cards.slice()
-          shiftedCards.splice(index, 1)
-          shiftedCards.unshift(item)
-          newCards = shiftedCards
-        }
-      })
+      let index: number = cards.indexOf(item)
+      if (index === -1) {
+        newCards = [item, ...cards]
+      } else {
+        // this shifts the selected card to the top... maybe unnecessary?
+        // what if it autoscrolled to their position???
+        let shiftedCards = cards.slice()
+        shiftedCards.splice(index, 1)
+        shiftedCards.unshift(item)
+        newCards = shiftedCards
+      }
 
       return newCards
     })

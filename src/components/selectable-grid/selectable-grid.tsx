@@ -17,7 +17,7 @@ export default function SelectableGrid({
   const gridRef: LegacyRef = useRef()
   const onSelectionChanged = useCallback(() => {
     const selectedRows = gridRef!.current.api.getSelectedRows()
-    onSelectedItem(selectedRows)
+    onSelectedItem(selectedRows[0])
   }, [])
 
   return (
