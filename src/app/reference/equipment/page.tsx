@@ -44,11 +44,7 @@ export default function EquipmentPage() {
         columnDefs={columnDefs}
         entities={equipment}
         buildCard={(equipment: Equipment) => (
-          <EquipmentCard
-            value={equipment}
-            closeable={true}
-            collapsible={true}
-          ></EquipmentCard>
+          <EquipmentCard value={equipment} collapsible={true}></EquipmentCard>
         )}
       ></SplitViewDisplay>
     </div>

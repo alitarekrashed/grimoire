@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useState } from 'react'
 import CardDisplayList from '../card-display-list/card-display-list'
 import SelectableGrid from '../selectable-grid/selectable-grid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import React from 'react'
 
 //TODO this should become id instead of name
 export default function SplitViewDisplay<T extends { id: string }>({
@@ -35,6 +36,11 @@ export default function SplitViewDisplay<T extends { id: string }>({
     setCards(foundEntities)
   }, [entities])
 
+  useEffect(() => {
+    const query = `?${cards.map((val) => val.id).join('&')}`
+    router.replace(`${pathname}${query}`)
+  }, [cards])
+
   function handleSelectedCard(items: T[]) {
     setCards((cards) => {
       let newCards = [...cards]
@@ -53,9 +59,26 @@ export default function SplitViewDisplay<T extends { id: string }>({
         }
       })
 
-      const query = `?${newCards.map((val) => val.id).join('&')}`
-      router.replace(`${pathname}${query}`)
       return newCards
+    })
+  }
+
+  function handleClosed(item: T) {
+    setCards((cards) => {
+      let index = cards.indexOf(item)
+      if (index > -1) {
+        const newCards = cards.slice()
+        newCards.splice(index, 1)
+        return newCards
+      }
+      return cards
+    })
+  }
+
+  const buildCardWithClosedHandler: (entity: T) => ReactNode = (entity: T) => {
+    let component: ReactNode = buildCard(entity)
+    return React.cloneElement(component as React.ReactElement<any>, {
+      onClosed: handleClosed,
     })
   }
 
@@ -79,7 +102,7 @@ export default function SplitViewDisplay<T extends { id: string }>({
         <CardDisplayList
           children={cards.map((value) => (
             <div key={value.id} className="pb-4">
-              {buildCard(value)}
+              {buildCardWithClosedHandler(value)}
             </div>
           ))}
         ></CardDisplayList>

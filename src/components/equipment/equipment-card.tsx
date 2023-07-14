@@ -4,18 +4,18 @@ import { Currency, Equipment, EquipmentVariantType } from '@/models/equipment'
 import * as Separator from '@radix-ui/react-separator'
 import { useState } from 'react'
 import Activation from '../card/activation-display'
-import Card from '../card/card'
+import Card, { CardData } from '../card/card'
 import CardLabel from '../card/card-label'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 
 export default function EquipmentCard({
   value,
   collapsible,
-  closeable,
+  onClosed,
 }: {
   value: Equipment
   collapsible?: boolean
-  closeable?: boolean
+  onClosed?: (item: CardData) => {}
 }) {
   const [fadeIn, setFadeIn] = useState(false)
 
@@ -41,7 +41,7 @@ export default function EquipmentCard({
       attributes={attributes}
       additionalContent={additionalContent}
       collapsible={collapsible}
-      closeable={closeable}
+      onClosed={onClosed}
     ></Card>
   )
 }
