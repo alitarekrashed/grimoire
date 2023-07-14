@@ -2,25 +2,30 @@ import { Equipment, EquipmentVariantType } from '@/models/equipment'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const keepCollapsed = searchParams.get('keepCollapsed')
+
   const equipment: Equipment[] = [...allEquipment]
   for (let i = 0; i < equipment.length; i++) {
     let item = equipment[i]
 
-    // converts an item with variants into their own standalone items.
-    if (item.types && item.types.length > 0) {
-      const variants: Equipment[] = item.types.map(
-        (variant: EquipmentVariantType) => {
-          return {
-            ...item,
-            ...variant,
-            name: variant.name ? item.name + ', ' + variant.name : item.name,
-            description:
-              item.description + '<br /><br />' + variant.description,
-            types: [],
+    if (!keepCollapsed) {
+      // converts an item with variants into their own standalone items.
+      if (item.types && item.types.length > 0) {
+        const variants: Equipment[] = item.types.map(
+          (variant: EquipmentVariantType) => {
+            return {
+              ...item,
+              ...variant,
+              name: variant.name ? item.name + ', ' + variant.name : item.name,
+              description:
+                item.description + '<br /><br />' + variant.description,
+              types: [],
+            }
           }
-        }
-      )
-      equipment.splice(i, 1, ...variants)
+        )
+        equipment.splice(i, 1, ...variants)
+      }
     }
   }
 
