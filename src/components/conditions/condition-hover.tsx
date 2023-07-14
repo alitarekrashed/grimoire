@@ -5,16 +5,19 @@ import { roboto_serif } from '@/utils/fonts'
 import * as HoverCard from '@radix-ui/react-hover-card'
 import styles from './condition-hover.module.css'
 import { ParsedDescription } from '../parsed-description/parsed-description'
+import Link from 'next/link'
 
 // TODO eventually the display should be clickable and allow the user to go to a page for the condition?
 export default function ConditionHover({ value }: { value: Condition }) {
   return (
     <>
       <HoverCard.Root openDelay={200} closeDelay={100}>
-        <HoverCard.Trigger>
-          <span className="underline" tabIndex={0}>
-            {value.name}
-          </span>
+        <HoverCard.Trigger asChild>
+          <Link href={`/reference/conditions/${value.id}`}>
+            <span className="underline" tabIndex={0}>
+              {value.name}
+            </span>
+          </Link>
         </HoverCard.Trigger>
         <HoverCard.Portal>
           <HoverCard.Content>

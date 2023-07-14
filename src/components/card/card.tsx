@@ -25,11 +25,13 @@ export default function Card({
   type,
   attributes,
   additionalContent,
+  contentTextSizeClassName,
 }: {
   data: CardData
   type: string
   attributes?: any
   additionalContent?: any
+  contentTextSizeClassName?: string
 }) {
   const [fadeIn, setFadeIn] = useState(false)
 
@@ -66,7 +68,13 @@ export default function Card({
             className="w-full bg-slate-400	h-px"
             style={{ margin: '10px 0' }}
           />
-          <div className="text-xs">
+          <div
+            className={`${
+              contentTextSizeClassName
+                ? `text-${contentTextSizeClassName}`
+                : 'text-xs'
+            }`}
+          >
             <ParsedDescription
               description={data.description}
             ></ParsedDescription>

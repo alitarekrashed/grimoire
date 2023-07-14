@@ -1,8 +1,9 @@
 'use client'
 
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import CardDisplayList from '../card-display-list/card-display-list'
 import SelectableGrid from '../selectable-grid/selectable-grid'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 //TODO this should become id instead of name
 export default function SplitViewDisplay<T extends { id: string }>({
@@ -18,19 +19,43 @@ export default function SplitViewDisplay<T extends { id: string }>({
 }) {
   const [cards, setCards] = useState<T[]>([])
 
-  function handleSelectedCard(item: T) {
-    setCards((cards) => {
-      let index: number = cards.indexOf(item)
-      if (index === -1) {
-        return [item, ...cards]
-      } else {
-        // this shifts the selected card to the top... maybe unnecessary?
-        // what if it autoscrolled to their position???
-        let shiftedCards = cards.slice()
-        shiftedCards.splice(index, 1)
-        shiftedCards.unshift(item)
-        return shiftedCards
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const current = new URLSearchParams(Array.from(searchParams.entries()))
+    let foundEntities: T[] = []
+    for (const key of current.keys()) {
+      const foundEntity = entities.find((value) => value.id === key)
+      if (foundEntity && foundEntities.includes(foundEntity) === false) {
+        foundEntities.push(foundEntity)
       }
+    }
+    setCards(foundEntities)
+  }, [entities])
+
+  function handleSelectedCard(items: T[]) {
+    setCards((cards) => {
+      let newCards = [...cards]
+
+      items.forEach((item) => {
+        let index: number = cards.indexOf(item)
+        if (index === -1) {
+          newCards = [item, ...cards]
+        } else {
+          // this shifts the selected card to the top... maybe unnecessary?
+          // what if it autoscrolled to their position???
+          let shiftedCards = cards.slice()
+          shiftedCards.splice(index, 1)
+          shiftedCards.unshift(item)
+          newCards = shiftedCards
+        }
+      })
+
+      const query = `?${newCards.map((val) => val.id).join('&')}`
+      router.replace(`${pathname}${query}`)
+      return newCards
     })
   }
 

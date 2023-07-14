@@ -1,15 +1,17 @@
-import Condition from '@/models/condition'
+import { Equipment } from '@/models/equipment'
 import { NextResponse } from 'next/server'
 
 export async function GET(
   request: Request,
-  { params }: { params: { identifier: string } }
+  { params }: { params: { id: string } }
 ) {
   const allConditions = await (
-    await fetch('http://localhost:3000/api/conditions', { cache: 'no-store' })
+    await fetch('http://localhost:3000/api/equipment?keepCollapsed=true', {
+      cache: 'no-store',
+    })
   ).json()
   const data = allConditions.find(
-    (condition: Condition) => condition.identifier === params.identifier
+    (equipment: Equipment) => equipment.id === params.id
   )
 
   if (data) {

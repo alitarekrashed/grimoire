@@ -1,9 +1,8 @@
 'use client'
 
 import { Currency, Equipment, EquipmentVariantType } from '@/models/equipment'
-import { parseDescription } from '@/utils/services/description-parser.service'
 import * as Separator from '@radix-ui/react-separator'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Activation from '../card/activation-display'
 import Card from '../card/card'
 import CardLabel from '../card/card-label'

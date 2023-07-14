@@ -8,6 +8,7 @@ export default function ConditionsPage() {
   const [conditions, setConditions] = useState([])
   const [columnDefs, setColumnDefs] = useState([
     { field: 'name', filter: true, flex: 1 },
+    { field: 'id', hide: true },
   ])
 
   useEffect(() => {
@@ -26,7 +27,10 @@ export default function ConditionsPage() {
         columnDefs={columnDefs}
         entities={conditions}
         buildCard={(condition: Condition) => (
-          <ConditionCard value={condition}></ConditionCard>
+          <ConditionCard
+            value={condition}
+            contentTextSizeClassName="sm"
+          ></ConditionCard>
         )}
         gridSize={1}
       ></SplitViewDisplay>
