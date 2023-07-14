@@ -22,7 +22,12 @@ export default function ConditionRecordPage() {
 
   return (
     <div className="p-4">
-      {condition && <ConditionCard value={condition}></ConditionCard>}
+      {condition && (
+        <ConditionCard
+          value={condition}
+          contentTextSizeClassName="md"
+        ></ConditionCard>
+      )}
     </div>
   )
 }

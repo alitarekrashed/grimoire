@@ -26,7 +26,10 @@ export default function ConditionsPage() {
         columnDefs={columnDefs}
         entities={conditions}
         buildCard={(condition: Condition) => (
-          <ConditionCard value={condition}></ConditionCard>
+          <ConditionCard
+            value={condition}
+            contentTextSizeClassName="sm"
+          ></ConditionCard>
         )}
         gridSize={1}
       ></SplitViewDisplay>
