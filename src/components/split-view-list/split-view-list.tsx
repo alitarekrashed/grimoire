@@ -5,7 +5,7 @@ import CardDisplayList from '../card-display-list/card-display-list'
 import SelectableGrid from '../selectable-grid/selectable-grid'
 
 //TODO this should become id instead of name
-export default function SplitViewDisplay<T extends { name: string }>({
+export default function SplitViewDisplay<T extends { id: string }>({
   columnDefs,
   entities,
   buildCard,
@@ -53,7 +53,7 @@ export default function SplitViewDisplay<T extends { name: string }>({
       >
         <CardDisplayList
           children={cards.map((value) => (
-            <div key={value.name} className="pb-4">
+            <div key={value.id} className="pb-4">
               {buildCard(value)}
             </div>
           ))}
