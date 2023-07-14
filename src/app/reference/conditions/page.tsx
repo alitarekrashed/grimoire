@@ -28,6 +28,7 @@ export default function ConditionsPage() {
         buildCard={(condition: Condition) => (
           <ConditionCard value={condition}></ConditionCard>
         )}
+        gridSize={1}
       ></SplitViewDisplay>
     </div>
   )
