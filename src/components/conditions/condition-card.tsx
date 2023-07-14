@@ -7,9 +7,13 @@ import Card from '../card/card'
 export default function ConditionCard({
   value,
   contentTextSizeClassName,
+  collapsible,
+  closeable,
 }: {
   value: Condition
   contentTextSizeClassName?: string
+  collapsible?: boolean
+  closeable?: boolean
 }) {
   const [fadeIn, setFadeIn] = useState(false)
 
@@ -18,6 +22,8 @@ export default function ConditionCard({
       data={value}
       contentTextSizeClassName={contentTextSizeClassName}
       type="Condition"
+      collapsible={collapsible}
+      closeable={closeable}
     ></Card>
   )
 }

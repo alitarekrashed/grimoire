@@ -26,6 +26,8 @@ export default function ConditionRecordPage() {
         <ConditionCard
           value={condition}
           contentTextSizeClassName="md"
+          collapsible={false}
+          closeable={false}
         ></ConditionCard>
       )}
     </div>

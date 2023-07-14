@@ -22,7 +22,13 @@ export default function EquipmentRecordPage() {
 
   return (
     <div className="p-4">
-      {equipment && <EquipmentCard value={equipment}></EquipmentCard>}
+      {equipment && (
+        <EquipmentCard
+          value={equipment}
+          closeable={false}
+          collapsible={false}
+        ></EquipmentCard>
+      )}
     </div>
   )
 }

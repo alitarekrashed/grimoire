@@ -26,12 +26,16 @@ export default function Card({
   attributes,
   additionalContent,
   contentTextSizeClassName,
+  collapsible,
+  closeable,
 }: {
   data: CardData
   type: string
   attributes?: any
   additionalContent?: any
   contentTextSizeClassName?: string
+  collapsible?: boolean
+  closeable?: boolean
 }) {
   const [fadeIn, setFadeIn] = useState(false)
 
@@ -49,7 +53,7 @@ export default function Card({
         roboto_serif.className
       }`}
     >
-      <Collapsible.Root defaultOpen={true}>
+      <Collapsible.Root defaultOpen={true} disabled={collapsible === false}>
         <Collapsible.Trigger className="w-full">
           <CardHeader
             name={data.name}
@@ -81,7 +85,16 @@ export default function Card({
             {additionalContent}
           </div>
           <br />
-          <SourceDisplay value={data.source}></SourceDisplay>
+          <div className="flex justify-between align-middle text-[10px]">
+            {closeable === true && (
+              <button className="border rounded-md border-slate-500 p-1 hover:bg-slate-400">
+                Close
+              </button>
+            )}
+            <div className="flex place-self-center">
+              <SourceDisplay value={data.source}></SourceDisplay>
+            </div>
+          </div>
         </Collapsible.Content>
       </Collapsible.Root>
     </div>

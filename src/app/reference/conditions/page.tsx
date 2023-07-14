@@ -30,6 +30,8 @@ export default function ConditionsPage() {
           <ConditionCard
             value={condition}
             contentTextSizeClassName="sm"
+            closeable={true}
+            collapsible={true}
           ></ConditionCard>
         )}
         gridSize={1}

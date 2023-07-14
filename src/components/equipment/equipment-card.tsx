@@ -8,7 +8,15 @@ import Card from '../card/card'
 import CardLabel from '../card/card-label'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 
-export default function EquipmentCard({ value }: { value: Equipment }) {
+export default function EquipmentCard({
+  value,
+  collapsible,
+  closeable,
+}: {
+  value: Equipment
+  collapsible?: boolean
+  closeable?: boolean
+}) {
   const [fadeIn, setFadeIn] = useState(false)
 
   const attributes = (
@@ -32,6 +40,8 @@ export default function EquipmentCard({ value }: { value: Equipment }) {
       type="Item"
       attributes={attributes}
       additionalContent={additionalContent}
+      collapsible={collapsible}
+      closeable={closeable}
     ></Card>
   )
 }
