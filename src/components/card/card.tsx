@@ -43,7 +43,7 @@ export default function Card({
     <div
       className={`transition-opacity duration-1000 ${
         fadeIn ? 'opacity-100' : 'opacity-0'
-      } grid grid-cols-1 w-144 p-3 border border-slate-400 rounded bg-slate-800 shadow-slate-400 drop-shadow-md ${
+      } grid grid-cols-1 p-3 border border-slate-400 rounded bg-slate-800 shadow-slate-400 drop-shadow-md ${
         roboto_serif.className
       }`}
     >

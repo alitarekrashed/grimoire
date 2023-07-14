@@ -42,14 +42,14 @@ export default function ConditionsDisplay() {
 
   return (
     <div className="h-full grid grid-cols-5 gap-x-4">
-      <div className="bg-neutral-800 p-3 rounded col-span-3 shadow-slate-200 drop-shadow-md">
+      <div className="bg-neutral-800 p-3 rounded col-span-1 shadow-slate-200 drop-shadow-md">
         <SelectableGrid
           rowData={conditions}
           onSelectedItem={handleSelectedCard}
           columnDefs={columnDefs}
         ></SelectableGrid>
       </div>
-      <div className="h-full bg-neutral-800 p-3 rounded overflow-y-scroll col-span-2 shadow-slate-200 drop-shadow-md">
+      <div className="h-full bg-neutral-800 p-3 rounded overflow-y-scroll col-span-4 shadow-slate-200 drop-shadow-md">
         <CardDisplayList
           children={cards.map((value) => (
             <div key={value.name} className="pb-4">
