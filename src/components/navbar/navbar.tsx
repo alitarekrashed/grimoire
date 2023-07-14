@@ -7,7 +7,7 @@ export default function Navbar() {
     <NavigationMenu.Root className="h-full">
       <NavigationMenu.List className="h-full inline-flex rounded bg-stone-800 border border-stone-300">
         <NavigationMenu.Item className="m-2">
-          <NavigationMenu.Link href="https://github.com/radix-ui">
+          <NavigationMenu.Link href="/reference/equipment">
             Equipment
           </NavigationMenu.Link>
         </NavigationMenu.Item>
@@ -15,7 +15,7 @@ export default function Navbar() {
           <div className="h-full w-[2] border border-stone-300"></div>
         </NavigationMenu.Item>
         <NavigationMenu.Item className="m-2">
-          <NavigationMenu.Link href="https://github.com/radix-ui">
+          <NavigationMenu.Link href="/reference/conditions">
             Conditions
           </NavigationMenu.Link>
         </NavigationMenu.Item>
