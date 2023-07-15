@@ -15,8 +15,8 @@ export default function SplitViewDisplay<T extends { id: string }>({
 }: {
   columnDefs: any[]
   entities: T[]
-  buildCard: (entity: T, closedHandler: (item: T) => void) => ReactNode
-  gridSize?: number
+  buildCard: (entity: T, removedHandler: (item: T) => void) => ReactNode
+  gridSize?: 'small' | 'medium'
 }) {
   const [cards, setCards] = useState<T[]>([])
 
@@ -73,13 +73,12 @@ export default function SplitViewDisplay<T extends { id: string }>({
     })
   }
 
-  let columnsForGrid = gridSize && gridSize <= 5 ? gridSize : 3
-  let columnsForCardsDisplay = 5 - columnsForGrid
-
   return (
     <div className="h-full grid grid-cols-5 gap-x-4">
       <div
-        className={`bg-neutral-800 p-3 rounded col-span-${columnsForGrid} shadow-stone-200 drop-shadow-md`}
+        className={`bg-neutral-800 p-3 rounded ${
+          gridSize === 'small' ? 'col-span-1' : 'col-span-3'
+        } shadow-stone-200 drop-shadow-md`}
       >
         <SelectableGrid
           rowData={entities}
@@ -88,7 +87,9 @@ export default function SplitViewDisplay<T extends { id: string }>({
         ></SelectableGrid>
       </div>
       <div
-        className={`h-full bg-neutral-800 p-3 rounded overflow-y-scroll col-span-${columnsForCardsDisplay} shadow-stone-200 drop-shadow-md`}
+        className={`h-full bg-neutral-800 p-3 rounded overflow-y-scroll ${
+          gridSize === 'small' ? 'col-span-4' : 'col-span-2'
+        } shadow-stone-200 drop-shadow-md`}
       >
         <CardDisplayList
           children={cards.map((value) => (

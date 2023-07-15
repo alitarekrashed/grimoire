@@ -15,7 +15,7 @@ export default function EquipmentCard({
 }: {
   value: Equipment
   collapsible?: boolean
-  onRemoved?: (item: CardData) => void
+  onRemoved?: (item: Equipment) => void
 }) {
   const [fadeIn, setFadeIn] = useState(false)
 

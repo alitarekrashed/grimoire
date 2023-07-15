@@ -20,7 +20,7 @@ export interface CardData {
   source: Source
 }
 
-export default function Card({
+export default function Card<T extends CardData>({
   data,
   type,
   attributes,
@@ -29,13 +29,13 @@ export default function Card({
   collapsible,
   onRemoved,
 }: {
-  data: CardData
+  data: T
   type: string
   attributes?: any
   additionalContent?: any
   contentTextSizeClassName?: string
   collapsible?: boolean
-  onRemoved?: (item: CardData) => void
+  onRemoved?: (item: T) => void
 }) {
   const [fadeIn, setFadeIn] = useState(false)
 

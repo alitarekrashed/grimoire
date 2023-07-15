@@ -2,7 +2,7 @@
 
 import Condition from '@/models/condition'
 import { useState } from 'react'
-import Card from '../card/card'
+import Card, { CardData } from '../card/card'
 
 export default function ConditionCard({
   value,
@@ -13,7 +13,7 @@ export default function ConditionCard({
   value: Condition
   contentTextSizeClassName?: string
   collapsible?: boolean
-  onRemoved?: (item: CardData) => void
+  onRemoved?: (item: Condition) => void
 }) {
   const [fadeIn, setFadeIn] = useState(false)
 
