@@ -23,7 +23,11 @@ export default function ConditionModal({ value }: { value: Condition }) {
           <Dialog.Overlay className={styles.DialogOverlay} />
           <Dialog.Content className={`bg-stone-800 ${styles.DialogContent}`}>
             <Dialog.Description className={`${styles.DialogDescription}`}>
-              <ConditionCard value={value}></ConditionCard>
+              <ConditionCard
+                value={value}
+                collapsible={false}
+                contentTextSizeClassName="md"
+              ></ConditionCard>
             </Dialog.Description>
             <Dialog.Close asChild>
               <button
