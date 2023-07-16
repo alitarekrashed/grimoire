@@ -9,13 +9,12 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const keepCollapsed = searchParams.get('keepCollapsed')
 
-  const equipment: Equipment[] = [...allEquipment]
-  for (let i = 0; i < equipment.length; i++) {
-    let item = equipment[i]
-
-    if (!keepCollapsed) {
+  const equipment: (Equipment | EquipmentWithVariant)[] = [...allEquipment]
+  if (!keepCollapsed) {
+    for (let i = 0; i < equipment.length; i++) {
       // converts an item with variants into their own standalone items.
-      if (item.types && item.types.length > 0) {
+      if (equipment[i].entity_type === 'EQUIPMENT_WITH_VARIANTS') {
+        let item = equipment[i] as EquipmentWithVariant
         const variants: Equipment[] = item.types.map(
           (variant: EquipmentVariantType) => {
             return {
@@ -26,6 +25,7 @@ export async function GET(request: Request) {
               description:
                 item.description + '<br /><br />' + variant.description,
               types: [],
+              entity_type: 'EQUIPMENT',
             }
           }
         )
