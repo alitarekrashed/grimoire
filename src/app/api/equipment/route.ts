@@ -1,4 +1,8 @@
-import { Equipment, EquipmentVariantType } from '@/models/equipment'
+import {
+  Equipment,
+  EquipmentVariantType,
+  EquipmentWithVariant,
+} from '@/models/equipment'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
@@ -33,7 +37,7 @@ export async function GET(request: Request) {
   return NextResponse.json(equipment)
 }
 
-const allEquipment: Equipment[] = [
+const allEquipment: (Equipment | EquipmentWithVariant)[] = [
   {
     id: '1',
     name: 'magnifying glass',
@@ -41,12 +45,15 @@ const allEquipment: Equipment[] = [
       'This quality handheld lens gives you a +1 item bonus to Perception checks to notice minute details of documents, fabric, and the like.',
     price: [{ value: 40, type: 'gp' }],
     level: 3,
-    source: {
-      title: 'Core Rulebook',
-      page: '288',
-    },
+    source: [
+      {
+        title: 'Core Rulebook',
+        page: '288',
+      },
+    ],
     category: 'Adventuring Gear',
     hands: '1',
+    entity_type: 'EQUIPMENT',
   },
   {
     id: '2',
@@ -56,10 +63,12 @@ const allEquipment: Equipment[] = [
     price: [{ value: 3, type: 'gp' }],
     bulk: 'L',
     level: 1,
-    source: {
-      title: "Advanced Player's Guide",
-      page: '258',
-    },
+    source: [
+      {
+        title: "Advanced Player's Guide",
+        page: '258',
+      },
+    ],
     category: 'Potion',
     usage: 'held in 1 hand',
     traits: ['consumable', 'magical', 'potion', 'transmutation'],
@@ -67,16 +76,19 @@ const allEquipment: Equipment[] = [
       numActions: 1,
       action: 'Interact',
     },
+    entity_type: 'EQUIPMENT',
   },
   {
     id: '3',
     name: 'healing potion',
     description:
       "A <i>healing potion</i> is a vial of a ruby-red liquid that imparts a tingling sensation as the drinker's wounds heal rapidly. When you drink a <i>healing potion</i>, you regain the listed number of Hit Points.",
-    source: {
-      title: 'Core Rulebook',
-      page: '563',
-    },
+    source: [
+      {
+        title: 'Core Rulebook',
+        page: '563',
+      },
+    ],
     category: 'Potion',
     usage: 'held in 1 hand',
     traits: [
@@ -124,16 +136,19 @@ const allEquipment: Equipment[] = [
         description: 'The potion restores 8d8 + 30 Hit Points',
       },
     ],
+    entity_type: 'EQUIPMENT_WITH_VARIANTS',
   },
   {
     id: '4',
     name: 'rhinocerous mask',
     description:
       'Covered with thick armor and bearing a thicker horn, a <i>rhinoceros mask</i> grants you increased momentum. If you Stride at least 10 feet, your next melee Strike before the end of your turn ignores the Hardness of objects with a Hardness of 5 or less. If the object has more than Hardness 5, the mask grants no benefit.    ',
-    source: {
-      title: 'Treasure Vault',
-      page: '155',
-    },
+    source: [
+      {
+        title: 'Treasure Vault',
+        page: '155',
+      },
+    ],
     usage: 'worn mask',
     category: 'Worn Item',
     traits: ['invested', 'magical', 'transmutation'],
@@ -153,5 +168,6 @@ const allEquipment: Equipment[] = [
       },
     ],
     rarity: 'uncommon',
+    entity_type: 'EQUIPMENT_WITH_VARIANTS',
   },
 ]

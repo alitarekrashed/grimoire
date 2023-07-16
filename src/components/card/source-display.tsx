@@ -1,9 +1,9 @@
-import { Source } from '@/models/equipment'
+import { Source } from '@/models/entity-model'
 
-export default function SourceDisplay({ value }: { value: Source }) {
+export default function SourceDisplay({ value }: { value: Source[] }) {
   return (
     <p className="italic">
-      <span>Source:</span> {value.title} ({value.page})
+      <span>Source:</span> {value[0].title} ({value[0].page})
     </p>
   )
 }

@@ -1,21 +1,19 @@
 'use client'
 
-import { ReactNode, useEffect, useState } from 'react'
+import { EntityModel } from '@/models/entity-model'
+import { CardFactoryService } from '@/utils/services/card-factory.service'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import CardDisplayList from '../card-display-list/card-display-list'
 import SelectableGrid from '../selectable-grid/selectable-grid'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import React from 'react'
 
-//TODO this should become id instead of name
-export default function SplitViewDisplay<T extends { id: string }>({
+export default function SplitViewDisplay<T extends EntityModel>({
   columnDefs,
   entities,
-  buildCard,
   gridSize,
 }: {
   columnDefs: any[]
   entities: T[]
-  buildCard: (entity: T, removedHandler: (item: T) => void) => ReactNode
   gridSize?: 'small' | 'medium'
 }) {
   const [cards, setCards] = useState<T[]>([])
@@ -94,7 +92,12 @@ export default function SplitViewDisplay<T extends { id: string }>({
         <CardDisplayList
           children={cards.map((value) => (
             <div key={value.id} className="pb-4">
-              {buildCard(value, handleRemoved)}
+              {CardFactoryService<T>({
+                card: value,
+                onRemoved: handleRemoved,
+                contentTextSizeClassName: 'sm',
+                collapsible: true,
+              })}
             </div>
           ))}
         ></CardDisplayList>

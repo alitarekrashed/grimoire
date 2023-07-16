@@ -1,8 +1,7 @@
 'use client'
 
 import Condition from '@/models/condition'
-import { useState } from 'react'
-import Card, { CardData } from '../card/card'
+import Card from '../card/card'
 
 export default function ConditionCard({
   value,
@@ -15,8 +14,6 @@ export default function ConditionCard({
   collapsible?: boolean
   onRemoved?: (item: Condition) => void
 }) {
-  const [fadeIn, setFadeIn] = useState(false)
-
   return (
     <Card
       data={value}

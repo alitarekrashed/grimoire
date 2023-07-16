@@ -1,8 +1,3 @@
-import { Source } from './equipment'
+import { EntityModel } from './entity-model'
 
-export default interface Condition {
-  id: string
-  name: string
-  description: string
-  source: Source
-}
+export default interface Condition extends EntityModel {}

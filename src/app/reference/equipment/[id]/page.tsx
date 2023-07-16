@@ -1,12 +1,13 @@
 'use client'
 
 import EquipmentCard from '@/components/equipment/equipment-card'
-import { Equipment } from '@/models/equipment'
+import { Equipment, EquipmentWithVariant } from '@/models/equipment'
+import { CardFactoryService } from '@/utils/services/card-factory.service'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export default function EquipmentRecordPage() {
-  const [equipment, setEquipment] = useState<Equipment>()
+  const [equipment, setEquipment] = useState<Equipment | EquipmentWithVariant>()
   const path: string[] = usePathname().split('/')
 
   useEffect(() => {
@@ -22,9 +23,12 @@ export default function EquipmentRecordPage() {
 
   return (
     <div className="p-4">
-      {equipment && (
-        <EquipmentCard value={equipment} collapsible={false}></EquipmentCard>
-      )}
+      {equipment &&
+        CardFactoryService<T>({
+          card: equipment,
+          contentTextSizeClassName: 'md',
+          collapsible: false,
+        })}
     </div>
   )
 }
