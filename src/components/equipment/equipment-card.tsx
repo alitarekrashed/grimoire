@@ -27,6 +27,8 @@ export default function EquipmentCard({
     <Card
       data={value}
       type="Item"
+      traits={value.traits}
+      rarity={value.rarity}
       attributes={attributes}
       collapsible={collapsible}
       onRemoved={onRemoved}

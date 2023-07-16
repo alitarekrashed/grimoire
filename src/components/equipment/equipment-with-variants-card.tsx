@@ -39,6 +39,8 @@ export default function EquipmentWithVariantsCard({
     <Card
       data={value}
       type="Item"
+      traits={value.traits}
+      rarity={value.rarity}
       attributes={attributes}
       additionalContent={additionalContent}
       collapsible={collapsible}
