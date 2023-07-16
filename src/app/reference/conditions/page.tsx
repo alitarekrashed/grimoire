@@ -1,8 +1,6 @@
 'use client'
 
-import ConditionCard from '@/components/conditions/condition-card'
 import SplitViewDisplay from '@/components/split-view-list/split-view-list'
-import Condition from '@/models/condition'
 import { useEffect, useState } from 'react'
 
 export default function ConditionsPage() {

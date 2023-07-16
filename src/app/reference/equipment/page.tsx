@@ -1,8 +1,6 @@
 'use client'
 
-import EquipmentCard from '@/components/equipment/equipment-card'
 import SplitViewDisplay from '@/components/split-view-list/split-view-list'
-import { Equipment, EquipmentWithVariant } from '@/models/equipment'
 import { SortDirection } from 'ag-grid-community'
 import { useEffect, useState } from 'react'
 
