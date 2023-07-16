@@ -1,7 +1,7 @@
 import {
   Equipment,
   EquipmentVariantType,
-  EquipmentWithVariant,
+  EquipmentWithVariants,
 } from '@/models/equipment'
 import { NextResponse } from 'next/server'
 
@@ -9,12 +9,12 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const keepCollapsed = searchParams.get('keepCollapsed')
 
-  const equipment: (Equipment | EquipmentWithVariant)[] = [...allEquipment]
+  const equipment: (Equipment | EquipmentWithVariants)[] = [...allEquipment]
   if (!keepCollapsed) {
     for (let i = 0; i < equipment.length; i++) {
       // converts an item with variants into their own standalone items.
       if (equipment[i].entity_type === 'EQUIPMENT_WITH_VARIANTS') {
-        let item = equipment[i] as EquipmentWithVariant
+        let item = equipment[i] as EquipmentWithVariants
         const variants: Equipment[] = item.types.map(
           (variant: EquipmentVariantType) => {
             return {
@@ -37,7 +37,7 @@ export async function GET(request: Request) {
   return NextResponse.json(equipment)
 }
 
-const allEquipment: (Equipment | EquipmentWithVariant)[] = [
+const allEquipment: (Equipment | EquipmentWithVariants)[] = [
   {
     id: '1',
     name: 'magnifying glass',

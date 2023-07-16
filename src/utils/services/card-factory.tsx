@@ -3,7 +3,7 @@ import EquipmentCard from '@/components/equipment/equipment-card'
 import EquipmentWithVariantsCard from '@/components/equipment/equipment-with-variants-card'
 import Condition from '@/models/condition'
 import { EntityModel } from '@/models/entity-model'
-import { Equipment, EquipmentWithVariant } from '@/models/equipment'
+import { Equipment, EquipmentWithVariants } from '@/models/equipment'
 import { ReactNode } from 'react'
 
 export function CardFactory<T extends EntityModel>({
@@ -29,10 +29,10 @@ export function CardFactory<T extends EntityModel>({
     case 'EQUIPMENT_WITH_VARIANTS':
       return (
         <EquipmentWithVariantsCard
-          value={card as unknown as EquipmentWithVariant}
+          value={card as unknown as EquipmentWithVariants}
           collapsible={collapsible}
           onRemoved={
-            onRemoved as unknown as (item: EquipmentWithVariant) => void
+            onRemoved as unknown as (item: EquipmentWithVariants) => void
           }
         ></EquipmentWithVariantsCard>
       )

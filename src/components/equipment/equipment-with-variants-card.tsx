@@ -4,7 +4,7 @@ import {
   Currency,
   Equipment,
   EquipmentVariantType,
-  EquipmentWithVariant,
+  EquipmentWithVariants,
 } from '@/models/equipment'
 import * as Separator from '@radix-ui/react-separator'
 import Activation from '../card/activation-display'
@@ -17,9 +17,9 @@ export default function EquipmentWithVariantsCard({
   collapsible,
   onRemoved,
 }: {
-  value: EquipmentWithVariant
+  value: EquipmentWithVariants
   collapsible?: boolean
-  onRemoved?: (item: EquipmentWithVariant) => void
+  onRemoved?: (item: EquipmentWithVariants) => void
 }) {
   const attributes = (
     <div className="text-sm">
@@ -83,7 +83,7 @@ function PriceLabel({ value }: { value: Currency[] | undefined }) {
 function OptionalFields({
   value,
 }: {
-  value: Equipment | EquipmentWithVariant
+  value: Equipment | EquipmentWithVariants
 }) {
   let optionalFields = []
   if (value.hands) {

@@ -16,7 +16,7 @@ export interface Equipment extends EntityModel {
   rarity?: string // enum?
 }
 
-export interface EquipmentWithVariant extends EntityModel {
+export interface EquipmentWithVariants extends EntityModel {
   category: string // enum e.g. Adventuring Gear
   bulk?: string // enum?
   hands?: string // enum? one-handed, two-handed, no hands?

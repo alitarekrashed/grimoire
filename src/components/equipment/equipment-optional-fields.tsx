@@ -1,11 +1,11 @@
-import { Equipment, EquipmentWithVariant } from '@/models/equipment'
+import { Equipment, EquipmentWithVariants } from '@/models/equipment'
 import CardLabel from '../card/card-label'
 
 // TODO add equipment id to key here?
 export function EquipmentOptionalFields({
   value,
 }: {
-  value: Equipment | EquipmentWithVariant
+  value: Equipment | EquipmentWithVariants
 }) {
   let optionalFields = []
   if (value.hands) {

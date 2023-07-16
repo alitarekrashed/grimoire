@@ -1,13 +1,15 @@
 'use client'
 
 import EquipmentCard from '@/components/equipment/equipment-card'
-import { Equipment, EquipmentWithVariant } from '@/models/equipment'
+import { Equipment, EquipmentWithVariants } from '@/models/equipment'
 import { CardFactory } from '@/utils/services/card-factory'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export default function EquipmentRecordPage() {
-  const [equipment, setEquipment] = useState<Equipment | EquipmentWithVariant>()
+  const [equipment, setEquipment] = useState<
+    Equipment | EquipmentWithVariants
+  >()
   const path: string[] = usePathname().split('/')
 
   useEffect(() => {
