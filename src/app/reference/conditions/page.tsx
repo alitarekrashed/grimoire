@@ -1,5 +1,6 @@
 'use client'
 
+import { CardData } from '@/components/card/card'
 import ConditionCard from '@/components/conditions/condition-card'
 import SplitViewDisplay from '@/components/split-view-list/split-view-list'
 import Condition from '@/models/condition'
@@ -38,7 +39,7 @@ export default function ConditionsPage() {
             onRemoved={onRemoved}
           ></ConditionCard>
         )}
-        gridSize={1}
+        gridSize="small"
       ></SplitViewDisplay>
     </div>
   )

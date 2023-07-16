@@ -15,7 +15,7 @@ export default function EquipmentCard({
 }: {
   value: Equipment
   collapsible?: boolean
-  onRemoved?: (item: CardData) => void
+  onRemoved?: (item: Equipment) => void
 }) {
   const [fadeIn, setFadeIn] = useState(false)
 
@@ -114,7 +114,7 @@ function EquipmentTypesList({
       {variants.map((value) => (
         <div key={value.name}>
           <Separator.Root
-            className="w-full bg-slate-400	h-px"
+            className="w-full bg-stone-400	h-px"
             style={{ margin: '10px 0' }}
           />
           <div className="inline-flex mb-1">

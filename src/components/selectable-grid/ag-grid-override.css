@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .ag-theme-alpine-dark {
+    --ag-header-background-color: theme('colors.stone.800');
+    --ag-background-color: theme('colors.neutral.800');
+    --ag-foreground-color: --foreground-rgb;
+    --ag-odd-row-background-color: theme('colors.stone.800');
+    --ag-row-hover-color: theme('colors.stone.600');
+    --ag-font-size: 0.75rem;
+  }
+  .ag-header-cell {
+    border-right: 1px solid #111;
+  }
+}

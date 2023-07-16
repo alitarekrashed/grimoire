@@ -20,7 +20,7 @@ export interface CardData {
   source: Source
 }
 
-export default function Card({
+export default function Card<T extends CardData>({
   data,
   type,
   attributes,
@@ -29,13 +29,13 @@ export default function Card({
   collapsible,
   onRemoved,
 }: {
-  data: CardData
+  data: T
   type: string
   attributes?: any
   additionalContent?: any
   contentTextSizeClassName?: string
   collapsible?: boolean
-  onRemoved?: (item: CardData) => void
+  onRemoved?: (item: T) => void
 }) {
   const [fadeIn, setFadeIn] = useState(false)
 
@@ -49,7 +49,7 @@ export default function Card({
     <div
       className={`transition-opacity duration-1000 ${
         fadeIn ? 'opacity-100' : 'opacity-0'
-      } grid grid-cols-1 p-3 border border-slate-400 rounded bg-slate-800 shadow-slate-400 drop-shadow-md ${
+      } grid grid-cols-1 p-3 border border-stone-400 rounded bg-stone-800 shadow-stone-400 drop-shadow-md ${
         roboto_serif.className
       }`}
     >
@@ -69,7 +69,7 @@ export default function Card({
           )}
           {attributes}
           <Separator.Root
-            className="w-full bg-slate-400	h-px"
+            className="w-full bg-stone-400	h-px"
             style={{ margin: '10px 0' }}
           />
           <div
@@ -88,7 +88,7 @@ export default function Card({
           <div className="flex justify-between align-middle text-[10px]">
             {onRemoved && (
               <button
-                className="border rounded-md border-slate-500 p-1 hover:bg-slate-400"
+                className="border rounded-md border-stone-500 p-1 hover:bg-stone-400 bg-stone-900"
                 onClick={() => onRemoved(data)}
               >
                 Remove

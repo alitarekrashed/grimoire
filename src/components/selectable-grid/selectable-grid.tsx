@@ -2,6 +2,7 @@
 
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
+import './ag-grid-override.css' // overriding default ag-grid theme
 import { AgGridReact } from 'ag-grid-react' // the AG Grid React Component
 import { LegacyRef, useCallback, useRef } from 'react'
 
