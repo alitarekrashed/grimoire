@@ -39,6 +39,7 @@ export default function EquipmentWithVariantsCard({
     <Card
       data={value}
       type="Item"
+      level={value.types.map((type) => type.level)}
       traits={value.traits}
       rarity={value.rarity}
       attributes={attributes}
