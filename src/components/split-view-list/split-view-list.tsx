@@ -1,7 +1,7 @@
 'use client'
 
 import { EntityModel } from '@/models/entity-model'
-import { CardFactoryService } from '@/utils/services/card-factory.service'
+import { CardFactory } from '@/utils/services/card-factory'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import CardDisplayList from '../card-display-list/card-display-list'
@@ -92,7 +92,7 @@ export default function SplitViewDisplay<T extends EntityModel>({
         <CardDisplayList
           children={cards.map((value) => (
             <div key={value.id} className="pb-4">
-              {CardFactoryService<T>({
+              {CardFactory<T>({
                 card: value,
                 onRemoved: handleRemoved,
                 contentTextSizeClassName: 'sm',

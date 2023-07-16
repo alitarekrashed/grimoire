@@ -6,7 +6,7 @@ import { EntityModel } from '@/models/entity-model'
 import { Equipment, EquipmentWithVariant } from '@/models/equipment'
 import { ReactNode } from 'react'
 
-export function CardFactoryService<T extends EntityModel>({
+export function CardFactory<T extends EntityModel>({
   card,
   onRemoved,
   contentTextSizeClassName,

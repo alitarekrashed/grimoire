@@ -1,7 +1,7 @@
 'use client'
 
 import Condition from '@/models/condition'
-import { CardFactoryService } from '@/utils/services/card-factory.service'
+import { CardFactory } from '@/utils/services/card-factory'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -23,7 +23,7 @@ export default function ConditionRecordPage() {
   return (
     <div className="p-4">
       {condition &&
-        CardFactoryService<T>({
+        CardFactory<T>({
           card: condition,
           contentTextSizeClassName: 'md',
           collapsible: false,

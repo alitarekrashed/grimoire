@@ -2,7 +2,7 @@
 
 import EquipmentCard from '@/components/equipment/equipment-card'
 import { Equipment, EquipmentWithVariant } from '@/models/equipment'
-import { CardFactoryService } from '@/utils/services/card-factory.service'
+import { CardFactory } from '@/utils/services/card-factory'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -24,7 +24,7 @@ export default function EquipmentRecordPage() {
   return (
     <div className="p-4">
       {equipment &&
-        CardFactoryService<T>({
+        CardFactory<T>({
           card: equipment,
           contentTextSizeClassName: 'md',
           collapsible: false,
