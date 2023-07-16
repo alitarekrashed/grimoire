@@ -1,7 +1,8 @@
-import { isString } from 'lodash'
-import { retrieveCondition } from './condition.service'
-import React from 'react'
+import ConditionModal from '@/components/conditions/condition-modal'
 import Condition from '@/models/condition'
+import { isString } from 'lodash'
+import React from 'react'
+import { retrieveCondition } from './condition.service'
 import ConditionHover from '@/components/conditions/condition-hover'
 
 export function parseDescription(description: any[]): Promise<any[]> {
@@ -33,7 +34,7 @@ function createComponentsForConditions(currentPart: string): Promise<any[]> {
         mapping.push(
           React.createElement(ConditionHover, {
             value: condition,
-            key: condition.identifier,
+            key: condition.id,
           })
         )
       newParts = newParts.concat(mapping)

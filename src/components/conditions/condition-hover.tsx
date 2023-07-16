@@ -18,7 +18,9 @@ export default function ConditionHover({ value }: { value: Condition }) {
     <>
       <HoverCard.Root openDelay={200} closeDelay={100}>
         <HoverCard.Trigger>
-          <ConditionModal value={value}></ConditionModal>
+          <span className="underline" tabIndex={0}>
+            {value.name}
+          </span>
         </HoverCard.Trigger>
         <HoverCard.Portal>
           <HoverCard.Content>
@@ -29,7 +31,7 @@ export default function ConditionHover({ value }: { value: Condition }) {
                 description={value.description}
               ></ParsedDescription>
             </div>
-            <HoverCard.Arrow className="fill-stone-600" />
+            <HoverCard.Arrow className="fill-slate-600" />
           </HoverCard.Content>
         </HoverCard.Portal>
       </HoverCard.Root>

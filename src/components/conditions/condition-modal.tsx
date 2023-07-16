@@ -14,7 +14,7 @@ export default function ConditionModal({ value }: { value: Condition }) {
   return (
     <>
       <Dialog.Root>
-        <Dialog.Trigger asChild>
+        <Dialog.Trigger>
           <button>
             <span className="underline" tabIndex={0}>
               {value.name}
@@ -31,7 +31,7 @@ export default function ConditionModal({ value }: { value: Condition }) {
                 contentTextSizeClassName="md"
               ></ConditionCard>
             </div>
-            <Dialog.Close asChild>
+            <Dialog.Close>
               <button
                 className={`${styles.IconButton} rounded `}
                 aria-label="Close"
