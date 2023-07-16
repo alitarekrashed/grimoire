@@ -1,28 +1,22 @@
 'use client'
 
-import { Source } from '@/models/equipment'
+import { EntityModel } from '@/models/entity-model'
 import { roboto_serif } from '@/utils/fonts'
 import * as Collapsible from '@radix-ui/react-collapsible'
 import * as Separator from '@radix-ui/react-separator'
 import { useEffect, useState } from 'react'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 import styles from './card.module.css'
-import Traits from './traits-display'
 import SourceDisplay from './source-display'
+import Traits from './traits-display'
 
-export interface CardData {
-  name: string
-  level?: number
-  types?: { level: number }[]
-  description: string
-  traits?: string[]
-  rarity?: string
-  source: Source
-}
-
-export default function Card<T extends CardData>({
+// Levelled Card vs. Generic Card...
+export default function Card<T extends EntityModel>({
   data,
   type,
+  level,
+  traits,
+  rarity,
   attributes,
   additionalContent,
   contentTextSizeClassName,
@@ -31,6 +25,9 @@ export default function Card<T extends CardData>({
 }: {
   data: T
   type: string
+  level?: number | number[] | undefined
+  traits?: string[]
+  rarity?: string
   attributes?: any
   additionalContent?: any
   contentTextSizeClassName?: string
@@ -55,18 +52,10 @@ export default function Card<T extends CardData>({
     >
       <Collapsible.Root defaultOpen={true} disabled={collapsible === false}>
         <Collapsible.Trigger className="w-full">
-          <CardHeader
-            name={data.name}
-            type={type}
-            level={
-              data.level ?? data.types?.map((val) => val.level) ?? undefined
-            }
-          ></CardHeader>
+          <CardHeader name={data.name} type={type} level={level}></CardHeader>
         </Collapsible.Trigger>
         <Collapsible.Content className={`${styles.cardContent}`}>
-          {data.traits && (
-            <Traits rarity={data.rarity} traits={data.traits}></Traits>
-          )}
+          {traits && <Traits rarity={rarity} traits={traits}></Traits>}
           {attributes}
           <Separator.Root
             className="w-full bg-stone-400	h-px"
