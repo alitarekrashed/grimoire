@@ -1,36 +1,44 @@
 import { EntityModel } from './entity-model'
 
+export type EquipmentCategory = 'Adventuring Gear' | 'Potion' | 'Worn Item'
+export type Bulk = 'L'
+export type EquipmentUsage = 'held in 1 hand' | 'worn mask'
+export type Rarity = 'uncommon' | 'rare'
+export type ActionName = 'Interact'
+export type ActionType = 'single'
+export type CurrencyType = 'gp'
+
 export interface Equipment extends EntityModel {
-  category: 'Adventuring Gear' | 'Potion' | 'Worn Item'
+  category: EquipmentCategory
   price: Currency[]
   level: number
-  bulk?: 'L'
+  bulk?: Bulk
   hands?: number
-  usage?: 'held in 1 hand' | 'worn mask'
+  usage?: EquipmentUsage
   traits?: string[] // eventually Trait object
   activation?: Activation
-  rarity?: 'uncommon' | 'rariry'
+  rarity?: Rarity
 }
 
 export interface EquipmentWithVariants extends EntityModel {
-  category: 'Adventuring Gear' | 'Potion' | 'Worn Item'
-  bulk?: 'L'
+  category: EquipmentCategory
+  bulk?: Bulk
   hands?: number
-  usage?: 'held in 1 hand' | 'worn mask'
+  usage?: EquipmentUsage
   traits?: string[] // eventually Trait object
   activation?: Activation
   types: EquipmentVariantType[]
-  rarity?: string
+  rarity?: Rarity
 }
 
 export interface Activation {
-  num_actions: 'single'
-  action: 'Interact'
+  num_actions: ActionType
+  action: ActionName
 }
 
 export interface Currency {
   value: number
-  type: 'gp'
+  type: CurrencyType
 }
 
 export interface EquipmentVariantType {
