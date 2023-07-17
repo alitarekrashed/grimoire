@@ -52,7 +52,7 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
       },
     ],
     category: 'Adventuring Gear',
-    hands: '1',
+    hands: 1,
     entity_type: 'EQUIPMENT',
   },
   {
@@ -73,7 +73,7 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     usage: 'held in 1 hand',
     traits: ['consumable', 'magical', 'potion', 'transmutation'],
     activation: {
-      numActions: 1,
+      num_actions: 'single',
       action: 'Interact',
     },
     entity_type: 'EQUIPMENT',
@@ -101,7 +101,7 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     ],
     bulk: 'L',
     activation: {
-      numActions: 1,
+      num_actions: 'single',
       action: 'Interact',
     },
     types: [

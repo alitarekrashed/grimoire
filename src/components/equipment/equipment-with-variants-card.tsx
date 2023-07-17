@@ -7,10 +7,10 @@ import {
   EquipmentWithVariants,
 } from '@/models/equipment'
 import * as Separator from '@radix-ui/react-separator'
-import Activation from '../card/activation-display'
 import Card from '../card/card'
 import CardLabel from '../card/card-label'
 import { ParsedDescription } from '../parsed-description/parsed-description'
+import { ActivationLabel } from './activation-label'
 
 export default function EquipmentWithVariantsCard({
   value,
@@ -47,16 +47,6 @@ export default function EquipmentWithVariantsCard({
       collapsible={collapsible}
       onRemoved={onRemoved}
     ></Card>
-  )
-}
-
-function ActivationLabel({ value }: { value: any }) {
-  return value ? (
-    <div className="flex">
-      Activate:&nbsp;<Activation value={value}></Activation>
-    </div>
-  ) : (
-    <></>
   )
 }
 

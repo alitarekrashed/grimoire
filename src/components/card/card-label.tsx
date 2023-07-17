@@ -4,7 +4,7 @@ export default function CardLabel({
   valueClassName,
 }: {
   label: string
-  value: string
+  value: string | number
   valueClassName?: string
 }) {
   return (

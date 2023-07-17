@@ -10,7 +10,6 @@ import styles from './card.module.css'
 import SourceDisplay from './source-display'
 import Traits from './traits-display'
 
-// Levelled Card vs. Generic Card...
 export default function Card<T extends EntityModel>({
   data,
   type,
