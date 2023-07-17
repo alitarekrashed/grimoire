@@ -1,38 +1,36 @@
 import { EntityModel } from './entity-model'
 
-// TODO really need to add an id here and update iterator keys to use that id
 export interface Equipment extends EntityModel {
-  category: string // enum e.g. Adventuring Gear
-  price: Currency[] // refactor to allow multiple types of currencies?
+  category: 'Adventuring Gear' | 'Potion' | 'Worn Item'
+  price: Currency[]
   level: number
-  bulk?: string // enum?
-  hands?: string // enum? one-handed, two-handed, no hands?
-  usage?: string
-  traits?: string[] // enum?
-  activation?: {
-    numActions: number // 1-3?
-    action: string // enum?
-  }
-  rarity?: string // enum?
+  bulk?: 'L'
+  hands?: number
+  usage?: 'held in 1 hand' | 'worn mask'
+  traits?: string[] // eventually Trait object
+  activation?: Activation
+  rarity?: 'uncommon' | 'rariry'
 }
 
 export interface EquipmentWithVariants extends EntityModel {
-  category: string // enum e.g. Adventuring Gear
-  bulk?: string // enum?
-  hands?: string // enum? one-handed, two-handed, no hands?
-  usage?: string
-  traits?: string[] // enum?
-  activation?: {
-    numActions: number // 1-3?
-    action: string // enum?
-  }
+  category: 'Adventuring Gear' | 'Potion' | 'Worn Item'
+  bulk?: 'L'
+  hands?: number
+  usage?: 'held in 1 hand' | 'worn mask'
+  traits?: string[] // eventually Trait object
+  activation?: Activation
   types: EquipmentVariantType[]
   rarity?: string
 }
 
+export interface Activation {
+  num_actions: 'single'
+  action: 'Interact'
+}
+
 export interface Currency {
   value: number
-  type: string // enum: gp, sp, cp, pp
+  type: 'gp'
 }
 
 export interface EquipmentVariantType {
