@@ -3,7 +3,7 @@ export interface EntityModel {
   name: string
   description: string
   source: Source[]
-  entity_type: 'EQUIPMENT' | 'EQUIPMENT_WITH_VARIANTS' | 'CONDITION'
+  entity_type: 'EQUIPMENT' | 'EQUIPMENT_WITH_VARIANTS' | 'CONDITION' | 'TRAIT'
 }
 
 export interface Source {
