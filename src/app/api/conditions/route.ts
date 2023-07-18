@@ -2,7 +2,16 @@ import Condition from '@/models/condition'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
-  return NextResponse.json(allConditions)
+  const { searchParams } = new URL(request.url)
+  const name = searchParams.get('name')
+
+  let data = allConditions
+
+  if (name) {
+    data = allConditions.filter((condition) => condition.name === name)
+  }
+
+  return NextResponse.json(data)
 }
 
 const allConditions: Condition[] = [

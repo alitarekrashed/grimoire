@@ -3,10 +3,16 @@ export interface EntityModel {
   name: string
   description: string
   source: Source[]
-  entity_type: 'EQUIPMENT' | 'EQUIPMENT_WITH_VARIANTS' | 'CONDITION'
+  entity_type: ModelType
 }
 
 export interface Source {
   title: string
   page?: string
 }
+
+export type ModelType =
+  | 'EQUIPMENT'
+  | 'EQUIPMENT_WITH_VARIANTS'
+  | 'CONDITION'
+  | 'TRAIT'
