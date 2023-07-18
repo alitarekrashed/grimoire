@@ -1,3 +1,10 @@
+import { createComponentsForTraits } from '@/utils/services/description-parser.service'
+import { useEffect, useState } from 'react'
+import {
+  ParsedDescription,
+  ParsedToken,
+} from '../parsed-description/parsed-description'
+
 export default function Traits({
   traits,
   rarity,
@@ -9,7 +16,7 @@ export default function Traits({
     <div className="text-xs my-1">
       {rarity ? <Rarity rarity={rarity}></Rarity> : null}
       {traits.map((trait) => (
-        <Trait key={trait} trait={trait}></Trait>
+        <Badge key={trait} trait={trait} type="trait"></Badge>
       ))}
     </div>
   )
@@ -21,15 +28,19 @@ function Rarity({ rarity }: { rarity: string }) {
     background = 'bg-orange-600'
   }
 
-  return <Trait backgroundColor={background} trait={rarity}></Trait>
+  return (
+    <Badge backgroundColor={background} trait={rarity} type="rarity"></Badge>
+  )
 }
 
-function Trait({
+function Badge({
   trait,
   backgroundColor,
+  type,
 }: {
   trait: string
   backgroundColor?: string
+  type: 'rarity' | 'trait'
 }) {
   return (
     <span
@@ -37,7 +48,11 @@ function Trait({
         backgroundColor ? backgroundColor : 'bg-stone-600'
       }  p-0.5 mr-2`}
     >
-      {trait}
+      {type === 'trait' ? (
+        <ParsedToken token={trait} type="TRAIT"></ParsedToken>
+      ) : (
+        trait
+      )}
     </span>
   )
 }

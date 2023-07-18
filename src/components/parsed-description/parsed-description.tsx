@@ -1,4 +1,8 @@
-import { parseDescription } from '@/utils/services/description-parser.service'
+import { ModelType } from '@/models/entity-model'
+import {
+  createComponentsForType,
+  parseDescription,
+} from '@/utils/services/description-parser.service'
 import { isString } from 'lodash'
 import { useEffect, useState } from 'react'
 
@@ -29,4 +33,30 @@ export function ParsedDescription({ description }: { description: string }) {
       })}
     </div>
   )
+}
+
+export function ParsedToken({
+  token,
+  type,
+}: {
+  token: string
+  type: ModelType
+}) {
+  const [parsed, setParsed] = useState([token])
+
+  const parseTokenForRendering = () => {
+    ;(async () => {
+      let updated: any[] = await createComponentsForType(
+        `@${type.toLowerCase()}:${token}@`,
+        type
+      )
+      setParsed(updated)
+    })()
+  }
+
+  useEffect(() => {
+    parseTokenForRendering()
+  }, [])
+
+  return parsed
 }
