@@ -58,5 +58,7 @@ export function ParsedToken({
     parseTokenForRendering()
   }, [])
 
-  return <>{parsed}</>
+  // this is hacky, should be smarter, maybe map all of them with a key, even if two of the elements are empty arrays
+  // returns ['', <element>, '']
+  return <>{parsed[1]}</>
 }

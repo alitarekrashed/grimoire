@@ -1,5 +1,6 @@
 'use client'
 import * as NavigationMenu from '@radix-ui/react-navigation-menu'
+import React from 'react'
 
 export default function Navbar() {
   const navItemStyles = 'block p-2 hover:bg-stone-700 hover:rounded-lg'
@@ -24,7 +25,7 @@ export default function Navbar() {
       <NavigationMenu.List className="flex justify-center ">
         {navItems.map((item, index) => {
           return (
-            <>
+            <React.Fragment key={item.title}>
               <NavigationMenu.Item>
                 <NavigationMenu.Link href={item.link}>
                   <span className={`${navItemStyles}`}>{item.title}</span>
@@ -36,7 +37,7 @@ export default function Navbar() {
                   <div className="h-full w-[1] border border-stone-300"></div>
                 </NavigationMenu.Item>
               )}
-            </>
+            </React.Fragment>
           )
         })}
       </NavigationMenu.List>
