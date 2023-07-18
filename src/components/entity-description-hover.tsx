@@ -1,19 +1,18 @@
 'use client'
 
-import Condition from '@/models/condition'
+import { EntityModel } from '@/models/entity-model'
 import { roboto_serif } from '@/utils/fonts'
 import * as HoverCard from '@radix-ui/react-hover-card'
-import styles from './condition-hover.module.css'
-import { ParsedDescription } from '../parsed-description/parsed-description'
-import * as Dialog from '@radix-ui/react-dialog'
-
-import Link from 'next/link'
-import ConditionCard from './condition-card'
-import ConditionModal from './condition-modal'
+import { ParsedDescription } from './parsed-description/parsed-description'
+import styles from './entity-description-hover.module.css'
 
 // TODO eventually the display should be clickable and allow the user to go to a page for the condition?
 // TODO maybe this should open a modal instead of a link to a new page
-export default function ConditionHover({ value }: { value: Condition }) {
+export default function EntityDescriptionHover({
+  value,
+}: {
+  value: EntityModel
+}) {
   return (
     <>
       <HoverCard.Root openDelay={200} closeDelay={100}>
