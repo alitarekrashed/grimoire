@@ -58,5 +58,5 @@ export function ParsedToken({
     parseTokenForRendering()
   }, [])
 
-  return parsed
+  return <>{parsed}</>
 }

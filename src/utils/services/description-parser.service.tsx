@@ -62,7 +62,7 @@ export function createComponentsForType(
       } else {
         notLastToken &&
           mapping.push(
-            <span className="underline" tabIndex={0}>
+            <span className="underline decoration-dotted" tabIndex={0}>
               {key}
             </span>
           )
