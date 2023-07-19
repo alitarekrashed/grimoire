@@ -70,11 +70,7 @@ function EquipmentTypesList({
           <div className="inline-flex mb-1">
             <CardLabel
               label="Type"
-              value={
-                value.name
-                  ? `${itemName.toLowerCase()}, ${value.name}`
-                  : `${itemName.toLowerCase()}`
-              }
+              value={value.name}
               valueClassName="italic"
             ></CardLabel>
             ;&nbsp;
