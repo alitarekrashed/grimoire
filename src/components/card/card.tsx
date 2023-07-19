@@ -8,7 +8,10 @@ import { useEffect, useState } from 'react'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 import styles from './card.module.css'
 import SourceDisplay from './source-display'
-import Traits from './traits-display'
+import { Activation } from '@/models/equipment'
+import { ActivationLabel } from '../equipment/activation-label'
+import { ActivationDescription } from '../equipment/activation-description'
+import { Traits } from './traits-display'
 
 export default function Card<T extends EntityModel>({
   data,
@@ -17,6 +20,7 @@ export default function Card<T extends EntityModel>({
   traits,
   rarity,
   attributes,
+  activation,
   additionalContent,
   contentTextSizeClassName,
   collapsible,
@@ -28,12 +32,15 @@ export default function Card<T extends EntityModel>({
   traits?: string[]
   rarity?: string
   attributes?: any
+  activation?: Activation
   additionalContent?: any
   contentTextSizeClassName?: string
   collapsible?: boolean
   onRemoved?: (item: T) => void
 }) {
   const [fadeIn, setFadeIn] = useState(false)
+
+  const hasShortActivation = !activation?.effect
 
   useEffect(() => {
     setTimeout(() => {
@@ -54,8 +61,15 @@ export default function Card<T extends EntityModel>({
           <CardHeader name={data.name} type={type} level={level}></CardHeader>
         </Collapsible.Trigger>
         <Collapsible.Content className={`${styles.cardContent}`}>
-          {traits && <Traits rarity={rarity} traits={traits}></Traits>}
+          {traits && (
+            <div className="my-1">
+              <Traits rarity={rarity} traits={traits}></Traits>
+            </div>
+          )}
           {attributes}
+          {hasShortActivation && (
+            <ActivationLabel value={activation}></ActivationLabel>
+          )}
           <Separator.Root
             className="w-full bg-stone-400	h-px"
             style={{ margin: '10px 0' }}
@@ -70,6 +84,12 @@ export default function Card<T extends EntityModel>({
             <ParsedDescription
               description={data.description}
             ></ParsedDescription>
+            {hasShortActivation === false && (
+              <ActivationDescription
+                value={activation!}
+              ></ActivationDescription>
+            )}
+
             {additionalContent}
           </div>
           <br />

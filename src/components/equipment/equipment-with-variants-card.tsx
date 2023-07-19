@@ -26,7 +26,6 @@ export default function EquipmentWithVariantsCard({
   const attributes = (
     <div className="text-sm">
       <EquipmentOptionalFields value={value}></EquipmentOptionalFields>
-      <ActivationLabel value={value.activation}></ActivationLabel>
     </div>
   )
 
@@ -44,6 +43,7 @@ export default function EquipmentWithVariantsCard({
       level={value.types.map((type) => type.level)}
       traits={value.traits}
       rarity={value.rarity}
+      activation={value.activation}
       attributes={attributes}
       additionalContent={additionalContent}
       collapsible={collapsible}

@@ -1,7 +1,7 @@
+import { Activation } from '@/models/equipment'
 import Image from 'next/image'
 
-// TODO better type
-export function ActivationLabel({ value }: { value: any }) {
+export function ActivationLabel({ value }: { value: Activation | undefined }) {
   return value ? (
     <div className="flex">
       Activate:&nbsp;<ActivationDisplay value={value}></ActivationDisplay>

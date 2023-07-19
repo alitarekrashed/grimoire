@@ -1,24 +1,35 @@
-import { createComponentsForTraits } from '@/utils/services/description-parser.service'
-import { useEffect, useState } from 'react'
-import {
-  ParsedDescription,
-  ParsedToken,
-} from '../parsed-description/parsed-description'
+import { ParsedToken } from '../parsed-description/parsed-description'
 
-export default function Traits({
+export function Traits({
   traits,
+  backgroundColor,
+  bordered,
   rarity,
 }: {
   traits: string[]
+  backgroundColor?: string
+  bordered?: boolean
   rarity?: string
 }) {
   return (
-    <div className="text-xs my-1">
+    <span className="text-xs">
       {rarity ? <Rarity rarity={rarity}></Rarity> : null}
-      {traits.map((trait) => (
-        <Badge key={trait} trait={trait} type="trait"></Badge>
-      ))}
-    </div>
+      {traits.map((trait, index) => {
+        return (
+          <>
+            <span className={`${index < traits.length - 1 && 'mr-2'}`}>
+              <Badge
+                key={trait}
+                trait={trait}
+                type="trait"
+                bordered={bordered}
+                backgroundColor={backgroundColor}
+              ></Badge>
+            </span>
+          </>
+        )
+      })}
+    </span>
   )
 }
 
@@ -29,24 +40,30 @@ function Rarity({ rarity }: { rarity: string }) {
   }
 
   return (
-    <Badge backgroundColor={background} trait={rarity} type="rarity"></Badge>
+    <span className="mr-2">
+      <Badge backgroundColor={background} trait={rarity} type="rarity"></Badge>
+    </span>
   )
 }
 
-function Badge({
+export function Badge({
   trait,
   backgroundColor,
+  bordered,
   type,
 }: {
   trait: string
   backgroundColor?: string
+  bordered?: boolean
   type: 'rarity' | 'trait'
 }) {
   return (
     <span
-      className={`border border-stone-400 rounded ${
+      className={`${
+        bordered === false ? '' : 'border'
+      } border-stone-400 rounded ${
         backgroundColor ? backgroundColor : 'bg-stone-600'
-      }  p-0.5 mr-2`}
+      }  p-0.5`}
     >
       {type === 'trait' ? (
         <ParsedToken token={trait} type="TRAIT"></ParsedToken>
