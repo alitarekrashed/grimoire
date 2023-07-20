@@ -9,11 +9,9 @@ export function ActivationDescription({ value }: { value: Activation }) {
   return (
     <>
       <br />
-      <div className="flex">
+      <div>
         <span className="font-bold">Activate</span>&nbsp;
-        <span>
-          <ActivationDisplay value={value}></ActivationDisplay>
-        </span>
+        <ActivationDisplay value={value}></ActivationDisplay>
         &nbsp;
         {value.traits &&
           value.traits.map((trait) => (
@@ -35,6 +33,14 @@ export function ActivationDescription({ value }: { value: Activation }) {
             labelClassName="font-bold"
           ></CardLabel>
         )}
+        ;&nbsp;
+        {value.effect && (
+          <CardLabel
+            label="Effect"
+            value={value.effect.description}
+            labelClassName="font-bold"
+          ></CardLabel>
+        )}
       </div>
     </>
   )
@@ -47,6 +53,7 @@ function ActivationDisplay({ value }: { value: any }) {
       width={15}
       height={15}
       alt="1 action"
+      className="inline"
     ></Image>
   )
 
