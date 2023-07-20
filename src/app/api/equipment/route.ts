@@ -23,7 +23,10 @@ export async function GET(request: Request) {
               id: item.id + '_' + variant.name,
               name: variant.name,
               description:
-                item.description + '<br /><br />' + variant.description,
+                item.description +
+                (variant.description
+                  ? '<br /><br />' + variant.description
+                  : ''),
               types: [],
               entity_type: 'EQUIPMENT',
             }

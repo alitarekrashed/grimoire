@@ -27,6 +27,8 @@ function Rarity({ rarity }: { rarity: string }) {
   let background = 'bg-stone-500'
   if (rarity === 'uncommon') {
     background = 'bg-orange-600'
+  } else if (rarity === 'rare') {
+    background = 'bg-blue-900'
   }
 
   return (
