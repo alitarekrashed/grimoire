@@ -2,13 +2,9 @@ import { ParsedToken } from '../parsed-description/parsed-description'
 
 export function Traits({
   traits,
-  backgroundColor,
-  bordered,
   rarity,
 }: {
   traits: string[]
-  backgroundColor?: string
-  bordered?: boolean
   rarity?: string
 }) {
   return (
@@ -18,13 +14,7 @@ export function Traits({
         return (
           <>
             <span className={`${index < traits.length - 1 && 'mr-2'}`}>
-              <Badge
-                key={trait}
-                trait={trait}
-                type="trait"
-                bordered={bordered}
-                backgroundColor={backgroundColor}
-              ></Badge>
+              <Badge key={trait} trait={trait} type="trait"></Badge>
             </span>
           </>
         )
@@ -49,19 +39,15 @@ function Rarity({ rarity }: { rarity: string }) {
 export function Badge({
   trait,
   backgroundColor,
-  bordered,
   type,
 }: {
   trait: string
   backgroundColor?: string
-  bordered?: boolean
   type: 'rarity' | 'trait'
 }) {
   return (
     <span
-      className={`${
-        bordered === false ? '' : 'border'
-      } border-stone-400 rounded ${
+      className={`border border-stone-400 rounded ${
         backgroundColor ? backgroundColor : 'bg-stone-600'
       }  p-0.5`}
     >
