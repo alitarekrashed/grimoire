@@ -59,7 +59,7 @@ function SavingThrowDisplay({ value }: { value: SavingThrow }) {
       {value.critical_success && (
         <>
           <CardLabel
-            label="Critical success"
+            label="Critical Success"
             value={value.critical_success}
             labelClassName="font-bold"
           ></CardLabel>
@@ -89,7 +89,7 @@ function SavingThrowDisplay({ value }: { value: SavingThrow }) {
       {value.critical_failure && (
         <>
           <CardLabel
-            label="Critical failure"
+            label="Critical Failure"
             value={value.critical_failure}
             labelClassName="font-bold"
           ></CardLabel>
