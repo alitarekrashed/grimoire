@@ -1,4 +1,4 @@
-import { Activation } from '@/models/equipment'
+import { Activation, SavingThrow } from '@/models/equipment'
 import Image from 'next/image'
 import { Traits } from '../card/traits-display'
 import CardLabel from '../card/card-label'
@@ -42,7 +42,61 @@ export function ActivationDescription({ value }: { value: Activation }) {
           ></CardLabel>
         )}
       </div>
+      {value.effect?.saving_throw && (
+        <div className="mt-2">
+          <SavingThrowDisplay
+            value={value.effect.saving_throw}
+          ></SavingThrowDisplay>
+        </div>
+      )}
     </>
+  )
+}
+
+function SavingThrowDisplay({ value }: { value: SavingThrow }) {
+  return (
+    <div className="ml-5">
+      {value.critical_success && (
+        <>
+          <CardLabel
+            label="Critical success"
+            value={value.critical_success}
+            labelClassName="font-bold"
+          ></CardLabel>
+          <br />
+        </>
+      )}
+      {value.success && (
+        <>
+          <CardLabel
+            label="Success"
+            value={value.success}
+            labelClassName="font-bold"
+          ></CardLabel>
+          <br />
+        </>
+      )}
+      {value.failure && (
+        <>
+          <CardLabel
+            label="Failure"
+            value={value.failure}
+            labelClassName="font-bold"
+          ></CardLabel>
+          <br />
+        </>
+      )}
+      {value.critical_failure && (
+        <>
+          <CardLabel
+            label="Critical failure"
+            value={value.critical_failure}
+            labelClassName="font-bold"
+          ></CardLabel>
+          <br />
+        </>
+      )}
+    </div>
   )
 }
 
