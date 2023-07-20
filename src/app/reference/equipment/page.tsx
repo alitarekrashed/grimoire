@@ -1,6 +1,7 @@
 'use client'
 
 import SplitViewDisplay from '@/components/split-view-list/split-view-list'
+import { Source } from '@/models/entity-model'
 import { SortDirection } from 'ag-grid-community'
 import { useEffect, useState } from 'react'
 
@@ -16,7 +17,13 @@ export default function EquipmentPage() {
     },
     { field: 'name', filter: true, flex: 1 },
     { field: 'category', filter: true, flex: 1 },
-    { field: 'source.title', headerName: 'Source', filter: true, flex: 1 },
+    {
+      field: 'source',
+      headerName: 'Source',
+      filter: true,
+      flex: 1,
+      valueFormatter: (value: any): string => value.data.source[0]?.title,
+    },
     {
       field: 'rarity',
       filter: true,

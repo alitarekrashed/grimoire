@@ -1,11 +1,6 @@
-import { createComponentsForTraits } from '@/utils/services/description-parser.service'
-import { useEffect, useState } from 'react'
-import {
-  ParsedDescription,
-  ParsedToken,
-} from '../parsed-description/parsed-description'
+import { ParsedToken } from '../parsed-description/parsed-description'
 
-export default function Traits({
+export function Traits({
   traits,
   rarity,
 }: {
@@ -13,12 +8,18 @@ export default function Traits({
   rarity?: string
 }) {
   return (
-    <div className="text-xs my-1">
+    <span className="text-xs">
       {rarity ? <Rarity rarity={rarity}></Rarity> : null}
-      {traits.map((trait) => (
-        <Badge key={trait} trait={trait} type="trait"></Badge>
-      ))}
-    </div>
+      {traits.map((trait, index) => {
+        return (
+          <>
+            <span className={`${index < traits.length - 1 && 'mr-2'}`}>
+              <Badge key={trait} trait={trait} type="trait"></Badge>
+            </span>
+          </>
+        )
+      })}
+    </span>
   )
 }
 
@@ -26,14 +27,18 @@ function Rarity({ rarity }: { rarity: string }) {
   let background = 'bg-stone-500'
   if (rarity === 'uncommon') {
     background = 'bg-orange-600'
+  } else if (rarity === 'rare') {
+    background = 'bg-blue-900'
   }
 
   return (
-    <Badge backgroundColor={background} trait={rarity} type="rarity"></Badge>
+    <span className="mr-2">
+      <Badge backgroundColor={background} trait={rarity} type="rarity"></Badge>
+    </span>
   )
 }
 
-function Badge({
+export function Badge({
   trait,
   backgroundColor,
   type,
@@ -46,7 +51,7 @@ function Badge({
     <span
       className={`border border-stone-400 rounded ${
         backgroundColor ? backgroundColor : 'bg-stone-600'
-      }  p-0.5 mr-2`}
+      }  p-0.5`}
     >
       {type === 'trait' ? (
         <ParsedToken token={trait} type="TRAIT"></ParsedToken>

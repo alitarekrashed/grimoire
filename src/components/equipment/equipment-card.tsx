@@ -19,7 +19,6 @@ export default function EquipmentCard({
     <div className="text-sm">
       <PriceLabel value={value.price}></PriceLabel>
       <EquipmentOptionalFields value={value}></EquipmentOptionalFields>
-      <ActivationLabel value={value.activation}></ActivationLabel>
     </div>
   )
 
@@ -27,9 +26,11 @@ export default function EquipmentCard({
     <Card
       data={value}
       type="Item"
+      level={value.level}
       traits={value.traits}
       rarity={value.rarity}
       attributes={attributes}
+      activation={value.activation}
       collapsible={collapsible}
       onRemoved={onRemoved}
     ></Card>

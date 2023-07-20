@@ -2,7 +2,7 @@ import { EntityModel } from './entity-model'
 
 export type EquipmentCategory = 'Adventuring Gear' | 'Potion' | 'Worn Item'
 export type Bulk = 'L'
-export type EquipmentUsage = 'held in 1 hand' | 'worn mask'
+export type EquipmentUsage = 'held in 1 hand' | 'worn mask' | 'worn cloak'
 export type Rarity = 'uncommon' | 'rare'
 export type ActionName = 'Interact'
 export type ActionType = 'single'
@@ -33,7 +33,23 @@ export interface EquipmentWithVariants extends EntityModel {
 
 export interface Activation {
   num_actions: ActionType
-  action: ActionName
+  action?: ActionName
+  traits?: string[]
+  frequency?: string // should this be an enum?
+  trigger?: string
+  effect?: Effect
+}
+
+export interface Effect {
+  description: string
+  saving_throw?: SavingThrow
+}
+
+export interface SavingThrow {
+  critical_success?: string
+  success?: string
+  failure?: string
+  critical_failure?: string
 }
 
 export interface Currency {

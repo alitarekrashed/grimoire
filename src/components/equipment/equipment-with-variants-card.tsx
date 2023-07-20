@@ -11,6 +11,8 @@ import Card from '../card/card'
 import CardLabel from '../card/card-label'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 import { ActivationLabel } from './activation-label'
+import { PriceLabel } from './price-label'
+import { EquipmentOptionalFields } from './equipment-optional-fields'
 
 export default function EquipmentWithVariantsCard({
   value,
@@ -23,8 +25,7 @@ export default function EquipmentWithVariantsCard({
 }) {
   const attributes = (
     <div className="text-sm">
-      <OptionalFields value={value}></OptionalFields>
-      <ActivationLabel value={value.activation}></ActivationLabel>
+      <EquipmentOptionalFields value={value}></EquipmentOptionalFields>
     </div>
   )
 
@@ -42,60 +43,13 @@ export default function EquipmentWithVariantsCard({
       level={value.types.map((type) => type.level)}
       traits={value.traits}
       rarity={value.rarity}
+      activation={value.activation}
       attributes={attributes}
       additionalContent={additionalContent}
       collapsible={collapsible}
       onRemoved={onRemoved}
     ></Card>
   )
-}
-
-function PriceLabel({ value }: { value: Currency[] | undefined }) {
-  let monetaryValue = ''
-  if (value) {
-    value.forEach((element, index) => {
-      if (index > 0) {
-        monetaryValue = monetaryValue.concat(', ')
-      }
-      monetaryValue = monetaryValue.concat(`${element.value} ${element.type}`)
-    })
-  }
-
-  return value ? (
-    <div>
-      <CardLabel label="Price" value={monetaryValue}></CardLabel>
-    </div>
-  ) : (
-    <></>
-  )
-}
-
-function OptionalFields({
-  value,
-}: {
-  value: Equipment | EquipmentWithVariants
-}) {
-  let optionalFields = []
-  if (value.hands) {
-    optionalFields.length > 0 && optionalFields.push('; ')
-    optionalFields.push(
-      <CardLabel key="Hands" label="Hands" value={value.hands}></CardLabel>
-    )
-  }
-  if (value.usage) {
-    optionalFields.length > 0 && optionalFields.push('; ')
-    optionalFields.push(
-      <CardLabel key="Usage" label="Usage" value={value.usage}></CardLabel>
-    )
-  }
-  if (value.bulk) {
-    optionalFields.length > 0 && optionalFields.push('; ')
-    optionalFields.push(
-      <CardLabel key="Bulk" label="Bulk" value={value.bulk}></CardLabel>
-    )
-  }
-
-  return optionalFields
 }
 
 function EquipmentTypesList({
@@ -116,11 +70,7 @@ function EquipmentTypesList({
           <div className="inline-flex mb-1">
             <CardLabel
               label="Type"
-              value={
-                value.name
-                  ? `${itemName.toLowerCase()}, ${value.name}`
-                  : `${itemName.toLowerCase()}`
-              }
+              value={value.name}
               valueClassName="italic"
             ></CardLabel>
             ;&nbsp;

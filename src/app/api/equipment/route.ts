@@ -21,9 +21,12 @@ export async function GET(request: Request) {
               ...item,
               ...variant,
               id: item.id + '_' + variant.name,
-              name: variant.name ? item.name + ', ' + variant.name : item.name,
+              name: variant.name,
               description:
-                item.description + '<br /><br />' + variant.description,
+                item.description +
+                (variant.description
+                  ? '<br /><br />' + variant.description
+                  : ''),
               types: [],
               entity_type: 'EQUIPMENT',
             }
@@ -106,31 +109,31 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     },
     types: [
       {
-        name: 'minor',
+        name: 'minor healing potion',
         price: [{ value: 4, type: 'gp' }],
         level: 1,
         description: 'The potion restores 1d8 Hit Points',
       },
       {
-        name: 'lesser',
+        name: 'lesser healing potion',
         price: [{ value: 12, type: 'gp' }],
         level: 3,
         description: 'The potion restores 2d8 + 5 Hit Points',
       },
       {
-        name: 'moderate',
+        name: 'moderate healing potion',
         price: [{ value: 50, type: 'gp' }],
         level: 6,
         description: 'The potion restores 3d8 + 10 Hit Points',
       },
       {
-        name: 'greater',
+        name: 'greater healing potion',
         price: [{ value: 400, type: 'gp' }],
         level: 12,
         description: 'The potion restores 6d8 + 20 Hit Points',
       },
       {
-        name: 'major',
+        name: 'major healing potion',
         price: [{ value: 5000, type: 'gp' }],
         level: 18,
         description: 'The potion restores 8d8 + 30 Hit Points',
@@ -142,7 +145,7 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     id: '4',
     name: 'rhinocerous mask',
     description:
-      'Covered with thick armor and bearing a thicker horn, a <i>rhinoceros mask</i> grants you increased momentum. If you Stride at least 10 feet, your next melee Strike before the end of your turn ignores the Hardness of objects with a Hardness of 5 or less. If the object has more than Hardness 5, the mask grants no benefit.    ',
+      'Covered with thick armor and bearing a thicker horn, a <i>rhinoceros mask</i> grants you increased momentum. If you Stride at least 10 feet, your next melee Strike before the end of your turn ignores the Hardness of objects with a Hardness of 5 or less. If the object has more than Hardness 5, the mask grants no benefit.',
     source: [
       {
         title: 'Treasure Vault',
@@ -156,18 +159,74 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
       {
         price: [{ value: 90, type: 'gp' }],
         level: 4,
-        name: '',
+        name: 'rhinocerous mask',
         description: '',
       },
       {
         price: [{ value: 425, type: 'gp' }],
         level: 8,
-        name: 'greater',
+        name: 'greater rhinocerous mask',
         description:
           'Your melee Strikes ignore the Hardness of objects with a Hardness of 10 or less.',
       },
     ],
     rarity: 'uncommon',
+    entity_type: 'EQUIPMENT_WITH_VARIANTS',
+  },
+  {
+    id: '5',
+    name: 'cloak of gnawing leaves',
+    description:
+      'This cloak appears to be woven from a thousand living leaves, hungry for flesh and eager to defend the cloak’s wearer.',
+    source: [
+      {
+        title: 'Gatewalkers',
+        page: '80',
+      },
+    ],
+    bulk: 'L',
+    usage: 'worn cloak',
+    category: 'Worn Item',
+    traits: ['invested', 'magical', 'primal', 'transmutation'],
+    activation: {
+      num_actions: 'single', // TODO support REACTION
+      traits: ['envision'],
+      frequency: 'once per day',
+      trigger: 'You are damaged by a melee attack from an adjacent creature',
+      effect: {
+        description:
+          'The leaves lash out at your attacker, rising up to reveal snapping jaws made of wicked thorns. The triggering creature must attempt a DC 17 Reflex saving throw.',
+        saving_throw: {
+          success: 'The creature is unaffected.',
+          failure: 'The creature takes 1d4 piercing damage.',
+          critical_failure:
+            'The creature takes 2d4 piercing damage and 1 bleed damage.',
+        },
+      },
+    },
+    types: [
+      {
+        price: [{ value: 60, type: 'gp' }],
+        level: 3,
+        name: 'cloak of gnawing leaves',
+        description: '',
+      },
+      {
+        price: [{ value: 330, type: 'gp' }],
+        level: 7,
+        name: 'cloak of thirsty fronds',
+        description:
+          'The save DC is 23, and the cloak can be activated once per minute. The leaves deal 1d6 piercing damage to a creature on a failed save, or 2d6 piercing damage and 2 bleed damage on a critical failure.',
+      },
+      {
+        price: [{ value: 2000, type: 'gp' }],
+        level: 12,
+        name: 'cloak of devouring thorns',
+        description:
+          'The save DC is 30, and the cloak can be activated once per round. The leaves deal 2d6 piercing damage to a creature on a failed save, or 4d6 piercing damage and 3 bleed damage on a critical failure.',
+      },
+    ],
+    rarity: 'rare',
     entity_type: 'EQUIPMENT_WITH_VARIANTS',
   },
 ]
