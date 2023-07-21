@@ -1,10 +1,11 @@
 import { EntityModel, ModelType } from '@/models/entity-model'
 import { isString } from 'lodash'
-import React from 'react'
+import React, { FunctionComponent, ReactNode } from 'react'
 import { retrieveCondition } from './condition.service'
 import { retrieveTrait } from './trait.service'
 import EntityHoverableDescription from '@/components/entity-hoverable-description/entity-description-hover'
 import { retrieveEquipment } from './equipment.service'
+import EntityModal from '@/components/entity-modal/entity-modal'
 
 export function parseDescription(description: any[]): Promise<any[]> {
   return (async () => {
@@ -65,9 +66,9 @@ export function createComponentsForType(
       if (entity) {
         notLastToken &&
           mapping.push(
-            React.createElement(EntityHoverableDescription, {
+            React.createElement(displayComponentFactory(type, entity), {
               value: entity,
-              key: entity.id,
+              id: entity.id,
             })
           )
       } else {
@@ -84,7 +85,7 @@ export function createComponentsForType(
   })()
 }
 
-export function lookupFunctionFactory(
+function lookupFunctionFactory(
   type: ModelType
 ): (key: any) => Promise<EntityModel> {
   switch (type) {
@@ -96,5 +97,17 @@ export function lookupFunctionFactory(
       return retrieveEquipment
     default:
       return () => undefined!
+  }
+}
+
+function displayComponentFactory(
+  type: ModelType,
+  value: EntityModel
+): (value: any) => JSX.Element {
+  switch (type) {
+    case 'EQUIPMENT':
+      return EntityModal
+    default:
+      return EntityHoverableDescription
   }
 }
