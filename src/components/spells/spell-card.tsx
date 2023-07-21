@@ -1,12 +1,9 @@
 'use client'
 
-import Trait from '@/models/trait'
 import Card from '../card/card'
 import { HeightenedExplicit, HeightenedFormula, Spell } from '@/models/spell'
 import { FieldDefinition, LabelsList } from '../labels-list/labels-list'
 import * as Separator from '@radix-ui/react-separator'
-import { describe } from 'node:test'
-import { last } from 'lodash'
 
 export default function SpellCard({
   value,

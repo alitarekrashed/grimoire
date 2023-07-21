@@ -8,9 +8,9 @@ import { useEffect, useState } from 'react'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 import styles from './card.module.css'
 import SourceDisplay from './source-display'
-import { Activation } from '@/models/equipment'
 import { ActivationDescription } from '../activation-displays/activation-description'
 import { TraitsList } from './traits-list'
+import { Activation } from '@/models/activation'
 
 export default function Card<T extends EntityModel>({
   data,

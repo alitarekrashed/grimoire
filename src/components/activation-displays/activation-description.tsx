@@ -1,8 +1,8 @@
-import { Activation, SavingThrow } from '@/models/equipment'
 import React from 'react'
 import { FieldDefinition, LabelsList } from '../labels-list/labels-list'
 import { ParsedToken } from '../parsed-description/parsed-description'
 import { ActionRenderer } from './action-renderer'
+import { Activation, SavingThrow } from '@/models/activation'
 
 export function ActivationDescription({
   value,

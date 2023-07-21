@@ -1,6 +1,5 @@
 'use client'
 
-import EquipmentCard from '@/components/equipment/equipment-card'
 import { Equipment, EquipmentWithVariants } from '@/models/equipment'
 import { CardFactory } from '@/utils/services/card-factory'
 import { usePathname } from 'next/navigation'
