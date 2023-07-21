@@ -111,4 +111,30 @@ const allSpells: Spell[] = [
     source: [{ title: 'Core Rulebook', page: '347' }],
     entity_type: 'SPELL',
   },
+  {
+    id: '4',
+    name: 'magic missile',
+    traits: ['evocation', 'force'],
+    traditions: ['arcane', 'occult'],
+    activation: {
+      num_actions: 'one-to-three',
+      action: 'Cast a Spell',
+      traits: ['somatic', 'verbal'],
+      range: { unit: 'feet', value: 120 },
+      targets: '1 creature',
+    },
+    description:
+      'You send a dart of force streaking toward a creature that you can see. It automatically hits and deals 1d4+1 force damage. For each additional action you use when Casting the Spell, increase the number of missiles you shoot by one, to a maximum of three missiles for 3 actions. You choose the target for each missile individually. If you shoot more than one missile at the same target, combine the damage before applying bonuses or penalties to damage, resistances, weaknesses, and so forth.',
+    heightened: {
+      type: 'formula',
+      value: {
+        level_modifier: 2,
+        description:
+          'You shoot one additional missile with each action you spend.',
+      },
+    },
+    rank: 1,
+    source: [{ title: 'Core Rulebook', page: '349' }],
+    entity_type: 'SPELL',
+  },
 ]
