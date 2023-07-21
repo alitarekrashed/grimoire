@@ -27,9 +27,9 @@ export default function SpellCard({
   activation.override_label = 'Cast'
   activation.action = undefined
 
-  const heightenedLevels: FieldDefinition[] = buildHeightenedFields(
-    value.heightened
-  )
+  const heightenedLevels: FieldDefinition[] = value.heightened
+    ? buildHeightenedFields(value.heightened)
+    : []
   const additionalContent = (
     <>
       <Separator.Root
@@ -67,27 +67,23 @@ export default function SpellCard({
 }
 
 function buildHeightenedFields(
-  heightenedDefinition: HeightenedDefinition | undefined
+  heightenedDefinition: HeightenedDefinition
 ): FieldDefinition[] {
-  let heightenedLevels: FieldDefinition[] = []
-  if (heightenedDefinition) {
-    if (heightenedDefinition.type === 'formula') {
-      const formula = heightenedDefinition.value as HeightenedFormula
-      heightenedLevels.push({
+  if (heightenedDefinition.type === 'formula') {
+    const formula = heightenedDefinition.value as HeightenedFormula
+    return [
+      {
         label: `Heightened (${formula.level_modifier}+)`,
         value: formula.description,
-      })
-    } else {
-      const explicit = heightenedDefinition.value as HeightenedExplicit[]
-      heightenedLevels = heightenedLevels.concat(
-        explicit.map((val: HeightenedExplicit) => ({
-          label: `Heightened (${withOrdinalSuffix(val.level)})`,
-          value: val.description,
-        }))
-      )
-    }
+      },
+    ]
+  } else {
+    const explicit = heightenedDefinition.value as HeightenedExplicit[]
+    return explicit.map((val: HeightenedExplicit) => ({
+      label: `Heightened (${withOrdinalSuffix(val.level)})`,
+      value: val.description,
+    }))
   }
-  return heightenedLevels
 }
 
 // from https://stackoverflow.com/questions/13627308/add-st-nd-rd-and-th-ordinal-suffix-to-a-number
