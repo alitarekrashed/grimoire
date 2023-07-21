@@ -3,13 +3,15 @@ import {
   EquipmentVariantType,
   EquipmentWithVariants,
 } from '@/models/equipment'
+import { eq } from 'lodash'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const keepCollapsed = searchParams.get('keepCollapsed')
+  const name = searchParams.get('name')
 
-  const equipment: (Equipment | EquipmentWithVariants)[] = [...allEquipment]
+  let equipment: (Equipment | EquipmentWithVariants)[] = [...allEquipment]
   if (!keepCollapsed) {
     for (let i = 0; i < equipment.length; i++) {
       // converts an item with variants into their own standalone items.
@@ -35,6 +37,10 @@ export async function GET(request: Request) {
         equipment.splice(i, 1, ...variants)
       }
     }
+  }
+
+  if (name) {
+    equipment = equipment.filter((equipment) => equipment.name === name)
   }
 
   return NextResponse.json(equipment)
@@ -277,5 +283,29 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     source: [{ title: 'Treasure Vault', page: '47' }],
     category: 'Alchemical Foods',
     entity_type: 'EQUIPMENT_WITH_VARIANTS',
+  },
+  {
+    id: '8',
+    name: 'invisibility potion',
+    usage: 'held in 1 hand',
+    level: 4,
+    description:
+      'An invisibility potion is colorless and oddly lightweight. Upon drinking it, you gain the effects of a 2nd-level @spell:invisibility@ spell.',
+    bulk: 'L',
+    rarity: 'uncommon',
+    traits: ['consumable', 'illusion', 'magical', 'potion'],
+    activation: {
+      num_actions: 'one',
+      action: 'Interact',
+    },
+    price: [
+      {
+        value: 20,
+        type: 'gp',
+      },
+    ],
+    source: [{ title: 'Core Rulebook', page: '563' }],
+    category: 'Potion',
+    entity_type: 'EQUIPMENT',
   },
 ]
