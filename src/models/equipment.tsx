@@ -1,4 +1,5 @@
 import { EntityModel } from './entity-model'
+import { RangeDefinition, Targets } from './spell'
 
 export type EquipmentCategory =
   | 'Adventuring Gear'
@@ -14,7 +15,7 @@ export type EquipmentUsage =
   | 'affixed to armor'
   | 'held in 2 hands'
 export type Rarity = 'uncommon' | 'rare'
-export type ActionName = 'Interact'
+export type ActionName = 'Interact' | 'Cast a Spell'
 export type ActionType =
   | 'one'
   | 'two'
@@ -54,6 +55,8 @@ export interface Activation {
   frequency?: string // should this be an enum?
   trigger?: string
   effect?: Effect
+  targets?: Targets
+  range?: RangeDefinition
 }
 
 export interface Effect {

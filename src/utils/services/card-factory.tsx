@@ -1,10 +1,12 @@
 import ConditionCard from '@/components/conditions/condition-card'
 import EquipmentCard from '@/components/equipment/equipment-card'
 import EquipmentWithVariantsCard from '@/components/equipment/equipment-with-variants-card'
+import SpellCard from '@/components/spells/spell-card'
 import TraitCard from '@/components/traits/trait-card'
 import Condition from '@/models/condition'
 import { EntityModel } from '@/models/entity-model'
 import { Equipment, EquipmentWithVariants } from '@/models/equipment'
+import { Spell } from '@/models/spell'
 import Trait from '@/models/trait'
 import { ReactNode } from 'react'
 
@@ -55,6 +57,14 @@ export function CardFactory<T extends EntityModel>({
           onRemoved={onRemoved as unknown as (item: Trait) => void}
           contentTextSizeClassName={contentTextSizeClassName}
         ></TraitCard>
+      )
+    case 'SPELL':
+      return (
+        <SpellCard
+          value={card as unknown as Spell}
+          collapsible={collapsible}
+          onRemoved={onRemoved as unknown as (item: Spell) => void}
+        ></SpellCard>
       )
     default:
     // throw error

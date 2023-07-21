@@ -11,6 +11,10 @@ export default function Navbar() {
       link: '/reference/equipment',
     },
     {
+      title: 'Spells',
+      link: '/reference/spells',
+    },
+    {
       title: 'Conditions',
       link: '/reference/conditions',
     },
