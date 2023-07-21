@@ -6,6 +6,7 @@ export type SavingThrowType = 'basic Reflex'
 export type ActionName = 'Interact' | 'Cast a Spell'
 export type ActionType =
   | 'one'
+  | 'one-to-three'
   | 'two'
   | 'three'
   | 'reaction'

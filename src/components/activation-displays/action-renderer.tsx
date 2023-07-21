@@ -9,15 +9,26 @@ export function ActionRenderer({
   activation: Activation
   size: number
 }) {
-  const values = getActionValues(activation.num_actions)
+  return <>{getRendererByType(activation, size)}</>
+}
 
-  return (
-    <>
-      {values
-        ? renderWithImage(activation, values, size)
-        : renderWithoutImage(activation)}
-    </>
-  )
+function getRendererByType(activation: Activation, size: number): ReactNode {
+  switch (activation.num_actions) {
+    case 'one':
+    case 'two':
+    case 'three':
+    case 'reaction':
+    case 'free':
+      return renderWithImage(
+        activation,
+        getActionValues(activation.num_actions),
+        size
+      )
+    case 'one-to-three':
+      return renderWithMultipleImages(activation, size)
+    default:
+      return renderWithoutImage(activation)
+  }
 }
 
 function renderWithImage(
@@ -32,6 +43,32 @@ function renderWithImage(
         width={size}
         height={size}
         alt={actionValues.alt}
+        className="inline"
+      ></Image>
+      &nbsp;
+      {activation.action}
+    </>
+  )
+}
+
+function renderWithMultipleImages(activation: Activation, size: number) {
+  const firstValue = getActionValues('one')
+  const lastValue = getActionValues('three')
+  return (
+    <>
+      <Image
+        src={`/${firstValue.file}dark.png`}
+        width={size}
+        height={size}
+        alt={firstValue.alt}
+        className="inline"
+      ></Image>
+      &nbsp;to&nbsp;
+      <Image
+        src={`/${lastValue.file}dark.png`}
+        width={size}
+        height={size}
+        alt={lastValue.alt}
         className="inline"
       ></Image>
       &nbsp;
@@ -55,7 +92,7 @@ interface ActionValues {
   alt: string
 }
 
-function getActionValues(type: ActionType): ActionValues | undefined {
+function getActionValues(type: ActionType): ActionValues {
   switch (type) {
     case 'one':
       return {
@@ -82,7 +119,5 @@ function getActionValues(type: ActionType): ActionValues | undefined {
         file: 'free-action-',
         alt: 'Free action',
       }
-    default:
-      return undefined
   }
 }
