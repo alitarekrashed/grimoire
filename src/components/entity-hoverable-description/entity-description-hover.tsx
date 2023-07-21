@@ -17,7 +17,7 @@ export default function EntityHoverableDescription({
     <>
       <HoverCard.Root openDelay={200} closeDelay={100}>
         <HoverCard.Trigger>
-          <span className="underline" tabIndex={0}>
+          <span className="underline decoration-dotted" tabIndex={0}>
             {value.name}
           </span>
         </HoverCard.Trigger>
