@@ -1,8 +1,16 @@
 import { EntityModel } from './entity-model'
 
-export type EquipmentCategory = 'Adventuring Gear' | 'Potion' | 'Worn Item'
+export type EquipmentCategory =
+  | 'Adventuring Gear'
+  | 'Potion'
+  | 'Worn Item'
+  | 'Fulu'
 export type Bulk = 'L'
-export type EquipmentUsage = 'held in 1 hand' | 'worn mask' | 'worn cloak'
+export type EquipmentUsage =
+  | 'held in 1 hand'
+  | 'worn mask'
+  | 'worn cloak'
+  | 'affixed to armor'
 export type Rarity = 'uncommon' | 'rare'
 export type ActionName = 'Interact'
 export type ActionType = 'one' | 'two' | 'three' | 'reaction' | 'free'

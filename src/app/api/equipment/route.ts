@@ -229,4 +229,22 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     rarity: 'rare',
     entity_type: 'EQUIPMENT_WITH_VARIANTS',
   },
+  {
+    id: '6',
+    name: 'escape fulu',
+    description:
+      'The <i>escape fulu</i> is a charm common among wealthy people, who wear the talisman in case of kidnapping. When you Activate this fulu, for 1 minute, you gain +2 status bonus to your attempts to Escape as well as to Stealth checks to Hide and Sneak.',
+    level: 7,
+    usage: 'affixed to armor',
+    price: [{ value: 70, type: 'gp' }],
+    activation: {
+      num_actions: 'free',
+      trigger: 'You attempt to Escape.',
+      traits: ['envision'],
+    },
+    category: 'Fulu',
+    traits: ['consumable', 'fulu', 'magical', 'talisman', 'transmutation'],
+    entity_type: 'EQUIPMENT',
+    source: [{ title: 'Treasure Vault', page: '77' }],
+  },
 ]
