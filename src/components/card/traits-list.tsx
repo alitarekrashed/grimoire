@@ -1,3 +1,4 @@
+import React from 'react'
 import { ParsedToken } from '../parsed-description/parsed-description'
 
 export function TraitsList({
@@ -12,11 +13,11 @@ export function TraitsList({
       {rarity ? <Rarity rarity={rarity}></Rarity> : null}
       {traits.map((trait, index) => {
         return (
-          <>
+          <React.Fragment key={trait}>
             <span className={`${index < traits.length - 1 && 'mr-2'}`}>
-              <Badge key={trait} trait={trait} type="trait"></Badge>
+              <Badge trait={trait} type="trait"></Badge>
             </span>
-          </>
+          </React.Fragment>
         )
       })}
     </span>

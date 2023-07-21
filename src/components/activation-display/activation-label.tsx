@@ -1,5 +1,5 @@
 import { Activation } from '@/models/equipment'
-import { CardLabelList } from '../card/card-label'
+import { CardLabelList } from '../card/card-label-list'
 import { ActionRenderer } from './action-renderer'
 import { ParsedToken } from '../parsed-description/parsed-description'
 import { ReactNode } from 'react'

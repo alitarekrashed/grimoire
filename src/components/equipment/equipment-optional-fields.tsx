@@ -1,5 +1,5 @@
 import { Equipment, EquipmentWithVariants } from '@/models/equipment'
-import { CardLabelList, FieldDefinition } from '../card/card-label'
+import { CardLabelList, FieldDefinition } from '../card/card-label-list'
 import { getPriceValue } from '@/utils/services/currency-utils'
 
 // TODO add equipment id to key here?

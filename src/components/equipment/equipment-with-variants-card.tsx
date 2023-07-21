@@ -4,7 +4,7 @@ import { EquipmentVariantType, EquipmentWithVariants } from '@/models/equipment'
 import { getPriceValue } from '@/utils/services/currency-utils'
 import * as Separator from '@radix-ui/react-separator'
 import Card from '../card/card'
-import { CardLabelList } from '../card/card-label'
+import { CardLabelList } from '../card/card-label-list'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 import { EquipmentOptionalFields } from './equipment-optional-fields'
 

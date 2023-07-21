@@ -1,8 +1,7 @@
 import { Activation, SavingThrow } from '@/models/equipment'
-import { CardLabelList, FieldDefinition } from '../card/card-label'
+import { CardLabelList, FieldDefinition } from '../card/card-label-list'
 import { ActivationLabel } from './activation-label'
 
-// TODO better type
 export function ActivationDescription({ value }: { value: Activation }) {
   const fields: FieldDefinition[] = [
     {
