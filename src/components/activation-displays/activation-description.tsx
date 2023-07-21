@@ -1,6 +1,8 @@
 import { Activation, SavingThrow } from '@/models/equipment'
-import { LabelsList, FieldDefinition } from '../labels-list/labels-list'
-import { ActivationLabel } from './activation-label'
+import React from 'react'
+import { FieldDefinition, LabelsList } from '../labels-list/labels-list'
+import { ParsedToken } from '../parsed-description/parsed-description'
+import { ActionRenderer } from './action-renderer'
 
 export function ActivationDescription({
   value,
@@ -10,6 +12,10 @@ export function ActivationDescription({
   labelClassName?: string
 }) {
   const fields: FieldDefinition[] = [
+    {
+      label: value?.override_label ?? 'Activate',
+      value: buildActionValue(value, 15),
+    },
     {
       label: 'Frequency',
       value: value?.frequency,
@@ -24,16 +30,30 @@ export function ActivationDescription({
     },
   ]
 
+  const secondaryFields: FieldDefinition[] = [
+    {
+      label: 'Range',
+      value: value?.range
+        ? `${value!.range.value} ${value!.range.unit}`
+        : undefined,
+    },
+    {
+      label: 'Targets',
+      value: value?.targets,
+    },
+  ]
+
   return value ? (
     <>
       <div>
-        <ActivationLabel
-          value={value}
-          iconSize={15}
-          labelClassName={labelClassName ?? 'font-bold'}
-        ></ActivationLabel>
         <LabelsList
           fieldDefinitions={fields}
+          labelClassName={labelClassName ?? 'font-bold'}
+        ></LabelsList>
+      </div>
+      <div>
+        <LabelsList
+          fieldDefinitions={secondaryFields}
           labelClassName={labelClassName ?? 'font-bold'}
         ></LabelsList>
       </div>
@@ -48,6 +68,30 @@ export function ActivationDescription({
   ) : (
     <></>
   )
+}
+
+function buildActionValue(value: Activation | undefined, iconSize: number) {
+  const result = []
+  if (value) {
+    result.push(
+      <ActionRenderer
+        key={value.num_actions}
+        activation={value}
+        size={iconSize}
+      ></ActionRenderer>
+    )
+    if (value.traits) {
+      result.push(
+        value.traits.map((trait, index) => (
+          <React.Fragment key={trait}>
+            <ParsedToken token={trait} type="TRAIT"></ParsedToken>
+            {index < value.traits!.length - 1 && ', '}
+          </React.Fragment>
+        ))
+      )
+    }
+    return result
+  }
 }
 
 function SavingThrowDisplay({ value }: { value: SavingThrow }) {

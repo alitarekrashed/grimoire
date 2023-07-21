@@ -57,6 +57,7 @@ export interface Activation {
   effect?: Effect
   targets?: Targets
   range?: RangeDefinition
+  override_label?: string
 }
 
 export interface Effect {

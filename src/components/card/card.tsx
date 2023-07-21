@@ -11,7 +11,6 @@ import SourceDisplay from './source-display'
 import { Activation } from '@/models/equipment'
 import { ActivationDescription } from '../activation-displays/activation-description'
 import { TraitsList } from './traits-list'
-import { ActivationLabel } from '../activation-displays/activation-label'
 
 export default function Card<T extends EntityModel>({
   data,

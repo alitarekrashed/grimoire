@@ -9,7 +9,7 @@ export default function SpellsPage() {
   const [spells, setSpells] = useState([])
   const [columnDefs, setColumnDefs] = useState([
     {
-      field: 'level',
+      field: 'rank',
       filter: true,
       sort: 'asc' as SortDirection,
       maxWidth: 90,

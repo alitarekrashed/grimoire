@@ -14,6 +14,7 @@ const allSpells: Spell[] = [
     activation: {
       num_actions: 'two',
       action: 'Cast a Spell',
+      traits: ['somatic', 'verbal'],
       range: {
         value: 30,
         unit: 'feet',

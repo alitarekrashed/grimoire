@@ -16,6 +16,10 @@ export default function SpellCard({
   onRemoved?: (item: Spell) => void
 }) {
   const type = value.rank === 0 ? 'Cantrip' : 'Spell'
+  let activation = { ...value.activation }
+  activation.override_label = 'Cast'
+  activation.action = undefined
+
   return (
     <Card
       data={value}
@@ -23,7 +27,7 @@ export default function SpellCard({
       level={value.rank}
       traits={value.traits}
       rarity={value.rarity}
-      activation={value.activation}
+      activation={activation}
       collapsible={collapsible}
       onRemoved={onRemoved}
     ></Card>
