@@ -278,4 +278,28 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     category: 'Alchemical Foods',
     entity_type: 'EQUIPMENT_WITH_VARIANTS',
   },
+  {
+    id: '8',
+    name: 'invisibility potion',
+    usage: 'held in 1 hand',
+    level: 4,
+    description:
+      'An invisibility potion is colorless and oddly lightweight. Upon drinking it, you gain the effects of a 2nd-level @spell:invisibility@ spell.',
+    bulk: 'L',
+    rarity: 'uncommon',
+    traits: ['consumable', 'illusion', 'magical', 'potion'],
+    activation: {
+      num_actions: 'one',
+      action: 'Interact',
+    },
+    price: [
+      {
+        value: 20,
+        type: 'gp',
+      },
+    ],
+    source: [{ title: 'Core Rulebook', page: '563' }],
+    category: 'Potion',
+    entity_type: 'EQUIPMENT',
+  },
 ]
