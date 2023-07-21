@@ -3,13 +3,15 @@ import {
   EquipmentVariantType,
   EquipmentWithVariants,
 } from '@/models/equipment'
+import { eq } from 'lodash'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const keepCollapsed = searchParams.get('keepCollapsed')
+  const name = searchParams.get('name')
 
-  const equipment: (Equipment | EquipmentWithVariants)[] = [...allEquipment]
+  let equipment: (Equipment | EquipmentWithVariants)[] = [...allEquipment]
   if (!keepCollapsed) {
     for (let i = 0; i < equipment.length; i++) {
       // converts an item with variants into their own standalone items.
@@ -35,6 +37,10 @@ export async function GET(request: Request) {
         equipment.splice(i, 1, ...variants)
       }
     }
+  }
+
+  if (name) {
+    equipment = equipment.filter((equipment) => equipment.name === name)
   }
 
   return NextResponse.json(equipment)

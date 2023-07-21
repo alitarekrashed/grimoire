@@ -1,6 +1,6 @@
 import Trait from '@/models/trait'
 
-export function retrieveTrait(key: string): Promise<Traitp> {
+export function retrieveTrait(key: string): Promise<Trait> {
   return (async () => {
     const traits = await (
       await fetch(`http://localhost:3000/api/traits?name=${key}`)
