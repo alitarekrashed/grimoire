@@ -4,14 +4,22 @@ import { ActionRenderer } from './action-renderer'
 import { ParsedToken } from '../parsed-description/parsed-description'
 import { ReactNode } from 'react'
 
-export function ActivationLabel({ value }: { value: Activation | undefined }) {
+export function ActivationLabel({
+  value,
+  iconSize,
+}: {
+  value: Activation | undefined
+  iconSize: number
+}) {
   return value ? (
     <>
       <LabelsList
         fieldDefinitions={[
           {
             label: 'Activate',
-            value: <ActionRenderer value={value} size={18}></ActionRenderer>,
+            value: (
+              <ActionRenderer value={value} size={iconSize}></ActionRenderer>
+            ),
           },
         ]}
         labelClassName="font-bold"
@@ -21,7 +29,7 @@ export function ActivationLabel({ value }: { value: Activation | undefined }) {
         value.traits.map((trait) => (
           <ParsedToken key={trait} token={trait} type="TRAIT"></ParsedToken>
         ))}
-      ;&nbsp;
+      {value.traits && '; '}
     </>
   ) : (
     <></>

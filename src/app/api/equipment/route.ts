@@ -76,7 +76,7 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     usage: 'held in 1 hand',
     traits: ['consumable', 'magical', 'potion', 'transmutation'],
     activation: {
-      num_actions: 'single',
+      num_actions: 'one',
       action: 'Interact',
     },
     entity_type: 'EQUIPMENT',
@@ -104,7 +104,7 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     ],
     bulk: 'L',
     activation: {
-      num_actions: 'single',
+      num_actions: 'one',
       action: 'Interact',
     },
     types: [
@@ -189,7 +189,7 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     category: 'Worn Item',
     traits: ['invested', 'magical', 'primal', 'transmutation'],
     activation: {
-      num_actions: 'single', // TODO support REACTION
+      num_actions: 'reaction',
       traits: ['envision'],
       frequency: 'once per day',
       trigger: 'You are damaged by a melee attack from an adjacent creature',

@@ -22,7 +22,7 @@ export function ActivationDescription({ value }: { value: Activation }) {
     <>
       <br />
       <div>
-        <ActivationLabel value={value}></ActivationLabel>
+        <ActivationLabel value={value} iconSize={15}></ActivationLabel>
         <LabelsList
           fieldDefinitions={fields}
           labelClassName="font-bold"
