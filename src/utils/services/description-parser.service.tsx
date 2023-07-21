@@ -1,11 +1,12 @@
+import EntityHoverableDescription from '@/components/entity-hoverable-description/entity-description-hover'
+import EntityModal from '@/components/entity-modal/entity-modal'
 import { EntityModel, ModelType } from '@/models/entity-model'
 import { isString } from 'lodash'
-import React, { FunctionComponent, ReactNode } from 'react'
+import React from 'react'
 import { retrieveCondition } from './condition.service'
-import { retrieveTrait } from './trait.service'
-import EntityHoverableDescription from '@/components/entity-hoverable-description/entity-description-hover'
 import { retrieveEquipment } from './equipment.service'
-import EntityModal from '@/components/entity-modal/entity-modal'
+import { retrieveSpell } from './spell.service'
+import { retrieveTrait } from './trait.service'
 
 export function parseDescription(description: any[]): Promise<any[]> {
   return (async () => {
@@ -29,6 +30,16 @@ export function parseDescription(description: any[]): Promise<any[]> {
         const brokenUpDescription = await createComponentsForType(
           currentPart,
           'EQUIPMENT'
+        )
+        tokenizedDescription.splice(index, 1, ...brokenUpDescription)
+        index = index + (brokenUpDescription.length - 1)
+        currentPart = brokenUpDescription[0]
+      }
+
+      if (isString(currentPart) && currentPart.includes('@spell:')) {
+        const brokenUpDescription = await createComponentsForType(
+          currentPart,
+          'SPELL'
         )
         tokenizedDescription.splice(index, 1, ...brokenUpDescription)
         index = index + (brokenUpDescription.length - 1)
@@ -95,6 +106,8 @@ function lookupFunctionFactory(
       return retrieveTrait
     case 'EQUIPMENT':
       return retrieveEquipment
+    case 'SPELL':
+      return retrieveSpell
     default:
       return () => undefined!
   }
@@ -105,6 +118,7 @@ function displayComponentFactory(
   value: EntityModel
 ): (value: any) => JSX.Element {
   switch (type) {
+    case 'SPELL':
     case 'EQUIPMENT':
       return EntityModal
     default:

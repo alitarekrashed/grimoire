@@ -2,7 +2,16 @@ import { Spell } from '@/models/spell'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
-  return NextResponse.json(allSpells)
+  const { searchParams } = new URL(request.url)
+  const name = searchParams.get('name')
+
+  let data = allSpells
+
+  if (name) {
+    data = allSpells.filter((spell) => spell.name === name)
+  }
+
+  return NextResponse.json(data)
 }
 
 const allSpells: Spell[] = [
@@ -68,6 +77,38 @@ const allSpells: Spell[] = [
     },
     rank: 0,
     source: [{ title: 'Core Rulebook', page: '328' }],
+    entity_type: 'SPELL',
+  },
+  {
+    id: '3',
+    name: 'invisibility',
+    traits: ['illusion'],
+    traditions: ['arcane', 'occult'],
+    activation: {
+      num_actions: 'two',
+      action: 'Cast a Spell',
+      traits: ['material', 'somatic'],
+      range: { unit: 'touch' },
+      targets: '1 creature',
+      duration: {
+        value: 10,
+        unit: 'minutes',
+      },
+    },
+    description:
+      'Cloaked in illusion, the target becomes @condition:invisible@. This makes it @condition:undetected@ to all creatures, though the creatures can attempt to find the target, making it @condition:hidden@ to them instead. If the target uses a hostile action, the spell ends after that hostile action is completed.',
+    heightened: {
+      type: 'explicit',
+      value: [
+        {
+          level: 4,
+          description:
+            "The spell lasts 1 minute, but it doesn't end if the target uses a hostile action.",
+        },
+      ],
+    },
+    rank: 2,
+    source: [{ title: 'Core Rulebook', page: '347' }],
     entity_type: 'SPELL',
   },
 ]
