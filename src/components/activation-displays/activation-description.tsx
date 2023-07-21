@@ -14,7 +14,7 @@ export function ActivationDescription({
   const fields: FieldDefinition[] = [
     {
       label: value?.override_label ?? 'Activate',
-      value: buildActionValue(value, 15),
+      value: value ? buildActionValue(value, 15) : [],
     },
     {
       label: 'Frequency',
@@ -76,28 +76,25 @@ export function ActivationDescription({
   )
 }
 
-function buildActionValue(value: Activation | undefined, iconSize: number) {
-  const result = []
-  if (value) {
-    result.push(
-      <ActionRenderer
-        key={value.num_actions}
-        activation={value}
-        size={iconSize}
-      ></ActionRenderer>
+function buildActionValue(value: Activation, iconSize: number) {
+  let result = [
+    <ActionRenderer
+      key={value.num_actions}
+      activation={value}
+      size={iconSize}
+    ></ActionRenderer>,
+  ]
+  if (value.traits) {
+    result = result.concat(
+      value.traits.map((trait, index) => (
+        <React.Fragment key={trait}>
+          <ParsedToken token={trait} type="TRAIT"></ParsedToken>
+          {index < value.traits!.length - 1 && ', '}
+        </React.Fragment>
+      ))
     )
-    if (value.traits) {
-      result.push(
-        value.traits.map((trait, index) => (
-          <React.Fragment key={trait}>
-            <ParsedToken token={trait} type="TRAIT"></ParsedToken>
-            {index < value.traits!.length - 1 && ', '}
-          </React.Fragment>
-        ))
-      )
-    }
-    return result
   }
+  return result
 }
 
 function SavingThrowDisplay({ value }: { value: SavingThrow }) {
