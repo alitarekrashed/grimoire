@@ -2,9 +2,7 @@
 
 import { Equipment } from '@/models/equipment'
 import Card from '../card/card'
-import { ActivationLabel } from './activation-label'
 import { EquipmentOptionalFields } from './equipment-optional-fields'
-import { PriceLabel } from './price-label'
 
 export default function EquipmentCard({
   value,
@@ -17,7 +15,6 @@ export default function EquipmentCard({
 }) {
   const attributes = (
     <div className="text-sm">
-      <PriceLabel value={value.price}></PriceLabel>
       <EquipmentOptionalFields value={value}></EquipmentOptionalFields>
     </div>
   )

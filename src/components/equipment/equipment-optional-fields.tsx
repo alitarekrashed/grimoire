@@ -1,5 +1,6 @@
 import { Equipment, EquipmentWithVariants } from '@/models/equipment'
-import CardLabel from '../card/card-label'
+import { CardLabelList, FieldDefinition } from '../card/card-label'
+import { getPriceValue } from '@/utils/services/currency-utils'
 
 // TODO add equipment id to key here?
 export function EquipmentOptionalFields({
@@ -7,25 +8,28 @@ export function EquipmentOptionalFields({
 }: {
   value: Equipment | EquipmentWithVariants
 }) {
-  let optionalFields = []
-  if (value.hands) {
-    optionalFields.length > 0 && optionalFields.push('; ')
-    optionalFields.push(
-      <CardLabel key="Hands" label="Hands" value={value.hands}></CardLabel>
-    )
-  }
-  if (value.usage) {
-    optionalFields.length > 0 && optionalFields.push('; ')
-    optionalFields.push(
-      <CardLabel key="Usage" label="Usage" value={value.usage}></CardLabel>
-    )
-  }
-  if (value.bulk) {
-    optionalFields.length > 0 && optionalFields.push('; ')
-    optionalFields.push(
-      <CardLabel key="Bulk" label="Bulk" value={value.bulk}></CardLabel>
-    )
+  const fields: FieldDefinition[] = [
+    {
+      label: 'Hands',
+      value: value.hands,
+    },
+    {
+      label: 'Usage',
+      value: value.usage,
+    },
+    {
+      label: 'Bulk',
+      value: value.bulk,
+    },
+  ]
+
+  if (value.entity_type === 'EQUIPMENT') {
+    fields.splice(0, 0, {
+      label: 'Price',
+      value: getPriceValue((value as Equipment).price),
+    })
+    console.log(fields)
   }
 
-  return optionalFields
+  return <CardLabelList fieldDefinitions={fields}></CardLabelList>
 }

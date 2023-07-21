@@ -1,22 +1,6 @@
-export default function CardLabel({
-  label,
-  value,
-  labelClassName,
-  valueClassName,
-}: {
+export interface FieldDefinition {
   label: string
-  value: string | number
-  labelClassName?: string
-  valueClassName?: string
-}) {
-  return (
-    <span>
-      <span className={`${labelClassName ?? 'font-medium'}`}>
-        {label}:&nbsp;
-      </span>
-      <span className={valueClassName}>{value}</span>
-    </span>
-  )
+  value: any | undefined
 }
 
 export function CardLabelList({
@@ -43,7 +27,10 @@ export function CardLabelList({
           valueClassName={valueClassName}
         ></CardLabel>
       )
-      if (i < fieldDefinitions.length - 1 && fieldDefinitions[i + 1].value) {
+      if (
+        i < fieldDefinitions.length - 1 &&
+        fieldDefinitions.slice(i + 1).some((field) => field.value)
+      ) {
         if (separator === 'new-line') {
           labels.push(<br />)
         } else {
@@ -56,7 +43,23 @@ export function CardLabelList({
   return <>{labels}</>
 }
 
-export interface FieldDefinition {
+function CardLabel({
+  label,
+  value,
+  labelClassName,
+  valueClassName,
+}: {
   label: string
-  value: string | undefined
+  value: string | number
+  labelClassName?: string
+  valueClassName?: string
+}) {
+  return (
+    <span>
+      <span className={`${labelClassName ?? 'font-medium'}`}>
+        {label}:&nbsp;
+      </span>
+      <span className={valueClassName}>{value}</span>
+    </span>
+  )
 }

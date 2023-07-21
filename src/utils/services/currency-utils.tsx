@@ -1,7 +1,6 @@
 import { Currency } from '@/models/equipment'
-import CardLabel from '../card/card-label'
 
-export function PriceLabel({ value }: { value: Currency[] | undefined }) {
+export function getPriceValue(value: Currency[] | undefined) {
   let monetaryValue = ''
   if (value) {
     value.forEach((element, index) => {
@@ -11,12 +10,5 @@ export function PriceLabel({ value }: { value: Currency[] | undefined }) {
       monetaryValue = monetaryValue.concat(`${element.value} ${element.type}`)
     })
   }
-
-  return value ? (
-    <div>
-      <CardLabel label="Price" value={monetaryValue}></CardLabel>
-    </div>
-  ) : (
-    <></>
-  )
+  return monetaryValue
 }
