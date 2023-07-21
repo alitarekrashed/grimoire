@@ -5,7 +5,7 @@ export type Bulk = 'L'
 export type EquipmentUsage = 'held in 1 hand' | 'worn mask' | 'worn cloak'
 export type Rarity = 'uncommon' | 'rare'
 export type ActionName = 'Interact'
-export type ActionType = 'single'
+export type ActionType = 'one' | 'two' | 'three' | 'reaction' | 'free'
 export type CurrencyType = 'gp'
 
 export interface Equipment extends EntityModel {

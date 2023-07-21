@@ -21,7 +21,7 @@ export function ActivationLabel({ value }: { value: Activation | undefined }) {
         value.traits.map((trait) => (
           <ParsedToken key={trait} token={trait} type="TRAIT"></ParsedToken>
         ))}
-      ;&nbsp;
+      {value.traits && '; '}
     </>
   ) : (
     <></>
