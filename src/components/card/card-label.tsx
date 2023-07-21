@@ -1,4 +1,49 @@
-export default function CardLabel({
+export interface FieldDefinition {
+  label: string
+  value: any | undefined
+}
+
+export function CardLabelList({
+  fieldDefinitions,
+  labelClassName,
+  valueClassName,
+  separator,
+}: {
+  fieldDefinitions: FieldDefinition[]
+  labelClassName?: string
+  valueClassName?: string
+  separator?: 'semicolon' | 'new-line'
+}) {
+  let labels: any = []
+
+  for (let i = 0; i < fieldDefinitions.length; i++) {
+    const field = fieldDefinitions[i]
+    if (field.value) {
+      labels.push(
+        <CardLabel
+          label={field.label}
+          value={field.value}
+          labelClassName={labelClassName}
+          valueClassName={valueClassName}
+        ></CardLabel>
+      )
+      if (
+        i < fieldDefinitions.length - 1 &&
+        fieldDefinitions.slice(i + 1).some((field) => field.value)
+      ) {
+        if (separator === 'new-line') {
+          labels.push(<br />)
+        } else {
+          labels.push('; ')
+        }
+      }
+    }
+  }
+
+  return <>{labels}</>
+}
+
+function CardLabel({
   label,
   value,
   labelClassName,

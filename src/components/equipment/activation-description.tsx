@@ -1,11 +1,26 @@
 import { Activation, SavingThrow } from '@/models/equipment'
 import Image from 'next/image'
 import { Traits } from '../card/traits-display'
-import CardLabel from '../card/card-label'
+import { CardLabelList, FieldDefinition } from '../card/card-label'
 import { ParsedToken } from '../parsed-description/parsed-description'
 
 // TODO better type
 export function ActivationDescription({ value }: { value: Activation }) {
+  const fields: FieldDefinition[] = [
+    {
+      label: 'Frequency',
+      value: value.frequency,
+    },
+    {
+      label: 'Trigger',
+      value: value.trigger,
+    },
+    {
+      label: 'Effect',
+      value: value.effect?.description,
+    },
+  ]
+
   return (
     <>
       <br />
@@ -18,29 +33,10 @@ export function ActivationDescription({ value }: { value: Activation }) {
             <ParsedToken key={trait} token={trait} type="TRAIT"></ParsedToken>
           ))}
         ;&nbsp;
-        {value.frequency && (
-          <CardLabel
-            label="Frequency"
-            value={value.frequency}
-            labelClassName="font-bold"
-          ></CardLabel>
-        )}
-        ;&nbsp;
-        {value.trigger && (
-          <CardLabel
-            label="Trigger"
-            value={value.trigger}
-            labelClassName="font-bold"
-          ></CardLabel>
-        )}
-        ;&nbsp;
-        {value.effect && (
-          <CardLabel
-            label="Effect"
-            value={value.effect.description}
-            labelClassName="font-bold"
-          ></CardLabel>
-        )}
+        <CardLabelList
+          fieldDefinitions={fields}
+          labelClassName="font-bold"
+        ></CardLabelList>
       </div>
       {value.effect?.saving_throw && (
         <div className="mt-2">
@@ -54,48 +50,32 @@ export function ActivationDescription({ value }: { value: Activation }) {
 }
 
 function SavingThrowDisplay({ value }: { value: SavingThrow }) {
+  const fields: FieldDefinition[] = [
+    {
+      label: 'Critical Success',
+      value: value.critical_success,
+    },
+    {
+      label: 'Success',
+      value: value.success,
+    },
+    {
+      label: 'Failure',
+      value: value.failure,
+    },
+    {
+      label: 'Critical Failure',
+      value: value.critical_failure,
+    },
+  ]
+
   return (
     <div className="ml-5">
-      {value.critical_success && (
-        <>
-          <CardLabel
-            label="Critical Success"
-            value={value.critical_success}
-            labelClassName="font-bold"
-          ></CardLabel>
-          <br />
-        </>
-      )}
-      {value.success && (
-        <>
-          <CardLabel
-            label="Success"
-            value={value.success}
-            labelClassName="font-bold"
-          ></CardLabel>
-          <br />
-        </>
-      )}
-      {value.failure && (
-        <>
-          <CardLabel
-            label="Failure"
-            value={value.failure}
-            labelClassName="font-bold"
-          ></CardLabel>
-          <br />
-        </>
-      )}
-      {value.critical_failure && (
-        <>
-          <CardLabel
-            label="Critical Failure"
-            value={value.critical_failure}
-            labelClassName="font-bold"
-          ></CardLabel>
-          <br />
-        </>
-      )}
+      <CardLabelList
+        fieldDefinitions={fields}
+        labelClassName="font-bold"
+        separator="new-line"
+      ></CardLabelList>
     </div>
   )
 }
