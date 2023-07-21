@@ -1,9 +1,9 @@
-import EntityDescriptionHover from '@/components/entity-description-hover'
 import { EntityModel, ModelType } from '@/models/entity-model'
 import { isString } from 'lodash'
 import React from 'react'
 import { retrieveCondition } from './condition.service'
 import { retrieveTrait } from './trait.service'
+import EntityHoverableDescription from '@/components/entity-hoverable-description/entity-description-hover'
 
 export function parseDescription(description: any[]): Promise<any[]> {
   return (async () => {
@@ -54,7 +54,7 @@ export function createComponentsForType(
       if (entity) {
         notLastToken &&
           mapping.push(
-            React.createElement(EntityDescriptionHover, {
+            React.createElement(EntityHoverableDescription, {
               value: entity,
               key: entity.id,
             })

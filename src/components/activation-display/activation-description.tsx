@@ -1,8 +1,6 @@
 import { Activation, SavingThrow } from '@/models/equipment'
-import Image from 'next/image'
-import { TraitsList } from '../card/traits-display'
 import { CardLabelList, FieldDefinition } from '../card/card-label'
-import { ParsedToken } from '../parsed-description/parsed-description'
+import { ActivationLabel } from './activation-label'
 
 // TODO better type
 export function ActivationDescription({ value }: { value: Activation }) {
@@ -25,14 +23,7 @@ export function ActivationDescription({ value }: { value: Activation }) {
     <>
       <br />
       <div>
-        <span className="font-bold">Activate</span>&nbsp;
-        <ActivationDisplay value={value}></ActivationDisplay>
-        &nbsp;
-        {value.traits &&
-          value.traits.map((trait) => (
-            <ParsedToken key={trait} token={trait} type="TRAIT"></ParsedToken>
-          ))}
-        ;&nbsp;
+        <ActivationLabel value={value}></ActivationLabel>
         <CardLabelList
           fieldDefinitions={fields}
           labelClassName="font-bold"
@@ -77,23 +68,5 @@ function SavingThrowDisplay({ value }: { value: SavingThrow }) {
         separator="new-line"
       ></CardLabelList>
     </div>
-  )
-}
-
-function ActivationDisplay({ value }: { value: any }) {
-  const image = (
-    <Image
-      src="/action-image-dark.png"
-      width={15}
-      height={15}
-      alt="1 action"
-      className="inline"
-    ></Image>
-  )
-
-  return (
-    <>
-      {image}&nbsp;{value.action}
-    </>
   )
 }

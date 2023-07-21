@@ -9,9 +9,9 @@ import { ParsedDescription } from '../parsed-description/parsed-description'
 import styles from './card.module.css'
 import SourceDisplay from './source-display'
 import { Activation } from '@/models/equipment'
-import { ActivationLabel } from '../equipment/activation-label'
-import { ActivationDescription } from '../equipment/activation-description'
+import { ActivationDescription } from '../activation-display/activation-description'
 import { TraitsList } from './traits-display'
+import { ActivationLabel } from '../activation-display/activation-label'
 
 export default function Card<T extends EntityModel>({
   data,
