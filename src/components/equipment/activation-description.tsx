@@ -1,6 +1,6 @@
 import { Activation, SavingThrow } from '@/models/equipment'
 import Image from 'next/image'
-import { Traits } from '../card/traits-display'
+import { TraitsList } from '../card/traits-display'
 import { CardLabelList, FieldDefinition } from '../card/card-label'
 import { ParsedToken } from '../parsed-description/parsed-description'
 

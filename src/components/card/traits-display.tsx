@@ -1,6 +1,6 @@
 import { ParsedToken } from '../parsed-description/parsed-description'
 
-export function Traits({
+export function TraitsList({
   traits,
   rarity,
 }: {

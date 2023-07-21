@@ -11,7 +11,7 @@ import SourceDisplay from './source-display'
 import { Activation } from '@/models/equipment'
 import { ActivationLabel } from '../equipment/activation-label'
 import { ActivationDescription } from '../equipment/activation-description'
-import { Traits } from './traits-display'
+import { TraitsList } from './traits-display'
 
 export default function Card<T extends EntityModel>({
   data,
@@ -63,7 +63,7 @@ export default function Card<T extends EntityModel>({
         <Collapsible.Content className={`${styles.cardContent}`}>
           {traits && (
             <div className="my-1">
-              <Traits rarity={rarity} traits={traits}></Traits>
+              <TraitsList rarity={rarity} traits={traits}></TraitsList>
             </div>
           )}
           {attributes}
