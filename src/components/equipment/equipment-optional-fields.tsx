@@ -1,5 +1,5 @@
 import { Equipment, EquipmentWithVariants } from '@/models/equipment'
-import { CardLabelList, FieldDefinition } from '../card/card-label'
+import { LabelsList, FieldDefinition } from '../labels-list/labels-list'
 import { getPriceValue } from '@/utils/services/currency-utils'
 
 // TODO add equipment id to key here?
@@ -28,8 +28,7 @@ export function EquipmentOptionalFields({
       label: 'Price',
       value: getPriceValue((value as Equipment).price),
     })
-    console.log(fields)
   }
 
-  return <CardLabelList fieldDefinitions={fields}></CardLabelList>
+  return <LabelsList fieldDefinitions={fields}></LabelsList>
 }

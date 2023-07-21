@@ -4,7 +4,7 @@ import { EquipmentVariantType, EquipmentWithVariants } from '@/models/equipment'
 import { getPriceValue } from '@/utils/services/currency-utils'
 import * as Separator from '@radix-ui/react-separator'
 import Card from '../card/card'
-import { CardLabelList } from '../card/card-label'
+import { LabelsList } from '../labels-list/labels-list'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 import { EquipmentOptionalFields } from './equipment-optional-fields'
 
@@ -75,7 +75,7 @@ function EquipmentTypesList({
           style={{ margin: '10px 0' }}
         />
         <div className="mb-1">
-          <CardLabelList fieldDefinitions={fields}></CardLabelList>
+          <LabelsList fieldDefinitions={fields}></LabelsList>
         </div>
         <div className="text-xs">
           <ParsedDescription

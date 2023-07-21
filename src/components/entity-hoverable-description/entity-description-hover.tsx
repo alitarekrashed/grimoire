@@ -3,12 +3,12 @@
 import { EntityModel } from '@/models/entity-model'
 import { roboto_serif } from '@/utils/fonts'
 import * as HoverCard from '@radix-ui/react-hover-card'
-import { ParsedDescription } from './parsed-description/parsed-description'
 import styles from './entity-description-hover.module.css'
+import { ParsedDescription } from '../parsed-description/parsed-description'
 
 // TODO eventually the display should be clickable and allow the user to go to a page for the condition?
 // TODO maybe this should open a modal instead of a link to a new page
-export default function EntityDescriptionHover({
+export default function EntityHoverableDescription({
   value,
 }: {
   value: EntityModel

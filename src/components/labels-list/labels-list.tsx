@@ -1,9 +1,11 @@
+import React from 'react'
+
 export interface FieldDefinition {
   label: string
   value: any | undefined
 }
 
-export function CardLabelList({
+export function LabelsList({
   fieldDefinitions,
   labelClassName,
   valueClassName,
@@ -21,6 +23,7 @@ export function CardLabelList({
     if (field.value) {
       labels.push(
         <CardLabel
+          key={field.label}
           label={field.label}
           value={field.value}
           labelClassName={labelClassName}
@@ -32,7 +35,11 @@ export function CardLabelList({
         fieldDefinitions.slice(i + 1).some((field) => field.value)
       ) {
         if (separator === 'new-line') {
-          labels.push(<br />)
+          labels.push(
+            <React.Fragment key={`${field.label} + ${separator}`}>
+              <br />
+            </React.Fragment>
+          )
         } else {
           labels.push('; ')
         }
