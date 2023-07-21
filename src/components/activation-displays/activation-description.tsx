@@ -40,12 +40,23 @@ export function ActivationDescription({
     {
       label: 'Range',
       value: value?.range
-        ? `${value!.range.value} ${value!.range.unit}`
+        ? `${value!.range.value ? value!.range!.value + ' ' : ''}${
+            value!.range.unit
+          }`
         : undefined,
     },
     {
       label: 'Targets',
       value: value?.targets,
+    },
+  ]
+
+  const tertiaryFields: FieldDefinition[] = [
+    {
+      label: 'Duration',
+      value: value?.duration
+        ? `${value!.duration.value} ${value!.duration.unit}`
+        : undefined,
     },
   ]
 
@@ -60,6 +71,12 @@ export function ActivationDescription({
       <div>
         <LabelsList
           fieldDefinitions={secondaryFields}
+          labelClassName={labelClassName ?? 'font-bold'}
+        ></LabelsList>
+      </div>
+      <div>
+        <LabelsList
+          fieldDefinitions={tertiaryFields}
           labelClassName={labelClassName ?? 'font-bold'}
         ></LabelsList>
       </div>
