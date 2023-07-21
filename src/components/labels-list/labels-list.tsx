@@ -64,7 +64,7 @@ function CardLabel({
   return (
     <span>
       <span className={`${labelClassName ?? 'font-medium'}`}>
-        {label}:&nbsp;
+        {label}&nbsp;
       </span>
       <span className={valueClassName}>{value}</span>
     </span>

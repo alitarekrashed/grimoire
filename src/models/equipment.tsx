@@ -1,3 +1,4 @@
+import { Activation } from './activation'
 import { EntityModel } from './entity-model'
 
 export type EquipmentCategory =
@@ -14,14 +15,6 @@ export type EquipmentUsage =
   | 'affixed to armor'
   | 'held in 2 hands'
 export type Rarity = 'uncommon' | 'rare'
-export type ActionName = 'Interact'
-export type ActionType =
-  | 'one'
-  | 'two'
-  | 'three'
-  | 'reaction'
-  | 'free'
-  | '10 minutes'
 export type CurrencyType = 'gp'
 
 export interface Equipment extends EntityModel {
@@ -45,27 +38,6 @@ export interface EquipmentWithVariants extends EntityModel {
   activation?: Activation
   types: EquipmentVariantType[]
   rarity?: Rarity
-}
-
-export interface Activation {
-  num_actions: ActionType
-  action?: ActionName
-  traits?: string[]
-  frequency?: string // should this be an enum?
-  trigger?: string
-  effect?: Effect
-}
-
-export interface Effect {
-  description: string
-  saving_throw?: SavingThrow
-}
-
-export interface SavingThrow {
-  critical_success?: string
-  success?: string
-  failure?: string
-  critical_failure?: string
 }
 
 export interface Currency {

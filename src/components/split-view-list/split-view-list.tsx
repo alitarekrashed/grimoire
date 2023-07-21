@@ -32,12 +32,12 @@ export default function SplitViewDisplay<T extends EntityModel>({
       }
     }
     setCards(foundEntities)
-  }, [entities])
+  }, [entities, searchParams])
 
   useEffect(() => {
     const query = `?${cards.map((val) => val.id).join('&')}`
     router.replace(`${pathname}${query}`)
-  }, [cards])
+  }, [cards, pathname, router])
 
   function handleSelectedCard(item: T) {
     setCards((cards) => {
