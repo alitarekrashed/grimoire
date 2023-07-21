@@ -247,4 +247,35 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     entity_type: 'EQUIPMENT',
     source: [{ title: 'Treasure Vault', page: '77' }],
   },
+  {
+    id: '7',
+    name: 'cooperative waffles',
+    usage: 'held in 2 hands',
+    description:
+      "Flash-cooked on a waffle iron and drizzled with alchemical syrupds and compound butter, cooperative waffles bolster the supportive spirit of those who share the batch. You can split the waffles with one other creature. After you both eat half of the waffles to Activate them, when one of you uses Follow the Expert to follow the other, the circumstance bonus granted is 1 higher. The waffles' lasts 24 hours or until you next make your daily preparations, whichever comes first. You can only be linked to one creature in this way at a time; if either of you eats cooperative waffles again, the effect of your previous waffles ends.",
+    bulk: 'L',
+    traits: ['alchemical', 'consumable', 'processed'],
+    activation: {
+      num_actions: '10 minutes',
+      action: 'Interact',
+    },
+    types: [
+      {
+        name: 'cooperative waffles',
+        level: 2,
+        description: '',
+        price: [{ value: 2, type: 'gp' }],
+      },
+      {
+        name: 'greater cooperative waffles',
+        level: 5,
+        description:
+          'The benefit of the waffles also applies when one of you successfully Aids a skill check the other attempts.',
+        price: [{ value: 25, type: 'gp' }],
+      },
+    ],
+    source: [{ title: 'Treasure Vault', page: '47 ' }],
+    category: 'Alchemical Foods',
+    entity_type: 'EQUIPMENT_WITH_VARIANTS',
+  },
 ]

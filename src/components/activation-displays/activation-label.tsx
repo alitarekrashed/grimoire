@@ -19,7 +19,10 @@ export function ActivationLabel({
           {
             label: 'Activate',
             value: (
-              <ActionRenderer value={value} size={iconSize}></ActionRenderer>
+              <ActionRenderer
+                activation={value}
+                size={iconSize}
+              ></ActionRenderer>
             ),
           },
         ]}
