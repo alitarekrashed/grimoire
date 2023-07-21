@@ -5,14 +5,12 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  const allEquipment = await (
-    await fetch('http://localhost:3000/api/equipment?keepCollapsed=true', {
+  const allSpells = await (
+    await fetch('http://localhost:3000/api/spells', {
       cache: 'no-store',
     })
   ).json()
-  const data = allEquipment.find(
-    (equipment: Equipment) => equipment.id === params.id
-  )
+  const data = allSpells.find((spells: Spell) => spells.id === params.id)
 
   if (data) {
     return NextResponse.json(data)
