@@ -69,7 +69,10 @@ export default function Card<T extends EntityModel>({
           {attributes}
           {hasShortActivation && (
             <span className="text-sm">
-              <ActivationLabel value={activation}></ActivationLabel>
+              <ActivationLabel
+                value={activation}
+                iconSize={17}
+              ></ActivationLabel>
             </span>
           )}
           <Separator.Root
