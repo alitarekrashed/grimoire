@@ -2,30 +2,39 @@ import { Activation, SavingThrow } from '@/models/equipment'
 import { LabelsList, FieldDefinition } from '../labels-list/labels-list'
 import { ActivationLabel } from './activation-label'
 
-export function ActivationDescription({ value }: { value: Activation }) {
+export function ActivationDescription({
+  value,
+  labelClassName,
+}: {
+  value: Activation | undefined
+  labelClassName?: string
+}) {
   const fields: FieldDefinition[] = [
     {
       label: 'Frequency',
-      value: value.frequency,
+      value: value?.frequency,
     },
     {
       label: 'Trigger',
-      value: value.trigger,
+      value: value?.trigger,
     },
     {
       label: 'Effect',
-      value: value.effect?.description,
+      value: value?.effect?.description,
     },
   ]
 
-  return (
+  return value ? (
     <>
-      <br />
       <div>
-        <ActivationLabel value={value} iconSize={15}></ActivationLabel>
+        <ActivationLabel
+          value={value}
+          iconSize={15}
+          labelClassName={labelClassName ?? 'font-bold'}
+        ></ActivationLabel>
         <LabelsList
           fieldDefinitions={fields}
-          labelClassName="font-bold"
+          labelClassName={labelClassName ?? 'font-bold'}
         ></LabelsList>
       </div>
       {value.effect?.saving_throw && (
@@ -36,6 +45,8 @@ export function ActivationDescription({ value }: { value: Activation }) {
         </div>
       )}
     </>
+  ) : (
+    <></>
   )
 }
 
