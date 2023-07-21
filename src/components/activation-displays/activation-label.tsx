@@ -1,5 +1,5 @@
 import { Activation } from '@/models/equipment'
-import { CardLabelList } from '../card/card-label-list'
+import { LabelsList } from '../labels-list/labels-list'
 import { ActionRenderer } from './action-renderer'
 import { ParsedToken } from '../parsed-description/parsed-description'
 import { ReactNode } from 'react'
@@ -7,7 +7,7 @@ import { ReactNode } from 'react'
 export function ActivationLabel({ value }: { value: Activation | undefined }) {
   return value ? (
     <>
-      <CardLabelList
+      <LabelsList
         fieldDefinitions={[
           {
             label: 'Activate',
@@ -15,7 +15,7 @@ export function ActivationLabel({ value }: { value: Activation | undefined }) {
           },
         ]}
         labelClassName="font-bold"
-      ></CardLabelList>
+      ></LabelsList>
       &nbsp;
       {value.traits &&
         value.traits.map((trait) => (

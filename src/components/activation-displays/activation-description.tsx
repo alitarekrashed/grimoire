@@ -1,5 +1,5 @@
 import { Activation, SavingThrow } from '@/models/equipment'
-import { CardLabelList, FieldDefinition } from '../card/card-label-list'
+import { LabelsList, FieldDefinition } from '../labels-list/labels-list'
 import { ActivationLabel } from './activation-label'
 
 export function ActivationDescription({ value }: { value: Activation }) {
@@ -23,10 +23,10 @@ export function ActivationDescription({ value }: { value: Activation }) {
       <br />
       <div>
         <ActivationLabel value={value}></ActivationLabel>
-        <CardLabelList
+        <LabelsList
           fieldDefinitions={fields}
           labelClassName="font-bold"
-        ></CardLabelList>
+        ></LabelsList>
       </div>
       {value.effect?.saving_throw && (
         <div className="mt-2">
@@ -61,11 +61,11 @@ function SavingThrowDisplay({ value }: { value: SavingThrow }) {
 
   return (
     <div className="ml-5">
-      <CardLabelList
+      <LabelsList
         fieldDefinitions={fields}
         labelClassName="font-bold"
         separator="new-line"
-      ></CardLabelList>
+      ></LabelsList>
     </div>
   )
 }

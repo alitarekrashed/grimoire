@@ -5,7 +5,7 @@ export interface FieldDefinition {
   value: any | undefined
 }
 
-export function CardLabelList({
+export function LabelsList({
   fieldDefinitions,
   labelClassName,
   valueClassName,
