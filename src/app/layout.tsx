@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${dm_serif_display.className} bg-gradient-to-t from-stone-950 to-stone-900 min-h-screen flex wrap flex-col`}
+        className={`${dm_serif_display.className} min-h-screen flex wrap flex-col`}
       >
         <div className="grid grid-cols-1 pt-5 w-full">
           <div
