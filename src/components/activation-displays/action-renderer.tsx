@@ -1,26 +1,51 @@
-import { Activation } from '@/models/equipment'
+import { ActionType, Activation } from '@/models/equipment'
 import Image from 'next/image'
+import { ReactNode } from 'react'
 
 export function ActionRenderer({
-  value,
+  activation,
   size,
 }: {
-  value: Activation
+  activation: Activation
   size: number
 }) {
-  const image = (
-    <Image
-      src={`/${actionMap[value.num_actions].file}dark.png`}
-      width={size}
-      height={size}
-      alt={actionMap[value.num_actions].alt}
-      className="inline"
-    ></Image>
-  )
+  const values = getActionValues(activation.num_actions)
 
   return (
     <>
-      {image}&nbsp;{value.action}
+      {values
+        ? renderWithImage(activation, values, size)
+        : renderWithoutImage(activation)}
+    </>
+  )
+}
+
+function renderWithImage(
+  activation: Activation,
+  actionValues: ActionValues,
+  size: number
+) {
+  return (
+    <>
+      <Image
+        src={`/${actionValues.file}dark.png`}
+        width={size}
+        height={size}
+        alt={actionValues.alt}
+        className="inline"
+      ></Image>
+      &nbsp;
+      {activation.action}
+    </>
+  )
+}
+
+function renderWithoutImage(activation: Activation) {
+  return (
+    <>
+      {activation.num_actions}
+      &nbsp;
+      {`(${activation.action})`}
     </>
   )
 }
@@ -30,31 +55,34 @@ interface ActionValues {
   alt: string
 }
 
-const actionMap: {
-  one: ActionValues
-  two: ActionValues
-  three: ActionValues
-  reaction: ActionValues
-  free: ActionValues
-} = {
-  one: {
-    file: 'one-action-',
-    alt: 'Single action',
-  },
-  two: {
-    file: 'two-actions-',
-    alt: 'Two actions',
-  },
-  three: {
-    file: 'three-actions-',
-    alt: 'Three actions',
-  },
-  reaction: {
-    file: 'reaction-',
-    alt: 'Reaction',
-  },
-  free: {
-    file: 'free-action-',
-    alt: 'Free action',
-  },
+function getActionValues(type: ActionType): ActionValues | undefined {
+  switch (type) {
+    case 'one':
+      return {
+        file: 'one-action-',
+        alt: 'Single action',
+      }
+    case 'two':
+      return {
+        file: 'two-actions-',
+        alt: 'Two actions',
+      }
+    case 'three':
+      return {
+        file: 'three-actions-',
+        alt: 'Three actions',
+      }
+    case 'reaction':
+      return {
+        file: 'reaction-',
+        alt: 'Reaction',
+      }
+    case 'free':
+      return {
+        file: 'free-action-',
+        alt: 'Free action',
+      }
+    default:
+      return undefined
+  }
 }

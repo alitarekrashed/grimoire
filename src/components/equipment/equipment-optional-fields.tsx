@@ -23,12 +23,21 @@ export function EquipmentOptionalFields({
     },
   ]
 
-  if (value.entity_type === 'EQUIPMENT') {
-    fields.splice(0, 0, {
-      label: 'Price',
-      value: getPriceValue((value as Equipment).price),
-    })
-  }
-
-  return <LabelsList fieldDefinitions={fields}></LabelsList>
+  return (
+    <>
+      {value.entity_type === 'EQUIPMENT' && (
+        <div>
+          <LabelsList
+            fieldDefinitions={[
+              {
+                label: 'Price',
+                value: getPriceValue((value as Equipment).price),
+              },
+            ]}
+          ></LabelsList>
+        </div>
+      )}
+      <LabelsList fieldDefinitions={fields}></LabelsList>
+    </>
+  )
 }

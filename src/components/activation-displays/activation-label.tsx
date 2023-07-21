@@ -1,15 +1,16 @@
 import { Activation } from '@/models/equipment'
 import { LabelsList } from '../labels-list/labels-list'
-import { ActionRenderer } from './action-renderer'
 import { ParsedToken } from '../parsed-description/parsed-description'
-import { ReactNode } from 'react'
+import { ActionRenderer } from './action-renderer'
 
 export function ActivationLabel({
   value,
   iconSize,
+  labelClassName,
 }: {
   value: Activation | undefined
   iconSize: number
+  labelClassName?: string
 }) {
   return value ? (
     <>
@@ -18,13 +19,15 @@ export function ActivationLabel({
           {
             label: 'Activate',
             value: (
-              <ActionRenderer value={value} size={iconSize}></ActionRenderer>
+              <ActionRenderer
+                activation={value}
+                size={iconSize}
+              ></ActionRenderer>
             ),
           },
         ]}
-        labelClassName="font-bold"
+        labelClassName={labelClassName}
       ></LabelsList>
-      &nbsp;
       {value.traits &&
         value.traits.map((trait) => (
           <ParsedToken key={trait} token={trait} type="TRAIT"></ParsedToken>
