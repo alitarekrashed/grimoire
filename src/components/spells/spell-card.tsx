@@ -2,9 +2,11 @@
 
 import Trait from '@/models/trait'
 import Card from '../card/card'
-import { Spell } from '@/models/spell'
-import { LabelsList } from '../labels-list/labels-list'
+import { HeightenedExplicit, HeightenedFormula, Spell } from '@/models/spell'
+import { FieldDefinition, LabelsList } from '../labels-list/labels-list'
 import * as Separator from '@radix-ui/react-separator'
+import { describe } from 'node:test'
+import { last } from 'lodash'
 
 export default function SpellCard({
   value,
@@ -22,6 +24,25 @@ export default function SpellCard({
   activation.override_label = 'Cast'
   activation.action = undefined
 
+  let heightenedLevels: FieldDefinition[] = []
+  if (value.heightened) {
+    if (value.heightened.type === 'formula') {
+      const formula = value.heightened.value as HeightenedFormula
+      heightenedLevels.push({
+        label: `Heightened (${formula.level_modifier}+)`,
+        value: formula.description,
+      })
+    } else {
+      const explicit = value.heightened.value as HeightenedExplicit[]
+      heightenedLevels = heightenedLevels.concat(
+        explicit.map((val: HeightenedExplicit) => ({
+          label: `Heightened (${withOrdinalSuffix(val.level)})`,
+          value: val.description,
+        }))
+      )
+    }
+  }
+
   const additionalContent = (
     <>
       <Separator.Root
@@ -29,14 +50,16 @@ export default function SpellCard({
         style={{ margin: '10px 0' }}
       />
       <div className="mb-1">
-        <LabelsList
-          fieldDefinitions={[
-            {
-              label: `Heightened (${value.heightened.level_modifier}+)`,
-              value: value.heightened.description,
-            },
-          ]}
-        ></LabelsList>
+        {heightenedLevels.map((level, index) => (
+          <div key={level.label}>
+            <LabelsList fieldDefinitions={[level]}></LabelsList>
+            {index < heightenedLevels.length - 1 && (
+              <>
+                <br /> <br />
+              </>
+            )}
+          </div>
+        ))}
       </div>
     </>
   )
@@ -54,4 +77,20 @@ export default function SpellCard({
       onRemoved={onRemoved}
     ></Card>
   )
+}
+
+// from https://stackoverflow.com/questions/13627308/add-st-nd-rd-and-th-ordinal-suffix-to-a-number
+function withOrdinalSuffix(i: number): string {
+  var j = i % 10,
+    k = i % 100
+  if (j == 1 && k != 11) {
+    return i + 'st'
+  }
+  if (j == 2 && k != 12) {
+    return i + 'nd'
+  }
+  if (j == 3 && k != 13) {
+    return i + 'rd'
+  }
+  return i + 'th'
 }

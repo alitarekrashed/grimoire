@@ -1,5 +1,5 @@
 import { EntityModel } from './entity-model'
-import { RangeDefinition, Targets } from './spell'
+import { AreaDefinition, RangeDefinition, Targets } from './spell'
 
 export type EquipmentCategory =
   | 'Adventuring Gear'
@@ -57,6 +57,7 @@ export interface Activation {
   effect?: Effect
   targets?: Targets
   range?: RangeDefinition
+  area?: AreaDefinition
   override_label?: string
 }
 

@@ -32,6 +32,12 @@ export function ActivationDescription({
 
   const secondaryFields: FieldDefinition[] = [
     {
+      label: 'Area',
+      value: value?.area
+        ? `${value!.area.value} ${value!.area.unit}`
+        : undefined,
+    },
+    {
       label: 'Range',
       value: value?.range
         ? `${value!.range.value} ${value!.range.unit}`
