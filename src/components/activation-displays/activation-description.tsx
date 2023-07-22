@@ -25,6 +25,10 @@ export function ActivationDescription({
       value: value?.trigger,
     },
     {
+      label: 'Requirements',
+      value: value?.requirements,
+    },
+    {
       label: 'Effect',
       value: value?.effect?.description,
     },

@@ -24,6 +24,7 @@ export interface Activation {
   range?: RangeDefinition
   area?: AreaDefinition
   duration?: DurationDefinition
+  requirements?: string
   override_label?: string
 }
 

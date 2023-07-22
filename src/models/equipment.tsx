@@ -7,6 +7,7 @@ export type EquipmentCategory =
   | 'Worn Item'
   | 'Fulu'
   | 'Alchemical Foods'
+  | 'Held Item'
 export type Bulk = 'L'
 export type EquipmentUsage =
   | 'held in 1 hand'

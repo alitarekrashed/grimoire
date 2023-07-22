@@ -308,4 +308,33 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     category: 'Potion',
     entity_type: 'EQUIPMENT',
   },
+  {
+    id: '9',
+    name: "battle medic's baton",
+    usage: 'held in 1 hand',
+    level: 3,
+    description:
+      'This short bronze rod has the form of a serpent coiled around it. While you hold it, you gain a +1 item bonus to Medicine checks.',
+    bulk: 'L',
+    traits: ['magical', 'necromancy'],
+    activation: {
+      num_actions: 'two',
+      action: 'Interact',
+      frequency: 'once per hour',
+      requirements: 'You have the Battle Medicine action',
+      effect: {
+        description:
+          'You use Battle Medicine. The target is temporarily immune to your Battle Medicine for 1 hour instead of 1 day.',
+      },
+    },
+    price: [
+      {
+        value: 60,
+        type: 'gp',
+      },
+    ],
+    source: [{ title: 'Treasure Vault', page: '114' }],
+    category: 'Held Item',
+    entity_type: 'EQUIPMENT',
+  },
 ]
