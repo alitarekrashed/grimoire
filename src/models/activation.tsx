@@ -29,8 +29,7 @@ export interface Activation {
 }
 
 export interface Effect {
-  description: string
-  saving_throw?: SavingThrow
+  description?: string
 }
 
 export interface SavingThrow {

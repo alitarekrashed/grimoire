@@ -202,13 +202,13 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
       effect: {
         description:
           'The leaves lash out at your attacker, rising up to reveal snapping jaws made of wicked thorns. The triggering creature must attempt a DC 17 Reflex saving throw.',
-        saving_throw: {
-          success: 'The creature is unaffected.',
-          failure: 'The creature takes 1d4 piercing damage.',
-          critical_failure:
-            'The creature takes 2d4 piercing damage and 1 bleed damage.',
-        },
       },
+    },
+    saving_throw: {
+      success: 'The creature is unaffected.',
+      failure: 'The creature takes 1d4 piercing damage.',
+      critical_failure:
+        'The creature takes 2d4 piercing damage and 1 bleed damage.',
     },
     types: [
       {

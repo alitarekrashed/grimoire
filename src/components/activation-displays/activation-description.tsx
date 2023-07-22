@@ -84,13 +84,6 @@ export function ActivationDescription({
           labelClassName={labelClassName ?? 'font-bold'}
         ></LabelsList>
       </div>
-      {value.effect?.saving_throw && (
-        <div className="mt-2">
-          <SavingThrowDisplay
-            value={value.effect.saving_throw}
-          ></SavingThrowDisplay>
-        </div>
-      )}
     </>
   ) : (
     <></>
@@ -118,7 +111,7 @@ function buildActionValue(value: Activation, iconSize: number) {
   return result
 }
 
-function SavingThrowDisplay({ value }: { value: SavingThrow }) {
+export function SavingThrowDisplay({ value }: { value: SavingThrow }) {
   const fields: FieldDefinition[] = [
     {
       label: 'Critical Success',

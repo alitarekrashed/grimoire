@@ -137,4 +137,33 @@ const allSpells: Spell[] = [
     source: [{ title: 'Core Rulebook', page: '349' }],
     entity_type: 'SPELL',
   },
+  {
+    id: '5',
+    name: 'telekinetic projectile',
+    traits: ['attack', 'cantrip', 'evocation'],
+    traditions: ['arcane', 'occult'],
+    saving_throw: {
+      critical_success: 'You deal double damage.',
+      success: 'You deal full damage.',
+    },
+    activation: {
+      num_actions: 'two',
+      action: 'Cast a Spell',
+      traits: ['somatic', 'verbal'],
+      range: { unit: 'feet', value: 120 },
+      targets: '1 creature',
+    },
+    description:
+      'You hurl a loose, unattended object that is within range and that has 1 Bulk or less at the target. Make a spell attack roll against the target. If you hit, you deal bludgeoning, piercing, or slashing damage-as appropriate for the object you hurled-equal to 1d6 plus your spellcasting ability modifier. No specific traits or magic properties of the hurled item affect the attack or the damage.',
+    heightened: {
+      type: 'formula',
+      value: {
+        level_modifier: 1,
+        description: 'The damage increases by 1d6.',
+      },
+    },
+    rank: 1,
+    source: [{ title: 'Core Rulebook', page: '377' }],
+    entity_type: 'SPELL',
+  },
 ]
