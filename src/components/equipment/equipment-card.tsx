@@ -3,6 +3,7 @@
 import { Equipment } from '@/models/equipment'
 import Card from '../card/card'
 import { EquipmentOptionalFields } from './equipment-optional-fields'
+import { SavingThrowDisplay } from '../activation-displays/activation-description'
 
 export default function EquipmentCard({
   value,
@@ -19,6 +20,14 @@ export default function EquipmentCard({
     </div>
   )
 
+  const additionalContent = value.saving_throw ? (
+    <div className="mt-2">
+      <SavingThrowDisplay value={value.saving_throw}></SavingThrowDisplay>
+    </div>
+  ) : (
+    <></>
+  )
+
   return (
     <Card
       data={value}
@@ -27,6 +36,7 @@ export default function EquipmentCard({
       traits={value.traits}
       rarity={value.rarity}
       attributes={attributes}
+      additionalContent={additionalContent}
       activation={value.activation}
       collapsible={collapsible}
       onRemoved={onRemoved}

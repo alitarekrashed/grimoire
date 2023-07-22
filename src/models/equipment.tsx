@@ -1,4 +1,4 @@
-import { Activation } from './activation'
+import { Activation, SavingThrow } from './activation'
 import { EntityModel } from './entity-model'
 
 export type EquipmentCategory =
@@ -7,6 +7,7 @@ export type EquipmentCategory =
   | 'Worn Item'
   | 'Fulu'
   | 'Alchemical Foods'
+  | 'Held Item'
 export type Bulk = 'L'
 export type EquipmentUsage =
   | 'held in 1 hand'
@@ -26,6 +27,7 @@ export interface Equipment extends EntityModel {
   usage?: EquipmentUsage
   traits?: string[] // eventually Trait object
   activation?: Activation
+  saving_throw?: SavingThrow
   rarity?: Rarity
 }
 
@@ -37,6 +39,7 @@ export interface EquipmentWithVariants extends EntityModel {
   traits?: string[] // eventually Trait object
   activation?: Activation
   types: EquipmentVariantType[]
+  saving_throw?: SavingThrow
   rarity?: Rarity
 }
 

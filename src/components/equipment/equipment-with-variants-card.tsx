@@ -7,6 +7,7 @@ import Card from '../card/card'
 import { LabelsList } from '../labels-list/labels-list'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 import { EquipmentOptionalFields } from './equipment-optional-fields'
+import { SavingThrowDisplay } from '../activation-displays/activation-description'
 
 export default function EquipmentWithVariantsCard({
   value,
@@ -24,10 +25,17 @@ export default function EquipmentWithVariantsCard({
   )
 
   const additionalContent = (
-    <EquipmentTypesList
-      itemName={value.name}
-      variants={value.types}
-    ></EquipmentTypesList>
+    <>
+      {value.saving_throw && (
+        <div className="mt-2">
+          <SavingThrowDisplay value={value.saving_throw}></SavingThrowDisplay>
+        </div>
+      )}
+      <EquipmentTypesList
+        itemName={value.name}
+        variants={value.types}
+      ></EquipmentTypesList>
+    </>
   )
 
   return (

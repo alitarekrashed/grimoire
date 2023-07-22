@@ -24,12 +24,12 @@ export interface Activation {
   range?: RangeDefinition
   area?: AreaDefinition
   duration?: DurationDefinition
+  requirements?: string
   override_label?: string
 }
 
 export interface Effect {
-  description: string
-  saving_throw?: SavingThrow
+  description?: string
 }
 
 export interface SavingThrow {

@@ -10,6 +10,7 @@ import {
 import { FieldDefinition, LabelsList } from '../labels-list/labels-list'
 import * as Separator from '@radix-ui/react-separator'
 import build from 'next/dist/build'
+import { SavingThrowDisplay } from '../activation-displays/activation-description'
 
 export default function SpellCard({
   value,
@@ -32,6 +33,11 @@ export default function SpellCard({
     : []
   const additionalContent = (
     <>
+      {value.saving_throw && (
+        <div className="mt-2">
+          <SavingThrowDisplay value={value.saving_throw}></SavingThrowDisplay>
+        </div>
+      )}
       <Separator.Root
         className="w-full bg-stone-400	h-px"
         style={{ margin: '10px 0' }}

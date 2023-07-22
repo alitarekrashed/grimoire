@@ -202,13 +202,13 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
       effect: {
         description:
           'The leaves lash out at your attacker, rising up to reveal snapping jaws made of wicked thorns. The triggering creature must attempt a DC 17 Reflex saving throw.',
-        saving_throw: {
-          success: 'The creature is unaffected.',
-          failure: 'The creature takes 1d4 piercing damage.',
-          critical_failure:
-            'The creature takes 2d4 piercing damage and 1 bleed damage.',
-        },
       },
+    },
+    saving_throw: {
+      success: 'The creature is unaffected.',
+      failure: 'The creature takes 1d4 piercing damage.',
+      critical_failure:
+        'The creature takes 2d4 piercing damage and 1 bleed damage.',
     },
     types: [
       {
@@ -306,6 +306,63 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     ],
     source: [{ title: 'Core Rulebook', page: '563' }],
     category: 'Potion',
+    entity_type: 'EQUIPMENT',
+  },
+  {
+    id: '9',
+    name: "battle medic's baton",
+    usage: 'held in 1 hand',
+    level: 3,
+    description:
+      'This short bronze rod has the form of a serpent coiled around it. While you hold it, you gain a +1 item bonus to Medicine checks.',
+    bulk: 'L',
+    traits: ['magical', 'necromancy'],
+    activation: {
+      num_actions: 'two',
+      action: 'Interact',
+      frequency: 'once per hour',
+      requirements: 'You have the Battle Medicine action',
+      effect: {
+        description:
+          'You use Battle Medicine. The target is temporarily immune to your Battle Medicine for 1 hour instead of 1 day.',
+      },
+    },
+    price: [
+      {
+        value: 60,
+        type: 'gp',
+      },
+    ],
+    source: [{ title: 'Treasure Vault', page: '114' }],
+    category: 'Held Item',
+    entity_type: 'EQUIPMENT',
+  },
+  {
+    id: '10',
+    name: 'cinnamon seers',
+    usage: 'held in 1 hand',
+    level: 4,
+    description:
+      'Zippy, alchemically treated cinnamon suffuses cinnamon seers, a rock candy with a lively taste that provides a mental boost. A cinnamon seer remains in your mouth for 1 hour, its stimulating flavor granting you a +1 item bonus to checks to Recall Knowledge.',
+    traits: ['alchemical', 'consumable', 'magical'],
+    activation: {
+      num_actions: 'reaction',
+      traits: ['fortune'],
+      override_label: 'Secondary Effect',
+      trigger: 'You gain no information from a Recall Knowledge check',
+      effect: {
+        description:
+          "Reroll the triggering check. If this was a secret check, the GM rerolls rather than you; the candy doesn't give you any insight into what the GM rolled, so in that case, you're rerolling based only on guesswork. The seer becomes insert. You become temporarily immune to cinnamon seers until the next time you make daily preparations.",
+      },
+    },
+    price: [
+      {
+        value: 14,
+        type: 'gp',
+      },
+    ],
+    source: [{ title: 'Treasure Vault', page: '46' }],
+    category: 'Alchemical Foods',
     entity_type: 'EQUIPMENT',
   },
 ]
