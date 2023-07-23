@@ -30,6 +30,14 @@ export async function getEntitiesCollection<T extends EntityModel>(): Promise<
   return db.collection('entities')
 }
 
+export async function searchEntities(search?: string): Promise<EntityModel[]> {
+  const collection = await getEntitiesCollection<EntityModel>()
+
+  let query = {}
+  query = { ...query, name: { $regex: search, $options: 'i' } }
+  return collection.find(query).toArray()
+}
+
 export async function getAllEntities<T extends EntityModel>(
   entity_types: ModelType[],
   name?: string
