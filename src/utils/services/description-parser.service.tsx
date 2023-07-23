@@ -79,7 +79,7 @@ export function createComponentsForType(
           mapping.push(
             React.createElement(displayComponentFactory(type, entity), {
               value: entity,
-              id: entity.id,
+              _id: entity._id,
             })
           )
       } else {

@@ -1,5 +1,5 @@
 export interface EntityModel {
-  id: string
+  _id: string
   name: string
   description: string
   source: Source[]

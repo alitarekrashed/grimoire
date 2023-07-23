@@ -7,5 +7,5 @@ export default function TraitRecordPage() {
   const path: string[] = usePathname().split('/')
   const id = path[path.length - 1]
 
-  return <EntityRecordPage id={id} type="TRAIT"></EntityRecordPage>
+  return <EntityRecordPage _id={id} type="TRAIT"></EntityRecordPage>
 }

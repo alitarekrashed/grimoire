@@ -9,8 +9,10 @@ export async function GET(
     await fetch('http://localhost:3000/api/conditions', { cache: 'no-store' })
   ).json()
   const data = allConditions.find(
-    (condition: Condition) => condition.id === params.id
+    (condition: Condition) => condition._id === params.id
   )
+
+  console.log(allConditions)
 
   if (data) {
     return NextResponse.json(data)

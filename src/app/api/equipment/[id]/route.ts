@@ -11,7 +11,7 @@ export async function GET(
     })
   ).json()
   const data = allEquipment.find(
-    (equipment: Equipment) => equipment.id === params.id
+    (equipment: Equipment) => equipment._id === params.id
   )
 
   if (data) {

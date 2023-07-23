@@ -16,7 +16,7 @@ export async function GET(request: Request) {
 
 const allSpells: Spell[] = [
   {
-    id: '1',
+    _id: '1',
     name: 'electric arc',
     traits: ['cantrip', 'electric', 'evocation'],
     traditions: ['arcane', 'primal'],
@@ -45,7 +45,7 @@ const allSpells: Spell[] = [
     entity_type: 'SPELL',
   },
   {
-    id: '2',
+    _id: '2',
     name: 'detect magic',
     traits: ['cantrip', 'detection', 'divination'],
     traditions: ['arcane', 'primal', 'divine', 'occult'],
@@ -80,7 +80,7 @@ const allSpells: Spell[] = [
     entity_type: 'SPELL',
   },
   {
-    id: '3',
+    _id: '3',
     name: 'invisibility',
     traits: ['illusion'],
     traditions: ['arcane', 'occult'],
@@ -112,7 +112,7 @@ const allSpells: Spell[] = [
     entity_type: 'SPELL',
   },
   {
-    id: '4',
+    _id: '4',
     name: 'magic missile',
     traits: ['evocation', 'force'],
     traditions: ['arcane', 'occult'],
@@ -138,7 +138,7 @@ const allSpells: Spell[] = [
     entity_type: 'SPELL',
   },
   {
-    id: '5',
+    _id: '5',
     name: 'telekinetic projectile',
     traits: ['attack', 'cantrip', 'evocation'],
     traditions: ['arcane', 'occult'],

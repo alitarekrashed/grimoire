@@ -8,7 +8,7 @@ export async function GET(
   const allTraits = await (
     await fetch('http://localhost:3000/api/traits', { cache: 'no-store' })
   ).json()
-  const data = allTraits.find((trait: Trait) => trait.id === params.id)
+  const data = allTraits.find((trait: Trait) => trait._id === params.id)
 
   if (data) {
     return NextResponse.json(data)

@@ -22,7 +22,7 @@ export async function GET(request: Request) {
             return {
               ...item,
               ...variant,
-              id: item.id + '_' + variant.name,
+              _id: item.id + '_' + variant.name,
               name: variant.name,
               description:
                 item.description +
@@ -48,7 +48,7 @@ export async function GET(request: Request) {
 
 const allEquipment: (Equipment | EquipmentWithVariants)[] = [
   {
-    id: '1',
+    _id: '1',
     name: 'magnifying glass',
     description:
       'This quality handheld lens gives you a +1 item bonus to Perception checks to notice minute details of documents, fabric, and the like.',
@@ -65,7 +65,7 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     entity_type: 'EQUIPMENT',
   },
   {
-    id: '2',
+    _id: '2',
     name: 'potion of expeditious retreat',
     description:
       'The stopper for a <i>potion of expeditious retreat</i> is crafted to easily snap open in dire circumstances. When you drink this potion, you become @condition:fleeing@ for 1 minute, and you gain a +40-foot status bonus to all your Speeds for the duration as long as you are fleeing. You immediately Stride.',
@@ -88,7 +88,7 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     entity_type: 'EQUIPMENT',
   },
   {
-    id: '3',
+    _id: '3',
     name: 'healing potion',
     description:
       "A <i>healing potion</i> is a vial of a ruby-red liquid that imparts a tingling sensation as the drinker's wounds heal rapidly. When you drink a <i>healing potion</i>, you regain the listed number of Hit Points.",
@@ -148,7 +148,7 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     entity_type: 'EQUIPMENT_WITH_VARIANTS',
   },
   {
-    id: '4',
+    _id: '4',
     name: 'rhinocerous mask',
     description:
       'Covered with thick armor and bearing a thicker horn, a <i>rhinoceros mask</i> grants you increased momentum. If you Stride at least 10 feet, your next melee Strike before the end of your turn ignores the Hardness of objects with a Hardness of 5 or less. If the object has more than Hardness 5, the mask grants no benefit.',
@@ -180,7 +180,7 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     entity_type: 'EQUIPMENT_WITH_VARIANTS',
   },
   {
-    id: '5',
+    _id: '5',
     name: 'cloak of gnawing leaves',
     description:
       'This cloak appears to be woven from a thousand living leaves, hungry for flesh and eager to defend the cloak’s wearer.',
@@ -236,7 +236,7 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     entity_type: 'EQUIPMENT_WITH_VARIANTS',
   },
   {
-    id: '6',
+    _id: '6',
     name: 'escape fulu',
     description:
       'The <i>escape fulu</i> is a charm common among wealthy people, who wear the talisman in case of kidnapping. When you Activate this fulu, for 1 minute, you gain +2 status bonus to your attempts to Escape as well as to Stealth checks to Hide and Sneak.',
@@ -254,7 +254,7 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     source: [{ title: 'Treasure Vault', page: '77' }],
   },
   {
-    id: '7',
+    _id: '7',
     name: 'cooperative waffles',
     usage: 'held in 2 hands',
     description:
@@ -285,7 +285,7 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     entity_type: 'EQUIPMENT_WITH_VARIANTS',
   },
   {
-    id: '8',
+    _id: '8',
     name: 'invisibility potion',
     usage: 'held in 1 hand',
     level: 4,
@@ -309,7 +309,7 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     entity_type: 'EQUIPMENT',
   },
   {
-    id: '9',
+    _id: '9',
     name: "battle medic's baton",
     usage: 'held in 1 hand',
     level: 3,
@@ -338,7 +338,7 @@ const allEquipment: (Equipment | EquipmentWithVariants)[] = [
     entity_type: 'EQUIPMENT',
   },
   {
-    id: '10',
+    _id: '10',
     name: 'cinnamon seers',
     usage: 'held in 1 hand',
     level: 4,

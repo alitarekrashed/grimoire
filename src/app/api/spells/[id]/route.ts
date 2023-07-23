@@ -10,7 +10,7 @@ export async function GET(
       cache: 'no-store',
     })
   ).json()
-  const data = allSpells.find((spells: Spell) => spells.id === params.id)
+  const data = allSpells.find((spells: Spell) => spells._id === params.id)
 
   if (data) {
     return NextResponse.json(data)
