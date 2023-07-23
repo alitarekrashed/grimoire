@@ -13,11 +13,13 @@ import build from 'next/dist/build'
 import { SavingThrowDisplay } from '../activation-displays/activation-description'
 
 export default function SpellCard({
+  reference,
   value,
   contentTextSizeClassName,
   collapsible,
   onRemoved,
 }: {
+  reference?: any
   value: Spell
   contentTextSizeClassName?: string
   collapsible?: boolean
@@ -59,6 +61,7 @@ export default function SpellCard({
 
   return (
     <Card
+      reference={reference}
       data={value}
       type={type}
       level={value.rank}
