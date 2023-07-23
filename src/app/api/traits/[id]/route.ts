@@ -1,4 +1,4 @@
-import Trait from '@/models/trait'
+import { getEntityById } from '@/utils/mongodb'
 import { NextResponse } from 'next/server'
 
 export async function GET(
@@ -8,7 +8,7 @@ export async function GET(
   const allTraits = await (
     await fetch('http://localhost:3000/api/traits', { cache: 'no-store' })
   ).json()
-  const data = allTraits.find((trait: Trait) => trait._id === params.id)
+  const data = await getEntityById(params.id, ['TRAIT'])
 
   if (data) {
     return NextResponse.json(data)

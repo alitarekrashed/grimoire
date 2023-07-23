@@ -26,7 +26,7 @@ export default function SplitViewDisplay<T extends EntityModel>({
     const current = new URLSearchParams(Array.from(searchParams.entries()))
     let foundEntities: T[] = []
     for (const key of current.keys()) {
-      const foundEntity = entities.find((value) => value.id === key)
+      const foundEntity = entities.find((value) => value._id === key)
       if (foundEntity && foundEntities.includes(foundEntity) === false) {
         foundEntities.push(foundEntity)
       }
@@ -35,7 +35,7 @@ export default function SplitViewDisplay<T extends EntityModel>({
   }, [entities, searchParams])
 
   useEffect(() => {
-    const query = `?${cards.map((val) => val.id).join('&')}`
+    const query = `?${cards.map((val) => val._id).join('&')}`
     router.replace(`${pathname}${query}`)
   }, [cards, pathname, router])
 
@@ -90,8 +90,8 @@ export default function SplitViewDisplay<T extends EntityModel>({
         } shadow-stone-200 drop-shadow-md`}
       >
         <CardDisplayList
-          children={cards.map((value) => (
-            <div key={value.id} className="pb-4">
+          cards={cards.map((value) => (
+            <div key={value._id.toString()} className="pb-4">
               {CardFactory<T>({
                 card: value,
                 onRemoved: handleRemoved,

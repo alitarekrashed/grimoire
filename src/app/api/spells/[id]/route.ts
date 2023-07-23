@@ -1,4 +1,4 @@
-import { Equipment } from '@/models/equipment'
+import { getEntityById } from '@/utils/mongodb'
 import { NextResponse } from 'next/server'
 
 export async function GET(
@@ -10,7 +10,7 @@ export async function GET(
       cache: 'no-store',
     })
   ).json()
-  const data = allSpells.find((spells: Spell) => spells._id === params.id)
+  const data = await getEntityById(params.id, ['SPELL'])
 
   if (data) {
     return NextResponse.json(data)

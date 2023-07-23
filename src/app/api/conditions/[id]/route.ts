@@ -1,13 +1,11 @@
-import Condition from '@/models/condition'
-import { getEntitiesCollection, getEntityById } from '@/utils/mongodb'
-import { Collection, Filter, ObjectId } from 'mongodb'
+import { getEntityById } from '@/utils/mongodb'
 import { NextResponse } from 'next/server'
 
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  const data = await getEntityById(params.id, 'CONDITION')
+  const data = await getEntityById(params.id, ['CONDITION'])
 
   if (data) {
     return NextResponse.json(data)

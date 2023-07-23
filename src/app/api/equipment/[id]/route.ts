@@ -1,4 +1,4 @@
-import { Equipment } from '@/models/equipment'
+import { getEntityById } from '@/utils/mongodb'
 import { NextResponse } from 'next/server'
 
 export async function GET(
@@ -10,9 +10,10 @@ export async function GET(
       cache: 'no-store',
     })
   ).json()
-  const data = allEquipment.find(
-    (equipment: Equipment) => equipment._id === params.id
-  )
+  const data = await getEntityById(params.id, [
+    'EQUIPMENT',
+    'EQUIPMENT_WITH_VARIANTS',
+  ])
 
   if (data) {
     return NextResponse.json(data)

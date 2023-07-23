@@ -31,17 +31,22 @@ export async function getEntitiesCollection<T extends EntityModel>(): Promise<
 }
 
 export async function getAllEntities<T extends EntityModel>(
-  entity_type: ModelType,
+  entity_types: ModelType[],
   name?: string
 ): Promise<WithId<T>[]> {
   const collection = await getEntitiesCollection<T>()
 
   let search: Filter<T> = {}
+  search = {
+    ...search,
+    entity_type: {
+      $in: entity_types,
+    },
+  }
   if (name) {
     search = {
       ...search,
       name: name,
-      entity_type: entity_type,
     }
   }
   return collection.find(search).sort('name', 1).toArray()
@@ -49,7 +54,7 @@ export async function getAllEntities<T extends EntityModel>(
 
 export async function getEntityById<T extends EntityModel>(
   id: string | ObjectId,
-  entity_type: ModelType
+  entity_types: ModelType[]
 ): Promise<WithId<T> | null> {
   const collection: Collection<T> = await getEntitiesCollection<T>()
 
@@ -57,7 +62,9 @@ export async function getEntityById<T extends EntityModel>(
   search = {
     ...search,
     _id: new ObjectId(id),
-    entity_type: entity_type,
+    entity_type: {
+      $in: entity_types,
+    },
   }
 
   return await collection.findOne(search)
