@@ -6,20 +6,25 @@ import { useEffect, useState } from 'react'
 export function SearchBar() {
   const [query, setQuery] = useState('')
   const [suggestions, setSuggestions] = useState([])
+  const [hideSuggestions, setHideSuggestions] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const data = await fetch(`http://localhost:3000/api?q=${query}`, {
-          cache: 'no-store',
-        })
-          .then((result) => result.json())
-          .then((val) => {
-            console.log(val)
-            setSuggestions(val)
+      if (query.length > 2) {
+        try {
+          await fetch(`http://localhost:3000/api?q=${query}`, {
+            cache: 'no-store',
           })
-      } catch (error) {
-        console.log(error)
+            .then((result) => result.json())
+            .then((val) => {
+              console.log(val)
+              setSuggestions(val)
+            })
+        } catch (error) {
+          console.log(error)
+        }
+      } else {
+        setSuggestions([])
       }
     }
 
@@ -28,33 +33,32 @@ export function SearchBar() {
 
   return (
     <>
-      <div className="flex place-content-center">
-        <input
-          className="text-stone-800 rounded h-10 w-144 box-border pl-1 focus:transition-all focus:duration-200 focus:ease-in-out"
-          type="text"
-          placeholder="Search for an item"
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value)
-          }}
-        />
-      </div>
-      <div className={`p-5 ${roboto_serif.className} font-normal`}>
-        TODO: <br />
-        2. instead of cards, display as suggestions with just the header (and
-        maybe traits?)
-        <br />
-        3. clicking a header takes you to record page? maybe the action is
-        customizable so eventually on the home page itll open the card, but
-        elsewhere on the site it takes u to a dedicated record page <br />
-        {suggestions.map((card: EntityModel) => (
-          <div key={card._id.toString()} className="pb-4">
-            {CardFactory<T>({
-              card: card,
-              collapsible: true,
-            })}
-          </div>
-        ))}
+      <div className="grid grid-cols-1">
+        <div className="justify-self-center">
+          <input
+            className="bg-stone-800 rounded h-10 w-144 box-border pl-1 justify-self-center focus:transition-all focus:duration-200 focus:ease-in-out"
+            type="text"
+            placeholder="Search for an item"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value)
+            }}
+          />
+          {hideSuggestions === false && (
+            <div
+              className={`font-normal max-h-80 h-fit overflow-y-scroll bg-stone-800 rounded`}
+            >
+              {suggestions.map((suggestion: EntityModel) => (
+                <div
+                  className="p-1 border-x border-t border-stone-300 hover:bg-stone-700"
+                  key={suggestion._id.toString()}
+                >
+                  {suggestion['name']}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </>
   )
