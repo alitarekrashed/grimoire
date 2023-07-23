@@ -1,6 +1,8 @@
 'use client'
 
-import { ysabeau } from '@/utils/fonts'
+import { EntityModel } from '@/models/entity-model'
+import { ysabeau, roboto_serif } from '@/utils/fonts'
+import { CardFactory } from '@/utils/services/card-factory'
 import { useEffect, useState } from 'react'
 
 export default function Home() {
@@ -28,18 +30,26 @@ export default function Home() {
 
   return (
     <div className={`h-full ${ysabeau.className}`}>
-      <h2 className="text-3xl text-center">Search for something!</h2>
-
-      <div className="mt-5 flex place-content-center">
+      <div className="flex place-content-center">
         <input
-          className="text-stone-800"
+          className="text-stone-800 rounded h-10 w-144 box-border pl-1"
           type="text"
-          placeholder="Search data..."
+          placeholder="Search for an item"
           value={query}
           onChange={(e) => {
             setQuery(e.target.value)
           }}
         />
+      </div>
+      <div className={`p-5 ${roboto_serif.className} font-normal`}>
+        {suggestions.map((card: EntityModel) => (
+          <div key={card._id.toString()} className="pb-4">
+            {CardFactory<T>({
+              card: card,
+              collapsible: true,
+            })}
+          </div>
+        ))}
       </div>
     </div>
   )
