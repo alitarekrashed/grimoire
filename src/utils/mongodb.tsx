@@ -1,5 +1,13 @@
-import { EntityModel } from '@/models/entity-model'
-import { Collection, Db, Filter, MongoClient, ObjectId, WithId } from 'mongodb'
+import { EntityModel, ModelType } from '@/models/entity-model'
+import {
+  Collection,
+  Condition,
+  Db,
+  Filter,
+  MongoClient,
+  ObjectId,
+  WithId,
+} from 'mongodb'
 
 const uri = process.env.MONGODB_URI
 
@@ -23,6 +31,7 @@ export async function getEntitiesCollection<T extends EntityModel>(): Promise<
 }
 
 export async function getAllEntities<T extends EntityModel>(
+  entity_type: ModelType,
   name?: string
 ): Promise<WithId<T>[]> {
   const collection = await getEntitiesCollection<T>()
@@ -32,18 +41,24 @@ export async function getAllEntities<T extends EntityModel>(
     search = {
       ...search,
       name: name,
+      entity_type: entity_type,
     }
   }
   return collection.find(search).sort('name', 1).toArray()
 }
 
 export async function getEntityById<T extends EntityModel>(
-  id: string | ObjectId
-): Promise<WithId<T>[]> {
-  const collection: Collection<Condition> =
-    await getEntitiesCollection<Condition>()
+  id: string | ObjectId,
+  entity_type: ModelType
+): Promise<WithId<T> | null> {
+  const collection: Collection<T> = await getEntitiesCollection<T>()
 
-  return await collection.findOne({
+  let search: Filter<T> = {}
+  search = {
+    ...search,
     _id: new ObjectId(id),
-  })
+    entity_type: entity_type,
+  }
+
+  return await collection.findOne(search)
 }
