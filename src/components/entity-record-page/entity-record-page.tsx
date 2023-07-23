@@ -5,16 +5,16 @@ import { CardFactory } from '@/utils/services/card-factory'
 import { useEffect, useState } from 'react'
 
 export function EntityRecordPage<T extends EntityModel>({
-  id,
+  _id,
   type,
 }: {
-  id: string
+  _id: string
   type: ModelType
 }) {
   const [entity, setEntity] = useState<T>()
 
   useEffect(() => {
-    fetch(`${baseUrlFactory(type)}/${id}`, {
+    fetch(`${baseUrlFactory(type)}/${_id}`, {
       cache: 'no-store',
     })
       .then((result) => result.json())

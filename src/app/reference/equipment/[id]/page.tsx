@@ -7,5 +7,5 @@ export default function EquipmentRecordPage() {
   const path: string[] = usePathname().split('/')
   const id = path[path.length - 1]
 
-  return <EntityRecordPage id={id} type="EQUIPMENT"></EntityRecordPage>
+  return <EntityRecordPage _id={id} type="EQUIPMENT"></EntityRecordPage>
 }

@@ -7,5 +7,5 @@ export default function ConditionRecordPage() {
   const path: string[] = usePathname().split('/')
   const id = path[path.length - 1]
 
-  return <EntityRecordPage id={id} type="CONDITION"></EntityRecordPage>
+  return <EntityRecordPage _id={id} type="CONDITION"></EntityRecordPage>
 }
