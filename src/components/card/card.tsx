@@ -4,7 +4,7 @@ import { EntityModel } from '@/models/entity-model'
 import { roboto_serif } from '@/utils/fonts'
 import * as Collapsible from '@radix-ui/react-collapsible'
 import * as Separator from '@radix-ui/react-separator'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 import styles from './card.module.css'
 import SourceDisplay from './source-display'
@@ -41,6 +41,14 @@ export default function Card<T extends EntityModel>({
 
   const hasShortActivation = !activation?.effect
 
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }
+  }, [])
+
   useEffect(() => {
     setTimeout(() => {
       setFadeIn(() => true)
@@ -49,6 +57,7 @@ export default function Card<T extends EntityModel>({
 
   return (
     <div
+      ref={ref}
       className={`transition-opacity duration-1000 ${
         fadeIn ? 'opacity-100' : 'opacity-0'
       } grid grid-cols-1 p-3 border border-stone-400 rounded bg-stone-800 shadow-stone-400 drop-shadow-md ${

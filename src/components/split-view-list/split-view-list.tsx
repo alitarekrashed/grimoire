@@ -3,7 +3,7 @@
 import { EntityModel } from '@/models/entity-model'
 import { CardFactory } from '@/utils/services/card-factory'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import CardDisplayList from '../card-display-list/card-display-list'
 import SelectableGrid from '../selectable-grid/selectable-grid'
 
