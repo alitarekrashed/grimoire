@@ -46,6 +46,7 @@ export function CardFactory<T extends EntityModel>({
     case 'CONDITION':
       return (
         <ConditionCard
+          reference={reference}
           value={card as unknown as Condition}
           collapsible={collapsible}
           onRemoved={onRemoved as unknown as (item: Condition) => void}
@@ -55,6 +56,7 @@ export function CardFactory<T extends EntityModel>({
     case 'TRAIT':
       return (
         <TraitCard
+          reference={reference}
           value={card as unknown as Trait}
           collapsible={collapsible}
           onRemoved={onRemoved as unknown as (item: Trait) => void}
@@ -64,6 +66,7 @@ export function CardFactory<T extends EntityModel>({
     case 'SPELL':
       return (
         <SpellCard
+          reference={reference}
           value={card as unknown as Spell}
           collapsible={collapsible}
           onRemoved={onRemoved as unknown as (item: Spell) => void}

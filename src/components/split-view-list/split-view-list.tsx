@@ -58,6 +58,7 @@ export default function SplitViewDisplay<T extends EntityModel>({
       } else {
         newCards[index].reference.current?.scrollIntoView({
           behavior: 'smooth',
+          block: 'end',
         })
       }
 

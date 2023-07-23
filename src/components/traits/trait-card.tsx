@@ -4,11 +4,13 @@ import Trait from '@/models/trait'
 import Card from '../card/card'
 
 export default function TraitCard({
+  reference,
   value,
   contentTextSizeClassName,
   collapsible,
   onRemoved,
 }: {
+  reference?: any
   value: Trait
   contentTextSizeClassName?: string
   collapsible?: boolean
@@ -16,6 +18,7 @@ export default function TraitCard({
 }) {
   return (
     <Card
+      reference={reference}
       data={value}
       contentTextSizeClassName={contentTextSizeClassName}
       type="Trait"
