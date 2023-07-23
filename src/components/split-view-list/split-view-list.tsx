@@ -17,7 +17,7 @@ export default function SplitViewDisplay<T extends EntityModel>({
   entities: T[]
   gridSize?: 'small' | 'medium'
 }) {
-  const [cards, setCards] = useState<{ value: T; reference: any }[]>([])
+  const [cards, setCards] = useState<CardWithRef[]>([])
 
   const router = useRouter()
   const pathname = usePathname()
@@ -25,7 +25,7 @@ export default function SplitViewDisplay<T extends EntityModel>({
 
   useEffect(() => {
     const current = new URLSearchParams(Array.from(searchParams.entries()))
-    let foundEntities: { value: T; reference: any }[] = []
+    let foundEntities: CardWithRef[] = []
     for (const key of current.keys()) {
       const foundEntity = entities.find((value) => value._id === key)
       if (
@@ -112,4 +112,9 @@ export default function SplitViewDisplay<T extends EntityModel>({
       </div>
     </div>
   )
+}
+
+interface CardWithRef<T extends EntityModel> {
+  value: T
+  ref: any
 }
