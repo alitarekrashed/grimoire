@@ -11,11 +11,13 @@ import Trait from '@/models/trait'
 import { ReactNode } from 'react'
 
 export function CardFactory<T extends EntityModel>({
+  reference,
   card,
   onRemoved,
   contentTextSizeClassName,
   collapsible,
 }: {
+  reference?: any
   card: T
   onRemoved?: (item: T) => void
   contentTextSizeClassName?: string
@@ -25,6 +27,7 @@ export function CardFactory<T extends EntityModel>({
     case 'EQUIPMENT':
       return (
         <EquipmentCard
+          reference={reference}
           value={card as unknown as Equipment}
           collapsible={collapsible}
           onRemoved={onRemoved as unknown as (item: Equipment) => void}

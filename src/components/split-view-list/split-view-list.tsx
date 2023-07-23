@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import CardDisplayList from '../card-display-list/card-display-list'
 import SelectableGrid from '../selectable-grid/selectable-grid'
+import React from 'react'
 
 export default function SplitViewDisplay<T extends EntityModel>({
   columnDefs,
@@ -16,7 +17,7 @@ export default function SplitViewDisplay<T extends EntityModel>({
   entities: T[]
   gridSize?: 'small' | 'medium'
 }) {
-  const [cards, setCards] = useState<T[]>([])
+  const [cards, setCards] = useState<{ value: T; reference: any }[]>([])
 
   const router = useRouter()
   const pathname = usePathname()
@@ -24,18 +25,26 @@ export default function SplitViewDisplay<T extends EntityModel>({
 
   useEffect(() => {
     const current = new URLSearchParams(Array.from(searchParams.entries()))
-    let foundEntities: T[] = []
+    let foundEntities: { value: T; reference: any }[] = []
     for (const key of current.keys()) {
       const foundEntity = entities.find((value) => value._id === key)
-      if (foundEntity && foundEntities.includes(foundEntity) === false) {
-        foundEntities.push(foundEntity)
+      if (
+        foundEntity &&
+        foundEntities
+          .map((entity) => entity.value._id)
+          .includes(foundEntity._id) === false
+      ) {
+        foundEntities.push({ value: foundEntity, reference: React.createRef() })
       }
     }
     setCards(foundEntities)
   }, [entities, searchParams])
 
   useEffect(() => {
-    const query = `?${cards.map((val) => val._id).join('&')}`
+    const query = `?${cards
+      .map((card) => card.value)
+      .map((val) => val._id)
+      .join('&')}`
     router.replace(`${pathname}${query}`)
   }, [cards, pathname, router])
 
@@ -43,16 +52,13 @@ export default function SplitViewDisplay<T extends EntityModel>({
     setCards((cards) => {
       let newCards = [...cards]
 
-      let index: number = cards.indexOf(item)
+      let index: number = cards.map((card) => card.value).indexOf(item)
       if (index === -1) {
-        newCards = [item, ...cards]
+        newCards = [{ value: item, reference: React.createRef() }, ...cards]
       } else {
-        // this shifts the selected card to the top... maybe unnecessary?
-        // what if it autoscrolled to their position???
-        let shiftedCards = cards.slice()
-        shiftedCards.splice(index, 1)
-        shiftedCards.unshift(item)
-        newCards = shiftedCards
+        newCards[index].reference.current?.scrollIntoView({
+          behavior: 'smooth',
+        })
       }
 
       return newCards
@@ -61,7 +67,7 @@ export default function SplitViewDisplay<T extends EntityModel>({
 
   function handleRemoved(item: T) {
     setCards((cards) => {
-      let index = cards.indexOf(item)
+      let index: number = cards.map((card) => card.value).indexOf(item)
       if (index > -1) {
         const newCards = cards.slice()
         newCards.splice(index, 1)
@@ -90,10 +96,11 @@ export default function SplitViewDisplay<T extends EntityModel>({
         } shadow-stone-200 drop-shadow-md`}
       >
         <CardDisplayList
-          cards={cards.map((value) => (
-            <div key={value._id.toString()} className="pb-4">
+          cards={cards.map((card) => (
+            <div key={card.value._id.toString()} className="pb-4">
               {CardFactory<T>({
-                card: value,
+                reference: card.reference,
+                card: card.value,
                 onRemoved: handleRemoved,
                 contentTextSizeClassName: 'sm',
                 collapsible: true,

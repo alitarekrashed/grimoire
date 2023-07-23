@@ -6,10 +6,12 @@ import { EquipmentOptionalFields } from './equipment-optional-fields'
 import { SavingThrowDisplay } from '../activation-displays/activation-description'
 
 export default function EquipmentCard({
+  reference,
   value,
   collapsible,
   onRemoved,
 }: {
+  reference?: any
   value: Equipment
   collapsible?: boolean
   onRemoved?: (item: Equipment) => void
@@ -30,6 +32,7 @@ export default function EquipmentCard({
 
   return (
     <Card
+      reference={reference}
       data={value}
       type="Item"
       level={value.level}
