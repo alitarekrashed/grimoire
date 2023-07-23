@@ -8,7 +8,7 @@ import { EntityModel } from '@/models/entity-model'
 import { Equipment, EquipmentWithVariants } from '@/models/equipment'
 import { Spell } from '@/models/spell'
 import Trait from '@/models/trait'
-import { ReactNode } from 'react'
+import { ReactNode, RefObject } from 'react'
 
 export function CardFactory<T extends EntityModel>({
   reference,
@@ -17,7 +17,7 @@ export function CardFactory<T extends EntityModel>({
   contentTextSizeClassName,
   collapsible,
 }: {
-  reference?: any
+  reference?: RefObject<HTMLDivElement>
   card: T
   onRemoved?: (item: T) => void
   contentTextSizeClassName?: string

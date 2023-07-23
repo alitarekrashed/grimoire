@@ -3,7 +3,7 @@
 import { EntityModel } from '@/models/entity-model'
 import { CardFactory } from '@/utils/services/card-factory'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { RefObject, useEffect, useRef, useState } from 'react'
 import CardDisplayList from '../card-display-list/card-display-list'
 import SelectableGrid from '../selectable-grid/selectable-grid'
 import React from 'react'
@@ -17,7 +17,7 @@ export default function SplitViewDisplay<T extends EntityModel>({
   entities: T[]
   gridSize?: 'small' | 'medium'
 }) {
-  const [cards, setCards] = useState<CardWithRef[]>([])
+  const [cards, setCards] = useState<CardWithRef<T>[]>([])
 
   const router = useRouter()
   const pathname = usePathname()
@@ -34,7 +34,10 @@ export default function SplitViewDisplay<T extends EntityModel>({
           .map((entity) => entity.value._id)
           .includes(foundEntity._id) === false
       ) {
-        foundEntities.push({ value: foundEntity, reference: React.createRef() })
+        foundEntities.push({
+          value: foundEntity,
+          reference: React.createRef<HTMLDivElement>(),
+        })
       }
     }
     setCards(foundEntities)
@@ -54,7 +57,10 @@ export default function SplitViewDisplay<T extends EntityModel>({
 
       let index: number = cards.map((card) => card.value).indexOf(item)
       if (index === -1) {
-        newCards = [{ value: item, reference: React.createRef() }, ...cards]
+        newCards = [
+          { value: item, reference: React.createRef<HTMLDivElement>() },
+          ...cards,
+        ]
       } else {
         newCards[index].reference.current?.scrollIntoView({
           behavior: 'smooth',
@@ -116,5 +122,5 @@ export default function SplitViewDisplay<T extends EntityModel>({
 
 interface CardWithRef<T extends EntityModel> {
   value: T
-  ref: any
+  reference: RefObject<HTMLDivElement>
 }

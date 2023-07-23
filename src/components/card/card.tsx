@@ -5,7 +5,7 @@ import { EntityModel } from '@/models/entity-model'
 import { roboto_serif } from '@/utils/fonts'
 import * as Collapsible from '@radix-ui/react-collapsible'
 import * as Separator from '@radix-ui/react-separator'
-import { useCallback, useEffect, useState } from 'react'
+import { RefObject, useCallback, useEffect, useState } from 'react'
 import { ActivationDescription } from '../activation-displays/activation-description'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 import styles from './card.module.css'
@@ -26,7 +26,7 @@ export default function Card<T extends EntityModel>({
   collapsible,
   onRemoved,
 }: {
-  reference?: any
+  reference?: RefObject<HTMLDivElement>
   data: T
   type: string
   level?: number | number[] | undefined
@@ -39,7 +39,7 @@ export default function Card<T extends EntityModel>({
   collapsible?: boolean
   onRemoved?: (item: T) => void
 }) {
-  const [ref, setRef] = useState(reference)
+  const [ref, setRef] = useState<RefObject<HTMLDivElement>>(reference)
   const [fadeIn, setFadeIn] = useState(false)
 
   const hasShortActivation = !activation?.effect

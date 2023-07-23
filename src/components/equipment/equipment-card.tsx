@@ -4,6 +4,7 @@ import { Equipment } from '@/models/equipment'
 import Card from '../card/card'
 import { EquipmentOptionalFields } from './equipment-optional-fields'
 import { SavingThrowDisplay } from '../activation-displays/activation-description'
+import { RefObject } from 'react'
 
 export default function EquipmentCard({
   reference,
@@ -11,7 +12,7 @@ export default function EquipmentCard({
   collapsible,
   onRemoved,
 }: {
-  reference?: any
+  reference?: RefObject<HTMLDivElement>
   value: Equipment
   collapsible?: boolean
   onRemoved?: (item: Equipment) => void
