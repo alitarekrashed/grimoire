@@ -17,7 +17,6 @@ export function SearchBar() {
           })
             .then((result) => result.json())
             .then((val) => {
-              console.log(val)
               setSuggestions(val)
             })
         } catch (error) {

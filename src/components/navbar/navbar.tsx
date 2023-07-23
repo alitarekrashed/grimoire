@@ -7,6 +7,10 @@ export default function Navbar() {
 
   const navItems = [
     {
+      title: 'Home',
+      link: '/',
+    },
+    {
       title: 'Equipment',
       link: '/reference/equipment',
     },
