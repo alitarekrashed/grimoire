@@ -1,18 +1,21 @@
 import Condition from '@/models/condition'
+import { getEntitiesCollection } from '@/utils/mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 import { NextResponse } from 'next/server'
 
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  const allConditions = await (
-    await fetch('http://localhost:3000/api/conditions', { cache: 'no-store' })
-  ).json()
-  const data = allConditions.find(
-    (condition: Condition) => condition._id === params.id
-  )
+  const collection: Collection<Condition> =
+    await getEntitiesCollection<Condition>()
 
-  console.log(allConditions)
+  let data: Condition | null = await collection.findOne({
+    _id: new ObjectId(params.id),
+  })
+
+  console.log('*********')
+  console.log(data)
 
   if (data) {
     return NextResponse.json(data)

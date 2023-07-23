@@ -1,5 +1,7 @@
+import { ObjectId } from 'mongodb'
+
 export interface EntityModel {
-  _id: string
+  _id: ObjectId | string
   name: string
   description: string
   source: Source[]
