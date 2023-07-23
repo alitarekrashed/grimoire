@@ -2,6 +2,7 @@
 
 import Trait from '@/models/trait'
 import Card from '../card/card'
+import { RefObject } from 'react'
 
 export default function TraitCard({
   reference,
@@ -10,7 +11,7 @@ export default function TraitCard({
   collapsible,
   onRemoved,
 }: {
-  reference?: any
+  reference?: RefObject<HTMLDivElement>
   value: Trait
   contentTextSizeClassName?: string
   collapsible?: boolean

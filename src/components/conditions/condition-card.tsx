@@ -2,6 +2,7 @@
 
 import Condition from '@/models/condition'
 import Card from '../card/card'
+import { RefObject } from 'react'
 
 export default function ConditionCard({
   reference,
@@ -10,7 +11,7 @@ export default function ConditionCard({
   collapsible,
   onRemoved,
 }: {
-  reference?: any
+  reference?: RefObject<HTMLDivElement>
   value: Condition
   contentTextSizeClassName?: string
   collapsible?: boolean

@@ -11,17 +11,16 @@ import { FieldDefinition, LabelsList } from '../labels-list/labels-list'
 import * as Separator from '@radix-ui/react-separator'
 import build from 'next/dist/build'
 import { SavingThrowDisplay } from '../activation-displays/activation-description'
+import { RefObject } from 'react'
 
 export default function SpellCard({
   reference,
   value,
-  contentTextSizeClassName,
   collapsible,
   onRemoved,
 }: {
-  reference?: any
+  reference?: RefObject<HTMLDivElement>
   value: Spell
-  contentTextSizeClassName?: string
   collapsible?: boolean
   onRemoved?: (item: Spell) => void
 }) {
