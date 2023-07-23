@@ -32,7 +32,7 @@ export default function Home() {
     <div className={`h-full ${ysabeau.className}`}>
       <div className="flex place-content-center">
         <input
-          className="text-stone-800 rounded h-10 w-144 box-border pl-1"
+          className="text-stone-800 rounded h-10 w-144 box-border pl-1 focus:transition-all focus:duration-200 focus:ease-in-out"
           type="text"
           placeholder="Search for an item"
           value={query}
