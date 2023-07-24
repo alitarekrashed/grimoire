@@ -1,7 +1,8 @@
 import { EntityModel } from '@/models/entity-model'
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { SearchResult } from './search-result'
 import { useRouter } from 'next/navigation'
+import { useDebounce } from '@/utils/debounce'
 
 export function SearchBar() {
   const router = useRouter()
@@ -9,7 +10,7 @@ export function SearchBar() {
   const [suggestions, setSuggestions] = useState([])
   const [hideSuggestions, setHideSuggestions] = useState(false)
 
-  useEffect(() => {
+  const debouncedRequest = useDebounce(() => {
     const fetchData = async () => {
       if (query.length >= 1) {
         try {
@@ -29,8 +30,14 @@ export function SearchBar() {
     }
 
     fetchData()
-  }, [query])
+  })
 
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setQuery(value)
+
+    debouncedRequest()
+  }
   return (
     <>
       <div className="grid grid-cols-1">
@@ -41,9 +48,7 @@ export function SearchBar() {
             type="text"
             placeholder="Search for an item"
             value={query}
-            onChange={(e) => {
-              setQuery(e.target.value)
-            }}
+            onChange={onChange}
             onFocus={() => setHideSuggestions(false)}
             onBlur={async () => {
               setTimeout(() => {
