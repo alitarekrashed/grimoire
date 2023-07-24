@@ -3,6 +3,7 @@ import React from 'react'
 export interface FieldDefinition {
   label: string
   value: any | undefined
+  valueClassName?: string // TODO consider making this better... maybe this should become a value formatter? to allow formatting of currencies too?
 }
 
 export function LabelsList({
@@ -27,7 +28,9 @@ export function LabelsList({
           label={field.label}
           value={field.value}
           labelClassName={labelClassName}
-          valueClassName={valueClassName}
+          valueClassName={`${valueClassName} ${
+            field.valueClassName && field.valueClassName
+          }`}
         ></CardLabel>
       )
       if (
