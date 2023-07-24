@@ -1,8 +1,10 @@
 import { EntityModel } from '@/models/entity-model'
 import { useEffect, useState } from 'react'
 import { SearchResult } from './search-result'
+import { useRouter } from 'next/navigation'
 
 export function SearchBar() {
+  const router = useRouter()
   const [query, setQuery] = useState('')
   const [suggestions, setSuggestions] = useState([])
   const [hideSuggestions, setHideSuggestions] = useState(false)
@@ -47,12 +49,15 @@ export function SearchBar() {
               className={`font-normal max-h-80 h-fit overflow-y-scroll bg-stone-800 rounded-b-lg border-b border-stone-300`}
             >
               {suggestions.map((suggestion: EntityModel) => (
-                <div
-                  className="p-1 border-x border-t border-stone-300 hover:bg-stone-700"
+                <SearchResult
                   key={suggestion._id.toString()}
-                >
-                  <SearchResult data={suggestion}></SearchResult>
-                </div>
+                  data={suggestion}
+                  handleClick={() =>
+                    router.push(
+                      `/reference/${getRoute(suggestion)}/${suggestion._id}`
+                    )
+                  }
+                ></SearchResult>
               ))}
             </div>
           )}
@@ -60,4 +65,18 @@ export function SearchBar() {
       </div>
     </>
   )
+}
+
+function getRoute(data: EntityModel): string {
+  switch (data.entity_type) {
+    case 'EQUIPMENT':
+    case 'EQUIPMENT_WITH_VARIANTS':
+      return 'equipment'
+    case 'SPELL':
+      return 'spells'
+    case 'CONDITION':
+      return 'conditions'
+    case 'TRAIT':
+      return 'traits'
+  }
 }
