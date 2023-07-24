@@ -1,8 +1,9 @@
 import { EntityModel } from '@/models/entity-model'
-import { ChangeEvent, useEffect, useState } from 'react'
-import { SearchResult } from './search-result'
-import { useRouter } from 'next/navigation'
 import { useDebounce } from '@/utils/debounce'
+import { useRouter } from 'next/navigation'
+import { ChangeEvent, useState } from 'react'
+import { SearchResult } from './search-result'
+import { ysabeau_semibold, ysabeau_thin } from '@/utils/fonts'
 
 export function SearchBar({ size }: { size?: 'small' | 'large' }) {
   const router = useRouter()
@@ -46,7 +47,9 @@ export function SearchBar({ size }: { size?: 'small' | 'large' }) {
           <input
             className={`bg-stone-800 rounded-lg h-10 ${
               size === 'small' ? 'w-80' : 'w-144'
-            } box-border pl-1 justify-self-center focus:transition-all focus:duration-200 focus:ease-in-out`}
+            } box-border pl-1 justify-self-center focus:transition-all focus:duration-200 focus:ease-in-out ${
+              ysabeau_thin.className
+            }`}
             type="text"
             placeholder="Search for an item"
             value={query}
@@ -62,7 +65,9 @@ export function SearchBar({ size }: { size?: 'small' | 'large' }) {
             <div
               className={`z-10 ${
                 size === 'small' ? 'w-80' : 'w-144'
-              } font-normal absolute max-h-80 h-fit overflow-y-scroll bg-stone-800 rounded-b-lg border-b border-stone-300`}
+              } font-normal absolute max-h-80 h-fit overflow-y-scroll bg-stone-800 rounded-b-lg border-b border-stone-300 ${
+                ysabeau_semibold.className
+              }`}
             >
               {suggestions.map((suggestion: EntityModel) => (
                 <SearchResult

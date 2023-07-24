@@ -20,3 +20,15 @@ export const ysabeau = Ysabeau({
   style: 'normal',
   weight: '800',
 })
+
+export const ysabeau_semibold = Ysabeau({
+  subsets: ['latin'],
+  style: 'normal',
+  weight: '600',
+})
+
+export const ysabeau_thin = Ysabeau({
+  subsets: ['latin'],
+  style: 'normal',
+  weight: '400',
+})
