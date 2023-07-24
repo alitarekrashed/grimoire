@@ -11,7 +11,7 @@ export function SearchBar() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (query.length > 2) {
+      if (query.length >= 1) {
         try {
           await fetch(`http://localhost:3000/api?q=${query}`, {
             cache: 'no-store',
