@@ -35,6 +35,7 @@ export function SearchBar() {
     <>
       <div className="grid grid-cols-1">
         <div className="justify-self-center">
+          {/* TODO: add animation to fade in/out during focus and onBlur? */}
           <input
             className="bg-stone-800 rounded h-10 w-144 box-border pl-1 justify-self-center focus:transition-all focus:duration-200 focus:ease-in-out"
             type="text"
@@ -42,6 +43,12 @@ export function SearchBar() {
             value={query}
             onChange={(e) => {
               setQuery(e.target.value)
+            }}
+            onFocus={() => setHideSuggestions(false)}
+            onBlur={async () => {
+              setTimeout(() => {
+                setHideSuggestions(true)
+              }, 200)
             }}
           />
           {hideSuggestions === false && suggestions.length > 0 && (
