@@ -1,6 +1,4 @@
 import { EntityModel } from '@/models/entity-model'
-import { roboto_serif } from '@/utils/fonts'
-import { CardFactory } from '@/utils/services/card-factory'
 import { useEffect, useState } from 'react'
 import { SearchResult } from './search-result'
 

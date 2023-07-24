@@ -3,11 +3,17 @@ import { EquipmentWithVariants } from '@/models/equipment'
 import { Rarity } from '../card/traits-list'
 import { ReactNode } from 'react'
 import React from 'react'
+import { useRouter } from 'next/navigation'
 
 export function SearchResult({ data }: { data: EntityModel }) {
+  const router = useRouter()
+
   const level: string | undefined = buildLevelDisplay(data)
   return (
-    <div className="flex justify-between">
+    <div
+      className="flex justify-between cursor-pointer"
+      onClick={() => router.push(`/reference/${getRoute(data)}/${data._id}`)}
+    >
       <span>
         {data.name} {buildRarityDisplay(data)}
       </span>
@@ -16,6 +22,20 @@ export function SearchResult({ data }: { data: EntityModel }) {
       </span>
     </div>
   )
+}
+
+function getRoute(data: EntityModel): string {
+  switch (data.entity_type) {
+    case 'EQUIPMENT':
+    case 'EQUIPMENT_WITH_VARIANTS':
+      return 'equipment'
+    case 'SPELL':
+      return 'spells'
+    case 'CONDITION':
+      return 'conditions'
+    case 'TRAIT':
+      return 'traits'
+  }
 }
 
 function getType(data: EntityModel): string {
