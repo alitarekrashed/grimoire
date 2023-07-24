@@ -66,6 +66,7 @@ function EquipmentTypesList({
       {
         label: 'Type',
         value: value.name,
+        valueClassName: 'italic',
       },
       {
         label: 'Level',
@@ -79,7 +80,7 @@ function EquipmentTypesList({
     return (
       <div key={value.name}>
         <Separator.Root
-          className="w-full bg-stone-400	h-px"
+          className="w-full bg-stone-400 h-px"
           style={{ margin: '10px 0' }}
         />
         <div className="mb-1">

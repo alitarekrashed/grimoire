@@ -1,11 +1,16 @@
 'use client'
 import * as NavigationMenu from '@radix-ui/react-navigation-menu'
 import React from 'react'
+import { SearchBar } from '../search-bar/search-bar'
 
 export default function Navbar() {
   const navItemStyles = 'block p-2 hover:bg-stone-700 hover:rounded-lg'
 
   const navItems = [
+    {
+      title: 'Home',
+      link: '/',
+    },
     {
       title: 'Equipment',
       link: '/reference/equipment',
@@ -44,6 +49,12 @@ export default function Navbar() {
             </React.Fragment>
           )
         })}
+        <NavigationMenu.Item>
+          <div className="h-full w-[1] border border-stone-300"></div>
+        </NavigationMenu.Item>
+        <NavigationMenu.Item>
+          <SearchBar size="small"></SearchBar>
+        </NavigationMenu.Item>
       </NavigationMenu.List>
 
       <NavigationMenu.Viewport />
