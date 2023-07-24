@@ -2,6 +2,7 @@ import { EntityModel } from '@/models/entity-model'
 import { roboto_serif } from '@/utils/fonts'
 import { CardFactory } from '@/utils/services/card-factory'
 import { useEffect, useState } from 'react'
+import { SearchResult } from './search-result'
 
 export function SearchBar() {
   const [query, setQuery] = useState('')
@@ -52,7 +53,7 @@ export function SearchBar() {
                   className="p-1 border-x border-t border-stone-300 hover:bg-stone-700"
                   key={suggestion._id.toString()}
                 >
-                  {suggestion['name']}
+                  <SearchResult data={suggestion}></SearchResult>
                 </div>
               ))}
             </div>
