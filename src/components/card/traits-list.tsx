@@ -24,7 +24,7 @@ export function TraitsList({
   )
 }
 
-function Rarity({ rarity }: { rarity: string }) {
+export function Rarity({ rarity }: { rarity: string }) {
   let background = 'bg-stone-500'
   if (rarity === 'uncommon') {
     background = 'bg-orange-600'
@@ -52,7 +52,7 @@ export function Badge({
     <span
       className={`border border-stone-400 rounded ${
         backgroundColor ? backgroundColor : 'bg-stone-600'
-      }  p-0.5`}
+      }  p-0.5 inline-flex items-end h-4/5`}
     >
       {type === 'trait' ? (
         <ParsedToken token={trait} type="TRAIT"></ParsedToken>
