@@ -1,4 +1,4 @@
-import { getEntityById } from '@/utils/mongodb'
+import { getEntityById } from '@/utils/services/db.service'
 import { NextResponse } from 'next/server'
 
 export async function GET(

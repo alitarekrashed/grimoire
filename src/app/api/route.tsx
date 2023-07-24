@@ -1,4 +1,4 @@
-import { searchEntities } from '@/utils/mongodb'
+import { searchEntities } from '@/utils/services/db.service'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {

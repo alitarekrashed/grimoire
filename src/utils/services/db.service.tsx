@@ -1,25 +1,9 @@
-import { EntityModel, ModelType } from '@/models/entity-model'
-import {
-  Collection,
-  Condition,
-  Db,
-  Filter,
-  MongoClient,
-  ObjectId,
-  WithId,
-} from 'mongodb'
+import { Collection, Db, Filter, MongoClient, ObjectId, WithId } from 'mongodb'
+import { EntityModel } from '@/models/entity-model'
+import clientPromise from '../mongodb'
 
-const uri = process.env.MONGODB_URI
-
-if (!uri) {
-  throw new Error('Add Mongo URI to .env.local')
-}
-
-const client: MongoClient = new MongoClient(uri)
-const clientPromise: Promise<MongoClient> = client.connect()
-
-export async function getDatabase(): Promise<Db> {
-  let client: MongoClient = await clientPromise
+async function getDatabase(): Promise<Db> {
+  const client: MongoClient = await clientPromise
   return client.db('grimoire')
 }
 

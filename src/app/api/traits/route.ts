@@ -1,5 +1,4 @@
-import Trait from '@/models/trait'
-import { getAllEntities } from '@/utils/mongodb'
+import { getAllEntities } from '@/utils/services/db.service'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {

@@ -3,8 +3,7 @@ import {
   EquipmentVariantType,
   EquipmentWithVariants,
 } from '@/models/equipment'
-import { getAllEntities } from '@/utils/mongodb'
-import { eq } from 'lodash'
+import { getAllEntities } from '@/utils/services/db.service'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
