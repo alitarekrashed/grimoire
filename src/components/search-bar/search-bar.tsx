@@ -4,7 +4,7 @@ import { SearchResult } from './search-result'
 import { useRouter } from 'next/navigation'
 import { useDebounce } from '@/utils/debounce'
 
-export function SearchBar() {
+export function SearchBar({ size }: { size?: 'small' | 'large' }) {
   const router = useRouter()
   const [query, setQuery] = useState('')
   const [suggestions, setSuggestions] = useState([])
@@ -44,7 +44,9 @@ export function SearchBar() {
         <div className="justify-self-center">
           {/* TODO: add animation to fade in/out during focus and onBlur? */}
           <input
-            className="bg-stone-800 rounded h-10 w-144 box-border pl-1 justify-self-center focus:transition-all focus:duration-200 focus:ease-in-out"
+            className={`bg-stone-800 rounded-lg h-10 ${
+              size === 'small' ? 'w-80' : 'w-144'
+            } box-border pl-1 justify-self-center focus:transition-all focus:duration-200 focus:ease-in-out`}
             type="text"
             placeholder="Search for an item"
             value={query}
@@ -58,7 +60,9 @@ export function SearchBar() {
           />
           {hideSuggestions === false && suggestions.length > 0 && (
             <div
-              className={`font-normal max-h-80 h-fit overflow-y-scroll bg-stone-800 rounded-b-lg border-b border-stone-300`}
+              className={`z-10 ${
+                size === 'small' ? 'w-80' : 'w-144'
+              } font-normal absolute max-h-80 h-fit overflow-y-scroll bg-stone-800 rounded-b-lg border-b border-stone-300`}
             >
               {suggestions.map((suggestion: EntityModel) => (
                 <SearchResult
