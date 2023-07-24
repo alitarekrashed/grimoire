@@ -43,9 +43,9 @@ export function SearchBar() {
               setQuery(e.target.value)
             }}
           />
-          {hideSuggestions === false && (
+          {hideSuggestions === false && suggestions.length > 0 && (
             <div
-              className={`font-normal max-h-80 h-fit overflow-y-scroll bg-stone-800 rounded`}
+              className={`font-normal max-h-80 h-fit overflow-y-scroll bg-stone-800 rounded-b-lg border-b border-stone-300`}
             >
               {suggestions.map((suggestion: EntityModel) => (
                 <div
