@@ -1,5 +1,6 @@
 import { Ancestry, Attribute } from '@/models/ancestry'
 import { Character } from '@/models/character'
+import { ObjectId } from 'mongodb'
 
 export interface Attributes {
   Strength: number
@@ -137,6 +138,18 @@ export class PlayerCharacter {
     pc.calculateLanguages()
     return pc
   }
+}
+
+export async function getCharacter(
+  id: string | ObjectId
+): Promise<PlayerCharacter> {
+  const character: Character = await (
+    await fetch(`http://localhost:3000/api/characters/${id}`, {
+      cache: 'no-store',
+    })
+  ).json()
+
+  return await PlayerCharacter.build(character)
 }
 
 export async function getCharacters(): Promise<PlayerCharacter[]> {
