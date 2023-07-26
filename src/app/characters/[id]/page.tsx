@@ -197,8 +197,8 @@ function CharacterEdit({
               <React.Fragment key={i}>
                 <select
                   className="bg-stone-800"
-                  value={choice} // ...force the select's value to match the state variable...
-                  onChange={(e) => updateAncestryLanguage(e.target.value, i)} // ... and update the state variable on any change!
+                  value={choice}
+                  onChange={(e) => updateAncestryLanguage(e.target.value, i)}
                 >
                   <option value=""></option>
 
