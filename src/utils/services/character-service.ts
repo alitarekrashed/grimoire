@@ -1,11 +1,34 @@
-import { Character } from '@/models/character'
-import { getEntityById } from './db.service'
 import { Ancestry } from '@/models/ancestry'
-import { ObjectId } from 'mongodb'
+import { Character } from '@/models/character'
 
-export async function getCharacters(): Promise<
-  { character: Character; ancestry: Ancestry }[]
-> {
+export class PlayerCharacter {
+  private constructor(
+    private character: Character,
+    private ancestry: Ancestry
+  ) {}
+
+  public getCharacter(): Character {
+    return this.character
+  }
+
+  public getSpeed(): number {
+    return this.ancestry.speed
+  }
+
+  static async build(character: Character): PlayerCharacter {
+    const ancestry = await (
+      await fetch(
+        `http://localhost:3000/api/ancestries/${character.ancestry.id}`,
+        {
+          cache: 'no-store',
+        }
+      )
+    ).json()
+    return new PlayerCharacter(character, ancestry)
+  }
+}
+
+export async function getCharacters(): Promise<PlayerCharacter[]> {
   const characters: Character[] = await (
     await fetch('http://localhost:3000/api/characters', {
       cache: 'no-store',
@@ -15,18 +38,7 @@ export async function getCharacters(): Promise<
   let result = []
 
   for (let i = 0; i < characters.length; i++) {
-    const character: Character = characters[i]
-    console.log(character)
-    const ancestry = await (
-      await fetch(
-        `http://localhost:3000/api/ancestries/${character.ancestry.id}`,
-        {
-          cache: 'no-store',
-        }
-      )
-    ).json()
-
-    result.push({ character, ancestry })
+    result.push(await PlayerCharacter.build(characters[i]))
   }
 
   return result

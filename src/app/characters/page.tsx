@@ -4,21 +4,20 @@ import { LabelsList } from '@/components/labels-list/labels-list'
 import { Ancestry } from '@/models/ancestry'
 import { Character } from '@/models/character'
 import { roboto_serif } from '@/utils/fonts'
-import { getCharacters } from '@/utils/services/character-service'
+import {
+  PlayerCharacter,
+  getCharacters,
+} from '@/utils/services/character-service'
 import { useEffect, useState } from 'react'
 
 export default function CharactersPage() {
-  const [characters, setCharacters] = useState<
-    { character: Character; ancestry: Ancestry }[]
-  >([])
+  const [characters, setCharacters] = useState<PlayerCharacter[]>([])
 
   useEffect(() => {
-    getCharacters().then(
-      (characters: { character: Character; ancestry: Ancestry }[]) => {
-        console.log(characters)
-        setCharacters(characters)
-      }
-    )
+    getCharacters().then((characters: PlayerCharacter[]) => {
+      console.log(characters)
+      setCharacters(characters)
+    })
   }, [])
 
   return (
@@ -26,16 +25,16 @@ export default function CharactersPage() {
       <h1>Character</h1>
       {characters.map((result) => {
         return (
-          <div key={result.character._id.toString()}>
+          <div key={result.getCharacter()._id.toString()}>
             <LabelsList
               fieldDefinitions={[
                 {
                   label: 'Name',
-                  value: result.character.name,
+                  value: result.getCharacter().name,
                 },
                 {
                   label: 'Level',
-                  value: result.character.level,
+                  value: result.getCharacter().level,
                 },
               ]}
             ></LabelsList>
@@ -43,16 +42,8 @@ export default function CharactersPage() {
             <LabelsList
               fieldDefinitions={[
                 {
-                  label: 'Ancestry name',
-                  value: result.ancestry.name,
-                },
-                {
                   label: 'Speed',
-                  value: result.ancestry.speed,
-                },
-                {
-                  label: 'Size',
-                  value: result.ancestry.size,
+                  value: result.getSpeed(),
                 },
               ]}
             ></LabelsList>
