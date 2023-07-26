@@ -12,7 +12,7 @@ import { usePathname } from 'next/navigation'
 import React from 'react'
 import { useEffect, useState } from 'react'
 
-export default function ConditionRecordPage() {
+export default function CharacterPage() {
   const path: string[] = usePathname().split('/')
   const id = path[path.length - 1]
 
@@ -109,7 +109,6 @@ function CharacterEdit({
     onEdit(val)
   }
 
-  console.log(character.getCharacter().ancestry)
   return (
     <div>
       <h1>Ancestry</h1>
