@@ -12,6 +12,10 @@ export default function Navbar() {
       link: '/',
     },
     {
+      title: 'Characters',
+      link: '/characters',
+    },
+    {
       title: 'Equipment',
       link: '/reference/equipment',
     },
