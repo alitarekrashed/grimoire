@@ -2,6 +2,7 @@
 
 import { LabelsList } from '@/components/labels-list/labels-list'
 import { Attribute } from '@/models/ancestry'
+import { CharacterAncestry } from '@/models/character'
 import { roboto_serif } from '@/utils/fonts'
 import {
   PlayerCharacter,
@@ -23,11 +24,8 @@ export default function ConditionRecordPage() {
     })
   }, [])
 
-  const handleEdit = (ancestryChoice: {
-    freeAttributes: (Attribute | undefined)[]
-    languageSelections: (string | undefined)[]
-  }) => {
-    setCharacter(character?.updateAncestryChoices(ancestryChoice))
+  const handleEdit = (ancestry: CharacterAncestry) => {
+    setCharacter(character?.updateAncestry(ancestry))
   }
 
   return (
@@ -82,8 +80,8 @@ function CharacterDisplay({ character }: { character: PlayerCharacter }) {
           </React.Fragment>
         ))}
         <br />
-        {character.getLanguages().map((language) => (
-          <span key={language}>{language} </span>
+        {character.getLanguages().map((language, index) => (
+          <span key={`${language}-${index}`}>{language}</span>
         ))}
         <br />
         <br />
@@ -100,18 +98,18 @@ function CharacterEdit({
   onEdit: (val: any) => void
 }) {
   const updateAncestryAttribute = (value: Attribute, index: number) => {
-    let val: any = { ...character.getAncestryChoices() }
-    val.freeAttributes[index] = value
+    let val: CharacterAncestry = { ...character.getCharacter().ancestry }
+    val.attribute_boost_selections[index] = value
     onEdit(val)
   }
 
   const updateAncestryLanguage = (value: string, index: number) => {
-    let val: any = { ...character.getAncestryChoices() }
-    val.languageSelections[index] = value
+    let val: CharacterAncestry = { ...character.getCharacter().ancestry }
+    val.language_selections[index] = value
     onEdit(val)
   }
 
-  console.log(character.getAncestryChoices())
+  console.log(character.getCharacter().ancestry)
   return (
     <div>
       <h1>Ancestry</h1>
@@ -119,33 +117,35 @@ function CharacterEdit({
       <span>
         {character &&
           character
-            .getAncestryChoices()
-            .freeAttributes.map((choice: any, i: number) => (
-              <React.Fragment key={i}>
-                <select
-                  className="bg-stone-800"
-                  value={choice} // ...force the select's value to match the state variable...
-                  onChange={(e) =>
-                    updateAncestryAttribute(e.target.value as Attribute, i)
-                  } // ... and update the state variable on any change!
-                >
-                  <option value=""></option>
-                  <option value="Strength">Strength</option>
-                  <option value="Dexterity">Dexterity</option>
-                  <option value="Constitution">Constitution</option>
-                  <option value="Intelligence">Intelligence</option>
-                  <option value="Wisdom">Wisdom</option>
-                  <option value="Charisma">Charisma</option>
-                </select>
-              </React.Fragment>
-            ))}
+            .getCharacter()
+            .ancestry.attribute_boost_selections.map(
+              (choice: any, i: number) => (
+                <React.Fragment key={i}>
+                  <select
+                    className="bg-stone-800"
+                    value={choice} // ...force the select's value to match the state variable...
+                    onChange={(e) =>
+                      updateAncestryAttribute(e.target.value as Attribute, i)
+                    } // ... and update the state variable on any change!
+                  >
+                    <option value=""></option>
+                    <option value="Strength">Strength</option>
+                    <option value="Dexterity">Dexterity</option>
+                    <option value="Constitution">Constitution</option>
+                    <option value="Intelligence">Intelligence</option>
+                    <option value="Wisdom">Wisdom</option>
+                    <option value="Charisma">Charisma</option>
+                  </select>
+                </React.Fragment>
+              )
+            )}
       </span>
       <h2>Languages</h2>
       <span>
         {character &&
           character
-            .getAncestryChoices()
-            .languageSelections.map((choice: any, i: number) => (
+            .getCharacter()
+            .ancestry.language_selections.map((choice: any, i: number) => (
               <React.Fragment key={i}>
                 <select
                   className="bg-stone-800"
