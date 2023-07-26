@@ -44,16 +44,6 @@ export class PlayerCharacter {
     return pc
   }
 
-  // TODO need to eventually handle changing TYPE of ancestry
-  public updateAncestry(ancestry: CharacterAncestry): PlayerCharacter {
-    let newCharacter = { ...this.character }
-
-    newCharacter.ancestry = ancestry
-    const pc = new PlayerCharacter(newCharacter, { ...this.ancestry })
-    pc.initialize()
-    return pc
-  }
-
   public calculateAncestry() {
     const freeAttributes = this.ancestry.attribute_boosts.filter(
       (attribute) => attribute === 'Free'

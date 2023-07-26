@@ -25,7 +25,11 @@ export default function CharacterPage() {
   }, [])
 
   const handleAncestryEdit = (ancestry: CharacterAncestry) => {
-    setCharacter(character?.updateAncestry(ancestry))
+    let newCharacter: Character = {
+      ...character!.getCharacter(),
+      ancestry: ancestry,
+    }
+    setCharacter(character?.updateCharacter(newCharacter))
   }
 
   const handleCharacterEdit = (char: Character) => {
@@ -141,18 +145,23 @@ function CharacterEdit({
                 <React.Fragment key={i}>
                   <select
                     className="bg-stone-800"
-                    value={choice} // ...force the select's value to match the state variable...
+                    value={choice}
                     onChange={(e) =>
                       updateAncestryAttribute(e.target.value as Attribute, i)
-                    } // ... and update the state variable on any change!
+                    }
                   >
                     <option value=""></option>
-                    <option value="Strength">Strength</option>
-                    <option value="Dexterity">Dexterity</option>
-                    <option value="Constitution">Constitution</option>
-                    <option value="Intelligence">Intelligence</option>
-                    <option value="Wisdom">Wisdom</option>
-                    <option value="Charisma">Charisma</option>
+                    {Object.keys(character.getAttributes()).map(
+                      (attribute) =>
+                        character
+                          .getAncestry()
+                          .attribute_boosts.filter((val) => val === attribute)
+                          .length == 0 && (
+                          <option key={attribute} value={attribute}>
+                            {attribute}
+                          </option>
+                        )
+                    )}
                   </select>
                 </React.Fragment>
               )
