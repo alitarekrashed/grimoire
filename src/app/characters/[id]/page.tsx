@@ -2,7 +2,7 @@
 
 import { LabelsList } from '@/components/labels-list/labels-list'
 import { Attribute } from '@/models/ancestry'
-import { CharacterAncestry } from '@/models/character'
+import { Character, CharacterAncestry } from '@/models/character'
 import { roboto_serif } from '@/utils/fonts'
 import {
   PlayerCharacter,
@@ -24,19 +24,25 @@ export default function CharacterPage() {
     })
   }, [])
 
-  const handleEdit = (ancestry: CharacterAncestry) => {
+  const handleAncestryEdit = (ancestry: CharacterAncestry) => {
     setCharacter(character?.updateAncestry(ancestry))
+  }
+
+  const handleCharacterEdit = (char: Character) => {
+    setCharacter(character?.updateCharacter(char))
   }
 
   return (
     <div className={`h-full ${roboto_serif.className}`}>
-      <h1>Character</h1>
       {character && (
         <>
-          <CharacterDisplay character={character}></CharacterDisplay>
+          <CharacterDisplay
+            character={character}
+            onEdit={handleCharacterEdit}
+          ></CharacterDisplay>
           <CharacterEdit
             character={character}
-            onEdit={handleEdit}
+            onEdit={handleAncestryEdit}
           ></CharacterEdit>
         </>
       )}
@@ -44,22 +50,37 @@ export default function CharacterPage() {
   )
 }
 
-function CharacterDisplay({ character }: { character: PlayerCharacter }) {
+function CharacterDisplay({
+  character,
+  onEdit,
+}: {
+  character: PlayerCharacter
+  onEdit: (character: Character) => void
+}) {
+  const updateName = (value: string) => {
+    let val: Character = { ...character.getCharacter() }
+    val.name = value
+    onEdit(val)
+  }
+
   return (
     character && (
       <div>
-        <LabelsList
-          fieldDefinitions={[
-            {
-              label: 'Name',
-              value: character.getCharacter().name,
-            },
-            {
-              label: 'Level',
-              value: character.getCharacter().level,
-            },
-          ]}
-        ></LabelsList>
+        <div>
+          <span>Name: </span>
+          <input
+            className="bg-stone-800"
+            value={character.getCharacter().name}
+            onChange={(e) => {
+              updateName(e.target.value)
+            }}
+          ></input>
+        </div>
+        <div>
+          <span>Level: </span>
+          <span>{character.getCharacter().level}</span>
+        </div>
+
         <br />
         <LabelsList
           fieldDefinitions={[
@@ -73,9 +94,7 @@ function CharacterDisplay({ character }: { character: PlayerCharacter }) {
         {Object.keys(character.getAttributes()).map((attribute) => (
           <React.Fragment key={attribute}>
             <span>{attribute}: </span>&nbsp;
-            <span>
-              {character.getAttributes()[attribute as Attribute]}
-            </span>{' '}
+            <span>{character.getAttributes()[attribute as Attribute]}</span>
             <br />
           </React.Fragment>
         ))}

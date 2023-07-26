@@ -38,6 +38,13 @@ export class PlayerCharacter {
     return this.ancestry
   }
 
+  public updateCharacter(character: Character): PlayerCharacter {
+    const pc = new PlayerCharacter(character, { ...this.ancestry })
+    pc.initialize()
+    return pc
+  }
+
+  // TODO need to eventually handle changing TYPE of ancestry
   public updateAncestry(ancestry: CharacterAncestry): PlayerCharacter {
     let newCharacter = { ...this.character }
 
