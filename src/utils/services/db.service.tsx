@@ -1,4 +1,13 @@
-import { Collection, Db, Filter, MongoClient, ObjectId, WithId } from 'mongodb'
+import {
+  Collection,
+  Db,
+  Filter,
+  MongoClient,
+  ObjectId,
+  UpdateResult,
+  Document,
+  WithId,
+} from 'mongodb'
 import { EntityModel, ModelType } from '@/models/entity-model'
 import clientPromise from '../mongodb'
 import { Character } from '@/models/character'
@@ -88,4 +97,19 @@ export async function getCharacterById(
   }
 
   return await collection.findOne(search)
+}
+
+export async function updateCharacterById(
+  id: string | ObjectId,
+  character: Character
+): Promise<Document | UpdateResult<Character>> {
+  const collection: Collection<Character> = await getCharactersCollection()
+
+  let search: Filter<Character> = {}
+  search = {
+    ...search,
+    _id: new ObjectId(id),
+  }
+
+  return await collection.replaceOne(search, character)
 }

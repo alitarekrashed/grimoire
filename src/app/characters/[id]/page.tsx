@@ -3,6 +3,7 @@
 import { LabelsList } from '@/components/labels-list/labels-list'
 import { Attribute } from '@/models/ancestry'
 import { Character, CharacterAncestry } from '@/models/character'
+import { useDebounce } from '@/utils/debounce'
 import { roboto_serif } from '@/utils/fonts'
 import {
   PlayerCharacter,
@@ -24,16 +25,36 @@ export default function CharacterPage() {
     })
   }, [])
 
+  const debouncedRequest = useDebounce(() => {
+    const saveEntity = async () => {
+      try {
+        await fetch(`http://localhost:3000/api/characters/${id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(character!.getCharacter()),
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    saveEntity()
+  })
+
   const handleAncestryEdit = (ancestry: CharacterAncestry) => {
     let newCharacter: Character = {
       ...character!.getCharacter(),
       ancestry: ancestry,
     }
     setCharacter(character?.updateCharacter(newCharacter))
+    debouncedRequest()
   }
 
   const handleCharacterEdit = (char: Character) => {
     setCharacter(character?.updateCharacter(char))
+    debouncedRequest()
   }
 
   return (
