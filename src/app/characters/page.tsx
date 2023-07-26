@@ -1,7 +1,7 @@
 'use client'
 
 import { LabelsList } from '@/components/labels-list/labels-list'
-import { Ancestry } from '@/models/ancestry'
+import { Ancestry, Attribute } from '@/models/ancestry'
 import { Character } from '@/models/character'
 import { roboto_serif } from '@/utils/fonts'
 import {
@@ -24,6 +24,8 @@ export default function CharactersPage() {
     <div className={`h-full ${roboto_serif.className}`}>
       <h1>Character</h1>
       {characters.map((result) => {
+        const attributes = result.getAttributes()
+        console.log(result.getAncestryChoices())
         return (
           <div key={result.getCharacter()._id.toString()}>
             <LabelsList
@@ -47,6 +49,19 @@ export default function CharactersPage() {
                 },
               ]}
             ></LabelsList>
+            <br />
+            {Object.keys(attributes).map((attribute) => (
+              <>
+                <span>{attribute}: </span>&nbsp;
+                <span>{attributes[attribute as Attribute]}</span> <br />
+              </>
+            ))}
+            <br />
+            {result.getLanguages().map((language) => (
+              <span key={language}>{language} </span>
+            ))}
+            <br />
+            <br />
           </div>
         )
       })}
