@@ -8,6 +8,7 @@ import {
   getCharacter,
 } from '@/utils/services/character-service'
 import { usePathname } from 'next/navigation'
+import React from 'react'
 import { useEffect, useState } from 'react'
 
 export default function ConditionRecordPage() {
@@ -22,53 +23,146 @@ export default function ConditionRecordPage() {
     })
   }, [])
 
+  const handleEdit = (ancestryChoice: {
+    freeAttributes: (Attribute | undefined)[]
+    languageSelections: (string | undefined)[]
+  }) => {
+    setCharacter(character?.updateAncestryChoices(ancestryChoice))
+  }
+
   return (
     <div className={`h-full ${roboto_serif.className}`}>
       <h1>Character</h1>
-      {character && <CharacterDisplay character={character}></CharacterDisplay>}
+      {character && (
+        <>
+          <CharacterDisplay character={character}></CharacterDisplay>
+          <CharacterEdit
+            character={character}
+            onEdit={handleEdit}
+          ></CharacterEdit>
+        </>
+      )}
     </div>
   )
 }
 
 function CharacterDisplay({ character }: { character: PlayerCharacter }) {
-  const attributes = character.getAttributes()
+  return (
+    character && (
+      <div>
+        <LabelsList
+          fieldDefinitions={[
+            {
+              label: 'Name',
+              value: character.getCharacter().name,
+            },
+            {
+              label: 'Level',
+              value: character.getCharacter().level,
+            },
+          ]}
+        ></LabelsList>
+        <br />
+        <LabelsList
+          fieldDefinitions={[
+            {
+              label: 'Speed',
+              value: character.getSpeed(),
+            },
+          ]}
+        ></LabelsList>
+        <br />
+        {Object.keys(character.getAttributes()).map((attribute) => (
+          <React.Fragment key={attribute}>
+            <span>{attribute}: </span>&nbsp;
+            <span>
+              {character.getAttributes()[attribute as Attribute]}
+            </span>{' '}
+            <br />
+          </React.Fragment>
+        ))}
+        <br />
+        {character.getLanguages().map((language) => (
+          <span key={language}>{language} </span>
+        ))}
+        <br />
+        <br />
+      </div>
+    )
+  )
+}
+
+function CharacterEdit({
+  character,
+  onEdit,
+}: {
+  character: PlayerCharacter
+  onEdit: (val: any) => void
+}) {
+  const updateAncestryAttribute = (value: Attribute, index: number) => {
+    let val: any = { ...character.getAncestryChoices() }
+    val.freeAttributes[index] = value
+    onEdit(val)
+  }
+
+  const updateAncestryLanguage = (value: string, index: number) => {
+    let val: any = { ...character.getAncestryChoices() }
+    val.languageSelections[index] = value
+    onEdit(val)
+  }
+
   console.log(character.getAncestryChoices())
   return (
-    <div key={character.getCharacter()._id.toString()}>
-      <LabelsList
-        fieldDefinitions={[
-          {
-            label: 'Name',
-            value: character.getCharacter().name,
-          },
-          {
-            label: 'Level',
-            value: character.getCharacter().level,
-          },
-        ]}
-      ></LabelsList>
-      <br />
-      <LabelsList
-        fieldDefinitions={[
-          {
-            label: 'Speed',
-            value: character.getSpeed(),
-          },
-        ]}
-      ></LabelsList>
-      <br />
-      {Object.keys(attributes).map((attribute) => (
-        <>
-          <span>{attribute}: </span>&nbsp;
-          <span>{attributes[attribute as Attribute]}</span> <br />
-        </>
-      ))}
-      <br />
-      {character.getLanguages().map((language) => (
-        <span key={language}>{language} </span>
-      ))}
-      <br />
-      <br />
+    <div>
+      <h1>Ancestry</h1>
+      <h2>Attributes</h2>
+      <span>
+        {character &&
+          character
+            .getAncestryChoices()
+            .freeAttributes.map((choice: any, i: number) => (
+              <React.Fragment key={i}>
+                <select
+                  className="bg-stone-800"
+                  value={choice} // ...force the select's value to match the state variable...
+                  onChange={(e) =>
+                    updateAncestryAttribute(e.target.value as Attribute, i)
+                  } // ... and update the state variable on any change!
+                >
+                  <option value=""></option>
+                  <option value="Strength">Strength</option>
+                  <option value="Dexterity">Dexterity</option>
+                  <option value="Constitution">Constitution</option>
+                  <option value="Intelligence">Intelligence</option>
+                  <option value="Wisdom">Wisdom</option>
+                  <option value="Charisma">Charisma</option>
+                </select>
+              </React.Fragment>
+            ))}
+      </span>
+      <h2>Languages</h2>
+      <span>
+        {character &&
+          character
+            .getAncestryChoices()
+            .languageSelections.map((choice: any, i: number) => (
+              <React.Fragment key={i}>
+                <select
+                  className="bg-stone-800"
+                  value={choice} // ...force the select's value to match the state variable...
+                  onChange={(e) => updateAncestryLanguage(e.target.value, i)} // ... and update the state variable on any change!
+                >
+                  <option value=""></option>
+
+                  {character.getAncestry().languages.options.map((language) => (
+                    <option key={language} value={language}>
+                      {language}
+                    </option>
+                  ))}
+                </select>
+              </React.Fragment>
+            ))}
+      </span>
     </div>
   )
 }

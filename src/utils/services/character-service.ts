@@ -34,6 +34,25 @@ export class PlayerCharacter {
     return this.character
   }
 
+  public getAncestry(): Ancestry {
+    return this.ancestry
+  }
+
+  public updateAncestryChoices(val: {
+    freeAttributes: (Attribute | undefined)[]
+    languageSelections: (string | undefined)[]
+  }): PlayerCharacter {
+    let newCharacter = { ...this.character }
+    let newAncestry = { ...this.ancestry }
+
+    newCharacter.ancestry.attribute_boost_selections = val.freeAttributes
+    newCharacter.ancestry.language_selections = val.languageSelections
+    const pc = new PlayerCharacter(newCharacter, newAncestry)
+    pc.calculateAttributes()
+    pc.calculateLanguages()
+    return pc
+  }
+
   public getAncestryChoices() {
     const freeAttributes = this.ancestry.attribute_boosts.filter(
       (attribute) => attribute === 'Free'

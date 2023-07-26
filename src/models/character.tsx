@@ -10,6 +10,6 @@ export interface Character {
 
 export interface CharacterAncestry {
   id: string
-  attribute_boost_selections: Attribute[]
-  language_selections: string[]
+  attribute_boost_selections: (Attribute | undefined)[]
+  language_selections: (string | undefined)[]
 }
