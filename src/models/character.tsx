@@ -4,5 +4,7 @@ export interface Character {
   _id: string | ObjectId
   name: string
   level: number
-  ancestry: string
+  ancestry: {
+    id: string
+  }
 }

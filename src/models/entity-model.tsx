@@ -19,3 +19,4 @@ export type ModelType =
   | 'CONDITION'
   | 'TRAIT'
   | 'SPELL'
+  | 'ANCESTRY'
