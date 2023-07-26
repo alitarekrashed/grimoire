@@ -1,6 +1,7 @@
 import { Collection, Db, Filter, MongoClient, ObjectId, WithId } from 'mongodb'
-import { EntityModel } from '@/models/entity-model'
+import { EntityModel, ModelType } from '@/models/entity-model'
 import clientPromise from '../mongodb'
+import { Character } from '@/models/character'
 
 async function getDatabase(): Promise<Db> {
   const client: MongoClient = await clientPromise
@@ -57,6 +58,33 @@ export async function getEntityById<T extends EntityModel>(
     entity_type: {
       $in: entity_types,
     },
+  }
+
+  return await collection.findOne(search)
+}
+
+export async function getCharactersCollection<Character>(): Promise<
+  Collection<T>
+> {
+  const db: Db = await getDatabase()
+  return db.collection('characters')
+}
+
+export async function getAllCharacters(): Promise<WithId<Character>[]> {
+  const collection = await getCharactersCollection()
+
+  return collection.find().sort('name', 1).toArray()
+}
+
+export async function getCharacterById(
+  id: string | ObjectId
+): Promise<WithId<Character> | null> {
+  const collection: Collection<Character> = await getCharactersCollection()
+
+  let search: Filter<Character> = {}
+  search = {
+    ...search,
+    _id: new ObjectId(id),
   }
 
   return await collection.findOne(search)
