@@ -10,7 +10,7 @@ import {
 } from 'mongodb'
 import { EntityModel, ModelType } from '@/models/entity-model'
 import clientPromise from '../mongodb'
-import { Character } from '@/models/character'
+import { CharacterEntity } from '@/models/character-entity'
 
 async function getDatabase(): Promise<Db> {
   const client: MongoClient = await clientPromise
@@ -79,7 +79,7 @@ export async function getCharactersCollection<Character>(): Promise<
   return db.collection('characters')
 }
 
-export async function getAllCharacters(): Promise<WithId<Character>[]> {
+export async function getAllCharacters(): Promise<WithId<CharacterEntity>[]> {
   const collection = await getCharactersCollection()
 
   return collection.find().sort('name', 1).toArray()
@@ -87,10 +87,11 @@ export async function getAllCharacters(): Promise<WithId<Character>[]> {
 
 export async function getCharacterById(
   id: string | ObjectId
-): Promise<WithId<Character> | null> {
-  const collection: Collection<Character> = await getCharactersCollection()
+): Promise<WithId<CharacterEntity> | null> {
+  const collection: Collection<CharacterEntity> =
+    await getCharactersCollection()
 
-  let search: Filter<Character> = {}
+  let search: Filter<CharacterEntity> = {}
   search = {
     ...search,
     _id: new ObjectId(id),
@@ -101,11 +102,12 @@ export async function getCharacterById(
 
 export async function updateCharacterById(
   id: string | ObjectId,
-  character: Character
-): Promise<Document | UpdateResult<Character>> {
-  const collection: Collection<Character> = await getCharactersCollection()
+  character: CharacterEntity
+): Promise<Document | UpdateResult<CharacterEntity>> {
+  const collection: Collection<CharacterEntity> =
+    await getCharactersCollection()
 
-  let search: Filter<Character> = {}
+  let search: Filter<CharacterEntity> = {}
   search = {
     ...search,
     _id: new ObjectId(id),

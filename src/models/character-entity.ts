@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb'
 import { Attribute } from './ancestry'
 
-export interface Character {
+export interface CharacterEntity {
   _id: string | ObjectId
   name: string
   level: number

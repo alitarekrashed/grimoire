@@ -1,5 +1,5 @@
 import { Ancestry, Attribute } from '@/models/ancestry'
-import { Character, CharacterAncestry } from '@/models/character'
+import { CharacterEntity, CharacterAncestry } from '@/models/character-entity'
 import { ObjectId } from 'mongodb'
 
 export interface Attributes {
@@ -16,7 +16,7 @@ export class PlayerCharacter {
   private languages!: (string | undefined)[]
 
   private constructor(
-    private character: Character,
+    private character: CharacterEntity,
     private ancestry: Ancestry
   ) {
     this.attributes = {
@@ -30,7 +30,7 @@ export class PlayerCharacter {
     this.languages = []
   }
 
-  public getCharacter(): Character {
+  public getCharacter(): CharacterEntity {
     return this.character
   }
 
@@ -38,7 +38,7 @@ export class PlayerCharacter {
     return this.ancestry
   }
 
-  public updateCharacter(character: Character): PlayerCharacter {
+  public updateCharacter(character: CharacterEntity): PlayerCharacter {
     const pc = new PlayerCharacter(character, { ...this.ancestry })
     pc.initialize()
     return pc
@@ -139,7 +139,7 @@ export class PlayerCharacter {
     this.calculateLanguages()
   }
 
-  static async build(character: Character): Promise<PlayerCharacter> {
+  static async build(character: CharacterEntity): Promise<PlayerCharacter> {
     const ancestry = await (
       await fetch(
         `http://localhost:3000/api/ancestries/${character.ancestry.id}`,
@@ -157,7 +157,7 @@ export class PlayerCharacter {
 export async function getCharacter(
   id: string | ObjectId
 ): Promise<PlayerCharacter> {
-  const character: Character = await (
+  const character: CharacterEntity = await (
     await fetch(`http://localhost:3000/api/characters/${id}`, {
       cache: 'no-store',
     })
@@ -167,7 +167,7 @@ export async function getCharacter(
 }
 
 export async function getCharacters(): Promise<PlayerCharacter[]> {
-  const characters: Character[] = await (
+  const characters: CharacterEntity[] = await (
     await fetch('http://localhost:3000/api/characters', {
       cache: 'no-store',
     })

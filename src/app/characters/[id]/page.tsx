@@ -2,7 +2,7 @@
 
 import { LabelsList } from '@/components/labels-list/labels-list'
 import { Attribute } from '@/models/ancestry'
-import { Character, CharacterAncestry } from '@/models/character'
+import { CharacterEntity, CharacterAncestry } from '@/models/character-entity'
 import { useDebounce } from '@/utils/debounce'
 import { roboto_serif } from '@/utils/fonts'
 import {
@@ -44,7 +44,7 @@ export default function CharacterPage() {
   })
 
   const handleAncestryEdit = (ancestry: CharacterAncestry) => {
-    let newCharacter: Character = {
+    let newCharacter: CharacterEntity = {
       ...character!.getCharacter(),
       ancestry: ancestry,
     }
@@ -52,7 +52,7 @@ export default function CharacterPage() {
     debouncedRequest()
   }
 
-  const handleCharacterEdit = (char: Character) => {
+  const handleCharacterEdit = (char: CharacterEntity) => {
     setCharacter(character?.updateCharacter(char))
     debouncedRequest()
   }
@@ -80,10 +80,10 @@ function CharacterDisplay({
   onEdit,
 }: {
   character: PlayerCharacter
-  onEdit: (character: Character) => void
+  onEdit: (character: CharacterEntity) => void
 }) {
   const updateName = (value: string) => {
-    let val: Character = { ...character.getCharacter() }
+    let val: CharacterEntity = { ...character.getCharacter() }
     val.name = value
     onEdit(val)
   }

@@ -1,4 +1,3 @@
-import { Character } from '@/models/character'
 import {
   getCharacterById,
   updateCharacterById,
