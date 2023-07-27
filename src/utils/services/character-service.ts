@@ -83,6 +83,14 @@ export class PlayerCharacter {
     return this.ancestry.speed
   }
 
+  public getSize(): string {
+    return this.ancestry.size
+  }
+
+  public getMaxHitpoints(): number {
+    return this.ancestry.hitpoints
+  }
+
   public getAttributes(): Attributes {
     return this.attributes
   }

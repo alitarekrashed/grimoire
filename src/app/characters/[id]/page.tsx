@@ -93,28 +93,34 @@ function CharacterDisplay({
   return (
     character && (
       <div>
-        <div className="inline-flex gap-5 border border-stone-300 p-2 mb-2 items-center">
-          <div>
-            <span>Name: </span>
-            <input
-              className="bg-stone-800"
-              value={character.getCharacter().name}
-              onChange={(e) => {
-                updateName(e.target.value)
-              }}
-            ></input>
+        <div className="inline-flex gap-5 mb-2 items-center">
+          <div className="inline-flex gap-5 border border-stone-300 p-2">
+            <div>
+              <span>Name: </span>
+              <input
+                className="bg-stone-800"
+                value={character.getCharacter().name}
+                onChange={(e) => {
+                  updateName(e.target.value)
+                }}
+              ></input>
+            </div>
+            <div>
+              <span>Level: </span>
+              <span>{character.getCharacter().level}</span>
+            </div>
+            <div>
+              <span>Ancestry: </span>
+              <span>{character.getAncestry().name}</span>
+            </div>
           </div>
-          <div>
-            <span>Level: </span>
-            <span>{character.getCharacter().level}</span>
-          </div>
-          <div>
-            <span>Ancestry: </span>
-            <span>{character.getAncestry().name}</span>
+          <div className="border border-stone-300 p-2">
+            <span>Hitpoints: </span>
+            <span>{character.getMaxHitpoints()}</span>
           </div>
         </div>
         <br />
-        <div className="inline-flex gap-10">
+        <div className="inline-flex gap-10 ">
           <div className="inline-flex gap-5 border border-stone-300 p-2">
             {Object.keys(character.getAttributes()).map((attribute) => (
               <div
@@ -136,6 +142,16 @@ function CharacterDisplay({
                 {
                   label: 'Speed',
                   value: character.getSpeed(),
+                },
+              ]}
+            ></LabelsList>
+          </div>
+          <div className="inline-flex border border-stone-300 p-2 items-center">
+            <LabelsList
+              fieldDefinitions={[
+                {
+                  label: 'Size',
+                  value: character.getSize(),
                 },
               ]}
             ></LabelsList>
