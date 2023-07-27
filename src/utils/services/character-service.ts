@@ -6,6 +6,7 @@ import {
 } from '@/models/ancestry'
 import { CharacterEntity, CharacterAncestry } from '@/models/character-entity'
 import { ObjectId } from 'mongodb'
+import build from 'next/dist/build'
 
 export interface Attributes {
   Strength: number
@@ -41,6 +42,14 @@ export class PlayerCharacter {
 
   public getAncestry(): Ancestry {
     return this.ancestry
+  }
+
+  // TODO this file needs so much love
+  public async updateAncestry(ancestryId: string): Promise<PlayerCharacter> {
+    let newCharacter = { ...this.character }
+    // need to figure out how to re-initialize languages and attribute choices?
+    newCharacter.ancestry.id = ancestryId
+    return await PlayerCharacter.build(this.character)
   }
 
   public updateCharacter(character: CharacterEntity): PlayerCharacter {

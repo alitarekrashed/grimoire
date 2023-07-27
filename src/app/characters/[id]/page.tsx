@@ -5,7 +5,7 @@ import {
   ParsedDescription,
   ParsedToken,
 } from '@/components/parsed-description/parsed-description'
-import { Attribute } from '@/models/ancestry'
+import { Ancestry, Attribute } from '@/models/ancestry'
 import { CharacterEntity, CharacterAncestry } from '@/models/character-entity'
 import { useDebounce } from '@/utils/debounce'
 import { roboto_serif } from '@/utils/fonts'
@@ -47,6 +47,13 @@ export default function CharacterPage() {
     saveEntity()
   })
 
+  const handleAncestryChange = (ancestryId: string) => {
+    character?.updateAncestry(ancestryId).then((val) => {
+      setCharacter(val)
+      debouncedRequest()
+    })
+  }
+
   const handleAncestryEdit = (ancestry: CharacterAncestry) => {
     let newCharacter: CharacterEntity = {
       ...character!.getCharacter(),
@@ -71,6 +78,7 @@ export default function CharacterPage() {
           ></CharacterDisplay>
           <CharacterEdit
             character={character}
+            onAncestryEdit={handleAncestryChange}
             onEdit={handleAncestryEdit}
           ></CharacterEdit>
         </>
@@ -193,13 +201,32 @@ function CharacterDisplay({
   )
 }
 
+// TODO separate out things like changing Ancestry with the choices from the Ancestry...
 function CharacterEdit({
   character,
+  onAncestryEdit,
   onEdit,
 }: {
   character: PlayerCharacter
-  onEdit: (val: any) => void
+  onAncestryEdit: (ancestryId: string) => void
+  onEdit: (val: CharacterAncestry) => void
 }) {
+  const [ancestries, setAncestries] = useState<Ancestry[]>([])
+
+  useEffect(() => {
+    fetch('http://localhost:3000/api/ancestries', {
+      cache: 'no-store',
+    })
+      .then((result) => result.json())
+      .then((ancestries) => {
+        setAncestries(ancestries)
+      })
+  }, [])
+
+  const updateAncestry = (value: string) => {
+    onAncestryEdit(value)
+  }
+
   const updateAncestryAttribute = (value: Attribute, index: number) => {
     let val: CharacterAncestry = { ...character.getCharacter().ancestry }
     val.attribute_boost_selections[index] = value
@@ -217,7 +244,23 @@ function CharacterEdit({
 
   return (
     <div className="inline-flex gap-5 border border-stone-300 p-2 items-center">
-      <h1>Ancestry choices</h1>
+      <span>
+        <h2>Ancestry</h2>
+        <select
+          className="bg-stone-800"
+          value={character.getAncestry()._id.toString()}
+          onChange={(e) => updateAncestry(e.target.value)}
+        >
+          {ancestries.map((ancestry) => (
+            <option
+              key={ancestry._id.toString()}
+              value={ancestry._id.toString()}
+            >
+              {ancestry.name}
+            </option>
+          ))}
+        </select>
+      </span>
       <span>
         <h2>Attributes</h2>
         {character &&
