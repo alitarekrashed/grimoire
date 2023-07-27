@@ -1,4 +1,4 @@
-import Trait from '@/models/trait'
+import Trait from '@/models/db/trait'
 
 export function retrieveTrait(key: string): Promise<Trait> {
   return (async () => {

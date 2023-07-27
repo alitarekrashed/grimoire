@@ -6,7 +6,7 @@ import {
   HeightenedExplicit,
   HeightenedFormula,
   Spell,
-} from '@/models/spell'
+} from '@/models/db/spell'
 import { FieldDefinition, LabelsList } from '../labels-list/labels-list'
 import * as Separator from '@radix-ui/react-separator'
 import build from 'next/dist/build'

@@ -1,6 +1,6 @@
 'use client'
 
-import { EntityModel } from '@/models/entity-model'
+import { EntityModel } from '@/models/db/entity-model'
 import { CardFactory } from '@/utils/services/card-factory'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { RefObject, useEffect, useRef, useState } from 'react'

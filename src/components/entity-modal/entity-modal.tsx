@@ -3,7 +3,7 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import styles from './entity-modal.module.css'
 
-import { EntityModel } from '@/models/entity-model'
+import { EntityModel } from '@/models/db/entity-model'
 import { CardFactory } from '@/utils/services/card-factory'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

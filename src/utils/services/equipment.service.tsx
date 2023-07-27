@@ -1,4 +1,4 @@
-import { Equipment } from '@/models/equipment'
+import { Equipment } from '@/models/db/equipment'
 
 export function retrieveEquipment(key: string): Promise<Equipment> {
   return (async () => {

@@ -1,4 +1,4 @@
-import { Equipment, EquipmentWithVariants } from '@/models/equipment'
+import { Equipment, EquipmentWithVariants } from '@/models/db/equipment'
 import { LabelsList, FieldDefinition } from '../labels-list/labels-list'
 import { getPriceValue } from '@/utils/services/currency-utils'
 

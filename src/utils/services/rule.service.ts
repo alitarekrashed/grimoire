@@ -1,4 +1,4 @@
-import Rule from '@/models/rule'
+import Rule from '@/models/db/rule'
 
 export function retrieveRule(key: string): Promise<Rule> {
   return (async () => {

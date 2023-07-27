@@ -1,4 +1,4 @@
-import { Spell } from '@/models/spell'
+import { Spell } from '@/models/db/spell'
 
 export function retrieveSpell(key: string): Promise<Spell> {
   return (async () => {

@@ -1,4 +1,4 @@
-import { ModelType } from '@/models/entity-model'
+import { ModelType } from '@/models/db/entity-model'
 import {
   createComponentsForType,
   parseDescription,

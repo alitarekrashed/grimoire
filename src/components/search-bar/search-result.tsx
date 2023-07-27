@@ -1,5 +1,5 @@
-import { EntityModel } from '@/models/entity-model'
-import { EquipmentWithVariants } from '@/models/equipment'
+import { EntityModel } from '@/models/db/entity-model'
+import { EquipmentWithVariants } from '@/models/db/equipment'
 import { useRouter } from 'next/navigation'
 import { ReactNode } from 'react'
 import { Rarity } from '../card/traits-list'

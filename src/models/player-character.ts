@@ -1,12 +1,3 @@
-import {
-  AdditionalFeature,
-  AdditionalFeatureType,
-  Ancestry,
-  Attribute,
-} from '@/models/ancestry'
-import { CharacterEntity, CharacterAncestry } from '@/models/character-entity'
-import { ObjectId } from 'mongodb'
-
 export interface Attributes {
   Strength: number
   Dexterity: number
@@ -41,6 +32,16 @@ export class PlayerCharacter {
 
   public getAncestry(): Ancestry {
     return this.ancestry
+  }
+
+  // TODO this file needs so much love
+  public async updateAncestry(ancestryId: string): Promise<PlayerCharacter> {
+    let newCharacter = { ...this.character }
+    // need to figure out how to re-initialize languages and attribute choices?
+    newCharacter.ancestry.id = ancestryId
+    newCharacter.ancestry.attribute_boost_selections = []
+    newCharacter.ancestry.language_selections = []
+    return await PlayerCharacter.build(this.character)
   }
 
   public updateCharacter(character: CharacterEntity): PlayerCharacter {
@@ -170,32 +171,4 @@ export class PlayerCharacter {
     pc.initialize()
     return pc
   }
-}
-
-export async function getCharacter(
-  id: string | ObjectId
-): Promise<PlayerCharacter> {
-  const character: CharacterEntity = await (
-    await fetch(`http://localhost:3000/api/characters/${id}`, {
-      cache: 'no-store',
-    })
-  ).json()
-
-  return await PlayerCharacter.build(character)
-}
-
-export async function getCharacters(): Promise<PlayerCharacter[]> {
-  const characters: CharacterEntity[] = await (
-    await fetch('http://localhost:3000/api/characters', {
-      cache: 'no-store',
-    })
-  ).json()
-
-  let result = []
-
-  for (let i = 0; i < characters.length; i++) {
-    result.push(await PlayerCharacter.build(characters[i]))
-  }
-
-  return result
 }

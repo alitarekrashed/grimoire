@@ -1,6 +1,6 @@
 'use client'
 
-import Condition from '@/models/condition'
+import Condition from '@/models/db/condition'
 import Card from '../card/card'
 import { RefObject } from 'react'
 

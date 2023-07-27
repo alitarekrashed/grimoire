@@ -1,7 +1,7 @@
 'use client'
 
-import { Activation } from '@/models/activation'
-import { EntityModel } from '@/models/entity-model'
+import { Activation } from '@/models/db/activation'
+import { EntityModel } from '@/models/db/entity-model'
 import { roboto_serif } from '@/utils/fonts'
 import * as Collapsible from '@radix-ui/react-collapsible'
 import * as Separator from '@radix-ui/react-separator'

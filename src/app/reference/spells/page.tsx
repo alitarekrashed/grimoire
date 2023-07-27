@@ -1,7 +1,7 @@
 'use client'
 
 import SplitViewDisplay from '@/components/split-view-list/split-view-list'
-import { Source } from '@/models/entity-model'
+import { Source } from '@/models/db/entity-model'
 import { SortDirection } from 'ag-grid-community'
 import { useEffect, useState } from 'react'
 

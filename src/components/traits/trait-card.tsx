@@ -1,6 +1,6 @@
 'use client'
 
-import Trait from '@/models/trait'
+import Trait from '@/models/db/trait'
 import Card from '../card/card'
 import { RefObject } from 'react'
 

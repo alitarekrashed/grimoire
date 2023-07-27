@@ -1,4 +1,4 @@
-import { ActionType, Activation } from '@/models/activation'
+import { ActionType, Activation } from '@/models/db/activation'
 import Image from 'next/image'
 import { ReactNode } from 'react'
 

@@ -2,7 +2,7 @@ import {
   Equipment,
   EquipmentVariantType,
   EquipmentWithVariants,
-} from '@/models/equipment'
+} from '@/models/db/equipment'
 import { getAllEntities } from '@/utils/services/db.service'
 import { NextResponse } from 'next/server'
 
