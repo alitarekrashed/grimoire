@@ -12,4 +12,5 @@ export interface CharacterAncestry {
   id: string
   attribute_boost_selections: (Attribute | undefined)[]
   language_selections: (string | undefined)[]
+  free_attribute: boolean
 }

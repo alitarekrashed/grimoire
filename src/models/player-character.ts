@@ -1,3 +1,6 @@
+import { AdditionalFeature, Ancestry, Attribute } from './db/ancestry'
+import { CharacterAncestry, CharacterEntity } from './db/character-entity'
+
 export interface Attributes {
   Strength: number
   Dexterity: number
@@ -7,55 +10,95 @@ export interface Attributes {
   Charisma: number
 }
 
-export class PlayerCharacter {
-  private attributes!: Attributes
-  private languages!: (string | undefined)[]
+const ATTRIBUTES: Attribute[] = [
+  'Strength',
+  'Dexterity',
+  'Constitution',
+  'Intelligence',
+  'Wisdom',
+  'Charisma',
+]
 
-  private constructor(
-    private character: CharacterEntity,
-    private ancestry: Ancestry
-  ) {
-    this.attributes = {
-      Strength: 0,
-      Dexterity: 0,
-      Constitution: 0,
-      Intelligence: 0,
-      Wisdom: 0,
-      Charisma: 0,
+export class PlayerAncestry {
+  public constructor(
+    private ancestry: Ancestry,
+    private characterAncestry: CharacterAncestry
+  ) {}
+
+  public getId(): string {
+    return this.ancestry._id.toString()
+  }
+
+  public getName(): string {
+    return this.ancestry.name
+  }
+
+  public getSpeed(): number {
+    return this.ancestry.speed
+  }
+
+  public getSize(): string {
+    return this.ancestry.size
+  }
+
+  public getHitpoints(): number {
+    return this.ancestry.hitpoints
+  }
+
+  public getSenses(): string[] {
+    const ancestrySenses = this.ancestry.additional
+      .filter((feature: AdditionalFeature) => feature.type === 'Sense')
+      .map((feature) => feature.value)
+
+    return ancestrySenses
+  }
+
+  public getGivenLanguages(): string[] {
+    return this.ancestry.languages.given
+  }
+
+  public getChosenLanguages(): string[] {
+    return this.characterAncestry.language_selections.map((val) => val ?? '')
+  }
+
+  // TODO ALI... maybe we need a player ancestry separate from the actual ancestry that encapsulates all this logic
+  public getAttributeChoices() {
+    let options = [...ATTRIBUTES]
+    if (this.characterAncestry.free_attribute == false) {
+      options = options.filter(
+        (option) => this.ancestry.attribute_boosts.indexOf(option) === -1
+      )
     }
-    this.languages = []
+
+    options = options.filter(
+      (option) =>
+        this.characterAncestry.attribute_boost_selections.indexOf(option) === -1
+    )
+
+    return options
   }
 
-  public getCharacter(): CharacterEntity {
-    return this.character
+  // TODO ALI... maybe we need a player ancestry separate from the actual ancestry that encapsulates all this logic
+  public getLanguageChoices(): string[] {
+    let options = this.ancestry.languages.options
+    options = options.filter(
+      (option) =>
+        this.characterAncestry.language_selections.indexOf(option) === -1
+    )
+
+    return options
   }
 
-  public getAncestry(): Ancestry {
-    return this.ancestry
-  }
-
-  // TODO this file needs so much love
-  public async updateAncestry(ancestryId: string): Promise<PlayerCharacter> {
-    let newCharacter = { ...this.character }
-    // need to figure out how to re-initialize languages and attribute choices?
-    newCharacter.ancestry.id = ancestryId
-    newCharacter.ancestry.attribute_boost_selections = []
-    newCharacter.ancestry.language_selections = []
-    return await PlayerCharacter.build(this.character)
-  }
-
-  public updateCharacter(character: CharacterEntity): PlayerCharacter {
-    const pc = new PlayerCharacter(character, { ...this.ancestry })
-    pc.initialize()
-    return pc
-  }
-
-  public calculateAncestry() {
-    const freeAttributes = this.ancestry.attribute_boosts.filter(
-      (attribute) => attribute === 'Free'
+  public initialize(intelligenceModifier: number) {
+    const freeAttributes = (
+      this.characterAncestry.free_attribute
+        ? ['Free', 'Free']
+        : this.ancestry.attribute_boosts.filter(
+            (attribute) => attribute === 'Free'
+          )
     ).length
 
-    const additionalLanguages = this.attributes.Intelligence
+    const additionalLanguages = intelligenceModifier
 
     const getExistingValue = (count: number, persisted: any[]) => {
       const values = []
@@ -71,27 +114,105 @@ export class PlayerCharacter {
 
     const freeAttributeSelections = getExistingValue(
       freeAttributes,
-      this.character.ancestry.attribute_boost_selections
+      this.characterAncestry.attribute_boost_selections
     )
     const languageSelections = getExistingValue(
       additionalLanguages,
-      this.character.ancestry.language_selections
+      this.characterAncestry.language_selections
     )
 
-    this.character.ancestry.attribute_boost_selections = freeAttributeSelections
-    this.character.ancestry.language_selections = languageSelections
+    this.characterAncestry.attribute_boost_selections = freeAttributeSelections
+    this.characterAncestry.language_selections = languageSelections
+  }
+
+  public getAttributeModifications() {
+    let attributes: any = {}
+    ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
+
+    const freeAttributes = this.characterAncestry.free_attribute
+      ? ['Free', 'Free']
+      : this.ancestry.attribute_boosts.filter(
+          (attribute) => attribute === 'Free'
+        )
+
+    if (this.characterAncestry.free_attribute === false) {
+      this.ancestry.attribute_boosts
+        .filter((attribute) => attribute !== 'Free')
+        .forEach((attribute) => {
+          attributes[attribute as Attribute] += 1
+        })
+      this.ancestry.attribute_flaws.forEach((attribute) => {
+        attributes[attribute as Attribute] -= 1
+      })
+    }
+
+    freeAttributes.forEach((freeBoost, index: number) => {
+      if (
+        index < this.characterAncestry.attribute_boost_selections?.length &&
+        this.characterAncestry.attribute_boost_selections[index]
+      ) {
+        attributes[
+          this.characterAncestry.attribute_boost_selections[index]!
+        ] += 1
+      }
+    })
+
+    return attributes
+  }
+}
+
+export class PlayerCharacter {
+  private attributes!: Attributes
+  private languages!: (string | undefined)[]
+
+  private constructor(
+    private character: CharacterEntity,
+    private ancestry: PlayerAncestry
+  ) {
+    this.attributes = {
+      Strength: 0,
+      Dexterity: 0,
+      Constitution: 0,
+      Intelligence: 0,
+      Wisdom: 0,
+      Charisma: 0,
+    }
+    this.languages = []
+    this.calculateAttributes()
+    this.ancestry.initialize(this.attributes.Intelligence)
+    this.calculateLanguages()
+  }
+
+  public getCharacter(): CharacterEntity {
+    return this.character
+  }
+
+  public async updateAncestry(ancestryId: string): Promise<PlayerCharacter> {
+    let newCharacter = { ...this.character }
+    newCharacter.ancestry.id = ancestryId
+    newCharacter.ancestry.attribute_boost_selections = []
+    newCharacter.ancestry.language_selections = []
+    return await PlayerCharacter.build(this.character)
+  }
+
+  public getAncestryId(): string {
+    return this.ancestry.getId()
+  }
+
+  public getAncestryName(): string {
+    return this.ancestry.getName()
   }
 
   public getSpeed(): number {
-    return this.ancestry.speed
+    return this.ancestry.getSpeed()
   }
 
   public getSize(): string {
-    return this.ancestry.size
+    return this.ancestry.getSize()
   }
 
   public getMaxHitpoints(): number {
-    return this.ancestry.hitpoints
+    return this.ancestry.getHitpoints()
   }
 
   public getAttributes(): Attributes {
@@ -103,23 +224,31 @@ export class PlayerCharacter {
   }
 
   public getSenses(): string[] {
-    const ancestrySenses = this.ancestry.additional
-      .filter((feature: AdditionalFeature) => feature.type === 'Sense')
-      .map((feature) => feature.value)
+    return this.ancestry.getSenses()
+  }
 
-    return ancestrySenses
+  public getAttributeChoices(): { ancestry: Attribute[] } {
+    return {
+      ancestry: this.ancestry.getAttributeChoices(),
+    }
+  }
+
+  public getLanguageChoices(): { ancestry: string[] } {
+    return {
+      ancestry: this.ancestry.getLanguageChoices(),
+    }
   }
 
   private calculateLanguages() {
     let languages = []
 
-    languages.push(...this.ancestry.languages.given)
-    languages.push(...this.character.ancestry.language_selections)
+    languages.push(...this.ancestry.getGivenLanguages())
+    languages.push(...this.ancestry.getChosenLanguages())
     this.languages = languages
   }
 
   private calculateAttributes() {
-    let attributes = {
+    let attributes: any = {
       Strength: 0,
       Dexterity: 0,
       Constitution: 0,
@@ -128,34 +257,13 @@ export class PlayerCharacter {
       Charisma: 0,
     }
 
-    this.ancestry.attribute_boosts
-      .filter((attribute) => attribute !== 'Free')
-      .forEach((attribute) => {
-        attributes[attribute as Attribute] += 1
-      })
-    this.ancestry.attribute_flaws.forEach((attribute) => {
-      attributes[attribute as Attribute] -= 1
-    })
+    const ancestryMods: any = this.ancestry.getAttributeModifications()
 
-    this.ancestry.attribute_boosts
-      .filter((attribute) => attribute === 'Free')
-      .forEach((freeBoost, index: number) => {
-        if (
-          index < this.character.ancestry.attribute_boost_selections?.length &&
-          this.character.ancestry.attribute_boost_selections[index]
-        ) {
-          attributes[
-            this.character.ancestry.attribute_boost_selections[index]!
-          ] += 1
-        }
-      })
+    Object.keys(ancestryMods).forEach(
+      (attribute: string) => (attributes[attribute] += ancestryMods[attribute])
+    )
+
     this.attributes = attributes
-  }
-
-  public initialize() {
-    this.calculateAttributes()
-    this.calculateAncestry()
-    this.calculateLanguages()
   }
 
   static async build(character: CharacterEntity): Promise<PlayerCharacter> {
@@ -167,8 +275,8 @@ export class PlayerCharacter {
         }
       )
     ).json()
-    const pc = new PlayerCharacter(character, ancestry)
-    pc.initialize()
+    const playerAncestry = new PlayerAncestry(ancestry, character.ancestry)
+    const pc = new PlayerCharacter(character, playerAncestry)
     return pc
   }
 }
