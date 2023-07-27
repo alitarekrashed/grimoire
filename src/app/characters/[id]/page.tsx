@@ -93,7 +93,7 @@ function CharacterDisplay({
   return (
     character && (
       <div>
-        <div className="inline-flex gap-5 border border-stone-300 p-2 mb-2">
+        <div className="inline-flex gap-5 border border-stone-300 p-2 mb-2 items-center">
           <div>
             <span>Name: </span>
             <input
@@ -130,7 +130,7 @@ function CharacterDisplay({
               </div>
             ))}
           </div>
-          <div className="border border-stone-300 p-2">
+          <div className="inline-flex border border-stone-300 p-2 items-center">
             <LabelsList
               fieldDefinitions={[
                 {
@@ -140,13 +140,15 @@ function CharacterDisplay({
               ]}
             ></LabelsList>
           </div>
-          <div className="border border-stone-300 p-2">
+          <div className="grid grid-rows-1 border border-stone-300 p-2">
             <span>Languages: </span>
-            {languages.map((language, index) => (
-              <span key={`${language}-${index}`}>{`${language}${
-                index < languages.length - 1 ? ', ' : ''
-              }`}</span>
-            ))}
+            <span>
+              {languages.map((language, index) => (
+                <span key={`${language}-${index}`}>{`${language}${
+                  index < languages.length - 1 ? ', ' : ''
+                }`}</span>
+              ))}
+            </span>
           </div>
         </div>
         <br />
@@ -176,8 +178,11 @@ function CharacterEdit({
     onEdit(val)
   }
 
+  const languageChoices: (string | undefined)[] =
+    character?.getCharacter().ancestry.language_selections
+
   return (
-    <div className="inline-flex gap-5 border border-stone-300 p-2">
+    <div className="inline-flex gap-5 border border-stone-300 p-2 items-center">
       <h1>Ancestry choices</h1>
       <span>
         <h2>Attributes</h2>
@@ -211,12 +216,11 @@ function CharacterEdit({
               )
             )}
       </span>
-      <span>
-        <h2>Languages</h2>
-        {character &&
-          character
-            .getCharacter()
-            .ancestry.language_selections.map((choice: any, i: number) => (
+      {languageChoices.length > 0 && (
+        <span>
+          <h2>Languages</h2>
+          {character &&
+            languageChoices.map((choice: any, i: number) => (
               <React.Fragment key={i}>
                 <select
                   className="bg-stone-800"
@@ -233,7 +237,8 @@ function CharacterEdit({
                 </select>
               </React.Fragment>
             ))}
-      </span>
+        </span>
+      )}
     </div>
   )
 }
