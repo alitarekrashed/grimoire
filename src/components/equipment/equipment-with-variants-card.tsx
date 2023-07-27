@@ -1,6 +1,9 @@
 'use client'
 
-import { EquipmentVariantType, EquipmentWithVariants } from '@/models/equipment'
+import {
+  EquipmentVariantType,
+  EquipmentWithVariants,
+} from '@/models/db/equipment'
 import { getPriceValue } from '@/utils/services/currency-utils'
 import * as Separator from '@radix-ui/react-separator'
 import Card from '../card/card'

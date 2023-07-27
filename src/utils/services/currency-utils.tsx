@@ -1,4 +1,4 @@
-import { Currency } from '@/models/equipment'
+import { Currency } from '@/models/db/equipment'
 
 export function getPriceValue(value: Currency[] | undefined) {
   let monetaryValue = ''

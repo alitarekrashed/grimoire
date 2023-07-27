@@ -1,6 +1,6 @@
 'use client'
 
-import { EntityModel } from '@/models/entity-model'
+import { EntityModel } from '@/models/db/entity-model'
 import { roboto_serif } from '@/utils/fonts'
 import * as HoverCard from '@radix-ui/react-hover-card'
 import styles from './entity-description-hover.module.css'

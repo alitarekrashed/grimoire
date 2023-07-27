@@ -1,4 +1,4 @@
-import { Source } from '@/models/entity-model'
+import { Source } from '@/models/db/entity-model'
 
 export default function SourceDisplay({ value }: { value: Source[] }) {
   return (

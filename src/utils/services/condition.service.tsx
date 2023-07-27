@@ -1,4 +1,4 @@
-import Condition from '@/models/condition'
+import Condition from '@/models/db/condition'
 
 export function retrieveCondition(key: string): Promise<Condition> {
   return (async () => {

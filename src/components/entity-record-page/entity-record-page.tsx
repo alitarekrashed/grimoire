@@ -1,6 +1,6 @@
 'use client'
 
-import { EntityModel, ModelType } from '@/models/entity-model'
+import { EntityModel, ModelType } from '@/models/db/entity-model'
 import { CardFactory } from '@/utils/services/card-factory'
 import { useEffect, useState } from 'react'
 

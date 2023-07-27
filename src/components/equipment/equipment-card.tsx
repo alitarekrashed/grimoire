@@ -1,6 +1,6 @@
 'use client'
 
-import { Equipment } from '@/models/equipment'
+import { Equipment } from '@/models/db/equipment'
 import Card from '../card/card'
 import { EquipmentOptionalFields } from './equipment-optional-fields'
 import { SavingThrowDisplay } from '../activation-displays/activation-description'

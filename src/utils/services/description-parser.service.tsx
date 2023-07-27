@@ -1,6 +1,6 @@
 import EntityHoverableDescription from '@/components/entity-hoverable-description/entity-description-hover'
 import EntityModal from '@/components/entity-modal/entity-modal'
-import { EntityModel, ModelType } from '@/models/entity-model'
+import { EntityModel, ModelType } from '@/models/db/entity-model'
 import { isString } from 'lodash'
 import React from 'react'
 import { retrieveCondition } from './condition.service'

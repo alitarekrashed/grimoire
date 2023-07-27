@@ -8,9 +8,9 @@ import {
   Document,
   WithId,
 } from 'mongodb'
-import { EntityModel, ModelType } from '@/models/entity-model'
+import { EntityModel, ModelType } from '@/models/db/entity-model'
 import clientPromise from '../mongodb'
-import { CharacterEntity } from '@/models/character-entity'
+import { CharacterEntity } from '@/models/db/character-entity'
 
 async function getDatabase(): Promise<Db> {
   const client: MongoClient = await clientPromise

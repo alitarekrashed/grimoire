@@ -5,14 +5,15 @@ import {
   ParsedDescription,
   ParsedToken,
 } from '@/components/parsed-description/parsed-description'
-import { Ancestry, Attribute } from '@/models/ancestry'
-import { CharacterEntity, CharacterAncestry } from '@/models/character-entity'
+import { Ancestry, Attribute } from '@/models/db/ancestry'
+import {
+  CharacterEntity,
+  CharacterAncestry,
+} from '@/models/db/character-entity'
+import { PlayerCharacter } from '@/models/player-character'
 import { useDebounce } from '@/utils/debounce'
 import { roboto_serif } from '@/utils/fonts'
-import {
-  PlayerCharacter,
-  getCharacter,
-} from '@/utils/services/character-service'
+import { getPlayerCharacter } from '@/utils/services/player-character-service'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 import { useEffect, useState } from 'react'
@@ -24,7 +25,7 @@ export default function CharacterPage() {
   const [character, setCharacter] = useState<PlayerCharacter>()
 
   useEffect(() => {
-    getCharacter(id).then((character: PlayerCharacter) => {
+    getPlayerCharacter(id).then((character: PlayerCharacter) => {
       setCharacter(character)
     })
   }, [])

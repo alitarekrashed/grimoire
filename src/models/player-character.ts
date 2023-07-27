@@ -1,13 +1,3 @@
-import {
-  AdditionalFeature,
-  AdditionalFeatureType,
-  Ancestry,
-  Attribute,
-} from '@/models/ancestry'
-import { CharacterEntity, CharacterAncestry } from '@/models/character-entity'
-import { ObjectId } from 'mongodb'
-import build from 'next/dist/build'
-
 export interface Attributes {
   Strength: number
   Dexterity: number
@@ -181,32 +171,4 @@ export class PlayerCharacter {
     pc.initialize()
     return pc
   }
-}
-
-export async function getCharacter(
-  id: string | ObjectId
-): Promise<PlayerCharacter> {
-  const character: CharacterEntity = await (
-    await fetch(`http://localhost:3000/api/characters/${id}`, {
-      cache: 'no-store',
-    })
-  ).json()
-
-  return await PlayerCharacter.build(character)
-}
-
-export async function getCharacters(): Promise<PlayerCharacter[]> {
-  const characters: CharacterEntity[] = await (
-    await fetch('http://localhost:3000/api/characters', {
-      cache: 'no-store',
-    })
-  ).json()
-
-  let result = []
-
-  for (let i = 0; i < characters.length; i++) {
-    result.push(await PlayerCharacter.build(characters[i]))
-  }
-
-  return result
 }
