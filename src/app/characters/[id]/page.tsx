@@ -60,13 +60,17 @@ export default function CharacterPage() {
       ...character!.getCharacter(),
       ancestry: ancestry,
     }
-    setCharacter(character?.updateCharacter(newCharacter))
-    debouncedRequest()
+    PlayerCharacter.build(newCharacter).then((val) => {
+      setCharacter(val)
+      debouncedRequest()
+    })
   }
 
   const handleCharacterEdit = (char: CharacterEntity) => {
-    setCharacter(character?.updateCharacter(char))
-    debouncedRequest()
+    PlayerCharacter.build(char).then((val) => {
+      setCharacter(val)
+      debouncedRequest()
+    })
   }
 
   return (
@@ -125,7 +129,7 @@ function CharacterDisplay({
             </div>
             <div>
               <span>Ancestry: </span>
-              <span>{character.getAncestry().name}</span>
+              <span>{character.getAncestryName()}</span>
             </div>
           </div>
           <div className="border border-stone-300 p-2">
@@ -255,7 +259,7 @@ function CharacterEdit({
         <h2>Ancestry</h2>
         <select
           className="bg-stone-800"
-          value={character.getAncestry()._id.toString()}
+          value={character.getAncestryId().toString()}
           onChange={(e) => updateAncestry(e.target.value)}
         >
           {ancestries.map((ancestry) => (
@@ -299,8 +303,8 @@ function CharacterEdit({
                     >
                       <option value={choice}>{choice}</option>
                       {character
-                        .getAncestryAttributeChoices()
-                        .map((attribute) => (
+                        .getAttributeChoices()
+                        .ancestry.map((attribute) => (
                           <option key={attribute} value={attribute}>
                             {attribute}
                           </option>
@@ -322,9 +326,8 @@ function CharacterEdit({
                   value={choice ?? ''}
                   onChange={(e) => updateAncestryLanguage(e.target.value, i)}
                 >
-                  <option value=""></option>
-
-                  {character.getAncestry().languages.options.map((language) => (
+                  <option value={choice}>{choice}</option>
+                  {character.getLanguageChoices().ancestry.map((language) => (
                     <option key={language} value={language}>
                       {language}
                     </option>
