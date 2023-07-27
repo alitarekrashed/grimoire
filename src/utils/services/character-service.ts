@@ -49,10 +49,7 @@ export class PlayerCharacter {
       (attribute) => attribute === 'Free'
     ).length
 
-    const additionalLanguages =
-      this.ancestry.languages.additional === '+Intelligence'
-        ? this.attributes.Intelligence
-        : 0
+    const additionalLanguages = this.attributes.Intelligence
 
     const getExistingValue = (count: number, persisted: any[]) => {
       const values = []

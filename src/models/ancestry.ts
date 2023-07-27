@@ -18,6 +18,13 @@ export type Attribute =
   | 'Wisdom'
   | 'Charisma'
 
+export type AdditionalFeatureType = 'Sense'
+
+export interface AdditionalFeature {
+  type: AdditionalFeatureType
+  value: string
+}
+
 export interface Ancestry extends EntityModel {
   hitpoints: number
   size: string // should be typed
@@ -29,5 +36,5 @@ export interface Ancestry extends EntityModel {
     options: string[]
     additional: string // '+Intelligence'
   }
-  additional: any[] // this will eventually have to include extra things, TODO will need to support things like adding equipment (clan dagger) or rules (darkvision)
+  additional: AdditionalFeatureType[] // this will eventually have to include extra things, TODO will need to support things like adding equipment (clan dagger) or rules (darkvision)
 }
