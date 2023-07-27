@@ -89,7 +89,7 @@ export class PlayerAncestry {
     return options
   }
 
-  public calculateAncestry(intelligenceModifier: number) {
+  public initialize(intelligenceModifier: number) {
     const freeAttributes = (
       this.characterAncestry.free_attribute
         ? ['Free', 'Free']
@@ -178,6 +178,9 @@ export class PlayerCharacter {
       Charisma: 0,
     }
     this.languages = []
+    this.calculateAttributes()
+    this.ancestry.initialize(this.attributes.Intelligence)
+    this.calculateLanguages()
   }
 
   public getCharacter(): CharacterEntity {
@@ -263,12 +266,6 @@ export class PlayerCharacter {
     this.attributes = attributes
   }
 
-  public initialize() {
-    this.calculateAttributes()
-    this.ancestry.calculateAncestry(this.attributes.Intelligence)
-    this.calculateLanguages()
-  }
-
   static async build(character: CharacterEntity): Promise<PlayerCharacter> {
     const ancestry = await (
       await fetch(
@@ -280,7 +277,6 @@ export class PlayerCharacter {
     ).json()
     const playerAncestry = new PlayerAncestry(ancestry, character.ancestry)
     const pc = new PlayerCharacter(character, playerAncestry)
-    pc.initialize()
     return pc
   }
 }
