@@ -88,45 +88,68 @@ function CharacterDisplay({
     onEdit(val)
   }
 
+  const languages = character.getLanguages().filter((language) => language)
+
   return (
     character && (
       <div>
-        <div>
-          <span>Name: </span>
-          <input
-            className="bg-stone-800"
-            value={character.getCharacter().name}
-            onChange={(e) => {
-              updateName(e.target.value)
-            }}
-          ></input>
+        <div className="inline-flex gap-5 border border-stone-300 p-2 mb-2">
+          <div>
+            <span>Name: </span>
+            <input
+              className="bg-stone-800"
+              value={character.getCharacter().name}
+              onChange={(e) => {
+                updateName(e.target.value)
+              }}
+            ></input>
+          </div>
+          <div>
+            <span>Level: </span>
+            <span>{character.getCharacter().level}</span>
+          </div>
+          <div>
+            <span>Ancestry: </span>
+            <span>{character.getAncestry().name}</span>
+          </div>
         </div>
-        <div>
-          <span>Level: </span>
-          <span>{character.getCharacter().level}</span>
+        <br />
+        <div className="inline-flex gap-10">
+          <div className="inline-flex gap-5 border border-stone-300 p-2">
+            {Object.keys(character.getAttributes()).map((attribute) => (
+              <div
+                className="grid grid-cols-1 justify-items-center"
+                key={attribute}
+              >
+                <div>{attribute} </div>
+                <div>
+                  {character.getAttributes()[attribute as Attribute] > 0 && `+`}
+                  {character.getAttributes()[attribute as Attribute]}
+                </div>
+                &nbsp;
+              </div>
+            ))}
+          </div>
+          <div className="border border-stone-300 p-2">
+            <LabelsList
+              fieldDefinitions={[
+                {
+                  label: 'Speed',
+                  value: character.getSpeed(),
+                },
+              ]}
+            ></LabelsList>
+          </div>
+          <div className="border border-stone-300 p-2">
+            <span>Languages: </span>
+            {languages.map((language, index) => (
+              <span key={`${language}-${index}`}>{`${language}${
+                index < languages.length - 1 ? ', ' : ''
+              }`}</span>
+            ))}
+          </div>
         </div>
-
         <br />
-        <LabelsList
-          fieldDefinitions={[
-            {
-              label: 'Speed',
-              value: character.getSpeed(),
-            },
-          ]}
-        ></LabelsList>
-        <br />
-        {Object.keys(character.getAttributes()).map((attribute) => (
-          <React.Fragment key={attribute}>
-            <span>{attribute}: </span>&nbsp;
-            <span>{character.getAttributes()[attribute as Attribute]}</span>
-            <br />
-          </React.Fragment>
-        ))}
-        <br />
-        {character.getLanguages().map((language, index) => (
-          <span key={`${language}-${index}`}>{language}</span>
-        ))}
         <br />
         <br />
       </div>
@@ -154,10 +177,10 @@ function CharacterEdit({
   }
 
   return (
-    <div>
-      <h1>Ancestry</h1>
-      <h2>Attributes</h2>
+    <div className="inline-flex gap-5 border border-stone-300 p-2">
+      <h1>Ancestry choices</h1>
       <span>
+        <h2>Attributes</h2>
         {character &&
           character
             .getCharacter()
@@ -188,8 +211,8 @@ function CharacterEdit({
               )
             )}
       </span>
-      <h2>Languages</h2>
       <span>
+        <h2>Languages</h2>
         {character &&
           character
             .getCharacter()
