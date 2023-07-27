@@ -49,6 +49,8 @@ export class PlayerCharacter {
     let newCharacter = { ...this.character }
     // need to figure out how to re-initialize languages and attribute choices?
     newCharacter.ancestry.id = ancestryId
+    newCharacter.ancestry.attribute_boost_selections = []
+    newCharacter.ancestry.language_selections = []
     return await PlayerCharacter.build(this.character)
   }
 
