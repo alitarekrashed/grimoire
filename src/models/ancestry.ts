@@ -36,5 +36,5 @@ export interface Ancestry extends EntityModel {
     options: string[]
     additional: string // '+Intelligence'
   }
-  additional: AdditionalFeatureType[] // this will eventually have to include extra things, TODO will need to support things like adding equipment (clan dagger) or rules (darkvision)
+  additional: AdditionalFeature[] // this will eventually have to include extra things, TODO will need to support things like adding equipment (clan dagger) or rules (darkvision)
 }

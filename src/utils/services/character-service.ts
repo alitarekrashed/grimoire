@@ -1,4 +1,9 @@
-import { Ancestry, Attribute } from '@/models/ancestry'
+import {
+  AdditionalFeature,
+  AdditionalFeatureType,
+  Ancestry,
+  Attribute,
+} from '@/models/ancestry'
 import { CharacterEntity, CharacterAncestry } from '@/models/character-entity'
 import { ObjectId } from 'mongodb'
 
@@ -94,6 +99,14 @@ export class PlayerCharacter {
 
   public getLanguages(): (string | undefined)[] {
     return this.languages
+  }
+
+  public getSenses(): string[] {
+    const ancestrySenses = this.ancestry.additional
+      .filter((feature: AdditionalFeature) => feature.type === 'Sense')
+      .map((feature) => feature.value)
+
+    return ancestrySenses
   }
 
   private calculateLanguages() {
