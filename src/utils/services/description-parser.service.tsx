@@ -7,6 +7,7 @@ import { retrieveCondition } from './condition.service'
 import { retrieveEquipment } from './equipment.service'
 import { retrieveSpell } from './spell.service'
 import { retrieveTrait } from './trait.service'
+import { retrieveRule } from './rule.service'
 
 export function parseDescription(description: any[]): Promise<any[]> {
   return (async () => {
@@ -40,6 +41,16 @@ export function parseDescription(description: any[]): Promise<any[]> {
         const brokenUpDescription = await createComponentsForType(
           currentPart,
           'SPELL'
+        )
+        tokenizedDescription.splice(index, 1, ...brokenUpDescription)
+        index = index + (brokenUpDescription.length - 1)
+        currentPart = brokenUpDescription[0]
+      }
+
+      if (isString(currentPart) && currentPart.includes('@rule:')) {
+        const brokenUpDescription = await createComponentsForType(
+          currentPart,
+          'RULE'
         )
         tokenizedDescription.splice(index, 1, ...brokenUpDescription)
         index = index + (brokenUpDescription.length - 1)
@@ -108,6 +119,9 @@ function lookupFunctionFactory(
       return retrieveEquipment
     case 'SPELL':
       return retrieveSpell
+    case 'RULE':
+      return retrieveRule
+
     default:
       return () => undefined!
   }

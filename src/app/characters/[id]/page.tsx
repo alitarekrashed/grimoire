@@ -1,6 +1,10 @@
 'use client'
 
 import { LabelsList } from '@/components/labels-list/labels-list'
+import {
+  ParsedDescription,
+  ParsedToken,
+} from '@/components/parsed-description/parsed-description'
 import { Attribute } from '@/models/ancestry'
 import { CharacterEntity, CharacterAncestry } from '@/models/character-entity'
 import { useDebounce } from '@/utils/debounce'
@@ -89,6 +93,7 @@ function CharacterDisplay({
   }
 
   const languages = character.getLanguages().filter((language) => language)
+  const senses = character.getSenses()
 
   return (
     character && (
@@ -164,6 +169,19 @@ function CharacterDisplay({
                   index < languages.length - 1 ? ', ' : ''
                 }`}</span>
               ))}
+            </span>
+          </div>
+          <div className="grid grid-rows-1 border border-stone-300 p-2">
+            <span>Senses: </span>
+            <span>
+              {senses.map((sense, index) => {
+                return (
+                  <ParsedDescription
+                    description={sense}
+                    key={`${sense}-${index}`}
+                  ></ParsedDescription>
+                )
+              })}
             </span>
           </div>
         </div>
