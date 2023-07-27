@@ -228,6 +228,12 @@ function CharacterEdit({
     onAncestryEdit(value)
   }
 
+  const updateAncestryAttributeMethod = () => {
+    let val: CharacterAncestry = { ...character.getCharacter().ancestry }
+    val.free_attribute = !val.free_attribute
+    onEdit(val)
+  }
+
   const updateAncestryAttribute = (value: Attribute, index: number) => {
     let val: CharacterAncestry = { ...character.getCharacter().ancestry }
     val.attribute_boost_selections[index] = value
@@ -263,35 +269,46 @@ function CharacterEdit({
         </select>
       </span>
       <span>
+        {character && (
+          <label>
+            <input
+              className="bg-stone-800"
+              type="checkbox"
+              checked={character.getCharacter().ancestry.free_attribute}
+              onChange={(e) => updateAncestryAttributeMethod()}
+            />
+            Freely assign attributes?
+          </label>
+        )}
+
         <h2>Attributes</h2>
         {character &&
           character
             .getCharacter()
             .ancestry.attribute_boost_selections.map(
-              (choice: any, i: number) => (
-                <React.Fragment key={i}>
-                  <select
-                    className="bg-stone-800"
-                    value={choice}
-                    onChange={(e) =>
-                      updateAncestryAttribute(e.target.value as Attribute, i)
-                    }
-                  >
-                    <option value=""></option>
-                    {Object.keys(character.getAttributes()).map(
-                      (attribute) =>
-                        character
-                          .getAncestry()
-                          .attribute_boosts.filter((val) => val === attribute)
-                          .length == 0 && (
+              (choice: any, i: number) => {
+                console.log(choice)
+                return (
+                  <React.Fragment key={i}>
+                    <select
+                      className="bg-stone-800 mr-2"
+                      value={choice ?? ''}
+                      onChange={(e) =>
+                        updateAncestryAttribute(e.target.value as Attribute, i)
+                      }
+                    >
+                      <option value={choice}>{choice}</option>
+                      {character
+                        .getAncestryAttributeChoices()
+                        .map((attribute) => (
                           <option key={attribute} value={attribute}>
                             {attribute}
                           </option>
-                        )
-                    )}
-                  </select>
-                </React.Fragment>
-              )
+                        ))}
+                    </select>
+                  </React.Fragment>
+                )
+              }
             )}
       </span>
       {languageChoices.length > 0 && (
@@ -301,8 +318,8 @@ function CharacterEdit({
             languageChoices.map((choice: any, i: number) => (
               <React.Fragment key={i}>
                 <select
-                  className="bg-stone-800"
-                  value={choice}
+                  className="bg-stone-800 mr-2"
+                  value={choice ?? ''}
                   onChange={(e) => updateAncestryLanguage(e.target.value, i)}
                 >
                   <option value=""></option>

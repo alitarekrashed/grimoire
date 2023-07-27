@@ -1,3 +1,6 @@
+import { Ancestry, Attribute, AttributeModifier } from './db/ancestry'
+import { CharacterEntity } from './db/character-entity'
+
 export interface Attributes {
   Strength: number
   Dexterity: number
@@ -34,6 +37,25 @@ export class PlayerCharacter {
     return this.ancestry
   }
 
+  // TODO ALI... maybe we need a player ancestry separate from the actual ancestry that encapsulates all this logic
+  public getAncestryAttributeChoices() {
+    let options: Attribute[] = Object.keys(this.getAttributes()) as Attribute[]
+
+    if (this.character.ancestry.free_attribute == false) {
+      options = options.filter(
+        (option) => this.ancestry.attribute_boosts.indexOf(option) === -1
+      )
+    }
+
+    options = options.filter(
+      (option) =>
+        this.character.ancestry.attribute_boost_selections.indexOf(option) ===
+        -1
+    )
+
+    return options
+  }
+
   // TODO this file needs so much love
   public async updateAncestry(ancestryId: string): Promise<PlayerCharacter> {
     let newCharacter = { ...this.character }
@@ -51,8 +73,12 @@ export class PlayerCharacter {
   }
 
   public calculateAncestry() {
-    const freeAttributes = this.ancestry.attribute_boosts.filter(
-      (attribute) => attribute === 'Free'
+    const freeAttributes = (
+      this.character.ancestry.free_attribute
+        ? ['Free', 'Free']
+        : this.ancestry.attribute_boosts.filter(
+            (attribute) => attribute === 'Free'
+          )
     ).length
 
     const additionalLanguages = this.attributes.Intelligence
@@ -128,27 +154,34 @@ export class PlayerCharacter {
       Charisma: 0,
     }
 
-    this.ancestry.attribute_boosts
-      .filter((attribute) => attribute !== 'Free')
-      .forEach((attribute) => {
-        attributes[attribute as Attribute] += 1
+    const freeAttributes = this.character.ancestry.free_attribute
+      ? ['Free', 'Free']
+      : this.ancestry.attribute_boosts.filter(
+          (attribute) => attribute === 'Free'
+        )
+
+    if (this.character.ancestry.free_attribute === false) {
+      this.ancestry.attribute_boosts
+        .filter((attribute) => attribute !== 'Free')
+        .forEach((attribute) => {
+          attributes[attribute as Attribute] += 1
+        })
+      this.ancestry.attribute_flaws.forEach((attribute) => {
+        attributes[attribute as Attribute] -= 1
       })
-    this.ancestry.attribute_flaws.forEach((attribute) => {
-      attributes[attribute as Attribute] -= 1
+    }
+
+    freeAttributes.forEach((freeBoost, index: number) => {
+      if (
+        index < this.character.ancestry.attribute_boost_selections?.length &&
+        this.character.ancestry.attribute_boost_selections[index]
+      ) {
+        attributes[
+          this.character.ancestry.attribute_boost_selections[index]!
+        ] += 1
+      }
     })
 
-    this.ancestry.attribute_boosts
-      .filter((attribute) => attribute === 'Free')
-      .forEach((freeBoost, index: number) => {
-        if (
-          index < this.character.ancestry.attribute_boost_selections?.length &&
-          this.character.ancestry.attribute_boost_selections[index]
-        ) {
-          attributes[
-            this.character.ancestry.attribute_boost_selections[index]!
-          ] += 1
-        }
-      })
     this.attributes = attributes
   }
 
