@@ -99,5 +99,9 @@ function getRoute(data: EntityModel): string {
       return 'conditions'
     case 'TRAIT':
       return 'traits'
+    case 'ANCESTRY':
+      return 'ancestries'
+    case 'RULE':
+      return 'rules'
   }
 }

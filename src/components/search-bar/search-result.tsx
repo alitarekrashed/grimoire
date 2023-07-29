@@ -40,6 +40,10 @@ function getType(data: EntityModel): string {
       return 'Condition'
     case 'TRAIT':
       return 'Trait'
+    case 'RULE':
+      return 'Rule'
+    case 'ANCESTRY':
+      return 'Ancestry'
   }
 }
 
