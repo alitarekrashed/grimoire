@@ -45,6 +45,10 @@ function baseUrlFactory(type: ModelType) {
       return 'http://localhost:3000/api/traits'
     case 'CONDITION':
       return 'http://localhost:3000/api/conditions'
+    case 'ANCESTRY':
+      return 'http://localhost:3000/api/ancestries'
+    case 'RULE':
+      return 'http://localhost:3000/api/rules'
     default: // throw exception?
   }
 }
