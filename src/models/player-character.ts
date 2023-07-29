@@ -45,6 +45,10 @@ export class PlayerAncestry {
     return this.ancestry.hitpoints
   }
 
+  public getTraits(): string[] {
+    return this.ancestry.traits
+  }
+
   public getSenses(): string[] {
     const ancestrySenses = this.ancestry.additional
       .filter((feature: AdditionalFeature) => feature.type === 'Sense')
@@ -193,6 +197,10 @@ export class PlayerCharacter {
     newCharacter.ancestry.attribute_boost_selections = []
     newCharacter.ancestry.language_selections = []
     return await PlayerCharacter.build(this.character)
+  }
+
+  public getTraits(): string[] {
+    return this.ancestry.getTraits()
   }
 
   public getAncestryId(): string {

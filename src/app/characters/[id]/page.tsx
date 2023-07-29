@@ -1,5 +1,6 @@
 'use client'
 
+import { TraitsList } from '@/components/card/traits-list'
 import { LabelsList } from '@/components/labels-list/labels-list'
 import {
   ParsedDescription,
@@ -135,6 +136,9 @@ function CharacterDisplay({
           <div className="border border-stone-300 p-2">
             <span>Hitpoints: </span>
             <span>{character.getMaxHitpoints()}</span>
+          </div>
+          <div>
+            <TraitsList traits={character.getTraits()}></TraitsList>
           </div>
         </div>
         <br />
