@@ -1,11 +1,15 @@
+import AncestryCard from '@/components/ancestries/ancestry-card'
 import ConditionCard from '@/components/conditions/condition-card'
 import EquipmentCard from '@/components/equipment/equipment-card'
 import EquipmentWithVariantsCard from '@/components/equipment/equipment-with-variants-card'
+import RuleCard from '@/components/rules/rule-card'
 import SpellCard from '@/components/spells/spell-card'
 import TraitCard from '@/components/traits/trait-card'
+import { Ancestry } from '@/models/db/ancestry'
 import Condition from '@/models/db/condition'
 import { EntityModel } from '@/models/db/entity-model'
 import { Equipment, EquipmentWithVariants } from '@/models/db/equipment'
+import Rule from '@/models/db/rule'
 import { Spell } from '@/models/db/spell'
 import Trait from '@/models/db/trait'
 import { ReactNode, RefObject } from 'react'
@@ -71,6 +75,24 @@ export function CardFactory<T extends EntityModel>({
           collapsible={collapsible}
           onRemoved={onRemoved as unknown as (item: Spell) => void}
         ></SpellCard>
+      )
+    case 'ANCESTRY':
+      return (
+        <AncestryCard
+          reference={reference}
+          value={card as unknown as Ancestry}
+          collapsible={collapsible}
+          onRemoved={onRemoved as unknown as (item: Ancestry) => void}
+        ></AncestryCard>
+      )
+    case 'RULE':
+      return (
+        <RuleCard
+          reference={reference}
+          value={card as unknown as Rule}
+          collapsible={collapsible}
+          onRemoved={onRemoved as unknown as (item: Rule) => void}
+        ></RuleCard>
       )
     default:
     // throw error
