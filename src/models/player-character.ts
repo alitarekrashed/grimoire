@@ -19,159 +19,122 @@ const ATTRIBUTES: Attribute[] = [
   'Charisma',
 ]
 
-export class PlayerAncestry {
-  public constructor(
-    private ancestry: Ancestry,
-    private characterAncestry: CharacterAncestry
-  ) {}
-
-  public getId(): string {
-    return this.ancestry._id.toString()
-  }
-
-  public getName(): string {
-    return this.ancestry.name
-  }
-
-  public getSpeed(): number {
-    return this.ancestry.speed
-  }
-
-  public getSize(): string {
-    return this.ancestry.size
-  }
-
-  public getHitpoints(): number {
-    return this.ancestry.hitpoints
-  }
-
-  public getTraits(): string[] {
-    return this.ancestry.traits
-  }
-
-  public getSenses(): string[] {
-    const ancestrySenses = this.ancestry.additional
-      .filter((feature: AdditionalFeature) => feature.type === 'Sense')
-      .map((feature) => feature.value)
-
-    return ancestrySenses
-  }
-
-  public getGivenLanguages(): string[] {
-    return this.ancestry.languages.given
-  }
-
-  public getChosenLanguages(): string[] {
-    return this.characterAncestry.language_selections.map((val) => val ?? '')
-  }
-
-  // TODO ALI... maybe we need a player ancestry separate from the actual ancestry that encapsulates all this logic
-  public getAttributeChoices() {
-    let options = [...ATTRIBUTES]
-    if (this.characterAncestry.free_attribute == false) {
-      options = options.filter(
-        (option) => this.ancestry.attribute_boosts.indexOf(option) === -1
-      )
-    }
-
+function getAncestryAttributeChoices(
+  characterAncestry: CharacterAncestry,
+  ancestry: Ancestry
+) {
+  let options = [...ATTRIBUTES]
+  if (characterAncestry.free_attribute == false) {
     options = options.filter(
-      (option) =>
-        this.characterAncestry.attribute_boost_selections.indexOf(option) === -1
+      (option) => ancestry.attribute_boosts.indexOf(option) === -1
     )
-
-    return options
   }
 
-  // TODO ALI... maybe we need a player ancestry separate from the actual ancestry that encapsulates all this logic
-  public getLanguageChoices(): string[] {
-    let options = this.ancestry.languages.options
-    options = options.filter(
-      (option) =>
-        this.characterAncestry.language_selections.indexOf(option) === -1
-    )
+  options = options.filter(
+    (option) =>
+      characterAncestry.attribute_boost_selections.indexOf(option) === -1
+  )
 
-    return options
-  }
+  return options
+}
 
-  public initialize(intelligenceModifier: number) {
-    const freeAttributes = (
-      this.characterAncestry.free_attribute
-        ? ['Free', 'Free']
-        : this.ancestry.attribute_boosts.filter(
-            (attribute) => attribute === 'Free'
-          )
-    ).length
+function getAncestryLanguageChoices(
+  characterAncestry: CharacterAncestry,
+  ancestry: Ancestry
+): string[] {
+  let options = ancestry.languages.options
+  options = options.filter(
+    (option) => characterAncestry.language_selections.indexOf(option) === -1
+  )
 
-    const additionalLanguages = intelligenceModifier
+  return options
+}
 
-    const getExistingValue = (count: number, persisted: any[]) => {
-      const values = []
-      for (let i = 0; i < count; i++) {
-        if (i < persisted.length) {
-          values.push(persisted[i])
-        } else {
-          values.push(undefined)
-        }
-      }
-      return values
-    }
+function getAncestryAttributeModifications(
+  characterAncestry: CharacterAncestry,
+  ancestry: Ancestry
+) {
+  let attributes: any = {}
+  ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
 
-    const freeAttributeSelections = getExistingValue(
-      freeAttributes,
-      this.characterAncestry.attribute_boost_selections
-    )
-    const languageSelections = getExistingValue(
-      additionalLanguages,
-      this.characterAncestry.language_selections
-    )
+  const freeAttributes = characterAncestry.free_attribute
+    ? ['Free', 'Free']
+    : ancestry.attribute_boosts.filter((attribute) => attribute === 'Free')
 
-    this.characterAncestry.attribute_boost_selections = freeAttributeSelections
-    this.characterAncestry.language_selections = languageSelections
-  }
-
-  public getAttributeModifications() {
-    let attributes: any = {}
-    ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
-
-    const freeAttributes = this.characterAncestry.free_attribute
-      ? ['Free', 'Free']
-      : this.ancestry.attribute_boosts.filter(
-          (attribute) => attribute === 'Free'
-        )
-
-    if (this.characterAncestry.free_attribute === false) {
-      this.ancestry.attribute_boosts
-        .filter((attribute) => attribute !== 'Free')
-        .forEach((attribute) => {
-          attributes[attribute as Attribute] += 1
-        })
-      this.ancestry.attribute_flaws.forEach((attribute) => {
-        attributes[attribute as Attribute] -= 1
+  if (characterAncestry.free_attribute === false) {
+    ancestry.attribute_boosts
+      .filter((attribute) => attribute !== 'Free')
+      .forEach((attribute) => {
+        attributes[attribute as Attribute] += 1
       })
-    }
-
-    freeAttributes.forEach((freeBoost, index: number) => {
-      if (
-        index < this.characterAncestry.attribute_boost_selections?.length &&
-        this.characterAncestry.attribute_boost_selections[index]
-      ) {
-        attributes[
-          this.characterAncestry.attribute_boost_selections[index]!
-        ] += 1
-      }
+    ancestry.attribute_flaws.forEach((attribute) => {
+      attributes[attribute as Attribute] -= 1
     })
-
-    return attributes
   }
+
+  freeAttributes.forEach((freeBoost, index: number) => {
+    if (
+      index < characterAncestry.attribute_boost_selections?.length &&
+      characterAncestry.attribute_boost_selections[index]
+    ) {
+      attributes[characterAncestry.attribute_boost_selections[index]!] += 1
+    }
+  })
+
+  return attributes
+}
+
+// TODO can some of these be simplified and folded into the calculate attributes for ancestry?
+function setCharacterAncestry(
+  characterAncestry: CharacterAncestry,
+  ancestry: Ancestry,
+  intelligenceModifier: number
+) {
+  const freeAttributes = (
+    characterAncestry.free_attribute
+      ? ['Free', 'Free']
+      : ancestry.attribute_boosts.filter((attribute) => attribute === 'Free')
+  ).length
+
+  const additionalLanguages = intelligenceModifier
+
+  const getExistingValue = (count: number, persisted: any[]) => {
+    const values = []
+    for (let i = 0; i < count; i++) {
+      if (i < persisted.length) {
+        values.push(persisted[i])
+      } else {
+        values.push(undefined)
+      }
+    }
+    return values
+  }
+
+  const freeAttributeSelections = getExistingValue(
+    freeAttributes,
+    characterAncestry.attribute_boost_selections
+  )
+  const languageSelections = getExistingValue(
+    additionalLanguages,
+    characterAncestry.language_selections
+  )
+
+  characterAncestry.attribute_boost_selections = freeAttributeSelections
+  characterAncestry.language_selections = languageSelections
 }
 
 export class PlayerCharacter {
   private attributes!: Attributes
-  private languages!: (string | undefined)[]
+  private languages!: string[]
+  private traits!: string[]
+  private speed!: number
+  private hitpoints!: number
+  private size!: string
+  private senses!: string[]
 
   private constructor(
     private character: CharacterEntity,
-    private ancestry: PlayerAncestry
+    private ancestry: Ancestry
   ) {
     this.attributes = {
       Strength: 0,
@@ -183,8 +146,21 @@ export class PlayerCharacter {
     }
     this.languages = []
     this.calculateAttributes()
-    this.ancestry.initialize(this.attributes.Intelligence)
+    setCharacterAncestry(
+      character.ancestry,
+      ancestry,
+      this.attributes.Intelligence
+    )
     this.calculateLanguages()
+
+    // TODO clean this up?
+    this.traits = this.ancestry.traits
+    this.speed = this.ancestry.speed
+    this.size = this.ancestry.size
+    this.hitpoints = this.ancestry.hitpoints
+    this.senses = this.ancestry.additional
+      .filter((feature: AdditionalFeature) => feature.type === 'Sense')
+      .map((feature) => feature.value)
   }
 
   public getCharacter(): CharacterEntity {
@@ -200,27 +176,27 @@ export class PlayerCharacter {
   }
 
   public getTraits(): string[] {
-    return this.ancestry.getTraits()
+    return this.traits
   }
 
   public getAncestryId(): string {
-    return this.ancestry.getId()
+    return this.ancestry._id.toString()
   }
 
   public getAncestryName(): string {
-    return this.ancestry.getName()
+    return this.ancestry.name
   }
 
   public getSpeed(): number {
-    return this.ancestry.getSpeed()
+    return this.speed
   }
 
   public getSize(): string {
-    return this.ancestry.getSize()
+    return this.size
   }
 
   public getMaxHitpoints(): number {
-    return this.ancestry.getHitpoints()
+    return this.hitpoints
   }
 
   public getAttributes(): Attributes {
@@ -232,26 +208,34 @@ export class PlayerCharacter {
   }
 
   public getSenses(): string[] {
-    return this.ancestry.getSenses()
+    return this.senses
   }
 
   public getAttributeChoices(): { ancestry: Attribute[] } {
     return {
-      ancestry: this.ancestry.getAttributeChoices(),
+      ancestry: getAncestryAttributeChoices(
+        this.character.ancestry,
+        this.ancestry
+      ),
     }
   }
 
   public getLanguageChoices(): { ancestry: string[] } {
     return {
-      ancestry: this.ancestry.getLanguageChoices(),
+      ancestry: getAncestryLanguageChoices(
+        this.character.ancestry,
+        this.ancestry
+      ),
     }
   }
 
   private calculateLanguages() {
     let languages = []
 
-    languages.push(...this.ancestry.getGivenLanguages())
-    languages.push(...this.ancestry.getChosenLanguages())
+    languages.push(...this.ancestry.languages.given)
+    languages.push(
+      ...this.character.ancestry.language_selections.map((val) => val ?? '')
+    )
     this.languages = languages
   }
 
@@ -265,7 +249,10 @@ export class PlayerCharacter {
       Charisma: 0,
     }
 
-    const ancestryMods: any = this.ancestry.getAttributeModifications()
+    const ancestryMods: any = getAncestryAttributeModifications(
+      this.character.ancestry,
+      this.ancestry
+    )
 
     Object.keys(ancestryMods).forEach(
       (attribute: string) => (attributes[attribute] += ancestryMods[attribute])
@@ -283,8 +270,7 @@ export class PlayerCharacter {
         }
       )
     ).json()
-    const playerAncestry = new PlayerAncestry(ancestry, character.ancestry)
-    const pc = new PlayerCharacter(character, playerAncestry)
+    const pc = new PlayerCharacter(character, ancestry)
     return pc
   }
 }
