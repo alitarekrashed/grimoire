@@ -19,6 +19,23 @@ const ATTRIBUTES: Attribute[] = [
   'Charisma',
 ]
 
+function buildChoiceSelectionArray(
+  count: number,
+  choices: any[],
+  invalidChoice: any[],
+  unsetValue: any
+) {
+  const values = []
+  for (let i = 0; i < count; i++) {
+    if (i < choices.length && invalidChoice.includes(choices[i]) === false) {
+      values.push(choices[i])
+    } else {
+      values.push(unsetValue)
+    }
+  }
+  return values
+}
+
 function getAncestryAttributeChoices(
   characterAncestry: CharacterAncestry,
   ancestry: Ancestry
@@ -50,16 +67,18 @@ function getAncestryLanguageChoices(
   return options
 }
 
-function getAncestryAttributeModifications(
+function calculateAncestryAttributeModifications(
   characterAncestry: CharacterAncestry,
   ancestry: Ancestry
 ) {
   let attributes: any = {}
   ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
 
-  const freeAttributes = characterAncestry.free_attribute
-    ? ['Free', 'Free']
-    : ancestry.attribute_boosts.filter((attribute) => attribute === 'Free')
+  const freeAttributeCount = (
+    characterAncestry.free_attribute
+      ? ['Free', 'Free']
+      : ancestry.attribute_boosts.filter((attribute) => attribute === 'Free')
+  ).length
 
   if (characterAncestry.free_attribute === false) {
     ancestry.attribute_boosts
@@ -72,55 +91,18 @@ function getAncestryAttributeModifications(
     })
   }
 
-  freeAttributes.forEach((freeBoost, index: number) => {
-    if (
-      index < characterAncestry.attribute_boost_selections?.length &&
-      characterAncestry.attribute_boost_selections[index]
-    ) {
-      attributes[characterAncestry.attribute_boost_selections[index]!] += 1
-    }
-  })
+  characterAncestry.attribute_boost_selections = buildChoiceSelectionArray(
+    freeAttributeCount,
+    characterAncestry.attribute_boost_selections,
+    characterAncestry.free_attribute === false ? ancestry.attribute_boosts : [],
+    undefined
+  )
+
+  characterAncestry.attribute_boost_selections
+    .filter((val) => val)
+    .forEach((val) => (attributes[val!] += 1))
 
   return attributes
-}
-
-// TODO can some of these be simplified and folded into the calculate attributes for ancestry?
-function setCharacterAncestry(
-  characterAncestry: CharacterAncestry,
-  ancestry: Ancestry,
-  intelligenceModifier: number
-) {
-  const freeAttributes = (
-    characterAncestry.free_attribute
-      ? ['Free', 'Free']
-      : ancestry.attribute_boosts.filter((attribute) => attribute === 'Free')
-  ).length
-
-  const additionalLanguages = intelligenceModifier
-
-  const getExistingValue = (count: number, persisted: any[]) => {
-    const values = []
-    for (let i = 0; i < count; i++) {
-      if (i < persisted.length) {
-        values.push(persisted[i])
-      } else {
-        values.push(undefined)
-      }
-    }
-    return values
-  }
-
-  const freeAttributeSelections = getExistingValue(
-    freeAttributes,
-    characterAncestry.attribute_boost_selections
-  )
-  const languageSelections = getExistingValue(
-    additionalLanguages,
-    characterAncestry.language_selections
-  )
-
-  characterAncestry.attribute_boost_selections = freeAttributeSelections
-  characterAncestry.language_selections = languageSelections
 }
 
 export class PlayerCharacter {
@@ -146,11 +128,6 @@ export class PlayerCharacter {
     }
     this.languages = []
     this.calculateAttributes()
-    setCharacterAncestry(
-      character.ancestry,
-      ancestry,
-      this.attributes.Intelligence
-    )
     this.calculateLanguages()
 
     // TODO clean this up?
@@ -232,6 +209,17 @@ export class PlayerCharacter {
   private calculateLanguages() {
     let languages = []
 
+    const additionalLanguages = this.attributes.Intelligence
+
+    const languageSelections = buildChoiceSelectionArray(
+      additionalLanguages,
+      this.character.ancestry.language_selections,
+      [],
+      ''
+    )
+
+    this.character.ancestry.language_selections = languageSelections
+
     languages.push(...this.ancestry.languages.given)
     languages.push(
       ...this.character.ancestry.language_selections.map((val) => val ?? '')
@@ -249,7 +237,7 @@ export class PlayerCharacter {
       Charisma: 0,
     }
 
-    const ancestryMods: any = getAncestryAttributeModifications(
+    const ancestryMods: any = calculateAncestryAttributeModifications(
       this.character.ancestry,
       this.ancestry
     )
