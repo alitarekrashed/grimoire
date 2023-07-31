@@ -47,6 +47,8 @@ function getType(data: EntityModel): string {
       return 'Ancestry'
     case 'HERITAGE':
       return `${(data as Heritage).ancestry} heritage`
+    case 'ACTION':
+      return 'Action'
   }
 }
 

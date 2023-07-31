@@ -46,7 +46,7 @@ function renderWithImage(
         className="inline"
       ></Image>
       &nbsp;
-      {activation.action}
+      {!activation?.override_label ?? activation.action}
     </>
   )
 }
@@ -72,7 +72,7 @@ function renderWithMultipleImages(activation: Activation, size: number) {
         className="inline"
       ></Image>
       &nbsp;
-      {activation.action}
+      {!activation?.override_label ?? activation.action}
     </>
   )
 }

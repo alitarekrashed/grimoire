@@ -22,3 +22,4 @@ export type ModelType =
   | 'ANCESTRY'
   | 'RULE'
   | 'HERITAGE'
+  | 'ACTION'

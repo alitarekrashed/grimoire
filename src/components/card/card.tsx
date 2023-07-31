@@ -6,7 +6,10 @@ import { roboto_serif } from '@/utils/fonts'
 import * as Collapsible from '@radix-ui/react-collapsible'
 import * as Separator from '@radix-ui/react-separator'
 import { RefObject, useCallback, useEffect, useState } from 'react'
-import { ActivationDescription } from '../activation-displays/activation-description'
+import {
+  ActivationDescription,
+  buildActionValue,
+} from '../activation-displays/activation-description'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 import styles from './card.module.css'
 import SourceDisplay from './source-display'
@@ -42,7 +45,20 @@ export default function Card<T extends EntityModel>({
   const [ref, setRef] = useState<RefObject<HTMLDivElement>>(reference)
   const [fadeIn, setFadeIn] = useState(false)
 
-  const hasShortActivation = !activation?.effect
+  let renderedActivation: Activation | undefined = activation
+    ? { ...activation }
+    : undefined
+
+  let activationType: string = 'standard'
+  if (activation?.effect) {
+    activationType = 'description'
+  } else if (
+    activation &&
+    !activation.action &&
+    data.entity_type !== 'EQUIPMENT'
+  ) {
+    activationType = 'title'
+  }
 
   useEffect(() => {
     setTimeout(() => {
@@ -67,7 +83,14 @@ export default function Card<T extends EntityModel>({
     >
       <Collapsible.Root defaultOpen={true} disabled={collapsible === false}>
         <Collapsible.Trigger className="w-full">
-          <CardHeader name={data.name} type={type} level={level}></CardHeader>
+          <CardHeader
+            name={data.name}
+            type={type}
+            level={level}
+            activation={
+              activationType === 'title' ? renderedActivation : undefined
+            }
+          ></CardHeader>
         </Collapsible.Trigger>
         <Collapsible.Content className={`${styles.cardContent}`}>
           {traits && (
@@ -76,10 +99,11 @@ export default function Card<T extends EntityModel>({
             </div>
           )}
           {attributes}
-          {hasShortActivation && (
+          {activationType !== 'description' && (
             <span className="text-sm">
               <ActivationDescription
-                value={activation}
+                value={renderedActivation}
+                hideActivation={activationType === 'title'}
                 labelClassName="font-medium"
               ></ActivationDescription>
             </span>
@@ -98,11 +122,11 @@ export default function Card<T extends EntityModel>({
             <ParsedDescription
               description={data.description}
             ></ParsedDescription>
-            {hasShortActivation === false && (
+            {activationType === 'description' && (
               <>
                 <br />
                 <ActivationDescription
-                  value={activation}
+                  value={renderedActivation}
                 ></ActivationDescription>
               </>
             )}
@@ -131,10 +155,12 @@ export default function Card<T extends EntityModel>({
 
 function CardHeader({
   name,
+  activation,
   type,
   level,
 }: {
   name: string
+  activation?: Activation
   type: string
   level: number | number[] | undefined
 }) {
@@ -147,7 +173,10 @@ function CardHeader({
 
   return (
     <div className="grid grid-cols-4 justify-between text-xl font-semibold">
-      <div className="col-span-3 justify-self-start capitalize">{name}</div>
+      <div className="inline-flex col-span-3 justify-self-start capitalize">
+        <span>{name}</span>
+        {activation && <span>&nbsp;{buildActionValue(activation, 20)}</span>}
+      </div>
       <div className="justify-self-end">
         {type} {displayLevel}
       </div>

@@ -7,14 +7,16 @@ import { Activation, SavingThrow } from '@/models/db/activation'
 export function ActivationDescription({
   value,
   labelClassName,
+  hideActivation,
 }: {
   value: Activation | undefined
   labelClassName?: string
+  hideActivation?: boolean
 }) {
   const fields: FieldDefinition[] = [
     {
       label: value?.override_label ?? 'Activate',
-      value: value ? buildActionValue(value, 15) : [],
+      value: !hideActivation && value ? buildActionValue(value, 15) : undefined,
     },
     {
       label: 'Frequency',
@@ -90,14 +92,17 @@ export function ActivationDescription({
   )
 }
 
-function buildActionValue(value: Activation, iconSize: number) {
-  let result = [
-    <ActionRenderer
-      key={value.num_actions}
-      activation={value}
-      size={iconSize}
-    ></ActionRenderer>,
-  ]
+export function buildActionValue(value: Activation, iconSize: number): any[] {
+  let result = []
+  if (value.num_actions) {
+    result.push(
+      <ActionRenderer
+        key={value.num_actions}
+        activation={value}
+        size={iconSize}
+      ></ActionRenderer>
+    )
+  }
   if (value.traits) {
     result = result.concat(
       value.traits.map((trait, index) => (
