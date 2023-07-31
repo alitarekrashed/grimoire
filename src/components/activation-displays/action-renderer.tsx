@@ -81,8 +81,7 @@ function renderWithoutImage(activation: Activation) {
   return (
     <>
       {activation.num_actions}
-      &nbsp;
-      {`(${activation.action})`}
+      {activation.override_label ? '' : ` (${activation.action})`}
     </>
   )
 }

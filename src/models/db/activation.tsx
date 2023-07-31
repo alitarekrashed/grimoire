@@ -3,6 +3,7 @@ export type DurationUnit = 'minutes'
 export type AreaUnit = 'emanataion'
 export type Targets = '1 or 2 creatures' | '1 creature'
 export type SavingThrowType = 'basic Reflex'
+export type DefenseType = SavingThrowType | 'AC'
 export type ActionName = 'Interact' | 'Cast a Spell'
 export type ActionType =
   | 'one'
@@ -13,6 +14,15 @@ export type ActionType =
   | 'free'
   | '10 minutes'
 
+export function isActionLongerThanTurn(type: ActionType) {
+  switch (type) {
+    case '10 minutes':
+      return true
+    default:
+      return false
+  }
+}
+
 export interface Activation {
   num_actions: ActionType
   action?: ActionName
@@ -22,6 +32,7 @@ export interface Activation {
   effect?: Effect
   targets?: Targets
   range?: RangeDefinition
+  defense?: DefenseType
   area?: AreaDefinition
   duration?: DurationDefinition
   requirements?: string
