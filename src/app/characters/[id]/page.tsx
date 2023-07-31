@@ -109,6 +109,8 @@ function CharacterDisplay({
 
   const languages = character.getLanguages().filter((language) => language)
   const senses = character.getSenses()
+  const additionalFeatures = character.getAdditionalFeatures()
+  const resistances = character.getResistances()
 
   return (
     character && (
@@ -203,6 +205,44 @@ function CharacterDisplay({
             </span>
           </div>
         </div>
+        <br />
+        <br />
+
+        <div className="inline-flex gap-10 ">
+          <div className="grid grid-rows-1 border border-stone-300 p-2">
+            <span>Resistances: </span>
+            <span>
+              {resistances.map((resistance, index) => {
+                return (
+                  <LabelsList
+                    key={`${resistance}-${index}`}
+                    fieldDefinitions={[
+                      {
+                        label: resistance.damage_type,
+                        value: resistance.value,
+                      },
+                    ]}
+                  ></LabelsList>
+                )
+              })}
+            </span>
+          </div>
+
+          <div className="grid grid-rows-1 border border-stone-300 p-2">
+            <span>Additional features: </span>
+            <span>
+              {additionalFeatures.map((feature, index) => {
+                return (
+                  <ParsedDescription
+                    description={feature}
+                    key={`${feature}-${index}`}
+                  ></ParsedDescription>
+                )
+              })}
+            </span>
+          </div>
+        </div>
+
         <br />
         <br />
         <br />

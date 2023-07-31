@@ -1,7 +1,8 @@
 import { Ancestry, Attribute } from './db/ancestry'
 import { CharacterAncestry, CharacterEntity } from './db/character-entity'
-import { Feature } from './db/feature'
+import { Feature, ResistanceFeatureValue } from './db/feature'
 import { Heritage } from './db/heritage'
+import { Resistance } from './resistance'
 
 export interface Attributes {
   Strength: number
@@ -106,6 +107,7 @@ function calculateAncestryAttributeModifications(
 }
 
 export class PlayerCharacter {
+  private level!: number
   private attributes!: Attributes
   private languages!: string[]
   private traits!: string[]
@@ -113,12 +115,15 @@ export class PlayerCharacter {
   private hitpoints!: number
   private size!: string
   private senses!: string[]
+  private additionalFeatures!: string[]
+  private resistances!: Resistance[]
 
   private constructor(
     private character: CharacterEntity,
     private ancestry: Ancestry,
     private heritage?: Heritage
   ) {
+    this.level = character.level
     this.attributes = {
       Strength: 0,
       Dexterity: 0,
@@ -139,7 +144,25 @@ export class PlayerCharacter {
     this.senses = this.ancestry.features
       .filter((feature: Feature) => feature.type === 'SENSE')
       .map((feature) => feature.value)
-    console.log(heritage)
+    this.additionalFeatures =
+      this.heritage?.features
+        .filter((feature) => feature.type === 'MISC')
+        .map((feature) => feature.value as string) ?? []
+    this.resistances =
+      this.heritage?.features
+        .filter((feature) => feature.type === 'RESISTANCE')
+        .map((feature) => {
+          let resistance = feature.value as ResistanceFeatureValue
+          let formulaValue =
+            resistance.formula === 'half-level' ? Math.floor(this.level / 2) : 0
+          return {
+            damage_type: resistance.damage_type,
+            value:
+              formulaValue > resistance.minimum
+                ? formulaValue
+                : resistance.minimum,
+          }
+        }) ?? []
   }
 
   public getCharacter(): CharacterEntity {
@@ -188,6 +211,14 @@ export class PlayerCharacter {
 
   public getSenses(): string[] {
     return this.senses
+  }
+
+  public getAdditionalFeatures(): string[] {
+    return this.additionalFeatures
+  }
+
+  public getResistances(): Resistance[] {
+    return this.resistances
   }
 
   public getAttributeChoices(): { ancestry: Attribute[] } {
