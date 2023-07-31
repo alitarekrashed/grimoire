@@ -13,6 +13,15 @@ export type ActionType =
   | 'free'
   | '10 minutes'
 
+export function isActionLongerThanTurn(type: ActionType) {
+  switch (type) {
+    case '10 minutes':
+      return true
+    default:
+      return false
+  }
+}
+
 export interface Activation {
   num_actions: ActionType
   action?: ActionName

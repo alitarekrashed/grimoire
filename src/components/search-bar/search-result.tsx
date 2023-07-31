@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { ReactNode } from 'react'
 import { Rarity } from '../card/traits-list'
 import { Heritage } from '@/models/db/heritage'
-import { Activation } from '@/models/db/activation'
+import { Activation, isActionLongerThanTurn } from '@/models/db/activation'
 import { buildActionValue } from '../activation-displays/activation-description'
 
 export function SearchResult({
@@ -100,7 +100,8 @@ function buildActionDisplay(data: EntityModel): ReactNode | undefined {
       }
       return (
         entityWithActivation.activation &&
-        entityWithActivation.activation.num_actions !== '10 minutes' && (
+        isActionLongerThanTurn(entityWithActivation.activation.num_actions) ===
+          false && (
           <span>
             &nbsp;{buildActionValue(entityWithActivation.activation, 15)}
           </span>

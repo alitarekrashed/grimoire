@@ -1,6 +1,6 @@
 'use client'
 
-import { Activation } from '@/models/db/activation'
+import { Activation, isActionLongerThanTurn } from '@/models/db/activation'
 import { EntityModel } from '@/models/db/entity-model'
 import { roboto_serif } from '@/utils/fonts'
 import * as Collapsible from '@radix-ui/react-collapsible'
@@ -54,7 +54,7 @@ export default function Card<T extends EntityModel>({
     activationType = 'description'
   } else if (
     activation &&
-    activation.num_actions !== '10 minutes' &&
+    isActionLongerThanTurn(activation.num_actions) === false &&
     (data.entity_type === 'SPELL' || data.entity_type === 'ACTION')
   ) {
     activationType = 'title'
