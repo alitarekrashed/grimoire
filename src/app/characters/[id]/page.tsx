@@ -111,6 +111,7 @@ function CharacterDisplay({
   const senses = character.getSenses()
   const additionalFeatures = character.getAdditionalFeatures()
   const resistances = character.getResistances()
+  const actions = character.getActions()
 
   return (
     character && (
@@ -236,6 +237,20 @@ function CharacterDisplay({
                   <ParsedDescription
                     description={feature}
                     key={`${feature}-${index}`}
+                  ></ParsedDescription>
+                )
+              })}
+            </span>
+          </div>
+
+          <div className="grid grid-rows-1 border border-stone-300 p-2">
+            <span>Actions: </span>
+            <span>
+              {actions.map((action, index) => {
+                return (
+                  <ParsedDescription
+                    description={action}
+                    key={`${action}-${index}`}
                   ></ParsedDescription>
                 )
               })}

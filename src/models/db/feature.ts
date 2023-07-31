@@ -1,4 +1,4 @@
-export type FeatureType = 'SENSE' | 'MISC' | 'RESISTANCE'
+export type FeatureType = 'SENSE' | 'MISC' | 'RESISTANCE' | 'ACTION'
 export type CalculationFormula = 'half-level'
 
 export interface Feature {
