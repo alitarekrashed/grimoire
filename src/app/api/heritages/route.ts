@@ -18,7 +18,9 @@ export async function GET(request: Request) {
   if (ancestry) {
     search = {
       ...search,
-      ancestry: ancestry,
+      ancestry: {
+        $in: [ancestry, 'versatile'],
+      },
     }
   }
 

@@ -168,6 +168,7 @@ export class PlayerCharacter {
         .filter((feature) => feature.type === 'SENSE')
         .map((feature) => feature.value as string) ?? []
     )
+    this.traits = this.traits.concat(this.heritage?.traits ?? [])
   }
 
   public getCharacter(): CharacterEntity {
