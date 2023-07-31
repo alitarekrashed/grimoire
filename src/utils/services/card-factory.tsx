@@ -1,3 +1,4 @@
+import ActionCard from '@/components/actions/action-card'
 import AncestryCard from '@/components/ancestries/ancestry-card'
 import ConditionCard from '@/components/conditions/condition-card'
 import EquipmentCard from '@/components/equipment/equipment-card'
@@ -6,6 +7,7 @@ import HeritageCard from '@/components/heritages/heritage-card'
 import RuleCard from '@/components/rules/rule-card'
 import SpellCard from '@/components/spells/spell-card'
 import TraitCard from '@/components/traits/trait-card'
+import { Action } from '@/models/db/action'
 import { Ancestry } from '@/models/db/ancestry'
 import Condition from '@/models/db/condition'
 import { EntityModel } from '@/models/db/entity-model'
@@ -105,7 +107,15 @@ export function CardFactory<T extends EntityModel>({
           onRemoved={onRemoved as unknown as (item: Heritage) => void}
         ></HeritageCard>
       )
-
+    case 'ACTION':
+      return (
+        <ActionCard
+          reference={reference}
+          value={card as unknown as Action}
+          collapsible={collapsible}
+          onRemoved={onRemoved as unknown as (item: Action) => void}
+        ></ActionCard>
+      )
     default:
     // throw error
   }

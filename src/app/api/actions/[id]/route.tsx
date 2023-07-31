@@ -5,7 +5,7 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  const data = await getEntityById(params.id, ['SPELL'])
+  const data = await getEntityById(params.id, ['ACTION'])
 
   if (data) {
     return NextResponse.json(data)

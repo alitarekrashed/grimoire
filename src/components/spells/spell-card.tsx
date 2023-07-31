@@ -27,7 +27,6 @@ export default function SpellCard({
   const type = value.rank === 0 ? 'Cantrip' : 'Spell'
   let activation = { ...value.activation }
   activation.override_label = 'Cast'
-  activation.action = undefined
 
   const heightenedLevels: FieldDefinition[] = value.heightened
     ? buildHeightenedFields(value.heightened)

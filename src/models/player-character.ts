@@ -117,6 +117,7 @@ export class PlayerCharacter {
   private senses: string[] = []
   private additionalFeatures: string[] = []
   private resistances: Resistance[] = []
+  private actions: string[] = [] // eventually this might need to change, in order to be able to track uses of limited actions
 
   private constructor(
     private character: CharacterEntity,
@@ -142,6 +143,7 @@ export class PlayerCharacter {
     this.initializeSenses()
     this.initializeResistances()
     this.initializeAdditionalFeatures()
+    this.initializeActions()
   }
 
   public getCharacter(): CharacterEntity {
@@ -199,6 +201,10 @@ export class PlayerCharacter {
 
   public getResistances(): Resistance[] {
     return this.resistances
+  }
+
+  public getActions(): string[] {
+    return this.actions
   }
 
   public getAttributeChoices(): { ancestry: Attribute[] } {
@@ -311,6 +317,15 @@ export class PlayerCharacter {
 
   private initializeHitpoints() {
     this.hitpoints += this.ancestry.hitpoints
+  }
+
+  private initializeActions() {
+    this.heritage?.features &&
+      this.actions.push(
+        ...this.heritage.features
+          .filter((feature) => feature.type === 'ACTION')
+          .map((feature) => feature.value as string)
+      )
   }
 
   static async build(character: CharacterEntity): Promise<PlayerCharacter> {

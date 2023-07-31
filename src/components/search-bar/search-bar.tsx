@@ -105,5 +105,7 @@ function getRoute(data: EntityModel): string {
       return 'rules'
     case 'HERITAGE':
       return 'heritages'
+    case 'ACTION':
+      return 'actions'
   }
 }

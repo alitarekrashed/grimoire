@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation'
 import { ReactNode } from 'react'
 import { Rarity } from '../card/traits-list'
 import { Heritage } from '@/models/db/heritage'
+import { Activation } from '@/models/db/activation'
+import { buildActionValue } from '../activation-displays/activation-description'
 
 export function SearchResult({
   data,
@@ -21,7 +23,7 @@ export function SearchResult({
       onClick={handleClick}
     >
       <span>
-        {data.name} {buildRarityDisplay(data)}
+        {data.name} {buildActionDisplay(data)} {buildRarityDisplay(data)}
       </span>
       <span className="capitalize">
         {getType(data)} {level}
@@ -47,6 +49,8 @@ function getType(data: EntityModel): string {
       return 'Ancestry'
     case 'HERITAGE':
       return `${(data as Heritage).ancestry} heritage`
+    case 'ACTION':
+      return 'Action'
   }
 }
 
@@ -79,6 +83,25 @@ function buildRarityDisplay(data: EntityModel): ReactNode | undefined {
         entityWithRarity.rarity && (
           <span className="text-xs">
             <Rarity rarity={entityWithRarity.rarity}></Rarity>
+          </span>
+        )
+      )
+    default:
+      return undefined
+  }
+}
+
+function buildActionDisplay(data: EntityModel): ReactNode | undefined {
+  switch (data.entity_type) {
+    case 'SPELL':
+    case 'ACTION':
+      const entityWithActivation = data as EntityModel & {
+        activation: Activation
+      }
+      return (
+        entityWithActivation.activation && (
+          <span>
+            &nbsp;{buildActionValue(entityWithActivation.activation, 15)}
           </span>
         )
       )

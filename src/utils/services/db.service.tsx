@@ -48,7 +48,7 @@ export async function getAllEntities<T extends EntityModel>(
   if (name) {
     search = {
       ...search,
-      name: name,
+      name: { $regex: name, $options: 'i' },
     }
   }
   return collection.find(search).sort('name', 1).toArray()
