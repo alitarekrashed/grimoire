@@ -54,8 +54,8 @@ export default function Card<T extends EntityModel>({
     activationType = 'description'
   } else if (
     activation &&
-    !activation.action &&
-    data.entity_type !== 'EQUIPMENT'
+    activation.num_actions !== '10 minutes' &&
+    (data.entity_type === 'SPELL' || data.entity_type === 'ACTION')
   ) {
     activationType = 'title'
   }
