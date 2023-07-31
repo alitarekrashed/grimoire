@@ -3,6 +3,7 @@ import { EquipmentWithVariants } from '@/models/db/equipment'
 import { useRouter } from 'next/navigation'
 import { ReactNode } from 'react'
 import { Rarity } from '../card/traits-list'
+import { Heritage } from '@/models/db/heritage'
 
 export function SearchResult({
   data,
@@ -22,7 +23,7 @@ export function SearchResult({
       <span>
         {data.name} {buildRarityDisplay(data)}
       </span>
-      <span>
+      <span className="capitalize">
         {getType(data)} {level}
       </span>
     </div>
@@ -44,6 +45,8 @@ function getType(data: EntityModel): string {
       return 'Rule'
     case 'ANCESTRY':
       return 'Ancestry'
+    case 'HERITAGE':
+      return `${(data as Heritage).ancestry} heritage`
   }
 }
 
