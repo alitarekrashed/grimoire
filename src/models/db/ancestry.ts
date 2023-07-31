@@ -1,5 +1,5 @@
-import { ObjectId } from 'mongodb'
 import { EntityModel } from './entity-model'
+import { Feature } from './feature'
 
 export type AttributeModifier =
   | 'Strength'
@@ -18,13 +18,6 @@ export type Attribute =
   | 'Wisdom'
   | 'Charisma'
 
-export type AdditionalFeatureType = 'Sense'
-
-export interface AdditionalFeature {
-  type: AdditionalFeatureType
-  value: string
-}
-
 export interface Ancestry extends EntityModel {
   hitpoints: number
   size: string // should be typed
@@ -37,5 +30,5 @@ export interface Ancestry extends EntityModel {
     options: string[]
     additional: string // '+Intelligence'
   }
-  additional: AdditionalFeature[] // this will eventually have to include extra things, TODO will need to support things like adding equipment (clan dagger) or rules (darkvision)
+  features: Feature[] // this will eventually have to include extra things, TODO will need to support things like adding equipment (clan dagger) or rules (darkvision)
 }

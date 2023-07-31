@@ -1,5 +1,6 @@
-import { AdditionalFeature, Ancestry, Attribute } from './db/ancestry'
+import { Ancestry, Attribute } from './db/ancestry'
 import { CharacterAncestry, CharacterEntity } from './db/character-entity'
+import { Feature } from './db/feature'
 
 export interface Attributes {
   Strength: number
@@ -133,8 +134,8 @@ export class PlayerCharacter {
     this.speed = this.ancestry.speed
     this.size = this.ancestry.size
     this.hitpoints = this.ancestry.hitpoints
-    this.senses = this.ancestry.additional
-      .filter((feature: AdditionalFeature) => feature.type === 'Sense')
+    this.senses = this.ancestry.features
+      .filter((feature: Feature) => feature.type === 'SENSE')
       .map((feature) => feature.value)
   }
 
