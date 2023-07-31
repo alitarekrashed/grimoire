@@ -409,6 +409,7 @@ function CharacterEdit({
           value={character.getCharacter().ancestry.heritage_id}
           onChange={(e) => updateHeritage(e.target.value)}
         >
+          <option value=""></option>
           {heritages.map((heritage) => (
             <option
               key={heritage._id.toString()}

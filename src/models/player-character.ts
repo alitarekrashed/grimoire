@@ -163,6 +163,11 @@ export class PlayerCharacter {
                 : resistance.minimum,
           }
         }) ?? []
+    this.senses = this.senses.concat(
+      this.heritage?.features
+        .filter((feature) => feature.type === 'SENSE')
+        .map((feature) => feature.value as string) ?? []
+    )
   }
 
   public getCharacter(): CharacterEntity {
@@ -174,6 +179,7 @@ export class PlayerCharacter {
     newCharacter.ancestry.id = ancestryId
     newCharacter.ancestry.attribute_boost_selections = []
     newCharacter.ancestry.language_selections = []
+    newCharacter.ancestry.heritage_id = ''
     return await PlayerCharacter.build(this.character)
   }
 
