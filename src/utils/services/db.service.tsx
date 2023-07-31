@@ -54,6 +54,25 @@ export async function getAllEntities<T extends EntityModel>(
   return collection.find(search).sort('name', 1).toArray()
 }
 
+export async function searchAllEntities<T extends EntityModel>(
+  entity_types: ModelType[],
+  search?: any
+): Promise<WithId<T>[]> {
+  const collection = await getEntitiesCollection<T>()
+
+  let query: Filter<T> = {}
+
+  if (search) {
+    query = {
+      ...search,
+      entity_type: {
+        $in: entity_types,
+      },
+    }
+  }
+  return collection.find(search).sort('name', 1).toArray()
+}
+
 export async function getEntityById<T extends EntityModel>(
   id: string | ObjectId,
   entity_types: ModelType[]

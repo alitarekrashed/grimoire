@@ -11,6 +11,7 @@ import {
   CharacterEntity,
   CharacterAncestry,
 } from '@/models/db/character-entity'
+import { Heritage } from '@/models/db/heritage'
 import { PlayerCharacter } from '@/models/player-character'
 import { useDebounce } from '@/utils/debounce'
 import { roboto_serif } from '@/utils/fonts'
@@ -108,6 +109,8 @@ function CharacterDisplay({
 
   const languages = character.getLanguages().filter((language) => language)
   const senses = character.getSenses()
+  const additionalFeatures = character.getAdditionalFeatures()
+  const resistances = character.getResistances()
 
   return (
     character && (
@@ -204,6 +207,44 @@ function CharacterDisplay({
         </div>
         <br />
         <br />
+
+        <div className="inline-flex gap-10 ">
+          <div className="grid grid-rows-1 border border-stone-300 p-2">
+            <span>Resistances: </span>
+            <span>
+              {resistances.map((resistance, index) => {
+                return (
+                  <LabelsList
+                    key={`${resistance}-${index}`}
+                    fieldDefinitions={[
+                      {
+                        label: resistance.damage_type,
+                        value: resistance.value,
+                      },
+                    ]}
+                  ></LabelsList>
+                )
+              })}
+            </span>
+          </div>
+
+          <div className="grid grid-rows-1 border border-stone-300 p-2">
+            <span>Additional features: </span>
+            <span>
+              {additionalFeatures.map((feature, index) => {
+                return (
+                  <ParsedDescription
+                    description={feature}
+                    key={`${feature}-${index}`}
+                  ></ParsedDescription>
+                )
+              })}
+            </span>
+          </div>
+        </div>
+
+        <br />
+        <br />
         <br />
       </div>
     )
@@ -221,6 +262,7 @@ function CharacterEdit({
   onEdit: (val: CharacterAncestry) => void
 }) {
   const [ancestries, setAncestries] = useState<Ancestry[]>([])
+  const [heritages, setHeritages] = useState<Heritage[]>([])
 
   useEffect(() => {
     fetch('http://localhost:3000/api/ancestries', {
@@ -231,6 +273,19 @@ function CharacterEdit({
         setAncestries(ancestries)
       })
   }, [])
+
+  useEffect(() => {
+    fetch(
+      `http://localhost:3000/api/heritages?ancestry=${character.getAncestryName()}`,
+      {
+        cache: 'no-store',
+      }
+    )
+      .then((result) => result.json())
+      .then((heritages) => {
+        setHeritages(heritages)
+      })
+  }, [character.getCharacter().ancestry.id])
 
   const updateAncestry = (value: string) => {
     onAncestryEdit(value)
@@ -251,6 +306,12 @@ function CharacterEdit({
   const updateAncestryLanguage = (value: string, index: number) => {
     let val: CharacterAncestry = { ...character.getCharacter().ancestry }
     val.language_selections[index] = value
+    onEdit(val)
+  }
+
+  const updateHeritage = (value: string) => {
+    let val: CharacterAncestry = { ...character.getCharacter().ancestry }
+    val.heritage_id = value
     onEdit(val)
   }
 
@@ -341,6 +402,24 @@ function CharacterEdit({
             ))}
         </span>
       )}
+      <span>
+        <h2>Heritage</h2>
+        <select
+          className="bg-stone-800"
+          value={character.getCharacter().ancestry.heritage_id}
+          onChange={(e) => updateHeritage(e.target.value)}
+        >
+          <option value=""></option>
+          {heritages.map((heritage) => (
+            <option
+              key={heritage._id.toString()}
+              value={heritage._id.toString()}
+            >
+              {heritage.name}
+            </option>
+          ))}
+        </select>
+      </span>
     </div>
   )
 }

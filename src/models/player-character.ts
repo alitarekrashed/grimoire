@@ -1,5 +1,8 @@
-import { AdditionalFeature, Ancestry, Attribute } from './db/ancestry'
+import { Ancestry, Attribute } from './db/ancestry'
 import { CharacterAncestry, CharacterEntity } from './db/character-entity'
+import { Feature, ResistanceFeatureValue } from './db/feature'
+import { Heritage } from './db/heritage'
+import { Resistance } from './resistance'
 
 export interface Attributes {
   Strength: number
@@ -56,13 +59,11 @@ function getAncestryAttributeChoices(
 }
 
 function getAncestryLanguageChoices(
-  characterAncestry: CharacterAncestry,
+  knownLanguages: string[],
   ancestry: Ancestry
 ): string[] {
   let options = ancestry.languages.options
-  options = options.filter(
-    (option) => characterAncestry.language_selections.indexOf(option) === -1
-  )
+  options = options.filter((option) => knownLanguages.indexOf(option) === -1)
 
   return options
 }
@@ -106,18 +107,25 @@ function calculateAncestryAttributeModifications(
 }
 
 export class PlayerCharacter {
-  private attributes!: Attributes
-  private languages!: string[]
-  private traits!: string[]
+  private level!: number
   private speed!: number
-  private hitpoints!: number
   private size!: string
-  private senses!: string[]
+  private attributes!: Attributes
+  private languages: string[] = []
+  private traits: string[] = []
+  private hitpoints: number = 0
+  private senses: string[] = []
+  private additionalFeatures: string[] = []
+  private resistances: Resistance[] = []
 
   private constructor(
     private character: CharacterEntity,
-    private ancestry: Ancestry
+    private ancestry: Ancestry,
+    private heritage?: Heritage
   ) {
+    this.level = character.level
+    this.speed = this.ancestry.speed
+    this.size = this.ancestry.size
     this.attributes = {
       Strength: 0,
       Dexterity: 0,
@@ -126,18 +134,14 @@ export class PlayerCharacter {
       Wisdom: 0,
       Charisma: 0,
     }
-    this.languages = []
     this.calculateAttributes()
     this.calculateLanguages()
 
-    // TODO clean this up?
-    this.traits = this.ancestry.traits
-    this.speed = this.ancestry.speed
-    this.size = this.ancestry.size
-    this.hitpoints = this.ancestry.hitpoints
-    this.senses = this.ancestry.additional
-      .filter((feature: AdditionalFeature) => feature.type === 'Sense')
-      .map((feature) => feature.value)
+    this.initializeTraits()
+    this.initializeHitpoints()
+    this.initializeSenses()
+    this.initializeResistances()
+    this.initializeAdditionalFeatures()
   }
 
   public getCharacter(): CharacterEntity {
@@ -149,6 +153,7 @@ export class PlayerCharacter {
     newCharacter.ancestry.id = ancestryId
     newCharacter.ancestry.attribute_boost_selections = []
     newCharacter.ancestry.language_selections = []
+    newCharacter.ancestry.heritage_id = ''
     return await PlayerCharacter.build(this.character)
   }
 
@@ -188,6 +193,14 @@ export class PlayerCharacter {
     return this.senses
   }
 
+  public getAdditionalFeatures(): string[] {
+    return this.additionalFeatures
+  }
+
+  public getResistances(): Resistance[] {
+    return this.resistances
+  }
+
   public getAttributeChoices(): { ancestry: Attribute[] } {
     return {
       ancestry: getAncestryAttributeChoices(
@@ -199,10 +212,7 @@ export class PlayerCharacter {
 
   public getLanguageChoices(): { ancestry: string[] } {
     return {
-      ancestry: getAncestryLanguageChoices(
-        this.character.ancestry,
-        this.ancestry
-      ),
+      ancestry: getAncestryLanguageChoices(this.languages, this.ancestry),
     }
   }
 
@@ -249,6 +259,60 @@ export class PlayerCharacter {
     this.attributes = attributes
   }
 
+  private initializeTraits() {
+    this.traits.push(...this.ancestry.traits)
+    this.heritage?.traits && this.traits.push(...this.heritage.traits)
+  }
+
+  private initializeSenses() {
+    this.senses.push(
+      ...this.ancestry.features
+        .filter((feature: Feature) => feature.type === 'SENSE')
+        .map((feature) => feature.value)
+    )
+    this.heritage?.features &&
+      this.senses.push(
+        ...this.heritage.features
+          .filter((feature) => feature.type === 'SENSE')
+          .map((feature) => feature.value as string)
+      )
+  }
+
+  private initializeResistances() {
+    this.heritage?.features &&
+      this.resistances.push(
+        ...this.heritage.features
+          .filter((feature) => feature.type === 'RESISTANCE')
+          .map((feature) => {
+            let resistance = feature.value as ResistanceFeatureValue
+            let formulaValue =
+              resistance.formula === 'half-level'
+                ? Math.floor(this.level / 2)
+                : 0
+            return {
+              damage_type: resistance.damage_type,
+              value:
+                formulaValue > resistance.minimum
+                  ? formulaValue
+                  : resistance.minimum,
+            }
+          })
+      )
+  }
+
+  private initializeAdditionalFeatures() {
+    this.heritage?.features &&
+      this.additionalFeatures.push(
+        ...this.heritage.features
+          .filter((feature) => feature.type === 'MISC')
+          .map((feature) => feature.value as string)
+      )
+  }
+
+  private initializeHitpoints() {
+    this.hitpoints += this.ancestry.hitpoints
+  }
+
   static async build(character: CharacterEntity): Promise<PlayerCharacter> {
     const ancestry = await (
       await fetch(
@@ -258,7 +322,18 @@ export class PlayerCharacter {
         }
       )
     ).json()
-    const pc = new PlayerCharacter(character, ancestry)
+    let heritage
+    if (character.ancestry.heritage_id) {
+      heritage = await (
+        await fetch(
+          `http://localhost:3000/api/heritages/${character.ancestry.heritage_id}`,
+          {
+            cache: 'no-store',
+          }
+        )
+      ).json()
+    }
+    const pc = new PlayerCharacter(character, ancestry, heritage)
     return pc
   }
 }

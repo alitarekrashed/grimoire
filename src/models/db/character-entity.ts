@@ -10,7 +10,8 @@ export interface CharacterEntity {
 
 export interface CharacterAncestry {
   id: string
-  attribute_boost_selections: (Attribute | undefined)[]
-  language_selections: (string | undefined)[]
+  attribute_boost_selections: Attribute[]
+  language_selections: string[]
   free_attribute: boolean
+  heritage_id: string
 }

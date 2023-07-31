@@ -21,3 +21,4 @@ export type ModelType =
   | 'SPELL'
   | 'ANCESTRY'
   | 'RULE'
+  | 'HERITAGE'

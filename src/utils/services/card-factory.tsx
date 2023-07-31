@@ -2,6 +2,7 @@ import AncestryCard from '@/components/ancestries/ancestry-card'
 import ConditionCard from '@/components/conditions/condition-card'
 import EquipmentCard from '@/components/equipment/equipment-card'
 import EquipmentWithVariantsCard from '@/components/equipment/equipment-with-variants-card'
+import HeritageCard from '@/components/heritages/heritage-card'
 import RuleCard from '@/components/rules/rule-card'
 import SpellCard from '@/components/spells/spell-card'
 import TraitCard from '@/components/traits/trait-card'
@@ -9,6 +10,7 @@ import { Ancestry } from '@/models/db/ancestry'
 import Condition from '@/models/db/condition'
 import { EntityModel } from '@/models/db/entity-model'
 import { Equipment, EquipmentWithVariants } from '@/models/db/equipment'
+import { Heritage } from '@/models/db/heritage'
 import Rule from '@/models/db/rule'
 import { Spell } from '@/models/db/spell'
 import Trait from '@/models/db/trait'
@@ -94,6 +96,16 @@ export function CardFactory<T extends EntityModel>({
           onRemoved={onRemoved as unknown as (item: Rule) => void}
         ></RuleCard>
       )
+    case 'HERITAGE':
+      return (
+        <HeritageCard
+          reference={reference}
+          value={card as unknown as Heritage}
+          collapsible={collapsible}
+          onRemoved={onRemoved as unknown as (item: Heritage) => void}
+        ></HeritageCard>
+      )
+
     default:
     // throw error
   }
