@@ -56,13 +56,11 @@ function getAncestryAttributeChoices(
 }
 
 function getAncestryLanguageChoices(
-  characterAncestry: CharacterAncestry,
+  knownLanguages: string[],
   ancestry: Ancestry
 ): string[] {
   let options = ancestry.languages.options
-  options = options.filter(
-    (option) => characterAncestry.language_selections.indexOf(option) === -1
-  )
+  options = options.filter((option) => knownLanguages.indexOf(option) === -1)
 
   return options
 }
@@ -199,10 +197,7 @@ export class PlayerCharacter {
 
   public getLanguageChoices(): { ancestry: string[] } {
     return {
-      ancestry: getAncestryLanguageChoices(
-        this.character.ancestry,
-        this.ancestry
-      ),
+      ancestry: getAncestryLanguageChoices(this.languages, this.ancestry),
     }
   }
 
