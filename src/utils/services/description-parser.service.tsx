@@ -8,6 +8,7 @@ import { retrieveEquipment } from './equipment.service'
 import { retrieveSpell } from './spell.service'
 import { retrieveTrait } from './trait.service'
 import { retrieveRule } from './rule.service'
+import { retrieveAction } from './action.service'
 
 export function parseDescription(description: any[]): Promise<any[]> {
   return (async () => {
@@ -51,6 +52,16 @@ export function parseDescription(description: any[]): Promise<any[]> {
         const brokenUpDescription = await createComponentsForType(
           currentPart,
           'RULE'
+        )
+        tokenizedDescription.splice(index, 1, ...brokenUpDescription)
+        index = index + (brokenUpDescription.length - 1)
+        currentPart = brokenUpDescription[0]
+      }
+
+      if (isString(currentPart) && currentPart.includes('@action:')) {
+        const brokenUpDescription = await createComponentsForType(
+          currentPart,
+          'ACTION'
         )
         tokenizedDescription.splice(index, 1, ...brokenUpDescription)
         index = index + (brokenUpDescription.length - 1)
@@ -121,7 +132,8 @@ function lookupFunctionFactory(
       return retrieveSpell
     case 'RULE':
       return retrieveRule
-
+    case 'ACTION':
+      return retrieveAction
     default:
       return () => undefined!
   }
@@ -132,6 +144,7 @@ function displayComponentFactory(
   value: EntityModel
 ): (value: any) => JSX.Element {
   switch (type) {
+    case 'ACTION':
     case 'SPELL':
     case 'EQUIPMENT':
       return EntityModal
