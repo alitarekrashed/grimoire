@@ -108,15 +108,15 @@ function calculateAncestryAttributeModifications(
 
 export class PlayerCharacter {
   private level!: number
-  private attributes!: Attributes
-  private languages!: string[]
-  private traits!: string[]
   private speed!: number
-  private hitpoints!: number
   private size!: string
-  private senses!: string[]
-  private additionalFeatures!: string[]
-  private resistances!: Resistance[]
+  private attributes!: Attributes
+  private languages: string[] = []
+  private traits: string[] = []
+  private hitpoints: number = 0
+  private senses: string[] = []
+  private additionalFeatures: string[] = []
+  private resistances: Resistance[] = []
 
   private constructor(
     private character: CharacterEntity,
@@ -124,6 +124,8 @@ export class PlayerCharacter {
     private heritage?: Heritage
   ) {
     this.level = character.level
+    this.speed = this.ancestry.speed
+    this.size = this.ancestry.size
     this.attributes = {
       Strength: 0,
       Dexterity: 0,
@@ -132,43 +134,14 @@ export class PlayerCharacter {
       Wisdom: 0,
       Charisma: 0,
     }
-    this.languages = []
     this.calculateAttributes()
     this.calculateLanguages()
 
-    // TODO clean this up?
-    this.traits = this.ancestry.traits
-    this.speed = this.ancestry.speed
-    this.size = this.ancestry.size
-    this.hitpoints = this.ancestry.hitpoints
-    this.senses = this.ancestry.features
-      .filter((feature: Feature) => feature.type === 'SENSE')
-      .map((feature) => feature.value)
-    this.additionalFeatures =
-      this.heritage?.features
-        .filter((feature) => feature.type === 'MISC')
-        .map((feature) => feature.value as string) ?? []
-    this.resistances =
-      this.heritage?.features
-        .filter((feature) => feature.type === 'RESISTANCE')
-        .map((feature) => {
-          let resistance = feature.value as ResistanceFeatureValue
-          let formulaValue =
-            resistance.formula === 'half-level' ? Math.floor(this.level / 2) : 0
-          return {
-            damage_type: resistance.damage_type,
-            value:
-              formulaValue > resistance.minimum
-                ? formulaValue
-                : resistance.minimum,
-          }
-        }) ?? []
-    this.senses = this.senses.concat(
-      this.heritage?.features
-        .filter((feature) => feature.type === 'SENSE')
-        .map((feature) => feature.value as string) ?? []
-    )
-    this.traits = this.traits.concat(this.heritage?.traits ?? [])
+    this.initializeTraits()
+    this.initializeHitpoints()
+    this.initializeSenses()
+    this.initializeResistances()
+    this.initializeAdditionalFeatures()
   }
 
   public getCharacter(): CharacterEntity {
@@ -284,6 +257,60 @@ export class PlayerCharacter {
     )
 
     this.attributes = attributes
+  }
+
+  private initializeTraits() {
+    this.traits.push(...this.ancestry.traits)
+    this.heritage?.traits && this.traits.push(...this.heritage.traits)
+  }
+
+  private initializeSenses() {
+    this.senses.push(
+      ...this.ancestry.features
+        .filter((feature: Feature) => feature.type === 'SENSE')
+        .map((feature) => feature.value)
+    )
+    this.heritage?.features &&
+      this.senses.push(
+        ...this.heritage.features
+          .filter((feature) => feature.type === 'SENSE')
+          .map((feature) => feature.value as string)
+      )
+  }
+
+  private initializeResistances() {
+    this.heritage?.features &&
+      this.resistances.push(
+        ...this.heritage.features
+          .filter((feature) => feature.type === 'RESISTANCE')
+          .map((feature) => {
+            let resistance = feature.value as ResistanceFeatureValue
+            let formulaValue =
+              resistance.formula === 'half-level'
+                ? Math.floor(this.level / 2)
+                : 0
+            return {
+              damage_type: resistance.damage_type,
+              value:
+                formulaValue > resistance.minimum
+                  ? formulaValue
+                  : resistance.minimum,
+            }
+          })
+      )
+  }
+
+  private initializeAdditionalFeatures() {
+    this.heritage?.features &&
+      this.additionalFeatures.push(
+        ...this.heritage.features
+          .filter((feature) => feature.type === 'MISC')
+          .map((feature) => feature.value as string)
+      )
+  }
+
+  private initializeHitpoints() {
+    this.hitpoints += this.ancestry.hitpoints
   }
 
   static async build(character: CharacterEntity): Promise<PlayerCharacter> {
