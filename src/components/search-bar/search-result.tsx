@@ -99,7 +99,8 @@ function buildActionDisplay(data: EntityModel): ReactNode | undefined {
         activation: Activation
       }
       return (
-        entityWithActivation.activation && (
+        entityWithActivation.activation &&
+        entityWithActivation.activation.num_actions !== '10 minutes' && (
           <span>
             &nbsp;{buildActionValue(entityWithActivation.activation, 15)}
           </span>
