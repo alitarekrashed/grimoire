@@ -3,6 +3,7 @@ export type DurationUnit = 'minutes'
 export type AreaUnit = 'emanataion'
 export type Targets = '1 or 2 creatures' | '1 creature'
 export type SavingThrowType = 'basic Reflex'
+export type DefenseType = SavingThrowType | 'AC'
 export type ActionName = 'Interact' | 'Cast a Spell'
 export type ActionType =
   | 'one'
@@ -31,6 +32,7 @@ export interface Activation {
   effect?: Effect
   targets?: Targets
   range?: RangeDefinition
+  defense?: DefenseType
   area?: AreaDefinition
   duration?: DurationDefinition
   requirements?: string

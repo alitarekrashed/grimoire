@@ -1,4 +1,4 @@
-import { Activation, SavingThrow, SavingThrowType } from './activation'
+import { Activation, SavingThrow } from './activation'
 import { EntityModel } from './entity-model'
 
 export type Tradition = 'arcane' | 'primal' | 'divine' | 'occult'
@@ -10,7 +10,6 @@ export interface Spell extends EntityModel {
   traits: string[]
   traditions: Tradition[]
   activation: Activation
-  saving_throw_type?: SavingThrowType
   saving_throw?: SavingThrow
   heightened: HeightenedDefinition
 }

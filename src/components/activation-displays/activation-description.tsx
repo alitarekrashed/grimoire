@@ -59,6 +59,10 @@ export function ActivationDescription({
 
   const tertiaryFields: FieldDefinition[] = [
     {
+      label: 'Defense',
+      value: value?.defense,
+    },
+    {
       label: 'Duration',
       value: value?.duration
         ? `${value!.duration.value} ${value!.duration.unit}`
