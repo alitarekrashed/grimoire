@@ -1,6 +1,7 @@
 import { Ancestry, Attribute } from './db/ancestry'
 import { CharacterAncestry, CharacterEntity } from './db/character-entity'
 import { Feature } from './db/feature'
+import { Heritage } from './db/heritage'
 
 export interface Attributes {
   Strength: number
@@ -115,7 +116,8 @@ export class PlayerCharacter {
 
   private constructor(
     private character: CharacterEntity,
-    private ancestry: Ancestry
+    private ancestry: Ancestry,
+    private heritage?: Heritage
   ) {
     this.attributes = {
       Strength: 0,
@@ -137,6 +139,7 @@ export class PlayerCharacter {
     this.senses = this.ancestry.features
       .filter((feature: Feature) => feature.type === 'SENSE')
       .map((feature) => feature.value)
+    console.log(heritage)
   }
 
   public getCharacter(): CharacterEntity {
@@ -254,7 +257,18 @@ export class PlayerCharacter {
         }
       )
     ).json()
-    const pc = new PlayerCharacter(character, ancestry)
+    let heritage
+    if (character.ancestry.heritage_id) {
+      heritage = await (
+        await fetch(
+          `http://localhost:3000/api/heritages/${character.ancestry.heritage_id}`,
+          {
+            cache: 'no-store',
+          }
+        )
+      ).json()
+    }
+    const pc = new PlayerCharacter(character, ancestry, heritage)
     return pc
   }
 }
