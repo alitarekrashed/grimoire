@@ -1,6 +1,12 @@
 import { Ancestry, Attribute } from './db/ancestry'
 import { CharacterAncestry, CharacterEntity } from './db/character-entity'
-import { Feature, ResistanceFeatureValue } from './db/feature'
+import {
+  ConditionalFeatureValue,
+  Feature,
+  FeatureType,
+  ResistanceFeatureValue,
+  featureMatcher,
+} from './db/feature'
 import { Heritage } from './db/heritage'
 import { Resistance } from './resistance'
 
@@ -114,10 +120,7 @@ export class PlayerCharacter {
   private languages: string[] = []
   private traits: string[] = []
   private hitpoints: number = 0
-  private senses: string[] = []
-  private additionalFeatures: string[] = []
-  private resistances: Resistance[] = []
-  private actions: string[] = [] // eventually this might need to change, in order to be able to track uses of limited actions
+  private features: Feature[] = []
 
   private constructor(
     private character: CharacterEntity,
@@ -140,10 +143,15 @@ export class PlayerCharacter {
 
     this.initializeTraits()
     this.initializeHitpoints()
-    this.initializeSenses()
-    this.initializeResistances()
-    this.initializeAdditionalFeatures()
-    this.initializeActions()
+
+    this.ancestry.features.forEach((feature) =>
+      this.addFeatureToCharacter(feature)
+    )
+    if (this.heritage) {
+      this.heritage?.features.forEach((feature) =>
+        this.addFeatureToCharacter(feature)
+      )
+    }
   }
 
   public getCharacter(): CharacterEntity {
@@ -192,19 +200,38 @@ export class PlayerCharacter {
   }
 
   public getSenses(): string[] {
-    return this.senses
+    return this.features
+      .filter((feature) => feature.type === 'SENSE')
+      .map((feature) => feature.value)
   }
 
   public getAdditionalFeatures(): string[] {
-    return this.additionalFeatures
+    return this.features
+      .filter((feature) => feature.type === 'MISC')
+      .map((feature) => feature.value)
   }
 
   public getResistances(): Resistance[] {
-    return this.resistances
+    return this.features
+      .filter((feature) => feature.type === 'RESISTANCE')
+      .map((feature) => {
+        let resistance = feature.value as ResistanceFeatureValue
+        let formulaValue =
+          resistance.formula === 'half-level' ? Math.floor(this.level / 2) : 0
+        return {
+          damage_type: resistance.damage_type,
+          value:
+            formulaValue > resistance.minimum
+              ? formulaValue
+              : resistance.minimum,
+        }
+      })
   }
 
   public getActions(): string[] {
-    return this.actions
+    return this.features
+      .filter((feature) => feature.type === 'ACTION')
+      .map((feature) => feature.value)
   }
 
   public getAttributeChoices(): { ancestry: Attribute[] } {
@@ -222,10 +249,12 @@ export class PlayerCharacter {
     }
   }
 
+  // should languages get wrapped into the feature list?
   private calculateLanguages() {
     let languages = []
 
-    const additionalLanguages = this.attributes.Intelligence
+    const additionalLanguages =
+      this.attributes.Intelligence + this.ancestry.languages.additional ?? 0
 
     const languageSelections = buildChoiceSelectionArray(
       additionalLanguages,
@@ -270,62 +299,36 @@ export class PlayerCharacter {
     this.heritage?.traits && this.traits.push(...this.heritage.traits)
   }
 
-  private initializeSenses() {
-    this.senses.push(
-      ...this.ancestry.features
-        .filter((feature: Feature) => feature.type === 'SENSE')
-        .map((feature) => feature.value)
-    )
-    this.heritage?.features &&
-      this.senses.push(
-        ...this.heritage.features
-          .filter((feature) => feature.type === 'SENSE')
-          .map((feature) => feature.value as string)
-      )
-  }
-
-  private initializeResistances() {
-    this.heritage?.features &&
-      this.resistances.push(
-        ...this.heritage.features
-          .filter((feature) => feature.type === 'RESISTANCE')
-          .map((feature) => {
-            let resistance = feature.value as ResistanceFeatureValue
-            let formulaValue =
-              resistance.formula === 'half-level'
-                ? Math.floor(this.level / 2)
-                : 0
-            return {
-              damage_type: resistance.damage_type,
-              value:
-                formulaValue > resistance.minimum
-                  ? formulaValue
-                  : resistance.minimum,
-            }
-          })
-      )
-  }
-
-  private initializeAdditionalFeatures() {
-    this.heritage?.features &&
-      this.additionalFeatures.push(
-        ...this.heritage.features
-          .filter((feature) => feature.type === 'MISC')
-          .map((feature) => feature.value as string)
-      )
-  }
-
   private initializeHitpoints() {
     this.hitpoints += this.ancestry.hitpoints
   }
 
-  private initializeActions() {
-    this.heritage?.features &&
-      this.actions.push(
-        ...this.heritage.features
-          .filter((feature) => feature.type === 'ACTION')
-          .map((feature) => feature.value as string)
+  private addFeatureToCharacter(feature: Feature) {
+    if (feature.type !== 'CONDITIONAL') {
+      this.features.push(feature)
+    } else {
+      const resolvedFeature = this.resolveConditionalFeature(
+        feature.value as ConditionalFeatureValue
       )
+      this.addFeatureToCharacter(resolvedFeature)
+    }
+  }
+
+  private resolveConditionalFeature(
+    conditional: ConditionalFeatureValue
+  ): Feature {
+    let feature: Feature = conditional.default
+    if (
+      conditional.condition.operator === 'has' &&
+      this.doesCharacterHaveFeature(conditional.condition.operand)
+    ) {
+      feature = conditional.matched
+    }
+    return feature
+  }
+
+  private doesCharacterHaveFeature(feature: Feature): boolean {
+    return this.features.findIndex(featureMatcher(feature)) !== -1
   }
 
   static async build(character: CharacterEntity): Promise<PlayerCharacter> {
