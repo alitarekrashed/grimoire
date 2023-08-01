@@ -1,6 +1,10 @@
 import { Ancestry, Attribute } from './db/ancestry'
 import { CharacterAncestry, CharacterEntity } from './db/character-entity'
-import { Feature, ResistanceFeatureValue } from './db/feature'
+import {
+  ConditionalFeatureValue,
+  Feature,
+  ResistanceFeatureValue,
+} from './db/feature'
 import { Heritage } from './db/heritage'
 import { Resistance } from './resistance'
 
@@ -144,6 +148,7 @@ export class PlayerCharacter {
     this.initializeResistances()
     this.initializeAdditionalFeatures()
     this.initializeActions()
+    this.initializeConditionals()
   }
 
   public getCharacter(): CharacterEntity {
@@ -320,6 +325,38 @@ export class PlayerCharacter {
   }
 
   private initializeActions() {
+    this.heritage?.features &&
+      this.actions.push(
+        ...this.heritage.features
+          .filter((feature) => feature.type === 'ACTION')
+          .map((feature) => feature.value as string)
+      )
+  }
+
+  private initializeConditionals() {
+    if (this.heritage) {
+      const conditional: ConditionalFeatureValue[] = this.heritage.features
+        .filter((feature) => feature.type === 'CONDITIONAL')
+        .map((feature) => feature.value as ConditionalFeatureValue)
+
+      conditional.forEach((conditional: ConditionalFeatureValue) => {
+        let feature: Feature = conditional.default
+        if (conditional.condition.operator === 'has') {
+          let conditionalCheck: Feature = conditional.condition.operand
+          let match = false
+          if (conditionalCheck.type === 'SENSE') {
+            match = this.senses.includes(conditionalCheck.value)
+          }
+          if (match) {
+            feature = conditional.matched
+          }
+        }
+        if (feature.type === 'SENSE') {
+          this.senses.push(feature.value)
+        }
+      })
+    }
+
     this.heritage?.features &&
       this.actions.push(
         ...this.heritage.features
