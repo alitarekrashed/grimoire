@@ -1,9 +1,9 @@
-import { EntityModel } from '@/models/entity-model'
 import { useDebounce } from '@/utils/debounce'
 import { useRouter } from 'next/navigation'
 import { ChangeEvent, useState } from 'react'
 import { SearchResult } from './search-result'
 import { ysabeau_semibold, ysabeau_thin } from '@/utils/fonts'
+import { EntityModel } from '@/models/db/entity-model'
 
 export function SearchBar({ size }: { size?: 'small' | 'large' }) {
   const router = useRouter()
@@ -107,5 +107,7 @@ function getRoute(data: EntityModel): string {
       return 'heritages'
     case 'ACTION':
       return 'actions'
+    case 'BACKGROUND':
+      return 'backgrounds'
   }
 }

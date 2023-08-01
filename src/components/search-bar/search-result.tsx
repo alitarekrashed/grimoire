@@ -51,6 +51,8 @@ function getType(data: EntityModel): string {
       return `${(data as Heritage).ancestry} heritage`
     case 'ACTION':
       return 'Action'
+    case 'BACKGROUND':
+      return 'Background'
   }
 }
 
