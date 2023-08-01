@@ -339,17 +339,18 @@ export class PlayerCharacter {
     conditional: ConditionalFeatureValue
   ): Feature {
     let feature: Feature = conditional.default
-    if (conditional.condition.operator === 'has') {
-      let conditionalCheck: Feature = conditional.condition.operand
-      let match = false
-      if (conditionalCheck.type === 'SENSE') {
-        match = this.senses.includes(conditionalCheck.value)
-      }
-      if (match) {
-        feature = conditional.matched
-      }
+    if (
+      conditional.condition.operator === 'has' &&
+      this.checkFeatureAlreadyExists(conditional.condition.operand)
+    ) {
+      feature = conditional.matched
     }
     return feature
+  }
+
+  private checkFeatureAlreadyExists(feature: Feature) {
+    const featureArray: any[] = this.getFeatureArray(feature.type)
+    return featureArray.includes(feature.value)
   }
 
   static async build(character: CharacterEntity): Promise<PlayerCharacter> {
