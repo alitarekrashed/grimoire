@@ -235,7 +235,8 @@ export class PlayerCharacter {
   private calculateLanguages() {
     let languages = []
 
-    const additionalLanguages = this.attributes.Intelligence
+    const additionalLanguages =
+      this.attributes.Intelligence + this.ancestry.languages.additional ?? 0
 
     const languageSelections = buildChoiceSelectionArray(
       additionalLanguages,

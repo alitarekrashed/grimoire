@@ -28,7 +28,7 @@ export interface Ancestry extends EntityModel {
   languages: {
     given: string[] // typed eventually maybe?
     options: string[]
-    additional: string // '+Intelligence'
+    additional: number
   }
   features: Feature[] // this will eventually have to include extra things, TODO will need to support things like adding equipment (clan dagger) or rules (darkvision)
 }
