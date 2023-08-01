@@ -5,6 +5,7 @@ import {
   Feature,
   FeatureType,
   ResistanceFeatureValue,
+  featureMatcher,
 } from './db/feature'
 import { Heritage } from './db/heritage'
 import { Resistance } from './resistance'
@@ -119,10 +120,7 @@ export class PlayerCharacter {
   private languages: string[] = []
   private traits: string[] = []
   private hitpoints: number = 0
-  private senses: string[] = []
-  private additionalFeatures: string[] = []
-  private resistances: Resistance[] = []
-  private actions: string[] = [] // eventually this might need to change, in order to be able to track uses of limited actions
+  private features: Feature[] = []
 
   private constructor(
     private character: CharacterEntity,
@@ -202,19 +200,38 @@ export class PlayerCharacter {
   }
 
   public getSenses(): string[] {
-    return this.senses
+    return this.features
+      .filter((feature) => feature.type === 'SENSE')
+      .map((feature) => feature.value)
   }
 
   public getAdditionalFeatures(): string[] {
-    return this.additionalFeatures
+    return this.features
+      .filter((feature) => feature.type === 'MISC')
+      .map((feature) => feature.value)
   }
 
   public getResistances(): Resistance[] {
-    return this.resistances
+    return this.features
+      .filter((feature) => feature.type === 'RESISTANCE')
+      .map((feature) => {
+        let resistance = feature.value as ResistanceFeatureValue
+        let formulaValue =
+          resistance.formula === 'half-level' ? Math.floor(this.level / 2) : 0
+        return {
+          damage_type: resistance.damage_type,
+          value:
+            formulaValue > resistance.minimum
+              ? formulaValue
+              : resistance.minimum,
+        }
+      })
   }
 
   public getActions(): string[] {
-    return this.actions
+    return this.features
+      .filter((feature) => feature.type === 'ACTION')
+      .map((feature) => feature.value)
   }
 
   public getAttributeChoices(): { ancestry: Attribute[] } {
@@ -232,6 +249,7 @@ export class PlayerCharacter {
     }
   }
 
+  // should languages get wrapped into the feature list?
   private calculateLanguages() {
     let languages = []
 
@@ -287,52 +305,12 @@ export class PlayerCharacter {
 
   private addFeatureToCharacter(feature: Feature) {
     if (feature.type !== 'CONDITIONAL') {
-      const featureArray: any[] = this.getFeatureArray(feature.type)
-      featureArray.push(this.buildFeatureValue(feature))
+      this.features.push(feature)
     } else {
       const resolvedFeature = this.resolveConditionalFeature(
         feature.value as ConditionalFeatureValue
       )
       this.addFeatureToCharacter(resolvedFeature)
-    }
-  }
-
-  private getFeatureArray(type: FeatureType): any[] {
-    switch (type) {
-      case 'SENSE':
-        return this.senses
-      case 'ACTION':
-        return this.actions
-      case 'RESISTANCE':
-        return this.resistances
-      case 'MISC':
-        return this.additionalFeatures
-      default:
-        return []
-    }
-  }
-
-  private buildFeatureValue(feature: Feature): any {
-    switch (feature.type) {
-      case 'SENSE':
-        return feature.value
-      case 'ACTION':
-        return feature.value
-      case 'RESISTANCE':
-        let resistance = feature.value as ResistanceFeatureValue
-        let formulaValue =
-          resistance.formula === 'half-level' ? Math.floor(this.level / 2) : 0
-        return {
-          damage_type: resistance.damage_type,
-          value:
-            formulaValue > resistance.minimum
-              ? formulaValue
-              : resistance.minimum,
-        }
-      case 'MISC':
-        return feature.value
-      default:
-        return undefined
     }
   }
 
@@ -342,16 +320,15 @@ export class PlayerCharacter {
     let feature: Feature = conditional.default
     if (
       conditional.condition.operator === 'has' &&
-      this.checkFeatureAlreadyExists(conditional.condition.operand)
+      this.doesCharacterHaveFeature(conditional.condition.operand)
     ) {
       feature = conditional.matched
     }
     return feature
   }
 
-  private checkFeatureAlreadyExists(feature: Feature) {
-    const featureArray: any[] = this.getFeatureArray(feature.type)
-    return featureArray.includes(feature.value)
+  private doesCharacterHaveFeature(feature: Feature): boolean {
+    return this.features.findIndex(featureMatcher(feature)) !== -1
   }
 
   static async build(character: CharacterEntity): Promise<PlayerCharacter> {

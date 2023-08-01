@@ -28,3 +28,20 @@ export interface Conditional {
   operator: ConditionalOperator
   operand: Feature
 }
+
+export function featureMatcher(other: Feature) {
+  switch (other.type) {
+    case 'RESISTANCE':
+      return (val: Feature) => {
+        const resistance: ResistanceFeatureValue =
+          val.value as ResistanceFeatureValue
+        return (
+          resistance.damage_type === resistance.damage_type &&
+          val.type === other.type
+        )
+      }
+    default:
+      return (val: Feature) =>
+        val.value === other.value && val.type === other.type
+  }
+}
