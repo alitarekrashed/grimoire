@@ -1,5 +1,10 @@
-import { Ancestry, Attribute } from './db/ancestry'
-import { CharacterAncestry, CharacterEntity } from './db/character-entity'
+import { Ancestry, Attribute, AttributeModifier } from './db/ancestry'
+import { Background } from './db/background'
+import {
+  CharacterAncestry,
+  CharacterBackground,
+  CharacterEntity,
+} from './db/character-entity'
 import {
   ConditionalFeatureValue,
   Feature,
@@ -112,6 +117,51 @@ function calculateAncestryAttributeModifications(
   return attributes
 }
 
+function getBackgroundAttributeChoices(
+  characterBackground: CharacterBackground,
+  background: Background
+) {
+  let options: Attribute[][] = background.attributes.map(
+    (choices: AttributeModifier[]) => {
+      if (choices.length === 1 && choices[0] === 'Free') {
+        return [...ATTRIBUTES]
+      } else {
+        return choices as Attribute[]
+      }
+    }
+  )
+
+  for (let i = 0; i < options.length; i++) {
+    options[i] = options[i].filter(
+      (option: Attribute) =>
+        characterBackground.attribute_boost_selections.indexOf(option) === -1
+    )
+  }
+
+  return options
+}
+
+function calculateBackgroundAttributeModifications(
+  characterBackground: CharacterBackground,
+  background: Background
+) {
+  let attributes: any = {}
+  ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
+
+  characterBackground.attribute_boost_selections = buildChoiceSelectionArray(
+    background.attributes.length,
+    characterBackground.attribute_boost_selections,
+    [],
+    undefined
+  )
+
+  characterBackground.attribute_boost_selections
+    .filter((val) => val)
+    .forEach((val) => (attributes[val!] += 1))
+
+  return attributes
+}
+
 export class PlayerCharacter {
   private level!: number
   private speed!: number
@@ -125,7 +175,8 @@ export class PlayerCharacter {
   private constructor(
     private character: CharacterEntity,
     private ancestry: Ancestry,
-    private heritage?: Heritage
+    private heritage?: Heritage,
+    private background?: Background
   ) {
     this.level = character.level
     this.speed = this.ancestry.speed
@@ -167,12 +218,25 @@ export class PlayerCharacter {
     return await PlayerCharacter.build(this.character)
   }
 
+  public async updateBackground(
+    backgroundId: string
+  ): Promise<PlayerCharacter> {
+    let newCharacter = { ...this.character }
+    newCharacter.background.id = backgroundId
+    newCharacter.background.attribute_boost_selections = []
+    return await PlayerCharacter.build(this.character)
+  }
+
   public getTraits(): string[] {
     return this.traits
   }
 
   public getAncestryId(): string {
     return this.ancestry._id.toString()
+  }
+
+  public getBackgroundId(): string {
+    return this.background?._id.toString() ?? ''
   }
 
   public getAncestryName(): string {
@@ -234,12 +298,21 @@ export class PlayerCharacter {
       .map((feature) => feature.value)
   }
 
-  public getAttributeChoices(): { ancestry: Attribute[] } {
+  public getAttributeChoices(): {
+    ancestry: Attribute[]
+    background: Attribute[][]
+  } {
     return {
       ancestry: getAncestryAttributeChoices(
         this.character.ancestry,
         this.ancestry
       ),
+      background: this.background
+        ? getBackgroundAttributeChoices(
+            this.character.background,
+            this.background
+          )
+        : [],
     }
   }
 
@@ -254,7 +327,7 @@ export class PlayerCharacter {
     let languages = []
 
     const additionalLanguages =
-      this.attributes.Intelligence + this.ancestry.languages.additional ?? 0
+      this.attributes.Intelligence + (this.ancestry.languages.additional ?? 0)
 
     const languageSelections = buildChoiceSelectionArray(
       additionalLanguages,
@@ -287,8 +360,20 @@ export class PlayerCharacter {
       this.ancestry
     )
 
+    const backgroundMods: any = this.background
+      ? calculateBackgroundAttributeModifications(
+          this.character.background,
+          this.background
+        )
+      : undefined
+
     Object.keys(ancestryMods).forEach(
       (attribute: string) => (attributes[attribute] += ancestryMods[attribute])
+    )
+
+    Object.keys(backgroundMods).forEach(
+      (attribute: string) =>
+        (attributes[attribute] += backgroundMods[attribute])
     )
 
     this.attributes = attributes
@@ -351,7 +436,18 @@ export class PlayerCharacter {
         )
       ).json()
     }
-    const pc = new PlayerCharacter(character, ancestry, heritage)
+    let background
+    if (character.background.id) {
+      background = await (
+        await fetch(
+          `http://localhost:3000/api/backgrounds/${character.background.id}`,
+          {
+            cache: 'no-store',
+          }
+        )
+      ).json()
+    }
+    const pc = new PlayerCharacter(character, ancestry, heritage, background)
     return pc
   }
 }

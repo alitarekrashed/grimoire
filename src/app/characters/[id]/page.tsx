@@ -7,9 +7,11 @@ import {
   ParsedToken,
 } from '@/components/parsed-description/parsed-description'
 import { Ancestry, Attribute } from '@/models/db/ancestry'
+import { Background } from '@/models/db/background'
 import {
   CharacterEntity,
   CharacterAncestry,
+  CharacterBackground,
 } from '@/models/db/character-entity'
 import { Heritage } from '@/models/db/heritage'
 import { PlayerCharacter } from '@/models/player-character'
@@ -68,6 +70,24 @@ export default function CharacterPage() {
     })
   }
 
+  const handleBackgroundChange = (backgroundId: string) => {
+    character?.updateBackground(backgroundId).then((val) => {
+      setCharacter(val)
+      debouncedRequest()
+    })
+  }
+
+  const handleBackgroundEdit = (background: CharacterBackground) => {
+    let newCharacter: CharacterEntity = {
+      ...character!.getCharacter(),
+      background: background,
+    }
+    PlayerCharacter.build(newCharacter).then((val) => {
+      setCharacter(val)
+      debouncedRequest()
+    })
+  }
+
   const handleCharacterEdit = (char: CharacterEntity) => {
     PlayerCharacter.build(char).then((val) => {
       setCharacter(val)
@@ -83,11 +103,16 @@ export default function CharacterPage() {
             character={character}
             onEdit={handleCharacterEdit}
           ></CharacterDisplay>
-          <CharacterEdit
+          <AncestryEdit
             character={character}
             onAncestryEdit={handleAncestryChange}
             onEdit={handleAncestryEdit}
-          ></CharacterEdit>
+          ></AncestryEdit>
+          <BackgroundEdit
+            character={character}
+            onBackgroundEdit={handleBackgroundChange}
+            onEdit={handleBackgroundEdit}
+          ></BackgroundEdit>
         </>
       )}
     </div>
@@ -267,7 +292,7 @@ function CharacterDisplay({
 }
 
 // TODO separate out things like changing Ancestry with the choices from the Ancestry...
-function CharacterEdit({
+function AncestryEdit({
   character,
   onAncestryEdit,
   onEdit,
@@ -339,7 +364,7 @@ function CharacterEdit({
         <h2>Ancestry</h2>
         <select
           className="bg-stone-800"
-          value={character.getAncestryId().toString()}
+          value={character.getAncestryId()}
           onChange={(e) => updateAncestry(e.target.value)}
         >
           {ancestries.map((ancestry) => (
@@ -371,7 +396,6 @@ function CharacterEdit({
             .getCharacter()
             .ancestry.attribute_boost_selections.map(
               (choice: any, i: number) => {
-                console.log(choice)
                 return (
                   <React.Fragment key={i}>
                     <select
@@ -434,6 +458,91 @@ function CharacterEdit({
             </option>
           ))}
         </select>
+      </span>
+    </div>
+  )
+}
+
+// TODO separate out things like changing Ancestry with the choices from the Ancestry...
+function BackgroundEdit({
+  character,
+  onBackgroundEdit,
+  onEdit,
+}: {
+  character: PlayerCharacter
+  onBackgroundEdit: (backgroundId: string) => void
+  onEdit: (val: CharacterBackground) => void
+}) {
+  const [backgrounds, setBackgrounds] = useState<Background[]>([])
+
+  useEffect(() => {
+    fetch('http://localhost:3000/api/backgrounds', {
+      cache: 'no-store',
+    })
+      .then((result) => result.json())
+      .then((backgrounds) => {
+        setBackgrounds(backgrounds)
+      })
+  }, [])
+
+  const updateBackground = (value: string) => {
+    onBackgroundEdit(value)
+  }
+
+  const updateAttribute = (value: Attribute, index: number) => {
+    let val: CharacterBackground = { ...character.getCharacter().background }
+    val.attribute_boost_selections[index] = value
+    onEdit(val)
+  }
+
+  return (
+    <div className="inline-flex gap-5 border border-stone-300 p-2 items-center">
+      <span>
+        <h2>Background</h2>
+        <select
+          className="bg-stone-800"
+          value={character.getBackgroundId()}
+          onChange={(e) => updateBackground(e.target.value)}
+        >
+          {backgrounds.map((background) => (
+            <option
+              key={background._id.toString()}
+              value={background._id.toString()}
+            >
+              {background.name}
+            </option>
+          ))}
+        </select>
+      </span>
+      <span>
+        <h2>Attributes</h2>
+        {character?.getCharacter()?.background &&
+          character
+            .getCharacter()
+            .background.attribute_boost_selections.map(
+              (choice: any, i: number) => {
+                return (
+                  <React.Fragment key={i}>
+                    <select
+                      className="bg-stone-800 mr-2"
+                      value={choice ?? ''}
+                      onChange={(e) =>
+                        updateAttribute(e.target.value as Attribute, i)
+                      }
+                    >
+                      <option value={choice}>{choice}</option>
+                      {character
+                        .getAttributeChoices()
+                        .background[i].map((attribute) => (
+                          <option key={attribute} value={attribute}>
+                            {attribute}
+                          </option>
+                        ))}
+                    </select>
+                  </React.Fragment>
+                )
+              }
+            )}
       </span>
     </div>
   )
