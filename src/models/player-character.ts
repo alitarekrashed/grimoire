@@ -483,37 +483,40 @@ export class PlayerCharacter {
     return this.features.findIndex(featureMatcher(feature)) !== -1
   }
 
-  static async build(character: CharacterEntity): Promise<PlayerCharacter> {
-    const ancestry = await (
-      await fetch(
-        `http://localhost:3000/api/ancestries/${character.ancestry.id}`,
-        {
-          cache: 'no-store',
-        }
-      )
+  static async getAncestry(id: string) {
+    return await (
+      await fetch(`http://localhost:3000/api/ancestries/${id}`, {
+        cache: 'no-store',
+      })
     ).json()
-    let heritage
-    if (character.ancestry.heritage_id) {
-      heritage = await (
-        await fetch(
-          `http://localhost:3000/api/heritages/${character.ancestry.heritage_id}`,
-          {
+  }
+
+  static async getHeritage(id: string) {
+    return id
+      ? await (
+          await fetch(`http://localhost:3000/api/heritages/${id}`, {
             cache: 'no-store',
-          }
-        )
-      ).json()
-    }
-    let background!: Background
-    if (character.background.id) {
-      background = await (
-        await fetch(
-          `http://localhost:3000/api/backgrounds/${character.background.id}`,
-          {
+          })
+        ).json()
+      : undefined
+  }
+
+  static async getBackground(id: string) {
+    return id
+      ? await (
+          await fetch(`http://localhost:3000/api/backgrounds/${id}`, {
             cache: 'no-store',
-          }
-        )
-      ).json()
-    }
+          })
+        ).json()
+      : undefined
+  }
+
+  static async build(character: CharacterEntity): Promise<PlayerCharacter> {
+    const [ancestry, heritage, background] = await Promise.all([
+      PlayerCharacter.getAncestry(character.ancestry.id),
+      PlayerCharacter.getHeritage(character.ancestry.heritage_id),
+      PlayerCharacter.getBackground(character.background.id),
+    ])
 
     let allFeatures: Feature[] = []
     allFeatures = allFeatures.concat(ancestry.features)
