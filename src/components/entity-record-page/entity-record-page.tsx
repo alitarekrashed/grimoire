@@ -35,6 +35,7 @@ export function EntityRecordPage<T extends EntityModel>({
   )
 }
 
+// TODO ALI can this be a relative URL call?
 function baseUrlFactory(type: ModelType) {
   switch (type) {
     case 'EQUIPMENT':
@@ -53,6 +54,8 @@ function baseUrlFactory(type: ModelType) {
       return 'http://localhost:3000/api/heritages'
     case 'ACTION':
       return 'http://localhost:3000/api/actions'
+    case 'BACKGROUND':
+      return 'http://localhost:3000/api/backgrounds'
     default: // throw exception?
   }
 }

@@ -1,9 +1,14 @@
-import { Ancestry, Attribute } from './db/ancestry'
-import { CharacterAncestry, CharacterEntity } from './db/character-entity'
+import { Ancestry, Attribute, AttributeModifier } from './db/ancestry'
+import { Background, ProficiencyFeatureValue } from './db/background'
+import {
+  CharacterAncestry,
+  CharacterBackground,
+  CharacterEntity,
+} from './db/character-entity'
+import { Feat } from './db/feat'
 import {
   ConditionalFeatureValue,
   Feature,
-  FeatureType,
   ResistanceFeatureValue,
   featureMatcher,
 } from './db/feature'
@@ -49,18 +54,46 @@ function getAncestryAttributeChoices(
   characterAncestry: CharacterAncestry,
   ancestry: Ancestry
 ) {
-  let options = [...ATTRIBUTES]
-  if (characterAncestry.free_attribute == false) {
-    options = options.filter(
-      (option) => ancestry.attribute_boosts.indexOf(option) === -1
+  if (characterAncestry.free_attribute === false) {
+    return getAncestryDefaultAttributeChoices(characterAncestry, ancestry)
+  } else {
+    return getAncestryFreeAttributeChoices(characterAncestry, ancestry)
+  }
+}
+
+function getAncestryDefaultAttributeChoices(
+  characterAncestry: CharacterAncestry,
+  ancestry: Ancestry
+) {
+  let options: Attribute[][] = ancestry.attribute_boosts
+    .filter((choices) => choices.length)
+    .filter((choices) => choices[0] === 'Free')
+    .map(() => [...ATTRIBUTES])
+
+  for (let i = 0; i < options.length; i++) {
+    options[i] = options[i].filter(
+      (option: any) =>
+        ancestry.attribute_boosts
+          .filter((attribute) => attribute.length === 1)
+          .map((attribute: AttributeModifier[]) => attribute[0])
+          .indexOf(option) === -1 &&
+        characterAncestry.attribute_boost_selections.indexOf(option) === -1
     )
   }
+  return options
+}
 
-  options = options.filter(
-    (option) =>
-      characterAncestry.attribute_boost_selections.indexOf(option) === -1
-  )
+function getAncestryFreeAttributeChoices(
+  characterAncestry: CharacterAncestry,
+  ancestries: Ancestry
+) {
+  let options: Attribute[][] = [[...ATTRIBUTES], [...ATTRIBUTES]]
 
+  for (let i = 0; i < options.length; i++) {
+    options[i] = options[i].filter((option: any) => {
+      return characterAncestry.attribute_boost_selections.indexOf(option) === -1
+    })
+  }
   return options
 }
 
@@ -78,34 +111,118 @@ function calculateAncestryAttributeModifications(
   characterAncestry: CharacterAncestry,
   ancestry: Ancestry
 ) {
+  if (characterAncestry.free_attribute === false) {
+    return calculateAncestryDefaultAttributeModifications(
+      characterAncestry,
+      ancestry
+    )
+  } else {
+    return calculateAncestryFreeAttributeModifications(
+      characterAncestry,
+      ancestry
+    )
+  }
+}
+
+function calculateAncestryDefaultAttributeModifications(
+  characterAncestry: CharacterAncestry,
+  ancestry: Ancestry
+) {
   let attributes: any = {}
   ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
 
-  const freeAttributeCount = (
-    characterAncestry.free_attribute
-      ? ['Free', 'Free']
-      : ancestry.attribute_boosts.filter((attribute) => attribute === 'Free')
-  ).length
+  const staticBoosts = ancestry.attribute_boosts
+    .filter((attribute) => attribute.length === 1)
+    .filter((attribute) => attribute[0] !== 'Free')
+    .map((attribute) => attribute[0])
 
-  if (characterAncestry.free_attribute === false) {
-    ancestry.attribute_boosts
-      .filter((attribute) => attribute !== 'Free')
-      .forEach((attribute) => {
-        attributes[attribute as Attribute] += 1
-      })
-    ancestry.attribute_flaws.forEach((attribute) => {
-      attributes[attribute as Attribute] -= 1
-    })
-  }
+  const choiceCount = ancestry.attribute_boosts
+    .filter((attribute) => attribute.length === 1)
+    .filter((attribute) => attribute[0] === 'Free').length
+
+  staticBoosts.forEach((attribute) => {
+    attributes[attribute as Attribute] += 1
+  })
+  ancestry.attribute_flaws.forEach((attribute) => {
+    attributes[attribute as Attribute] -= 1
+  })
 
   characterAncestry.attribute_boost_selections = buildChoiceSelectionArray(
-    freeAttributeCount,
+    choiceCount,
     characterAncestry.attribute_boost_selections,
-    characterAncestry.free_attribute === false ? ancestry.attribute_boosts : [],
+    staticBoosts,
     undefined
   )
 
   characterAncestry.attribute_boost_selections
+    .filter((val) => val)
+    .forEach((val) => (attributes[val!] += 1))
+
+  return attributes
+}
+
+function calculateAncestryFreeAttributeModifications(
+  characterAncestry: CharacterAncestry,
+  ancestry: Ancestry
+) {
+  let attributes: any = {}
+  ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
+
+  const choiceCount = [['Free'], ['Free']].length
+
+  characterAncestry.attribute_boost_selections = buildChoiceSelectionArray(
+    choiceCount,
+    characterAncestry.attribute_boost_selections,
+    [],
+    undefined
+  )
+
+  characterAncestry.attribute_boost_selections
+    .filter((val) => val)
+    .forEach((val) => (attributes[val!] += 1))
+
+  return attributes
+}
+
+function getBackgroundAttributeChoices(
+  characterBackground: CharacterBackground,
+  background: Background
+) {
+  let options: Attribute[][] = background.attributes.map(
+    (choices: AttributeModifier[]) => {
+      if (choices.length === 1 && choices[0] === 'Free') {
+        return [...ATTRIBUTES]
+      } else {
+        return choices as Attribute[]
+      }
+    }
+  )
+
+  for (let i = 0; i < options.length; i++) {
+    options[i] = options[i].filter(
+      (option: Attribute) =>
+        characterBackground.attribute_boost_selections.indexOf(option) === -1
+    )
+  }
+
+  return options
+}
+
+function calculateBackgroundAttributeModifications(
+  characterBackground: CharacterBackground,
+  background: Background
+) {
+  let attributes: any = {}
+  ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
+
+  characterBackground.attribute_boost_selections = buildChoiceSelectionArray(
+    background.attributes.length,
+    characterBackground.attribute_boost_selections,
+    [],
+    undefined
+  )
+
+  characterBackground.attribute_boost_selections
     .filter((val) => val)
     .forEach((val) => (attributes[val!] += 1))
 
@@ -125,7 +242,9 @@ export class PlayerCharacter {
   private constructor(
     private character: CharacterEntity,
     private ancestry: Ancestry,
-    private heritage?: Heritage
+    private allFeatures: Feature[],
+    private heritage?: Heritage,
+    private background?: Background
   ) {
     this.level = character.level
     this.speed = this.ancestry.speed
@@ -144,14 +263,7 @@ export class PlayerCharacter {
     this.initializeTraits()
     this.initializeHitpoints()
 
-    this.ancestry.features.forEach((feature) =>
-      this.addFeatureToCharacter(feature)
-    )
-    if (this.heritage) {
-      this.heritage?.features.forEach((feature) =>
-        this.addFeatureToCharacter(feature)
-      )
-    }
+    this.allFeatures.forEach((feature) => this.addFeatureToCharacter(feature))
   }
 
   public getCharacter(): CharacterEntity {
@@ -167,12 +279,25 @@ export class PlayerCharacter {
     return await PlayerCharacter.build(this.character)
   }
 
+  public async updateBackground(
+    backgroundId: string
+  ): Promise<PlayerCharacter> {
+    let newCharacter = { ...this.character }
+    newCharacter.background.id = backgroundId
+    newCharacter.background.attribute_boost_selections = []
+    return await PlayerCharacter.build(this.character)
+  }
+
   public getTraits(): string[] {
     return this.traits
   }
 
   public getAncestryId(): string {
     return this.ancestry._id.toString()
+  }
+
+  public getBackgroundId(): string {
+    return this.background?._id.toString() ?? ''
   }
 
   public getAncestryName(): string {
@@ -234,12 +359,27 @@ export class PlayerCharacter {
       .map((feature) => feature.value)
   }
 
-  public getAttributeChoices(): { ancestry: Attribute[] } {
+  public getProficiencies(): ProficiencyFeatureValue[] {
+    return this.features
+      .filter((feature) => feature.type === 'PROFICIENCY')
+      .map((feature) => feature.value)
+  }
+
+  public getAttributeChoices(): {
+    ancestry: Attribute[][]
+    background: Attribute[][]
+  } {
     return {
       ancestry: getAncestryAttributeChoices(
         this.character.ancestry,
         this.ancestry
       ),
+      background: this.background
+        ? getBackgroundAttributeChoices(
+            this.character.background,
+            this.background
+          )
+        : [],
     }
   }
 
@@ -254,7 +394,7 @@ export class PlayerCharacter {
     let languages = []
 
     const additionalLanguages =
-      this.attributes.Intelligence + this.ancestry.languages.additional ?? 0
+      this.attributes.Intelligence + (this.ancestry.languages.additional ?? 0)
 
     const languageSelections = buildChoiceSelectionArray(
       additionalLanguages,
@@ -287,8 +427,20 @@ export class PlayerCharacter {
       this.ancestry
     )
 
+    const backgroundMods: any = this.background
+      ? calculateBackgroundAttributeModifications(
+          this.character.background,
+          this.background
+        )
+      : undefined
+
     Object.keys(ancestryMods).forEach(
       (attribute: string) => (attributes[attribute] += ancestryMods[attribute])
+    )
+
+    Object.keys(backgroundMods).forEach(
+      (attribute: string) =>
+        (attributes[attribute] += backgroundMods[attribute])
     )
 
     this.attributes = attributes
@@ -331,27 +483,69 @@ export class PlayerCharacter {
     return this.features.findIndex(featureMatcher(feature)) !== -1
   }
 
-  static async build(character: CharacterEntity): Promise<PlayerCharacter> {
-    const ancestry = await (
-      await fetch(
-        `http://localhost:3000/api/ancestries/${character.ancestry.id}`,
-        {
-          cache: 'no-store',
-        }
-      )
+  static async getAncestry(id: string) {
+    return await (
+      await fetch(`http://localhost:3000/api/ancestries/${id}`, {
+        cache: 'no-store',
+      })
     ).json()
-    let heritage
-    if (character.ancestry.heritage_id) {
-      heritage = await (
-        await fetch(
-          `http://localhost:3000/api/heritages/${character.ancestry.heritage_id}`,
-          {
+  }
+
+  static async getHeritage(id: string) {
+    return id
+      ? await (
+          await fetch(`http://localhost:3000/api/heritages/${id}`, {
             cache: 'no-store',
-          }
-        )
-      ).json()
+          })
+        ).json()
+      : undefined
+  }
+
+  static async getBackground(id: string) {
+    return id
+      ? await (
+          await fetch(`http://localhost:3000/api/backgrounds/${id}`, {
+            cache: 'no-store',
+          })
+        ).json()
+      : undefined
+  }
+
+  static async build(character: CharacterEntity): Promise<PlayerCharacter> {
+    const [ancestry, heritage, background] = await Promise.all([
+      PlayerCharacter.getAncestry(character.ancestry.id),
+      PlayerCharacter.getHeritage(character.ancestry.heritage_id),
+      PlayerCharacter.getBackground(character.background.id),
+    ])
+
+    let allFeatures: Feature[] = []
+    allFeatures = allFeatures.concat(ancestry.features)
+    if (heritage) {
+      allFeatures = allFeatures.concat(heritage.features)
     }
-    const pc = new PlayerCharacter(character, ancestry, heritage)
+    if (background) {
+      allFeatures = allFeatures.concat(
+        background.skills.map((skill: ProficiencyFeatureValue) => {
+          return { type: 'PROFICIENCY', value: skill }
+        })
+      )
+
+      let bgFeat: Feat[] = await (
+        await fetch(`http://localhost:3000/api/feats?name=${background.feat}`, {
+          cache: 'no-store',
+        })
+      ).json()
+
+      allFeatures = allFeatures.concat(bgFeat[0].features)
+    }
+
+    const pc = new PlayerCharacter(
+      character,
+      ancestry,
+      allFeatures,
+      heritage,
+      background
+    )
     return pc
   }
 }

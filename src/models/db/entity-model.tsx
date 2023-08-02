@@ -23,3 +23,5 @@ export type ModelType =
   | 'RULE'
   | 'HERITAGE'
   | 'ACTION'
+  | 'BACKGROUND'
+  | 'FEAT'

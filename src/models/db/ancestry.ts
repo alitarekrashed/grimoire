@@ -22,7 +22,7 @@ export interface Ancestry extends EntityModel {
   hitpoints: number
   size: string // should be typed
   speed: number
-  attribute_boosts: AttributeModifier[]
+  attribute_boosts: AttributeModifier[][]
   attribute_flaws: AttributeModifier[]
   traits: string[]
   languages: {

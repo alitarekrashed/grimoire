@@ -6,6 +6,7 @@ export interface CharacterEntity {
   name: string
   level: number
   ancestry: CharacterAncestry
+  background: CharacterBackground
 }
 
 export interface CharacterAncestry {
@@ -14,4 +15,9 @@ export interface CharacterAncestry {
   language_selections: string[]
   free_attribute: boolean
   heritage_id: string
+}
+
+export interface CharacterBackground {
+  id: string
+  attribute_boost_selections: Attribute[]
 }
