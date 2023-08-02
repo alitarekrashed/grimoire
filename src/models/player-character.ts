@@ -54,32 +54,46 @@ function getAncestryAttributeChoices(
   characterAncestry: CharacterAncestry,
   ancestry: Ancestry
 ) {
-  let options: Attribute[][] = []
-  if (characterAncestry.free_attribute == false) {
-    options = ancestry.attribute_boosts
-      .filter((choices) => choices.length)
-      .filter((choices) => choices[0] === 'Free')
-      .map(() => [...ATTRIBUTES])
+  if (characterAncestry.free_attribute === false) {
+    return getAncestryDefaultAttributeChoices(characterAncestry, ancestry)
   } else {
-    options = [[...ATTRIBUTES], [...ATTRIBUTES]]
+    return getAncestryFreeAttributeChoices(characterAncestry, ancestry)
   }
+}
+
+function getAncestryDefaultAttributeChoices(
+  characterAncestry: CharacterAncestry,
+  ancestry: Ancestry
+) {
+  let options: Attribute[][] = ancestry.attribute_boosts
+    .filter((choices) => choices.length)
+    .filter((choices) => choices[0] === 'Free')
+    .map(() => [...ATTRIBUTES])
+
+  for (let i = 0; i < options.length; i++) {
+    options[i] = options[i].filter(
+      (option: any) =>
+        ancestry.attribute_boosts
+          .filter((attribute) => attribute.length === 1)
+          .map((attribute: AttributeModifier[]) => attribute[0])
+          .indexOf(option) === -1 &&
+        characterAncestry.attribute_boost_selections.indexOf(option) === -1
+    )
+  }
+  return options
+}
+
+function getAncestryFreeAttributeChoices(
+  characterAncestry: CharacterAncestry,
+  ancestries: Ancestry
+) {
+  let options: Attribute[][] = [[...ATTRIBUTES], [...ATTRIBUTES]]
 
   for (let i = 0; i < options.length; i++) {
     options[i] = options[i].filter((option: any) => {
-      const existsForFreeAttribute =
-        characterAncestry.free_attribute === false
-          ? ancestry.attribute_boosts
-              .filter((attribute) => attribute.length === 1)
-              .map((attribute: AttributeModifier[]) => attribute[0])
-              .indexOf(option) === -1
-          : true
-      return (
-        existsForFreeAttribute &&
-        characterAncestry.attribute_boost_selections.indexOf(option) === -1
-      )
+      return characterAncestry.attribute_boost_selections.indexOf(option) === -1
     })
   }
-  console.log(options)
   return options
 }
 
