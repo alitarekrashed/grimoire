@@ -137,6 +137,7 @@ function CharacterDisplay({
   const additionalFeatures = character.getAdditionalFeatures()
   const resistances = character.getResistances()
   const actions = character.getActions()
+  const proficiencies = character.getProficiencies()
 
   return (
     character && (
@@ -277,6 +278,30 @@ function CharacterDisplay({
                     description={action}
                     key={`${action}-${index}`}
                   ></ParsedDescription>
+                )
+              })}
+            </span>
+          </div>
+
+          <div className="grid grid-rows-1 border border-stone-300 p-2">
+            <span>Proficiencies: </span>
+            <span>
+              {proficiencies.map((proficiency, index) => {
+                return (
+                  <div>
+                    <LabelsList
+                      key={`${proficiency.value}-${index}`}
+                      fieldDefinitions={[
+                        {
+                          label:
+                            proficiency.type === 'Lore'
+                              ? `Lore ${proficiency.value}`
+                              : proficiency.value,
+                          value: proficiency.rank,
+                        },
+                      ]}
+                    ></LabelsList>
+                  </div>
                 )
               })}
             </span>

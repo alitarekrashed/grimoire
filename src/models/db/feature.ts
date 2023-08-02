@@ -4,6 +4,7 @@ export type FeatureType =
   | 'RESISTANCE'
   | 'ACTION'
   | 'CONDITIONAL'
+  | 'PROFICIENCY'
 export type CalculationFormula = 'half-level'
 export type ConditionalOperator = 'has'
 

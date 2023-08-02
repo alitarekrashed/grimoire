@@ -1,5 +1,5 @@
 import { Ancestry, Attribute, AttributeModifier } from './db/ancestry'
-import { Background } from './db/background'
+import { Background, ProficiencyFeatureValue } from './db/background'
 import {
   CharacterAncestry,
   CharacterBackground,
@@ -269,6 +269,11 @@ export class PlayerCharacter {
         this.addFeatureToCharacter(feature)
       )
     }
+    if (this.background) {
+      this.background?.skills.forEach((skill) => {
+        this.addFeatureToCharacter({ type: 'PROFICIENCY', value: skill })
+      })
+    }
   }
 
   public getCharacter(): CharacterEntity {
@@ -361,6 +366,12 @@ export class PlayerCharacter {
   public getActions(): string[] {
     return this.features
       .filter((feature) => feature.type === 'ACTION')
+      .map((feature) => feature.value)
+  }
+
+  public getProficiencies(): ProficiencyFeatureValue[] {
+    return this.features
+      .filter((feature) => feature.type === 'PROFICIENCY')
       .map((feature) => feature.value)
   }
 
