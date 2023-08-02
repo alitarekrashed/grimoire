@@ -8,7 +8,6 @@ import {
 import {
   ConditionalFeatureValue,
   Feature,
-  FeatureType,
   ResistanceFeatureValue,
   featureMatcher,
 } from './db/feature'
