@@ -97,37 +97,69 @@ function calculateAncestryAttributeModifications(
   characterAncestry: CharacterAncestry,
   ancestry: Ancestry
 ) {
+  if (characterAncestry.free_attribute === false) {
+    return calculateAncestryDefaultAttributeModifications(
+      characterAncestry,
+      ancestry
+    )
+  } else {
+    return calculateAncestryFreeAttributeModifications(
+      characterAncestry,
+      ancestry
+    )
+  }
+}
+
+function calculateAncestryDefaultAttributeModifications(
+  characterAncestry: CharacterAncestry,
+  ancestry: Ancestry
+) {
   let attributes: any = {}
   ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
-
-  const freeAttributeCount = (
-    characterAncestry.free_attribute
-      ? [['Free'], ['Free']]
-      : ancestry.attribute_boosts
-          .filter((attribute) => attribute.length === 1)
-          .filter((attribute) => attribute[0] === 'Free')
-  ).length
 
   const staticBoosts = ancestry.attribute_boosts
     .filter((attribute) => attribute.length === 1)
     .filter((attribute) => attribute[0] !== 'Free')
     .map((attribute) => attribute[0])
 
-  if (characterAncestry.free_attribute === false) {
-    staticBoosts.forEach((attribute) => {
-      attributes[attribute as Attribute] += 1
-    })
-    ancestry.attribute_flaws.forEach((attribute) => {
-      attributes[attribute as Attribute] -= 1
-    })
-  }
+  const choiceCount = ancestry.attribute_boosts
+    .filter((attribute) => attribute.length === 1)
+    .filter((attribute) => attribute[0] === 'Free').length
 
-  console.log('static boosts')
-  console.log()
+  staticBoosts.forEach((attribute) => {
+    attributes[attribute as Attribute] += 1
+  })
+  ancestry.attribute_flaws.forEach((attribute) => {
+    attributes[attribute as Attribute] -= 1
+  })
+
   characterAncestry.attribute_boost_selections = buildChoiceSelectionArray(
-    freeAttributeCount,
+    choiceCount,
     characterAncestry.attribute_boost_selections,
-    characterAncestry.free_attribute === false ? staticBoosts : [],
+    staticBoosts,
+    undefined
+  )
+
+  characterAncestry.attribute_boost_selections
+    .filter((val) => val)
+    .forEach((val) => (attributes[val!] += 1))
+
+  return attributes
+}
+
+function calculateAncestryFreeAttributeModifications(
+  characterAncestry: CharacterAncestry,
+  ancestry: Ancestry
+) {
+  let attributes: any = {}
+  ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
+
+  const choiceCount = [['Free'], ['Free']].length
+
+  characterAncestry.attribute_boost_selections = buildChoiceSelectionArray(
+    choiceCount,
+    characterAncestry.attribute_boost_selections,
+    [],
     undefined
   )
 
