@@ -54,18 +54,32 @@ function getAncestryAttributeChoices(
   characterAncestry: CharacterAncestry,
   ancestry: Ancestry
 ) {
-  let options = [...ATTRIBUTES]
+  let options: Attribute[][] = []
   if (characterAncestry.free_attribute == false) {
-    options = options.filter(
-      (option) => ancestry.attribute_boosts.indexOf(option) === -1
-    )
+    options = ancestry.attribute_boosts
+      .filter((choices) => choices.length)
+      .filter((choices) => choices[0] === 'Free')
+      .map(() => [...ATTRIBUTES])
+  } else {
+    options = [[...ATTRIBUTES], [...ATTRIBUTES]]
   }
 
-  options = options.filter(
-    (option) =>
-      characterAncestry.attribute_boost_selections.indexOf(option) === -1
-  )
-
+  for (let i = 0; i < options.length; i++) {
+    options[i] = options[i].filter((option: any) => {
+      const existsForFreeAttribute =
+        characterAncestry.free_attribute === false
+          ? ancestry.attribute_boosts
+              .filter((attribute) => attribute.length === 1)
+              .map((attribute: AttributeModifier[]) => attribute[0])
+              .indexOf(option) === -1
+          : true
+      return (
+        existsForFreeAttribute &&
+        characterAncestry.attribute_boost_selections.indexOf(option) === -1
+      )
+    })
+  }
+  console.log(options)
   return options
 }
 
@@ -88,25 +102,32 @@ function calculateAncestryAttributeModifications(
 
   const freeAttributeCount = (
     characterAncestry.free_attribute
-      ? ['Free', 'Free']
-      : ancestry.attribute_boosts.filter((attribute) => attribute === 'Free')
+      ? [['Free'], ['Free']]
+      : ancestry.attribute_boosts
+          .filter((attribute) => attribute.length === 1)
+          .filter((attribute) => attribute[0] === 'Free')
   ).length
 
+  const staticBoosts = ancestry.attribute_boosts
+    .filter((attribute) => attribute.length === 1)
+    .filter((attribute) => attribute[0] !== 'Free')
+    .map((attribute) => attribute[0])
+
   if (characterAncestry.free_attribute === false) {
-    ancestry.attribute_boosts
-      .filter((attribute) => attribute !== 'Free')
-      .forEach((attribute) => {
-        attributes[attribute as Attribute] += 1
-      })
+    staticBoosts.forEach((attribute) => {
+      attributes[attribute as Attribute] += 1
+    })
     ancestry.attribute_flaws.forEach((attribute) => {
       attributes[attribute as Attribute] -= 1
     })
   }
 
+  console.log('static boosts')
+  console.log()
   characterAncestry.attribute_boost_selections = buildChoiceSelectionArray(
     freeAttributeCount,
     characterAncestry.attribute_boost_selections,
-    characterAncestry.free_attribute === false ? ancestry.attribute_boosts : [],
+    characterAncestry.free_attribute === false ? staticBoosts : [],
     undefined
   )
 
@@ -299,7 +320,7 @@ export class PlayerCharacter {
   }
 
   public getAttributeChoices(): {
-    ancestry: Attribute[]
+    ancestry: Attribute[][]
     background: Attribute[][]
   } {
     return {

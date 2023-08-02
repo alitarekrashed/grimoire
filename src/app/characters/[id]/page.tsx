@@ -408,7 +408,7 @@ function AncestryEdit({
                       <option value={choice}>{choice}</option>
                       {character
                         .getAttributeChoices()
-                        .ancestry.map((attribute) => (
+                        .ancestry[i].map((attribute) => (
                           <option key={attribute} value={attribute}>
                             {attribute}
                           </option>
