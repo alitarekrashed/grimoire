@@ -139,6 +139,8 @@ function CharacterDisplay({
   const actions = character.getActions()
   const proficiencies = character.getProficiencies()
 
+  console.log(additionalFeatures)
+
   return (
     character && (
       <div>

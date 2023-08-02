@@ -24,3 +24,4 @@ export type ModelType =
   | 'HERITAGE'
   | 'ACTION'
   | 'BACKGROUND'
+  | 'FEAT'

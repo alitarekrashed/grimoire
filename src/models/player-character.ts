@@ -5,6 +5,7 @@ import {
   CharacterBackground,
   CharacterEntity,
 } from './db/character-entity'
+import { Feat } from './db/feat'
 import {
   ConditionalFeatureValue,
   Feature,
@@ -241,6 +242,7 @@ export class PlayerCharacter {
   private constructor(
     private character: CharacterEntity,
     private ancestry: Ancestry,
+    private allFeatures: Feature[],
     private heritage?: Heritage,
     private background?: Background
   ) {
@@ -261,19 +263,7 @@ export class PlayerCharacter {
     this.initializeTraits()
     this.initializeHitpoints()
 
-    this.ancestry.features.forEach((feature) =>
-      this.addFeatureToCharacter(feature)
-    )
-    if (this.heritage) {
-      this.heritage?.features.forEach((feature) =>
-        this.addFeatureToCharacter(feature)
-      )
-    }
-    if (this.background) {
-      this.background?.skills.forEach((skill) => {
-        this.addFeatureToCharacter({ type: 'PROFICIENCY', value: skill })
-      })
-    }
+    this.allFeatures.forEach((feature) => this.addFeatureToCharacter(feature))
   }
 
   public getCharacter(): CharacterEntity {
@@ -513,7 +503,7 @@ export class PlayerCharacter {
         )
       ).json()
     }
-    let background
+    let background!: Background
     if (character.background.id) {
       background = await (
         await fetch(
@@ -524,7 +514,35 @@ export class PlayerCharacter {
         )
       ).json()
     }
-    const pc = new PlayerCharacter(character, ancestry, heritage, background)
+
+    let allFeatures: Feature[] = []
+    allFeatures = allFeatures.concat(ancestry.features)
+    if (heritage) {
+      allFeatures = allFeatures.concat(heritage.features)
+    }
+    if (background) {
+      allFeatures = allFeatures.concat(
+        background.skills.map((skill: ProficiencyFeatureValue) => {
+          return { type: 'PROFICIENCY', value: skill }
+        })
+      )
+
+      let bgFeat: Feat[] = await (
+        await fetch(`http://localhost:3000/api/feats?name=${background.feat}`, {
+          cache: 'no-store',
+        })
+      ).json()
+
+      allFeatures = allFeatures.concat(bgFeat[0].features)
+    }
+
+    const pc = new PlayerCharacter(
+      character,
+      ancestry,
+      allFeatures,
+      heritage,
+      background
+    )
     return pc
   }
 }
