@@ -5,6 +5,7 @@ export type FeatureType =
   | 'ACTION'
   | 'CONDITIONAL'
   | 'PROFICIENCY'
+  | 'LANGUAGE'
 export type CalculationFormula = 'half-level'
 export type ConditionalOperator = 'has'
 

@@ -9,6 +9,7 @@ import { Feat } from './db/feat'
 import {
   ConditionalFeatureValue,
   Feature,
+  FeatureType,
   ResistanceFeatureValue,
   featureMatcher,
 } from './db/feature'
@@ -321,7 +322,9 @@ export class PlayerCharacter {
   }
 
   public getLanguages(): (string | undefined)[] {
-    return this.languages
+    return this.features
+      .filter((feature) => feature.type === 'LANGUAGE')
+      .map((feature) => feature.value)
   }
 
   public getSenses(): string[] {
@@ -389,7 +392,6 @@ export class PlayerCharacter {
     }
   }
 
-  // should languages get wrapped into the feature list?
   private calculateLanguages() {
     let languages = []
 
@@ -404,12 +406,6 @@ export class PlayerCharacter {
     )
 
     this.character.ancestry.language_selections = languageSelections
-
-    languages.push(...this.ancestry.languages.given)
-    languages.push(
-      ...this.character.ancestry.language_selections.map((val) => val ?? '')
-    )
-    this.languages = languages
   }
 
   private calculateAttributes() {
@@ -520,6 +516,16 @@ export class PlayerCharacter {
 
     let allFeatures: Feature[] = []
     allFeatures = allFeatures.concat(ancestry.features)
+    allFeatures.push(
+      ...ancestry.languages.given.map((language: string) => {
+        return { type: 'LANGUAGE', value: language }
+      })
+    )
+    allFeatures.push(
+      ...character.ancestry.language_selections.map((language: string) => {
+        return { type: 'LANGUAGE' as FeatureType, value: language }
+      })
+    )
     if (heritage) {
       allFeatures = allFeatures.concat(heritage.features)
     }
