@@ -4,6 +4,7 @@ import BackgroundCard from '@/components/backgrounds/background-card'
 import ConditionCard from '@/components/conditions/condition-card'
 import EquipmentCard from '@/components/equipment/equipment-card'
 import EquipmentWithVariantsCard from '@/components/equipment/equipment-with-variants-card'
+import FeatCard from '@/components/feats/feat-card'
 import HeritageCard from '@/components/heritages/heritage-card'
 import RuleCard from '@/components/rules/rule-card'
 import SpellCard from '@/components/spells/spell-card'
@@ -14,6 +15,7 @@ import { Background } from '@/models/db/background'
 import Condition from '@/models/db/condition'
 import { EntityModel } from '@/models/db/entity-model'
 import { Equipment, EquipmentWithVariants } from '@/models/db/equipment'
+import { Feat } from '@/models/db/feat'
 import { Heritage } from '@/models/db/heritage'
 import Rule from '@/models/db/rule'
 import { Spell } from '@/models/db/spell'
@@ -126,6 +128,15 @@ export function CardFactory<T extends EntityModel>({
           collapsible={collapsible}
           onRemoved={onRemoved as unknown as (item: Background) => void}
         ></BackgroundCard>
+      )
+    case 'FEAT':
+      return (
+        <FeatCard
+          reference={reference}
+          value={card as unknown as Feat}
+          collapsible={collapsible}
+          onRemoved={onRemoved as unknown as (item: Feat) => void}
+        ></FeatCard>
       )
     default:
     // throw error

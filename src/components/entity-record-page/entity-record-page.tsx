@@ -56,6 +56,8 @@ function baseUrlFactory(type: ModelType) {
       return 'http://localhost:3000/api/actions'
     case 'BACKGROUND':
       return 'http://localhost:3000/api/backgrounds'
+    case 'FEAT':
+      return 'http://localhost:3000/api/feats'
     default: // throw exception?
   }
 }
