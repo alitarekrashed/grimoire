@@ -514,8 +514,8 @@ export class PlayerCharacter {
       PlayerCharacter.getBackground(character.background.id),
     ])
 
-    let allFeatures: Feature[] = []
-    allFeatures = allFeatures.concat(ancestry.features)
+    const allFeatures: Feature[] = []
+    allFeatures.push(...ancestry.features)
     allFeatures.push(
       ...ancestry.languages.given.map((language: string) => {
         return { type: 'LANGUAGE', value: language }
@@ -527,11 +527,11 @@ export class PlayerCharacter {
       })
     )
     if (heritage) {
-      allFeatures = allFeatures.concat(heritage.features)
+      allFeatures.push(...heritage.features)
     }
     if (background) {
-      allFeatures = allFeatures.concat(
-        background.skills.map((skill: ProficiencyFeatureValue) => {
+      allFeatures.push(
+        ...background.skills.map((skill: ProficiencyFeatureValue) => {
           return { type: 'PROFICIENCY', value: skill }
         })
       )
@@ -542,7 +542,7 @@ export class PlayerCharacter {
         })
       ).json()
 
-      allFeatures = allFeatures.concat(bgFeat[0].features)
+      allFeatures.push(...bgFeat[0].features)
     }
 
     const pc = new PlayerCharacter(
