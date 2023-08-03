@@ -53,6 +53,8 @@ function getType(data: EntityModel): string {
       return 'Action'
     case 'BACKGROUND':
       return 'Background'
+    case 'FEAT':
+      return 'Feat'
   }
 }
 
