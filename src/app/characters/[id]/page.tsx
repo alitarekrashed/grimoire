@@ -1,6 +1,7 @@
 'use client'
 
 import { TraitsList } from '@/components/card/traits-list'
+import CharacterBuilderModal from '@/components/character-builder/character-builder'
 import { LabelsList } from '@/components/labels-list/labels-list'
 import { ParsedDescription } from '@/components/parsed-description/parsed-description'
 import { Ancestry, Attribute } from '@/models/db/ancestry'
@@ -99,6 +100,9 @@ export default function CharacterPage() {
             character={character}
             onEdit={handleCharacterEdit}
           ></CharacterDisplay>
+          <CharacterBuilderModal
+            playerCharacter={character}
+          ></CharacterBuilderModal>
           <AncestryEdit
             character={character}
             onAncestryEdit={handleAncestryChange}
