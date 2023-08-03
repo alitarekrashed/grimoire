@@ -276,6 +276,13 @@ export class PlayerCharacter {
     return this.character
   }
 
+  public updateName(name: string): PlayerCharacter {
+    let newCharacter = { ...this.character }
+    newCharacter.name = name
+    this.character = newCharacter
+    return this
+  }
+
   public async updateAncestry(ancestryId: string): Promise<PlayerCharacter> {
     let newCharacter = { ...this.character }
     newCharacter.ancestry.id = ancestryId
