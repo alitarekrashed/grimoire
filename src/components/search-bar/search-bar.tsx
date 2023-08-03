@@ -109,5 +109,7 @@ function getRoute(data: EntityModel): string {
       return 'actions'
     case 'BACKGROUND':
       return 'backgrounds'
+    case 'FEAT':
+      return 'feats'
   }
 }
