@@ -1,3 +1,5 @@
+import { SourcedFeature } from '../player-character'
+
 export type FeatureType =
   | 'SENSE'
   | 'MISC'
@@ -31,19 +33,19 @@ export interface Conditional {
   operand: Feature
 }
 
-export function featureMatcher(other: Feature) {
-  switch (other.type) {
+export function featureMatcher(other: SourcedFeature) {
+  switch (other.feature.type) {
     case 'RESISTANCE':
-      return (val: Feature) => {
-        const resistance: ResistanceFeatureValue =
-          val.value as ResistanceFeatureValue
+      return (val: SourcedFeature) => {
+        const resistance: ResistanceFeatureValue = val.feature
+          .value as ResistanceFeatureValue
         return (
           resistance.damage_type === resistance.damage_type &&
-          val.type === other.type
+          val.feature.type === other.feature.type
         )
       }
     default:
-      return (val: Feature) =>
-        val.value === other.value && val.type === other.type
+      return (val: SourcedFeature) =>
+        val.feature === other.feature && val.feature.type === other.feature.type
   }
 }
