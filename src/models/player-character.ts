@@ -9,6 +9,7 @@ import { Feat } from './db/feat'
 import {
   ConditionalFeatureValue,
   Feature,
+  FeatureType,
   ResistanceFeatureValue,
   featureMatcher,
 } from './db/feature'
@@ -22,6 +23,11 @@ export interface Attributes {
   Intelligence: number
   Wisdom: number
   Charisma: number
+}
+
+export interface SourcedFeature {
+  source: string
+  feature: Feature
 }
 
 const ATTRIBUTES: Attribute[] = [
@@ -237,12 +243,12 @@ export class PlayerCharacter {
   private languages: string[] = []
   private traits: string[] = []
   private hitpoints: number = 0
-  private features: Feature[] = []
+  private features: SourcedFeature[] = []
 
   private constructor(
     private character: CharacterEntity,
     private ancestry: Ancestry,
-    private allFeatures: Feature[],
+    private allFeatures: SourcedFeature[],
     private heritage?: Heritage,
     private background?: Background
   ) {
@@ -285,7 +291,7 @@ export class PlayerCharacter {
     let newCharacter = { ...this.character }
     newCharacter.background.id = backgroundId
     newCharacter.background.attribute_boost_selections = []
-    return await PlayerCharacter.build(this.character)
+    return await PlayerCharacter.build(newCharacter)
   }
 
   public getTraits(): string[] {
@@ -320,49 +326,57 @@ export class PlayerCharacter {
     return this.attributes
   }
 
-  public getLanguages(): (string | undefined)[] {
-    return this.languages
+  public getLanguages(): SourcedFeature[] {
+    return this.features
+      .filter((feature) => feature.feature.type === 'LANGUAGE')
+      .map((feature) => feature)
   }
 
-  public getSenses(): string[] {
+  public getSenses(): SourcedFeature[] {
     return this.features
-      .filter((feature) => feature.type === 'SENSE')
-      .map((feature) => feature.value)
+      .filter((feature) => feature.feature.type === 'SENSE')
+      .map((feature) => feature)
   }
 
-  public getAdditionalFeatures(): string[] {
+  public getAdditionalFeatures(): SourcedFeature[] {
     return this.features
-      .filter((feature) => feature.type === 'MISC')
-      .map((feature) => feature.value)
+      .filter((feature) => feature.feature.type === 'MISC')
+      .map((feature) => feature)
   }
 
-  public getResistances(): Resistance[] {
+  public getResistances(): SourcedFeature[] {
     return this.features
-      .filter((feature) => feature.type === 'RESISTANCE')
+      .filter((feature) => feature.feature.type === 'RESISTANCE')
       .map((feature) => {
-        let resistance = feature.value as ResistanceFeatureValue
+        let resistance = feature.feature.value as ResistanceFeatureValue
         let formulaValue =
           resistance.formula === 'half-level' ? Math.floor(this.level / 2) : 0
         return {
-          damage_type: resistance.damage_type,
-          value:
-            formulaValue > resistance.minimum
-              ? formulaValue
-              : resistance.minimum,
+          source: feature.source,
+          feature: {
+            type: 'RESISTANCE',
+            value: {
+              damage_type: resistance.damage_type,
+              value:
+                formulaValue > resistance.minimum
+                  ? formulaValue
+                  : resistance.minimum,
+            },
+          },
         }
       })
   }
 
-  public getActions(): string[] {
+  public getActions(): SourcedFeature[] {
     return this.features
-      .filter((feature) => feature.type === 'ACTION')
-      .map((feature) => feature.value)
+      .filter((feature) => feature.feature.type === 'ACTION')
+      .map((feature) => feature)
   }
 
-  public getProficiencies(): ProficiencyFeatureValue[] {
+  public getProficiencies(): SourcedFeature[] {
     return this.features
-      .filter((feature) => feature.type === 'PROFICIENCY')
-      .map((feature) => feature.value)
+      .filter((feature) => feature.feature.type === 'PROFICIENCY')
+      .map((feature) => feature)
   }
 
   public getAttributeChoices(): {
@@ -389,7 +403,6 @@ export class PlayerCharacter {
     }
   }
 
-  // should languages get wrapped into the feature list?
   private calculateLanguages() {
     let languages = []
 
@@ -404,12 +417,6 @@ export class PlayerCharacter {
     )
 
     this.character.ancestry.language_selections = languageSelections
-
-    languages.push(...this.ancestry.languages.given)
-    languages.push(
-      ...this.character.ancestry.language_selections.map((val) => val ?? '')
-    )
-    this.languages = languages
   }
 
   private calculateAttributes() {
@@ -455,31 +462,39 @@ export class PlayerCharacter {
     this.hitpoints += this.ancestry.hitpoints
   }
 
-  private addFeatureToCharacter(feature: Feature) {
-    if (feature.type !== 'CONDITIONAL') {
+  private addFeatureToCharacter(feature: SourcedFeature) {
+    if (feature.feature.type !== 'CONDITIONAL') {
       this.features.push(feature)
     } else {
       const resolvedFeature = this.resolveConditionalFeature(
-        feature.value as ConditionalFeatureValue
+        feature.feature.value as ConditionalFeatureValue,
+        feature.source
       )
       this.addFeatureToCharacter(resolvedFeature)
     }
   }
 
   private resolveConditionalFeature(
-    conditional: ConditionalFeatureValue
-  ): Feature {
-    let feature: Feature = conditional.default
+    conditional: ConditionalFeatureValue,
+    source: string
+  ): SourcedFeature {
+    let feature: SourcedFeature = {
+      source: source,
+      feature: conditional.default,
+    }
     if (
       conditional.condition.operator === 'has' &&
-      this.doesCharacterHaveFeature(conditional.condition.operand)
+      this.doesCharacterHaveFeature({
+        source: source,
+        feature: conditional.condition.operand,
+      })
     ) {
-      feature = conditional.matched
+      feature = { source: source, feature: conditional.matched }
     }
     return feature
   }
 
-  private doesCharacterHaveFeature(feature: Feature): boolean {
+  private doesCharacterHaveFeature(feature: SourcedFeature): boolean {
     return this.features.findIndex(featureMatcher(feature)) !== -1
   }
 
@@ -518,15 +533,48 @@ export class PlayerCharacter {
       PlayerCharacter.getBackground(character.background.id),
     ])
 
-    let allFeatures: Feature[] = []
-    allFeatures = allFeatures.concat(ancestry.features)
+    const allFeatures: SourcedFeature[] = []
+    allFeatures.push(
+      ...ancestry.features.map((feature: Feature) => {
+        return {
+          source: ancestry.name,
+          feature: feature,
+        }
+      })
+    )
+    allFeatures.push(
+      ...ancestry.languages.given.map((language: string) => {
+        return {
+          source: ancestry.name,
+          feature: { type: 'LANGUAGE', value: language },
+        }
+      })
+    )
+    allFeatures.push(
+      ...character.ancestry.language_selections.map((language: string) => {
+        return {
+          source: ancestry.name,
+          feature: { type: 'LANGUAGE' as FeatureType, value: language },
+        }
+      })
+    )
     if (heritage) {
-      allFeatures = allFeatures.concat(heritage.features)
+      allFeatures.push(
+        ...heritage.features.map((feature: Feature) => {
+          return {
+            source: heritage.name,
+            feature: feature,
+          }
+        })
+      )
     }
     if (background) {
-      allFeatures = allFeatures.concat(
-        background.skills.map((skill: ProficiencyFeatureValue) => {
-          return { type: 'PROFICIENCY', value: skill }
+      allFeatures.push(
+        ...background.skills.map((skill: ProficiencyFeatureValue) => {
+          return {
+            source: background.name,
+            feature: { type: 'PROFICIENCY', value: skill },
+          }
         })
       )
 
@@ -536,7 +584,11 @@ export class PlayerCharacter {
         })
       ).json()
 
-      allFeatures = allFeatures.concat(bgFeat[0].features)
+      allFeatures.push(
+        ...bgFeat[0].features.map((feature: Feature) => {
+          return { source: bgFeat[0].name, feature: feature }
+        })
+      )
     }
 
     const pc = new PlayerCharacter(

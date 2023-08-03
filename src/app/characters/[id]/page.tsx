@@ -2,16 +2,13 @@
 
 import { TraitsList } from '@/components/card/traits-list'
 import { LabelsList } from '@/components/labels-list/labels-list'
-import {
-  ParsedDescription,
-  ParsedToken,
-} from '@/components/parsed-description/parsed-description'
+import { ParsedDescription } from '@/components/parsed-description/parsed-description'
 import { Ancestry, Attribute } from '@/models/db/ancestry'
 import { Background } from '@/models/db/background'
 import {
-  CharacterEntity,
   CharacterAncestry,
   CharacterBackground,
+  CharacterEntity,
 } from '@/models/db/character-entity'
 import { Heritage } from '@/models/db/heritage'
 import { PlayerCharacter } from '@/models/player-character'
@@ -19,8 +16,7 @@ import { useDebounce } from '@/utils/debounce'
 import { roboto_serif } from '@/utils/fonts'
 import { getPlayerCharacter } from '@/utils/services/player-character-service'
 import { usePathname } from 'next/navigation'
-import React from 'react'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 export default function CharacterPage() {
   const path: string[] = usePathname().split('/')
@@ -132,14 +128,12 @@ function CharacterDisplay({
     onEdit(val)
   }
 
-  const languages = character.getLanguages().filter((language) => language)
+  const languages = character.getLanguages()
   const senses = character.getSenses()
   const additionalFeatures = character.getAdditionalFeatures()
   const resistances = character.getResistances()
   const actions = character.getActions()
   const proficiencies = character.getProficiencies()
-
-  console.log(additionalFeatures)
 
   return (
     character && (
@@ -214,9 +208,9 @@ function CharacterDisplay({
             <span>Languages: </span>
             <span>
               {languages.map((language, index) => (
-                <span key={`${language}-${index}`}>{`${language}${
-                  index < languages.length - 1 ? ', ' : ''
-                }`}</span>
+                <span key={`${language.feature.value}-${index}`}>{`${
+                  language.feature.value
+                }${index < languages.length - 1 ? ', ' : ''}`}</span>
               ))}
             </span>
           </div>
@@ -226,7 +220,7 @@ function CharacterDisplay({
               {senses.map((sense, index) => {
                 return (
                   <ParsedDescription
-                    description={sense}
+                    description={sense.feature.value}
                     key={`${sense}-${index}`}
                   ></ParsedDescription>
                 )
@@ -247,8 +241,8 @@ function CharacterDisplay({
                     key={`${resistance}-${index}`}
                     fieldDefinitions={[
                       {
-                        label: resistance.damage_type,
-                        value: resistance.value,
+                        label: resistance.feature.value.damage_type,
+                        value: resistance.feature.value.value,
                       },
                     ]}
                   ></LabelsList>
@@ -263,8 +257,8 @@ function CharacterDisplay({
               {additionalFeatures.map((feature, index) => {
                 return (
                   <ParsedDescription
-                    description={feature}
-                    key={`${feature}-${index}`}
+                    description={feature.feature.value}
+                    key={`${feature.feature.value}-${index}`}
                   ></ParsedDescription>
                 )
               })}
@@ -277,7 +271,7 @@ function CharacterDisplay({
               {actions.map((action, index) => {
                 return (
                   <ParsedDescription
-                    description={action}
+                    description={action.feature.value}
                     key={`${action}-${index}`}
                   ></ParsedDescription>
                 )
@@ -290,16 +284,15 @@ function CharacterDisplay({
             <span>
               {proficiencies.map((proficiency, index) => {
                 return (
-                  <div>
+                  <div key={`${proficiency.feature.value.value}-${index}`}>
                     <LabelsList
-                      key={`${proficiency.value}-${index}`}
                       fieldDefinitions={[
                         {
                           label:
-                            proficiency.type === 'Lore'
-                              ? `Lore ${proficiency.value}`
-                              : proficiency.value,
-                          value: proficiency.rank,
+                            proficiency.feature.value.type === 'Lore'
+                              ? `Lore ${proficiency.feature.value.value}`
+                              : proficiency.feature.value.value,
+                          value: proficiency.feature.value.rank,
                         },
                       ]}
                     ></LabelsList>
