@@ -14,7 +14,7 @@ export function FeaturesTabs({
   proficiencies: SourcedFeature[]
 }) {
   return (
-    <Tabs.Root>
+    <Tabs.Root defaultValue="actions">
       <Tabs.List className="flex gap-2 mb-2 border-b border-b-stone-300">
         <Tabs.Trigger value="actions" className={styles.tabHeader}>
           Actions
