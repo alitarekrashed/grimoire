@@ -3,7 +3,6 @@ import { roboto_condensed } from '@/utils/fonts'
 import { useEffect, useState } from 'react'
 import AncestryCard from '../ancestries/ancestry-card'
 import { Modal, ModalCloseButton } from '../modal/modal'
-import styles from './character-builder.module.css'
 
 export function AncestryChoiceModal({
   ancestryId,
@@ -49,7 +48,7 @@ export function AncestryChoiceModal({
               {ancestries.map((ancestry) => (
                 <div className={`h-full`}>
                   <div
-                    className={`w-full pl-2 pr-4 border-b border-b-stone-300/25 ${styles.splitItem}`}
+                    className={`w-full pl-2 pr-4 border-b border-b-stone-300/25 data-[state=active]:text-rose-400 data-[state=active]:border-b-rose-300`}
                     data-value={ancestry._id}
                     data-state={ancestry._id === selected?._id && 'active'}
                     onClick={(e) => {
