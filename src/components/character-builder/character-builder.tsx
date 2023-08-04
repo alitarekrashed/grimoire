@@ -15,6 +15,7 @@ import {
 import { Ancestry } from '@/models/db/ancestry'
 import { Heritage } from '@/models/db/heritage'
 import { useDebounce } from '@/utils/debounce'
+import { roboto_condensed } from '@/utils/fonts'
 
 export default function CharacterBuilderModal({
   playerCharacter,
@@ -82,20 +83,21 @@ export default function CharacterBuilderModal({
         <Dialog.Portal>
           <Dialog.Overlay className={` ${styles.DialogOverlay}`} />
           <Dialog.Content
-            className={`bg-stone-800 ${styles.DialogContent}`}
+            className={`bg-stone-900 ${styles.DialogContent}`}
             onInteractOutside={(e) => e.preventDefault()}
           >
+            <div className={`text-sm ${roboto_condensed.className}`}>
+              <span>Name </span>
+              <input
+                className="bg-stone-700 p-1 rounded-md"
+                value={name}
+                onChange={(e) => {
+                  updateName(e.target.value)
+                }}
+              ></input>
+            </div>
+            <div className="mb-128"></div>
             <div className="mt-4">
-              <div>
-                <span>Name: </span>
-                <input
-                  className="bg-stone-800"
-                  value={name}
-                  onChange={(e) => {
-                    updateName(e.target.value)
-                  }}
-                ></input>
-              </div>
               <AncestryEdit
                 character={character}
                 onAncestryEdit={handleAncestryChange}
@@ -114,7 +116,7 @@ export default function CharacterBuilderModal({
                 onClick={() => onClose(character.getCharacter())}
               >
                 <FontAwesomeIcon
-                  className="p-1.5 bg-stone-800 rounded-full hover:bg-stone-400"
+                  className="p-1.5 bg-stone-700 rounded-full hover:bg-stone-400"
                   icon={faXmark}
                 />
               </span>
@@ -198,7 +200,7 @@ function AncestryEdit({
       <span>
         <h2>Ancestry</h2>
         <select
-          className="bg-stone-800"
+          className="bg-stone-700"
           value={character.getAncestryId()}
           onChange={(e) => updateAncestry(e.target.value)}
         >
@@ -216,7 +218,7 @@ function AncestryEdit({
         {character && (
           <label>
             <input
-              className="bg-stone-800"
+              className="bg-stone-700"
               type="checkbox"
               checked={character.getCharacter().ancestry.free_attribute}
               onChange={(e) => updateAncestryAttributeMethod()}
@@ -234,7 +236,7 @@ function AncestryEdit({
                 return (
                   <React.Fragment key={i}>
                     <select
-                      className="bg-stone-800 mr-2"
+                      className="bg-stone-700 mr-2"
                       value={choice ?? ''}
                       onChange={(e) =>
                         updateAncestryAttribute(e.target.value as Attribute, i)
@@ -261,7 +263,7 @@ function AncestryEdit({
             languageChoices.map((choice: any, i: number) => (
               <React.Fragment key={i}>
                 <select
-                  className="bg-stone-800 mr-2"
+                  className="bg-stone-700 mr-2"
                   value={choice ?? ''}
                   onChange={(e) => updateAncestryLanguage(e.target.value, i)}
                 >
@@ -279,7 +281,7 @@ function AncestryEdit({
       <span>
         <h2>Heritage</h2>
         <select
-          className="bg-stone-800"
+          className="bg-stone-700"
           value={character.getCharacter().ancestry.heritage_id}
           onChange={(e) => updateHeritage(e.target.value)}
         >
@@ -335,7 +337,7 @@ function BackgroundEdit({
       <span>
         <h2>Background</h2>
         <select
-          className="bg-stone-800"
+          className="bg-stone-700"
           value={character.getBackgroundId()}
           onChange={(e) => updateBackground(e.target.value)}
         >
@@ -359,7 +361,7 @@ function BackgroundEdit({
                 return (
                   <React.Fragment key={i}>
                     <select
-                      className="bg-stone-800 mr-2"
+                      className="bg-stone-700 mr-2"
                       value={choice ?? ''}
                       onChange={(e) =>
                         updateAttribute(e.target.value as Attribute, i)
