@@ -1,9 +1,9 @@
 'use client'
 
 import {
-  CharacterAncestry,
-  CharacterBackground,
-  CharacterEntity,
+    CharacterAncestry,
+    CharacterBackground,
+    CharacterEntity,
 } from '@/models/db/character-entity'
 import { Heritage } from '@/models/db/heritage'
 import { PlayerCharacter } from '@/models/player-character'
@@ -116,7 +116,10 @@ export default function CharacterBuilderModal({
             label="Save"
             onClick={() => onClose(character.getCharacter())}
           ></ModalCloseButton>,
-          <ModalCloseButton label="Close"></ModalCloseButton>,
+          <ModalCloseButton
+            label="Cancel"
+            onClick={() => setCharacter(playerCharacter)}
+          ></ModalCloseButton>,
         ]}
       ></Modal>
     </>
