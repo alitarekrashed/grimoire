@@ -110,7 +110,6 @@ export default function CharacterBuilderModal({
             <div className="mt-4">
               <AncestryEdit
                 character={character}
-                onAncestryEdit={handleAncestryChange}
                 onEdit={handleAncestryEdit}
               ></AncestryEdit>
               <BackgroundEdit
@@ -141,25 +140,12 @@ export default function CharacterBuilderModal({
 // TODO separate out things like changing Ancestry with the choices from the Ancestry...
 function AncestryEdit({
   character,
-  onAncestryEdit,
   onEdit,
 }: {
   character: PlayerCharacter
-  onAncestryEdit: (ancestryId: string) => void
   onEdit: (val: CharacterAncestry) => void
 }) {
-  const [ancestries, setAncestries] = useState<Ancestry[]>([])
   const [heritages, setHeritages] = useState<Heritage[]>([])
-
-  useEffect(() => {
-    fetch('http://localhost:3000/api/ancestries', {
-      cache: 'no-store',
-    })
-      .then((result) => result.json())
-      .then((ancestries) => {
-        setAncestries(ancestries)
-      })
-  }, [])
 
   useEffect(() => {
     fetch(
@@ -173,10 +159,6 @@ function AncestryEdit({
         setHeritages(heritages)
       })
   }, [character.getCharacter().ancestry.id])
-
-  const updateAncestry = (value: string) => {
-    onAncestryEdit(value)
-  }
 
   const updateAncestryAttributeMethod = () => {
     let val: CharacterAncestry = { ...character.getCharacter().ancestry }
@@ -207,23 +189,6 @@ function AncestryEdit({
 
   return (
     <div className="inline-flex gap-5 border border-stone-300 p-2 items-center">
-      <span>
-        <h2>Ancestry</h2>
-        <select
-          className="bg-stone-700"
-          value={character.getAncestryId()}
-          onChange={(e) => updateAncestry(e.target.value)}
-        >
-          {ancestries.map((ancestry) => (
-            <option
-              key={ancestry._id.toString()}
-              value={ancestry._id.toString()}
-            >
-              {ancestry.name}
-            </option>
-          ))}
-        </select>
-      </span>
       <span>
         {character && (
           <label>
