@@ -81,8 +81,8 @@ function CharacterDisplay({
   return (
     <div className={`text-sm ${roboto_condensed.className}`}>
       <div className="ml-2">
-        <div className="inline-flex gap-6">
-          <div className="w-[10%]">
+        <div className="grid grid-cols-9 gap-6">
+          <div className="col-start-1">
             <div className="text-base">
               {character.getCharacter().name}
               <span className="ml-2">
@@ -95,81 +95,98 @@ function CharacterDisplay({
             <div className="text-xs capitalize">
               <div>{character.getLineageName()}</div>
               <div>{`Fighter Level ${character.getCharacter().level}`}</div>
-              <div className="lowercase">
+              <div className="mt-2 lowercase">
                 <TraitsList traits={character.getTraits()}></TraitsList>
               </div>
             </div>
           </div>
-          <div className="inline-flex gap-5 border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-full">
-            {Object.keys(character.getAttributes()).map((attribute) => (
-              <div
-                className="grid grid-cols-1 justify-items-center"
-                key={attribute}
-              >
-                <div className="font-medium">{attribute} </div>
-                <div>
-                  {character.getAttributes()[attribute as Attribute] > 0 && `+`}
-                  {character.getAttributes()[attribute as Attribute]}
+          <div className="col-span-3 justify-self-center">
+            <div className="border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-full">
+              <div className="inline-flex gap-5">
+                {Object.keys(character.getAttributes()).map((attribute) => (
+                  <div
+                    className="grid grid-cols-1 justify-items-center"
+                    key={attribute}
+                  >
+                    <div className="font-medium">{attribute} </div>
+                    <div>
+                      {character.getAttributes()[attribute as Attribute] > 0 &&
+                        `+`}
+                      {character.getAttributes()[attribute as Attribute]}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="col-span-1 justify-self-center">
+            <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3 w-fit text-center">
+              <div>{character.getMaxHitpoints()}</div>
+              <div className="text-[10px] font-semibold">Hitpoints</div>
+            </div>
+          </div>
+          <div className="col-span-1 justify-self-center">
+            <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
+              <div className="grid grid-rows-2 grid-cols-2">
+                <span className="font-bold">Speed</span>
+                <span>{character.getSpeed()}</span>
+                <span className="font-bold">Size</span>
+                <span>{character.getSize()}</span>
+              </div>
+            </div>
+          </div>
+          <div className="col-span-3 justify-self-start">
+            <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
+              <div className="grid grid-rows-2 grid-cols-4 gap-1">
+                <span className="font-bold col-span-1">Resistances</span>
+                <span className="col-span-3">
+                  {resistances.map((resistance, index) => {
+                    return (
+                      <LabelsList
+                        key={`${resistance}-${index}`}
+                        fieldDefinitions={[
+                          {
+                            label: resistance.feature.value.damage_type,
+                            value: resistance.feature.value.value,
+                          },
+                        ]}
+                      ></LabelsList>
+                    )
+                  })}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="col-start-1 col-span-1">
+            <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
+              <div className="grid grid-rows-2">
+                <div className="row-span-1">
+                  <div className="font-bold">Languages</div>
+                  <span className="text-xs">
+                    {languages.map((language, index) => (
+                      <span key={`${language.feature.value}-${index}`}>{`${
+                        language.feature.value
+                      }${index < languages.length - 1 ? ', ' : ''}`}</span>
+                    ))}
+                  </span>
+                </div>
+                <div className="row-span-1">
+                  <div className="font-bold">Senses</div>
+                  <span className="text-xs">
+                    {senses.map((sense, index) => {
+                      return (
+                        <>
+                          <ParsedDescription
+                            description={sense.feature.value}
+                            key={`${sense}-${index}`}
+                          ></ParsedDescription>
+                          {index < senses.length - 1 ? ', ' : ''}
+                        </>
+                      )
+                    })}
+                  </span>{' '}
                 </div>
               </div>
-            ))}
-          </div>
-          <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
-            <div className="text-center">{character.getMaxHitpoints()}</div>
-            <div className="text-[10px] font-semibold">Hitpoints</div>
-          </div>
-          <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
-            <div className="grid grid-rows-2 grid-cols-2">
-              <span className="font-bold">Speed</span>
-              <span>{character.getSpeed()}</span>
-              <span className="font-bold">Size</span>
-              <span>{character.getSize()}</span>
-            </div>
-          </div>
-          <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
-            <div className="grid grid-rows-2 grid-cols-4 gap-1">
-              <span className="font-bold col-span-1">Languages</span>
-              <span className="col-span-3">
-                {languages.map((language, index) => (
-                  <span key={`${language.feature.value}-${index}`}>{`${
-                    language.feature.value
-                  }${index < languages.length - 1 ? ', ' : ''}`}</span>
-                ))}
-              </span>
-              <span className="font-bold col-span-1">Senses</span>
-              <span className="col-span-3">
-                {senses.map((sense, index) => {
-                  return (
-                    <>
-                      <ParsedDescription
-                        description={sense.feature.value}
-                        key={`${sense}-${index}`}
-                      ></ParsedDescription>
-                      {index < senses.length - 1 ? ', ' : ''}
-                    </>
-                  )
-                })}
-              </span>
-            </div>
-          </div>
-          <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
-            <div className="grid grid-rows-2 grid-cols-4 gap-1">
-              <span className="font-bold col-span-1">Resistances</span>
-              <span className="col-span-3">
-                {resistances.map((resistance, index) => {
-                  return (
-                    <LabelsList
-                      key={`${resistance}-${index}`}
-                      fieldDefinitions={[
-                        {
-                          label: resistance.feature.value.damage_type,
-                          value: resistance.feature.value.value,
-                        },
-                      ]}
-                    ></LabelsList>
-                  )
-                })}
-              </span>
             </div>
           </div>
         </div>
