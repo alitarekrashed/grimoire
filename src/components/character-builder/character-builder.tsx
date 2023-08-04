@@ -17,6 +17,7 @@ import { Heritage } from '@/models/db/heritage'
 import { useDebounce } from '@/utils/debounce'
 import { roboto_condensed } from '@/utils/fonts'
 import { AncestryChoiceModal } from './ancestry-choice-modal'
+import { Modal, ModalCloseButton } from '../modal/modal'
 
 export default function CharacterBuilderModal({
   playerCharacter,
@@ -70,23 +71,21 @@ export default function CharacterBuilderModal({
     })
   }
 
+  //onClick={() => onClose(character.getCharacter())}
+
   return (
     <>
-      <Dialog.Root>
-        <Dialog.Trigger>
+      <Modal
+        trigger={
           <span
             className="text-[9px] border p-0.5 rounded-sm hover:bg-stone-600"
             tabIndex={0}
           >
             EDIT
           </span>
-        </Dialog.Trigger>
-        <Dialog.Portal>
-          <Dialog.Overlay className={` ${styles.DialogOverlay}`} />
-          <Dialog.Content
-            className={`bg-stone-900 ${styles.DialogContent} w-11/12 h-10/12`}
-            onInteractOutside={(e) => e.preventDefault()}
-          >
+        }
+        body={
+          <div className="p-2">
             <div className={`text-sm ${roboto_condensed.className}`}>
               <div className="mb-2">
                 <span className="font-semibold">Name </span>
@@ -106,7 +105,6 @@ export default function CharacterBuilderModal({
                 ></AncestryChoiceModal>
               </div>
             </div>
-            <div className="mb-128"></div>
             <div className="mt-4">
               <AncestryEdit
                 character={character}
@@ -118,21 +116,16 @@ export default function CharacterBuilderModal({
                 onEdit={handleBackgroundEdit}
               ></BackgroundEdit>
             </div>
-            <Dialog.Close>
-              <span
-                className={`${styles.IconButton} rounded `}
-                aria-label="Close"
-                onClick={() => onClose(character.getCharacter())}
-              >
-                <FontAwesomeIcon
-                  className="p-1.5 bg-stone-700 rounded-full hover:bg-stone-400"
-                  icon={faXmark}
-                />
-              </span>
-            </Dialog.Close>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
+          </div>
+        }
+        closeButtons={[
+          <ModalCloseButton
+            label="Save"
+            onClick={() => onClose(character.getCharacter())}
+          ></ModalCloseButton>,
+          <ModalCloseButton label="Close"></ModalCloseButton>,
+        ]}
+      ></Modal>
     </>
   )
 }

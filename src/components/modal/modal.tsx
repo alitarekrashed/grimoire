@@ -32,11 +32,18 @@ export function Modal({
   )
 }
 
-export function ModalCloseButton({ label }: { label: string }) {
+export function ModalCloseButton({
+  label,
+  onClick,
+}: {
+  label: string
+  onClick?: () => void
+}) {
   return (
     <span
       className={`py-0.5 px-2 text-sm border border-stone-300 rounded-md ${roboto_flex.className} hover:bg-stone-500`}
       aria-label={label}
+      onClick={onClick}
     >
       {label}
     </span>
