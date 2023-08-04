@@ -84,7 +84,7 @@ export function AncestryChoiceModal({
               <span
                 className={`${styles.IconButton} rounded `}
                 aria-label="Close"
-                // onClick={() => onClose(character.getCharacter())}
+                onClick={() => updateAncestry(selected?._id.toString() ?? '')}
               >
                 <FontAwesomeIcon
                   className="p-1.5 bg-stone-700 rounded-full hover:bg-stone-400"
