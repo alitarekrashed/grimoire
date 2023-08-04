@@ -9,16 +9,16 @@ import { useEffect, useState } from 'react'
 export function ParsedDescription({ description }: { description: string }) {
   const [parsed, setParsed] = useState([description])
 
-  const parseDescriptionForRendering = () => {
+  const parseDescriptionForRendering = (toParse: string) => {
     ;(async () => {
-      let updated: any[] = await parseDescription(parsed)
+      let updated: any[] = await parseDescription([toParse])
       setParsed(updated)
     })()
   }
 
   useEffect(() => {
-    parseDescriptionForRendering()
-  }, [])
+    parseDescriptionForRendering(description)
+  }, [description])
 
   return (
     <>

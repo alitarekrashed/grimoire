@@ -54,7 +54,17 @@ export function AncestryChoiceModal({
                   <div className={`h-full`}>
                     <div
                       className={`w-full pr-4 border-b ${styles.splitItem}`}
+                      data-value={ancestry._id}
                       data-state={ancestry._id === selected?._id && 'active'}
+                      onClick={(e) => {
+                        setSelected(
+                          ancestries.find(
+                            (ancestry: Ancestry) =>
+                              ancestry._id ===
+                              (e.target as HTMLElement).dataset.value
+                          )
+                        )
+                      }}
                     >
                       {ancestry.name}
                     </div>
