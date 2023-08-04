@@ -79,41 +79,49 @@ function CharacterDisplay({
   const proficiencies = character.getProficiencies()
 
   return (
-    <div>
+    <div className={`text-sm capitalize ${roboto_condensed.className}`}>
       <div className="ml-2">
-        <div className={`text-base ${roboto_condensed.className}`}>
-          {character.getCharacter().name}
-          <span className="ml-2">
-            <CharacterBuilderModal
-              playerCharacter={character}
-              onClose={onSave}
-            ></CharacterBuilderModal>
-          </span>
-        </div>
-        <div className={`text-sm capitalize ${roboto_condensed.className}`}>
-          {character.getLineageName()} Fighter Level{' '}
-          {character.getCharacter().level}
-        </div>
-        <div>
-          <TraitsList traits={character.getTraits()}></TraitsList>
+        <div className="inline-flex gap-10">
+          <div>
+            <div className="text-base">
+              {character.getCharacter().name}
+              <span className="ml-2">
+                <CharacterBuilderModal
+                  playerCharacter={character}
+                  onClose={onSave}
+                ></CharacterBuilderModal>
+              </span>
+            </div>
+            <div className="text-sm capitalize">
+              {character.getLineageName()} Fighter Level{' '}
+              {character.getCharacter().level}
+            </div>
+            <div>
+              <TraitsList traits={character.getTraits()}></TraitsList>
+            </div>
+          </div>
+          <div>
+            <div className="inline-flex gap-5 border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-16">
+              {Object.keys(character.getAttributes()).map((attribute) => (
+                <div
+                  className="grid grid-cols-1 justify-items-center"
+                  key={attribute}
+                >
+                  <div>{attribute} </div>
+                  <div>
+                    {character.getAttributes()[attribute as Attribute] > 0 &&
+                      `+`}
+                    {character.getAttributes()[attribute as Attribute]}
+                  </div>
+                  &nbsp;
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
       <div className="mb-128"></div>
       <div className="inline-flex gap-5 mb-2 items-center">
-        <div className="inline-flex gap-5 border border-stone-300 p-2">
-          <div>
-            <span>Name: </span>
-            <span>{character.getCharacter().name}</span>
-          </div>
-          <div>
-            <span>Level: </span>
-            <span>{character.getCharacter().level}</span>
-          </div>
-          <div>
-            <span>Ancestry: </span>
-            <span>{character.getAncestryName()}</span>
-          </div>
-        </div>
         <div className="border border-stone-300 p-2">
           <span>Hitpoints: </span>
           <span>{character.getMaxHitpoints()}</span>
@@ -121,21 +129,6 @@ function CharacterDisplay({
       </div>
       <br />
       <div className="inline-flex gap-10 ">
-        <div className="inline-flex gap-5 border border-stone-300 p-2">
-          {Object.keys(character.getAttributes()).map((attribute) => (
-            <div
-              className="grid grid-cols-1 justify-items-center"
-              key={attribute}
-            >
-              <div>{attribute} </div>
-              <div>
-                {character.getAttributes()[attribute as Attribute] > 0 && `+`}
-                {character.getAttributes()[attribute as Attribute]}
-              </div>
-              &nbsp;
-            </div>
-          ))}
-        </div>
         <div className="inline-flex border border-stone-300 p-2 items-center">
           <LabelsList
             fieldDefinitions={[
