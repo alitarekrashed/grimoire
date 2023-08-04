@@ -192,7 +192,7 @@ function AncestryEdit({
           </label>
         )}
 
-        <h2>Attributes</h2>
+        <span>Attributes</span>
         {character &&
           character
             .getCharacter()
@@ -223,7 +223,7 @@ function AncestryEdit({
       </span>
       {languageChoices.length > 0 && (
         <span>
-          <h2>Languages</h2>
+          <span>Languages</span>
           {character &&
             languageChoices.map((choice: any, i: number) => (
               <React.Fragment key={i}>
@@ -244,7 +244,7 @@ function AncestryEdit({
         </span>
       )}
       <span>
-        <h2>Heritage</h2>
+        <span>Heritage</span>
         <select
           className="bg-stone-700"
           value={character.getCharacter().ancestry.heritage_id}
@@ -300,7 +300,7 @@ function BackgroundEdit({
   return (
     <div className="inline-flex gap-5 border border-stone-300 p-2 items-center">
       <span>
-        <h2>Background</h2>
+        <span>Background</span>
         <select
           className="bg-stone-700"
           value={character.getBackgroundId()}
@@ -317,7 +317,7 @@ function BackgroundEdit({
         </select>
       </span>
       <span>
-        <h2>Attributes</h2>
+        <span>Attributes</span>
         {character?.getCharacter()?.background &&
           character
             .getCharacter()

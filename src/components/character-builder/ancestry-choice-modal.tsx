@@ -46,7 +46,7 @@ export function AncestryChoiceModal({
           >
             <div className="col-span-1 grid grid-cols-1 auto-rows-min h-full border-r border-r-stone-300/25">
               {ancestries.map((ancestry) => (
-                <div className={`h-full`}>
+                <div className={`h-full`} key={ancestry._id.toString()}>
                   <div
                     className={`w-full pl-2 pr-4 border-b border-b-stone-300/25 data-[state=active]:text-rose-400 data-[state=active]:border-b-rose-300`}
                     data-value={ancestry._id}

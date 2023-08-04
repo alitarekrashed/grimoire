@@ -33,12 +33,12 @@ export function Modal({
             className={`bg-stone-900 rounded-t-md focus:outline-none border border-stone-300/20 h-full overflow-y-scroll`}
           >
             <Dialog.Title />
-            <Dialog.Description className="h-full">{body}</Dialog.Description>
+            {body}
           </Dialog.Content>
           <div className="rounded-b-md border-b border-x border-stone-300/20 bg-stone-900 bottom-0 min-w-min">
             <div className="inline-flex gap-2 p-2">
-              {closeButtons.map((button) => (
-                <Dialog.Close>{button}</Dialog.Close>
+              {closeButtons.map((button, index) => (
+                <Dialog.Close key={index}>{button}</Dialog.Close>
               ))}
             </div>
           </div>
