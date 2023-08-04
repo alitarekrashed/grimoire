@@ -1,0 +1,7 @@
+.tabHeader:hover {
+  @apply text-rose-400;
+}
+.tabHeader[data-state='active'] {
+  @apply text-rose-400;
+  @apply border-b border-b-rose-300;
+}

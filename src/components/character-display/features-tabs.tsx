@@ -2,6 +2,7 @@ import * as Tabs from '@radix-ui/react-tabs'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 import { SourcedFeature } from '@/models/player-character'
 import { LabelsList } from '../labels-list/labels-list'
+import styles from './features-tabs.module.css'
 
 export function FeaturesTabs({
   features,
@@ -14,10 +15,16 @@ export function FeaturesTabs({
 }) {
   return (
     <Tabs.Root>
-      <Tabs.List>
-        <Tabs.Trigger value="actions">Actions</Tabs.Trigger>
-        <Tabs.Trigger value="features">Features</Tabs.Trigger>
-        <Tabs.Trigger value="proficiencies">Proficiencies</Tabs.Trigger>
+      <Tabs.List className="flex gap-2 mb-2 border-b border-b-stone-300">
+        <Tabs.Trigger value="actions" className={styles.tabHeader}>
+          Actions
+        </Tabs.Trigger>
+        <Tabs.Trigger value="features" className={styles.tabHeader}>
+          Features
+        </Tabs.Trigger>
+        <Tabs.Trigger value="proficiencies" className={styles.tabHeader}>
+          Proficiencies
+        </Tabs.Trigger>
       </Tabs.List>
       <Tabs.Content value="actions">
         <span className="text-xs">
