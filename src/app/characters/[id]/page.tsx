@@ -2,6 +2,7 @@
 
 import { TraitsList } from '@/components/card/traits-list'
 import CharacterBuilderModal from '@/components/character-builder/character-builder'
+import { FeaturesTabs } from '@/components/character-display/features-tabs'
 import { LabelsList } from '@/components/labels-list/labels-list'
 import { ParsedDescription } from '@/components/parsed-description/parsed-description'
 import { Attribute } from '@/models/db/ancestry'
@@ -158,7 +159,7 @@ function CharacterDisplay({
             </div>
           </div>
           <div className="col-start-1 col-span-1">
-            <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
+            <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl pr-3 pl-3">
               <div className="grid grid-rows-2">
                 <div className="row-span-1">
                   <div className="font-bold">Languages</div>
@@ -191,68 +192,15 @@ function CharacterDisplay({
           </div>
           <div className="col-start-5 col-span-4">
             <div className="border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-full">
-              <div className="font-bold">Additional features</div>
-              <span className="text-xs">
-                {additionalFeatures.map((feature, index) => {
-                  return (
-                    <div
-                      className="mb-2"
-                      key={`${feature.feature.value}-${index}`}
-                    >
-                      <ParsedDescription
-                        description={feature.feature.value}
-                      ></ParsedDescription>
-                    </div>
-                  )
-                })}
-              </span>
+              <FeaturesTabs
+                features={additionalFeatures}
+                actions={actions}
+                proficiencies={proficiencies}
+              ></FeaturesTabs>
             </div>
           </div>
         </div>
       </div>
-      <div className="mb-128"></div>
-      <div className="inline-flex gap-10 ">
-        <div className="grid grid-rows-1 border border-stone-300 p-2">
-          <span>Actions: </span>
-          <span>
-            {actions.map((action, index) => {
-              return (
-                <ParsedDescription
-                  description={action.feature.value}
-                  key={`${action}-${index}`}
-                ></ParsedDescription>
-              )
-            })}
-          </span>
-        </div>
-
-        <div className="grid grid-rows-1 border border-stone-300 p-2">
-          <span>Proficiencies: </span>
-          <span>
-            {proficiencies.map((proficiency, index) => {
-              return (
-                <div key={`${proficiency.feature.value.value}-${index}`}>
-                  <LabelsList
-                    fieldDefinitions={[
-                      {
-                        label:
-                          proficiency.feature.value.type === 'Lore'
-                            ? `Lore ${proficiency.feature.value.value}`
-                            : proficiency.feature.value.value,
-                        value: proficiency.feature.value.rank,
-                      },
-                    ]}
-                  ></LabelsList>
-                </div>
-              )
-            })}
-          </span>
-        </div>
-      </div>
-
-      <br />
-      <br />
-      <br />
     </div>
   )
 }
