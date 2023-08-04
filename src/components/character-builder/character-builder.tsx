@@ -1,21 +1,15 @@
 'use client'
 
-import * as Dialog from '@radix-ui/react-dialog'
-import styles from './character-builder.module.css'
-
-import { PlayerCharacter } from '@/models/player-character'
-import { faXmark } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useEffect, useState } from 'react'
 import {
   CharacterAncestry,
   CharacterBackground,
   CharacterEntity,
 } from '@/models/db/character-entity'
-import { Ancestry } from '@/models/db/ancestry'
 import { Heritage } from '@/models/db/heritage'
-import { useDebounce } from '@/utils/debounce'
+import { PlayerCharacter } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
+import React, { useEffect, useState } from 'react'
+import { Modal, ModalCloseButton } from '../modal/modal'
 import { AncestryChoiceModal } from './ancestry-choice-modal'
 
 export default function CharacterBuilderModal({
@@ -70,23 +64,22 @@ export default function CharacterBuilderModal({
     })
   }
 
+  //onClick={() => onClose(character.getCharacter())}
+
   return (
     <>
-      <Dialog.Root>
-        <Dialog.Trigger>
+      <Modal
+        size="large"
+        trigger={
           <span
             className="text-[9px] border p-0.5 rounded-sm hover:bg-stone-600"
             tabIndex={0}
           >
             EDIT
           </span>
-        </Dialog.Trigger>
-        <Dialog.Portal>
-          <Dialog.Overlay className={` ${styles.DialogOverlay}`} />
-          <Dialog.Content
-            className={`bg-stone-900 ${styles.DialogContent} w-11/12 h-10/12`}
-            onInteractOutside={(e) => e.preventDefault()}
-          >
+        }
+        body={
+          <div className="p-2">
             <div className={`text-sm ${roboto_condensed.className}`}>
               <div className="mb-2">
                 <span className="font-semibold">Name </span>
@@ -106,7 +99,6 @@ export default function CharacterBuilderModal({
                 ></AncestryChoiceModal>
               </div>
             </div>
-            <div className="mb-128"></div>
             <div className="mt-4">
               <AncestryEdit
                 character={character}
@@ -118,21 +110,19 @@ export default function CharacterBuilderModal({
                 onEdit={handleBackgroundEdit}
               ></BackgroundEdit>
             </div>
-            <Dialog.Close>
-              <span
-                className={`${styles.IconButton} rounded `}
-                aria-label="Close"
-                onClick={() => onClose(character.getCharacter())}
-              >
-                <FontAwesomeIcon
-                  className="p-1.5 bg-stone-700 rounded-full hover:bg-stone-400"
-                  icon={faXmark}
-                />
-              </span>
-            </Dialog.Close>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
+          </div>
+        }
+        closeButtons={[
+          <ModalCloseButton
+            label="Save"
+            onClick={() => onClose(character.getCharacter())}
+          ></ModalCloseButton>,
+          <ModalCloseButton
+            label="Cancel"
+            onClick={() => setCharacter(playerCharacter)}
+          ></ModalCloseButton>,
+        ]}
+      ></Modal>
     </>
   )
 }
