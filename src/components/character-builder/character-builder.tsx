@@ -80,9 +80,9 @@ export default function CharacterBuilderModal({
           </span>
         </Dialog.Trigger>
         <Dialog.Portal>
-          <Dialog.Overlay className={styles.DialogOverlay} />
+          <Dialog.Overlay className={` ${styles.DialogOverlay}`} />
           <Dialog.Content
-            className={`bg-stone-900 ${styles.DialogContent}`}
+            className={`bg-stone-800 ${styles.DialogContent}`}
             onInteractOutside={(e) => e.preventDefault()}
           >
             <div className="mt-4">
