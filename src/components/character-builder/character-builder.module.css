@@ -14,8 +14,6 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 90vw;
-  height: 90vh;
   padding: 25px;
   animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -75,4 +73,9 @@
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
+}
+
+.splitItem[data-state='active'] {
+  @apply text-rose-400;
+  @apply border-b border-b-rose-300;
 }

@@ -16,6 +16,7 @@ import { Ancestry } from '@/models/db/ancestry'
 import { Heritage } from '@/models/db/heritage'
 import { useDebounce } from '@/utils/debounce'
 import { roboto_condensed } from '@/utils/fonts'
+import { AncestryChoiceModal } from './ancestry-choice-modal'
 
 export default function CharacterBuilderModal({
   playerCharacter,
@@ -83,7 +84,7 @@ export default function CharacterBuilderModal({
         <Dialog.Portal>
           <Dialog.Overlay className={` ${styles.DialogOverlay}`} />
           <Dialog.Content
-            className={`bg-stone-900 ${styles.DialogContent}`}
+            className={`bg-stone-900 ${styles.DialogContent} w-11/12 h-10/12`}
             onInteractOutside={(e) => e.preventDefault()}
           >
             <div className={`text-sm ${roboto_condensed.className}`}>
@@ -98,10 +99,11 @@ export default function CharacterBuilderModal({
                 ></input>
               </div>
               <div>
-                <AncestryChoice
+                <span className="font-semibold">Ancestry </span>
+                <AncestryChoiceModal
                   ancestryId={character.getAncestryId()}
                   onAncestryEdit={handleAncestryChange}
-                ></AncestryChoice>
+                ></AncestryChoiceModal>
               </div>
             </div>
             <div className="mb-128"></div>
