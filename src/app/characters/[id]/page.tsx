@@ -184,29 +184,34 @@ function CharacterDisplay({
                         </>
                       )
                     })}
-                  </span>{' '}
+                  </span>
                 </div>
               </div>
+            </div>
+          </div>
+          <div className="col-start-5 col-span-4">
+            <div className="border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-full">
+              <div className="font-bold">Additional features</div>
+              <span className="text-xs">
+                {additionalFeatures.map((feature, index) => {
+                  return (
+                    <div
+                      className="mb-2"
+                      key={`${feature.feature.value}-${index}`}
+                    >
+                      <ParsedDescription
+                        description={feature.feature.value}
+                      ></ParsedDescription>
+                    </div>
+                  )
+                })}
+              </span>
             </div>
           </div>
         </div>
       </div>
       <div className="mb-128"></div>
       <div className="inline-flex gap-10 ">
-        <div className="grid grid-rows-1 border border-stone-300 p-2">
-          <span>Additional features: </span>
-          <span>
-            {additionalFeatures.map((feature, index) => {
-              return (
-                <ParsedDescription
-                  description={feature.feature.value}
-                  key={`${feature.feature.value}-${index}`}
-                ></ParsedDescription>
-              )
-            })}
-          </span>
-        </div>
-
         <div className="grid grid-rows-1 border border-stone-300 p-2">
           <span>Actions: </span>
           <span>
