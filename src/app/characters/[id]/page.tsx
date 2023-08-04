@@ -86,7 +86,7 @@ function CharacterDisplay({
           <div className="col-start-1">
             <div className="text-base">
               {character.getCharacter().name}
-              <span className="ml-2">
+              <span className="ml-2 align-bottom">
                 <CharacterBuilderModal
                   playerCharacter={character}
                   onClose={onSave}
