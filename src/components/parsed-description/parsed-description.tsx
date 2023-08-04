@@ -21,7 +21,7 @@ export function ParsedDescription({ description }: { description: string }) {
   }, [])
 
   return (
-    <div>
+    <>
       {/* TODO This allows the descriptions be html-like but comes at the risk of injection attacks... need to revist */}
       {/* TODO look into: https://www.npmjs.com/package/react-sanitized-html */}
       {parsed.map((value, index) => {
@@ -31,7 +31,7 @@ export function ParsedDescription({ description }: { description: string }) {
           <span key={index}>{value}</span>
         )
       })}
-    </div>
+    </>
   )
 }
 

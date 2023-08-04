@@ -79,7 +79,7 @@ function CharacterDisplay({
   const proficiencies = character.getProficiencies()
 
   return (
-    <div className={`text-sm capitalize ${roboto_condensed.className}`}>
+    <div className={`text-sm ${roboto_condensed.className}`}>
       <div className="ml-2">
         <div className="inline-flex gap-10">
           <div>
@@ -100,81 +100,61 @@ function CharacterDisplay({
               <TraitsList traits={character.getTraits()}></TraitsList>
             </div>
           </div>
-          <div>
-            <div className="inline-flex gap-5 border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-full">
-              {Object.keys(character.getAttributes()).map((attribute) => (
-                <div
-                  className="grid grid-cols-1 justify-items-center"
-                  key={attribute}
-                >
-                  <div>{attribute} </div>
-                  <div>
-                    {character.getAttributes()[attribute as Attribute] > 0 &&
-                      `+`}
-                    {character.getAttributes()[attribute as Attribute]}
-                  </div>
+          <div className="inline-flex gap-5 border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-full">
+            {Object.keys(character.getAttributes()).map((attribute) => (
+              <div
+                className="grid grid-cols-1 justify-items-center"
+                key={attribute}
+              >
+                <div className="font-medium">{attribute} </div>
+                <div>
+                  {character.getAttributes()[attribute as Attribute] > 0 && `+`}
+                  {character.getAttributes()[attribute as Attribute]}
                 </div>
-              ))}
+              </div>
+            ))}
+          </div>
+          <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
+            <div className="text-center">{character.getMaxHitpoints()}</div>
+            <div className="text-[10px] font-semibold">Hitpoints</div>
+          </div>
+          <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
+            <div className="grid grid-rows-2 grid-cols-2">
+              <span className="font-bold">Speed</span>
+              <span>{character.getSpeed()}</span>
+              <span className="font-bold">Size</span>
+              <span>{character.getSize()}</span>
             </div>
           </div>
-          <div>
-            <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
-              <div className="text-center">{character.getMaxHitpoints()}</div>
-              <div className="text-[10px]">Hitpoints</div>
+          <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
+            <div className="grid grid-rows-2 grid-cols-4 gap-1">
+              <span className="font-bold col-span-1">Languages</span>
+              <span className="col-span-3">
+                {languages.map((language, index) => (
+                  <span key={`${language.feature.value}-${index}`}>{`${
+                    language.feature.value
+                  }${index < languages.length - 1 ? ', ' : ''}`}</span>
+                ))}
+              </span>
+              <span className="font-bold col-span-1">Senses</span>
+              <span className="col-span-3">
+                {senses.map((sense, index) => {
+                  return (
+                    <>
+                      <ParsedDescription
+                        description={sense.feature.value}
+                        key={`${sense}-${index}`}
+                      ></ParsedDescription>
+                      {index < senses.length - 1 ? ', ' : ''}
+                    </>
+                  )
+                })}
+              </span>
             </div>
           </div>
         </div>
       </div>
       <div className="mb-128"></div>
-      <br />
-      <div className="inline-flex gap-10 ">
-        <div className="inline-flex border border-stone-300 p-2 items-center">
-          <LabelsList
-            fieldDefinitions={[
-              {
-                label: 'Speed',
-                value: character.getSpeed(),
-              },
-            ]}
-          ></LabelsList>
-        </div>
-        <div className="inline-flex border border-stone-300 p-2 items-center">
-          <LabelsList
-            fieldDefinitions={[
-              {
-                label: 'Size',
-                value: character.getSize(),
-              },
-            ]}
-          ></LabelsList>
-        </div>
-        <div className="grid grid-rows-1 border border-stone-300 p-2">
-          <span>Languages: </span>
-          <span>
-            {languages.map((language, index) => (
-              <span key={`${language.feature.value}-${index}`}>{`${
-                language.feature.value
-              }${index < languages.length - 1 ? ', ' : ''}`}</span>
-            ))}
-          </span>
-        </div>
-        <div className="grid grid-rows-1 border border-stone-300 p-2">
-          <span>Senses: </span>
-          <span>
-            {senses.map((sense, index) => {
-              return (
-                <ParsedDescription
-                  description={sense.feature.value}
-                  key={`${sense}-${index}`}
-                ></ParsedDescription>
-              )
-            })}
-          </span>
-        </div>
-      </div>
-      <br />
-      <br />
-
       <div className="inline-flex gap-10 ">
         <div className="grid grid-rows-1 border border-stone-300 p-2">
           <span>Resistances: </span>
