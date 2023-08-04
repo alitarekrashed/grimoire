@@ -1,5 +1,4 @@
 import EntityHoverableDescription from '@/components/entity-hoverable-description/entity-description-hover'
-import EntityModal from '@/components/entity-modal/entity-modal'
 import { EntityModel, ModelType } from '@/models/db/entity-model'
 import { isString } from 'lodash'
 import React from 'react'
@@ -9,6 +8,7 @@ import { retrieveSpell } from './spell.service'
 import { retrieveTrait } from './trait.service'
 import { retrieveRule } from './rule.service'
 import { retrieveAction } from './action.service'
+import { EntityModal } from '@/components/entity-modal/entity-modal'
 
 export function parseDescription(description: any[]): Promise<any[]> {
   return (async () => {
