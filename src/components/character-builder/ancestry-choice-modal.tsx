@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState } from 'react'
 import { Ancestry } from '@/models/db/ancestry'
+import AncestryCard from '../ancestries/ancestry-card'
 
 export function AncestryChoiceModal({
   ancestryId,
@@ -47,8 +48,8 @@ export function AncestryChoiceModal({
             className={`bg-stone-900 ${roboto_condensed.className} ${styles.DialogContent} w-3/4 h-3/4`}
             onInteractOutside={(e) => e.preventDefault()}
           >
-            <div className="grid grid-rows-1 grid-cols-2 h-full w-full">
-              <div className="cols-span-1 auto-rows-min grid grid-cols-1 w-max border-r h-full">
+            <div className="grid grid-rows-1 grid-cols-8 h-full w-full">
+              <div className="col-span-1 grid grid-cols-1 auto-rows-min border-r h-full">
                 {ancestries.map((ancestry) => (
                   <div className={`h-full`}>
                     <div
@@ -59,6 +60,14 @@ export function AncestryChoiceModal({
                     </div>
                   </div>
                 ))}
+              </div>
+              <div className="col-span-7 w-full h-full p-4">
+                {selected && (
+                  <AncestryCard
+                    value={selected}
+                    collapsible={false}
+                  ></AncestryCard>
+                )}
               </div>
             </div>
             <Dialog.Close>
