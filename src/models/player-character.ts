@@ -323,7 +323,10 @@ export class PlayerCharacter {
   public getLineageName(): string {
     const ancestry = this.ancestry.name
     let heritage: string = this.heritage?.name ?? ''
-    return `${heritage.replace(ancestry, '')} ${ancestry}`
+    return `${this.background?.name ?? ''} ${heritage.replace(
+      ancestry,
+      ''
+    )} ${ancestry}`
   }
 
   public getSpeed(): number {

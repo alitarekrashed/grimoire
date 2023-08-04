@@ -81,8 +81,8 @@ function CharacterDisplay({
   return (
     <div className={`text-sm ${roboto_condensed.className}`}>
       <div className="ml-2">
-        <div className="inline-flex gap-10">
-          <div>
+        <div className="inline-flex gap-6">
+          <div className="w-[10%]">
             <div className="text-base">
               {character.getCharacter().name}
               <span className="ml-2">
@@ -92,12 +92,12 @@ function CharacterDisplay({
                 ></CharacterBuilderModal>
               </span>
             </div>
-            <div className="text-sm capitalize">
-              {character.getLineageName()} Fighter Level{' '}
-              {character.getCharacter().level}
-            </div>
-            <div>
-              <TraitsList traits={character.getTraits()}></TraitsList>
+            <div className="text-xs capitalize">
+              <div>{character.getLineageName()}</div>
+              <div>{`Fighter Level ${character.getCharacter().level}`}</div>
+              <div className="lowercase">
+                <TraitsList traits={character.getTraits()}></TraitsList>
+              </div>
             </div>
           </div>
           <div className="inline-flex gap-5 border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-full">
@@ -152,29 +152,30 @@ function CharacterDisplay({
               </span>
             </div>
           </div>
+          <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
+            <div className="grid grid-rows-2 grid-cols-4 gap-1">
+              <span className="font-bold col-span-1">Resistances</span>
+              <span className="col-span-3">
+                {resistances.map((resistance, index) => {
+                  return (
+                    <LabelsList
+                      key={`${resistance}-${index}`}
+                      fieldDefinitions={[
+                        {
+                          label: resistance.feature.value.damage_type,
+                          value: resistance.feature.value.value,
+                        },
+                      ]}
+                    ></LabelsList>
+                  )
+                })}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
       <div className="mb-128"></div>
       <div className="inline-flex gap-10 ">
-        <div className="grid grid-rows-1 border border-stone-300 p-2">
-          <span>Resistances: </span>
-          <span>
-            {resistances.map((resistance, index) => {
-              return (
-                <LabelsList
-                  key={`${resistance}-${index}`}
-                  fieldDefinitions={[
-                    {
-                      label: resistance.feature.value.damage_type,
-                      value: resistance.feature.value.value,
-                    },
-                  ]}
-                ></LabelsList>
-              )
-            })}
-          </span>
-        </div>
-
         <div className="grid grid-rows-1 border border-stone-300 p-2">
           <span>Additional features: </span>
           <span>
