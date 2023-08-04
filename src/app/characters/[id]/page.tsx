@@ -101,7 +101,7 @@ function CharacterDisplay({
             </div>
           </div>
           <div>
-            <div className="inline-flex gap-5 border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-16">
+            <div className="inline-flex gap-5 border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-full">
               {Object.keys(character.getAttributes()).map((attribute) => (
                 <div
                   className="grid grid-cols-1 justify-items-center"
@@ -113,20 +113,19 @@ function CharacterDisplay({
                       `+`}
                     {character.getAttributes()[attribute as Attribute]}
                   </div>
-                  &nbsp;
                 </div>
               ))}
+            </div>
+          </div>
+          <div>
+            <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
+              <div className="text-center">{character.getMaxHitpoints()}</div>
+              <div className="text-[10px]">Hitpoints</div>
             </div>
           </div>
         </div>
       </div>
       <div className="mb-128"></div>
-      <div className="inline-flex gap-5 mb-2 items-center">
-        <div className="border border-stone-300 p-2">
-          <span>Hitpoints: </span>
-          <span>{character.getMaxHitpoints()}</span>
-        </div>
-      </div>
       <br />
       <div className="inline-flex gap-10 ">
         <div className="inline-flex border border-stone-300 p-2 items-center">
