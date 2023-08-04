@@ -1,4 +1,4 @@
-import { roboto_condensed, roboto_flex } from '@/utils/fonts'
+import { roboto_flex } from '@/utils/fonts'
 import * as Dialog from '@radix-ui/react-dialog'
 import { ReactNode } from 'react'
 

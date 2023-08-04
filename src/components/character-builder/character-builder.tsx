@@ -1,23 +1,16 @@
 'use client'
 
-import * as Dialog from '@radix-ui/react-dialog'
-import styles from './character-builder.module.css'
-
-import { PlayerCharacter } from '@/models/player-character'
-import { faXmark } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useEffect, useState } from 'react'
 import {
   CharacterAncestry,
   CharacterBackground,
   CharacterEntity,
 } from '@/models/db/character-entity'
-import { Ancestry } from '@/models/db/ancestry'
 import { Heritage } from '@/models/db/heritage'
-import { useDebounce } from '@/utils/debounce'
+import { PlayerCharacter } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
-import { AncestryChoiceModal } from './ancestry-choice-modal'
+import React, { useEffect, useState } from 'react'
 import { Modal, ModalCloseButton } from '../modal/modal'
+import { AncestryChoiceModal } from './ancestry-choice-modal'
 
 export default function CharacterBuilderModal({
   playerCharacter,
