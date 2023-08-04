@@ -138,47 +138,6 @@ export default function CharacterBuilderModal({
   )
 }
 
-function AncestryChoice({
-  ancestryId,
-  onAncestryEdit,
-}: {
-  ancestryId: string
-  onAncestryEdit: (ancestryId: string) => void
-}) {
-  const [ancestries, setAncestries] = useState<Ancestry[]>([])
-
-  useEffect(() => {
-    fetch('http://localhost:3000/api/ancestries', {
-      cache: 'no-store',
-    })
-      .then((result) => result.json())
-      .then((ancestries) => {
-        setAncestries(ancestries)
-      })
-  }, [])
-
-  const updateAncestry = (id: string) => {
-    onAncestryEdit(id)
-  }
-
-  return (
-    <>
-      <span className="font-semibold">Ancestry </span>
-      <select
-        className="bg-stone-700 p-1 rounded-md"
-        value={ancestryId}
-        onChange={(e) => updateAncestry(e.target.value)}
-      >
-        {ancestries.map((ancestry) => (
-          <option key={ancestry._id.toString()} value={ancestry._id.toString()}>
-            {ancestry.name}
-          </option>
-        ))}
-      </select>
-    </>
-  )
-}
-
 // TODO separate out things like changing Ancestry with the choices from the Ancestry...
 function AncestryEdit({
   character,
