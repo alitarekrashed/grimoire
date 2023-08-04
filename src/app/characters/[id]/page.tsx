@@ -43,13 +43,6 @@ export default function CharacterPage() {
     saveEntity()
   })
 
-  const handleCharacterEdit = (char: CharacterEntity) => {
-    PlayerCharacter.build(char).then((val) => {
-      setCharacter(val)
-      debouncedRequest()
-    })
-  }
-
   const handleClose = (char: CharacterEntity) => {
     PlayerCharacter.build(char).then((val) => {
       setCharacter(val)
