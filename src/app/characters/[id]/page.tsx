@@ -8,7 +8,7 @@ import { Attribute } from '@/models/db/ancestry'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { PlayerCharacter } from '@/models/player-character'
 import { useDebounce } from '@/utils/debounce'
-import { roboto_serif } from '@/utils/fonts'
+import { roboto_condensed, roboto_flex } from '@/utils/fonts'
 import { getPlayerCharacter } from '@/utils/services/player-character-service'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -51,21 +51,26 @@ export default function CharacterPage() {
   }
 
   return (
-    <div className={`h-full ${roboto_serif.className}`}>
+    <div className={`h-full ${roboto_flex.className}`}>
       {character && (
         <>
-          <CharacterDisplay character={character}></CharacterDisplay>
-          <CharacterBuilderModal
-            playerCharacter={character}
-            onClose={handleClose}
-          ></CharacterBuilderModal>
+          <CharacterDisplay
+            character={character}
+            onSave={handleClose}
+          ></CharacterDisplay>
         </>
       )}
     </div>
   )
 }
 
-function CharacterDisplay({ character }: { character: PlayerCharacter }) {
+function CharacterDisplay({
+  character,
+  onSave,
+}: {
+  character: PlayerCharacter
+  onSave: (character: CharacterEntity) => void
+}) {
   const languages = character.getLanguages()
   const senses = character.getSenses()
   const additionalFeatures = character.getAdditionalFeatures()
@@ -74,171 +79,183 @@ function CharacterDisplay({ character }: { character: PlayerCharacter }) {
   const proficiencies = character.getProficiencies()
 
   return (
-    character && (
-      <div>
-        <div className="inline-flex gap-5 mb-2 items-center">
-          <div className="inline-flex gap-5 border border-stone-300 p-2">
-            <div>
-              <span>Name: </span>
-              <span>{character.getCharacter().name}</span>
-            </div>
-            <div>
-              <span>Level: </span>
-              <span>{character.getCharacter().level}</span>
-            </div>
-            <div>
-              <span>Ancestry: </span>
-              <span>{character.getAncestryName()}</span>
-            </div>
-          </div>
-          <div className="border border-stone-300 p-2">
-            <span>Hitpoints: </span>
-            <span>{character.getMaxHitpoints()}</span>
+    <div>
+      <div className={`ml-2 text-base ${roboto_condensed.className}`}>
+        {character.getCharacter().name}
+        <span className="ml-2">
+          <CharacterBuilderModal
+            playerCharacter={character}
+            onClose={onSave}
+          ></CharacterBuilderModal>
+        </span>
+      </div>
+      <div className={`ml-2 text-sm capitalize ${roboto_condensed.className}`}>
+        {character.getAncestryName()} Fighter Level{' '}
+        {character.getCharacter().level}
+      </div>
+      <div className="mb-128"></div>
+      <div className="inline-flex gap-5 mb-2 items-center">
+        <div className="inline-flex gap-5 border border-stone-300 p-2">
+          <div>
+            <span>Name: </span>
+            <span>{character.getCharacter().name}</span>
           </div>
           <div>
-            <TraitsList traits={character.getTraits()}></TraitsList>
+            <span>Level: </span>
+            <span>{character.getCharacter().level}</span>
+          </div>
+          <div>
+            <span>Ancestry: </span>
+            <span>{character.getAncestryName()}</span>
           </div>
         </div>
-        <br />
-        <div className="inline-flex gap-10 ">
-          <div className="inline-flex gap-5 border border-stone-300 p-2">
-            {Object.keys(character.getAttributes()).map((attribute) => (
-              <div
-                className="grid grid-cols-1 justify-items-center"
-                key={attribute}
-              >
-                <div>{attribute} </div>
-                <div>
-                  {character.getAttributes()[attribute as Attribute] > 0 && `+`}
-                  {character.getAttributes()[attribute as Attribute]}
-                </div>
-                &nbsp;
+        <div className="border border-stone-300 p-2">
+          <span>Hitpoints: </span>
+          <span>{character.getMaxHitpoints()}</span>
+        </div>
+        <div>
+          <TraitsList traits={character.getTraits()}></TraitsList>
+        </div>
+      </div>
+      <br />
+      <div className="inline-flex gap-10 ">
+        <div className="inline-flex gap-5 border border-stone-300 p-2">
+          {Object.keys(character.getAttributes()).map((attribute) => (
+            <div
+              className="grid grid-cols-1 justify-items-center"
+              key={attribute}
+            >
+              <div>{attribute} </div>
+              <div>
+                {character.getAttributes()[attribute as Attribute] > 0 && `+`}
+                {character.getAttributes()[attribute as Attribute]}
               </div>
-            ))}
-          </div>
-          <div className="inline-flex border border-stone-300 p-2 items-center">
-            <LabelsList
-              fieldDefinitions={[
-                {
-                  label: 'Speed',
-                  value: character.getSpeed(),
-                },
-              ]}
-            ></LabelsList>
-          </div>
-          <div className="inline-flex border border-stone-300 p-2 items-center">
-            <LabelsList
-              fieldDefinitions={[
-                {
-                  label: 'Size',
-                  value: character.getSize(),
-                },
-              ]}
-            ></LabelsList>
-          </div>
-          <div className="grid grid-rows-1 border border-stone-300 p-2">
-            <span>Languages: </span>
-            <span>
-              {languages.map((language, index) => (
-                <span key={`${language.feature.value}-${index}`}>{`${
-                  language.feature.value
-                }${index < languages.length - 1 ? ', ' : ''}`}</span>
-              ))}
-            </span>
-          </div>
-          <div className="grid grid-rows-1 border border-stone-300 p-2">
-            <span>Senses: </span>
-            <span>
-              {senses.map((sense, index) => {
-                return (
-                  <ParsedDescription
-                    description={sense.feature.value}
-                    key={`${sense}-${index}`}
-                  ></ParsedDescription>
-                )
-              })}
-            </span>
-          </div>
+              &nbsp;
+            </div>
+          ))}
         </div>
-        <br />
-        <br />
+        <div className="inline-flex border border-stone-300 p-2 items-center">
+          <LabelsList
+            fieldDefinitions={[
+              {
+                label: 'Speed',
+                value: character.getSpeed(),
+              },
+            ]}
+          ></LabelsList>
+        </div>
+        <div className="inline-flex border border-stone-300 p-2 items-center">
+          <LabelsList
+            fieldDefinitions={[
+              {
+                label: 'Size',
+                value: character.getSize(),
+              },
+            ]}
+          ></LabelsList>
+        </div>
+        <div className="grid grid-rows-1 border border-stone-300 p-2">
+          <span>Languages: </span>
+          <span>
+            {languages.map((language, index) => (
+              <span key={`${language.feature.value}-${index}`}>{`${
+                language.feature.value
+              }${index < languages.length - 1 ? ', ' : ''}`}</span>
+            ))}
+          </span>
+        </div>
+        <div className="grid grid-rows-1 border border-stone-300 p-2">
+          <span>Senses: </span>
+          <span>
+            {senses.map((sense, index) => {
+              return (
+                <ParsedDescription
+                  description={sense.feature.value}
+                  key={`${sense}-${index}`}
+                ></ParsedDescription>
+              )
+            })}
+          </span>
+        </div>
+      </div>
+      <br />
+      <br />
 
-        <div className="inline-flex gap-10 ">
-          <div className="grid grid-rows-1 border border-stone-300 p-2">
-            <span>Resistances: </span>
-            <span>
-              {resistances.map((resistance, index) => {
-                return (
+      <div className="inline-flex gap-10 ">
+        <div className="grid grid-rows-1 border border-stone-300 p-2">
+          <span>Resistances: </span>
+          <span>
+            {resistances.map((resistance, index) => {
+              return (
+                <LabelsList
+                  key={`${resistance}-${index}`}
+                  fieldDefinitions={[
+                    {
+                      label: resistance.feature.value.damage_type,
+                      value: resistance.feature.value.value,
+                    },
+                  ]}
+                ></LabelsList>
+              )
+            })}
+          </span>
+        </div>
+
+        <div className="grid grid-rows-1 border border-stone-300 p-2">
+          <span>Additional features: </span>
+          <span>
+            {additionalFeatures.map((feature, index) => {
+              return (
+                <ParsedDescription
+                  description={feature.feature.value}
+                  key={`${feature.feature.value}-${index}`}
+                ></ParsedDescription>
+              )
+            })}
+          </span>
+        </div>
+
+        <div className="grid grid-rows-1 border border-stone-300 p-2">
+          <span>Actions: </span>
+          <span>
+            {actions.map((action, index) => {
+              return (
+                <ParsedDescription
+                  description={action.feature.value}
+                  key={`${action}-${index}`}
+                ></ParsedDescription>
+              )
+            })}
+          </span>
+        </div>
+
+        <div className="grid grid-rows-1 border border-stone-300 p-2">
+          <span>Proficiencies: </span>
+          <span>
+            {proficiencies.map((proficiency, index) => {
+              return (
+                <div key={`${proficiency.feature.value.value}-${index}`}>
                   <LabelsList
-                    key={`${resistance}-${index}`}
                     fieldDefinitions={[
                       {
-                        label: resistance.feature.value.damage_type,
-                        value: resistance.feature.value.value,
+                        label:
+                          proficiency.feature.value.type === 'Lore'
+                            ? `Lore ${proficiency.feature.value.value}`
+                            : proficiency.feature.value.value,
+                        value: proficiency.feature.value.rank,
                       },
                     ]}
                   ></LabelsList>
-                )
-              })}
-            </span>
-          </div>
-
-          <div className="grid grid-rows-1 border border-stone-300 p-2">
-            <span>Additional features: </span>
-            <span>
-              {additionalFeatures.map((feature, index) => {
-                return (
-                  <ParsedDescription
-                    description={feature.feature.value}
-                    key={`${feature.feature.value}-${index}`}
-                  ></ParsedDescription>
-                )
-              })}
-            </span>
-          </div>
-
-          <div className="grid grid-rows-1 border border-stone-300 p-2">
-            <span>Actions: </span>
-            <span>
-              {actions.map((action, index) => {
-                return (
-                  <ParsedDescription
-                    description={action.feature.value}
-                    key={`${action}-${index}`}
-                  ></ParsedDescription>
-                )
-              })}
-            </span>
-          </div>
-
-          <div className="grid grid-rows-1 border border-stone-300 p-2">
-            <span>Proficiencies: </span>
-            <span>
-              {proficiencies.map((proficiency, index) => {
-                return (
-                  <div key={`${proficiency.feature.value.value}-${index}`}>
-                    <LabelsList
-                      fieldDefinitions={[
-                        {
-                          label:
-                            proficiency.feature.value.type === 'Lore'
-                              ? `Lore ${proficiency.feature.value.value}`
-                              : proficiency.feature.value.value,
-                          value: proficiency.feature.value.rank,
-                        },
-                      ]}
-                    ></LabelsList>
-                  </div>
-                )
-              })}
-            </span>
-          </div>
+                </div>
+              )
+            })}
+          </span>
         </div>
-
-        <br />
-        <br />
-        <br />
       </div>
-    )
+
+      <br />
+      <br />
+      <br />
+    </div>
   )
 }

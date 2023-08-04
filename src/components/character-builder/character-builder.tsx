@@ -72,9 +72,12 @@ export default function CharacterBuilderModal({
     <>
       <Dialog.Root>
         <Dialog.Trigger>
-          <span className="underline" tabIndex={0}>
-            Edit build
-          </span>
+          <button
+            className="text-xs border p-0.5 rounded-sm hover:bg-stone-600"
+            tabIndex={0}
+          >
+            EDIT
+          </button>
         </Dialog.Trigger>
         <Dialog.Portal>
           <Dialog.Overlay className={styles.DialogOverlay} />
