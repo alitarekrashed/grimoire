@@ -46,6 +46,7 @@ export function featureMatcher(other: SourcedFeature) {
       }
     default:
       return (val: SourcedFeature) =>
-        val.feature === other.feature && val.feature.type === other.feature.type
+        val.feature.value === other.feature.value &&
+        val.feature.type === other.feature.type
   }
 }

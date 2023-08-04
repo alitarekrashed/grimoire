@@ -1,22 +1,18 @@
 'use client'
 
 import { TraitsList } from '@/components/card/traits-list'
+import CharacterBuilderModal from '@/components/character-builder/character-builder'
+import { FeaturesTabs } from '@/components/character-display/features-tabs'
 import { LabelsList } from '@/components/labels-list/labels-list'
 import { ParsedDescription } from '@/components/parsed-description/parsed-description'
-import { Ancestry, Attribute } from '@/models/db/ancestry'
-import { Background } from '@/models/db/background'
-import {
-  CharacterAncestry,
-  CharacterBackground,
-  CharacterEntity,
-} from '@/models/db/character-entity'
-import { Heritage } from '@/models/db/heritage'
+import { Attribute } from '@/models/db/ancestry'
+import { CharacterEntity } from '@/models/db/character-entity'
 import { PlayerCharacter } from '@/models/player-character'
 import { useDebounce } from '@/utils/debounce'
-import { roboto_serif } from '@/utils/fonts'
+import { roboto_condensed, roboto_flex } from '@/utils/fonts'
 import { getPlayerCharacter } from '@/utils/services/player-character-service'
 import { usePathname } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function CharacterPage() {
   const path: string[] = usePathname().split('/')
@@ -48,43 +44,7 @@ export default function CharacterPage() {
     saveEntity()
   })
 
-  const handleAncestryChange = (ancestryId: string) => {
-    character?.updateAncestry(ancestryId).then((val) => {
-      setCharacter(val)
-      debouncedRequest()
-    })
-  }
-
-  const handleAncestryEdit = (ancestry: CharacterAncestry) => {
-    let newCharacter: CharacterEntity = {
-      ...character!.getCharacter(),
-      ancestry: ancestry,
-    }
-    PlayerCharacter.build(newCharacter).then((val) => {
-      setCharacter(val)
-      debouncedRequest()
-    })
-  }
-
-  const handleBackgroundChange = (backgroundId: string) => {
-    character?.updateBackground(backgroundId).then((val) => {
-      setCharacter(val)
-      debouncedRequest()
-    })
-  }
-
-  const handleBackgroundEdit = (background: CharacterBackground) => {
-    let newCharacter: CharacterEntity = {
-      ...character!.getCharacter(),
-      background: background,
-    }
-    PlayerCharacter.build(newCharacter).then((val) => {
-      setCharacter(val)
-      debouncedRequest()
-    })
-  }
-
-  const handleCharacterEdit = (char: CharacterEntity) => {
+  const handleClose = (char: CharacterEntity) => {
     PlayerCharacter.build(char).then((val) => {
       setCharacter(val)
       debouncedRequest()
@@ -92,23 +52,13 @@ export default function CharacterPage() {
   }
 
   return (
-    <div className={`h-full ${roboto_serif.className}`}>
+    <div className={`h-full ${roboto_flex.className}`}>
       {character && (
         <>
           <CharacterDisplay
             character={character}
-            onEdit={handleCharacterEdit}
+            onSave={handleClose}
           ></CharacterDisplay>
-          <AncestryEdit
-            character={character}
-            onAncestryEdit={handleAncestryChange}
-            onEdit={handleAncestryEdit}
-          ></AncestryEdit>
-          <BackgroundEdit
-            character={character}
-            onBackgroundEdit={handleBackgroundChange}
-            onEdit={handleBackgroundEdit}
-          ></BackgroundEdit>
         </>
       )}
     </div>
@@ -117,17 +67,11 @@ export default function CharacterPage() {
 
 function CharacterDisplay({
   character,
-  onEdit,
+  onSave,
 }: {
   character: PlayerCharacter
-  onEdit: (character: CharacterEntity) => void
+  onSave: (character: CharacterEntity) => void
 }) {
-  const updateName = (value: string) => {
-    let val: CharacterEntity = { ...character.getCharacter() }
-    val.name = value
-    onEdit(val)
-  }
-
   const languages = character.getLanguages()
   const senses = character.getSenses()
   const additionalFeatures = character.getAdditionalFeatures()
@@ -136,434 +80,127 @@ function CharacterDisplay({
   const proficiencies = character.getProficiencies()
 
   return (
-    character && (
-      <div>
-        <div className="inline-flex gap-5 mb-2 items-center">
-          <div className="inline-flex gap-5 border border-stone-300 p-2">
-            <div>
-              <span>Name: </span>
-              <input
-                className="bg-stone-800"
-                value={character.getCharacter().name}
-                onChange={(e) => {
-                  updateName(e.target.value)
-                }}
-              ></input>
+    <div className={`text-sm ${roboto_condensed.className}`}>
+      <div className="ml-2">
+        <div className="grid grid-cols-9 gap-6">
+          <div className="col-start-1">
+            <div className="text-base">
+              {character.getCharacter().name}
+              <span className="ml-2 align-bottom">
+                <CharacterBuilderModal
+                  playerCharacter={character}
+                  onClose={onSave}
+                ></CharacterBuilderModal>
+              </span>
             </div>
-            <div>
-              <span>Level: </span>
-              <span>{character.getCharacter().level}</span>
-            </div>
-            <div>
-              <span>Ancestry: </span>
-              <span>{character.getAncestryName()}</span>
-            </div>
-          </div>
-          <div className="border border-stone-300 p-2">
-            <span>Hitpoints: </span>
-            <span>{character.getMaxHitpoints()}</span>
-          </div>
-          <div>
-            <TraitsList traits={character.getTraits()}></TraitsList>
-          </div>
-        </div>
-        <br />
-        <div className="inline-flex gap-10 ">
-          <div className="inline-flex gap-5 border border-stone-300 p-2">
-            {Object.keys(character.getAttributes()).map((attribute) => (
-              <div
-                className="grid grid-cols-1 justify-items-center"
-                key={attribute}
-              >
-                <div>{attribute} </div>
-                <div>
-                  {character.getAttributes()[attribute as Attribute] > 0 && `+`}
-                  {character.getAttributes()[attribute as Attribute]}
-                </div>
-                &nbsp;
+            <div className="text-xs capitalize">
+              <div>{character.getLineageName()}</div>
+              <div>{`Fighter Level ${character.getCharacter().level}`}</div>
+              <div className="mt-2 lowercase">
+                <TraitsList traits={character.getTraits()}></TraitsList>
               </div>
-            ))}
+            </div>
           </div>
-          <div className="inline-flex border border-stone-300 p-2 items-center">
-            <LabelsList
-              fieldDefinitions={[
-                {
-                  label: 'Speed',
-                  value: character.getSpeed(),
-                },
-              ]}
-            ></LabelsList>
-          </div>
-          <div className="inline-flex border border-stone-300 p-2 items-center">
-            <LabelsList
-              fieldDefinitions={[
-                {
-                  label: 'Size',
-                  value: character.getSize(),
-                },
-              ]}
-            ></LabelsList>
-          </div>
-          <div className="grid grid-rows-1 border border-stone-300 p-2">
-            <span>Languages: </span>
-            <span>
-              {languages.map((language, index) => (
-                <span key={`${language.feature.value}-${index}`}>{`${
-                  language.feature.value
-                }${index < languages.length - 1 ? ', ' : ''}`}</span>
-              ))}
-            </span>
-          </div>
-          <div className="grid grid-rows-1 border border-stone-300 p-2">
-            <span>Senses: </span>
-            <span>
-              {senses.map((sense, index) => {
-                return (
-                  <ParsedDescription
-                    description={sense.feature.value}
-                    key={`${sense}-${index}`}
-                  ></ParsedDescription>
-                )
-              })}
-            </span>
-          </div>
-        </div>
-        <br />
-        <br />
-
-        <div className="inline-flex gap-10 ">
-          <div className="grid grid-rows-1 border border-stone-300 p-2">
-            <span>Resistances: </span>
-            <span>
-              {resistances.map((resistance, index) => {
-                return (
-                  <LabelsList
-                    key={`${resistance}-${index}`}
-                    fieldDefinitions={[
-                      {
-                        label: resistance.feature.value.damage_type,
-                        value: resistance.feature.value.value,
-                      },
-                    ]}
-                  ></LabelsList>
-                )
-              })}
-            </span>
-          </div>
-
-          <div className="grid grid-rows-1 border border-stone-300 p-2">
-            <span>Additional features: </span>
-            <span>
-              {additionalFeatures.map((feature, index) => {
-                return (
-                  <ParsedDescription
-                    description={feature.feature.value}
-                    key={`${feature.feature.value}-${index}`}
-                  ></ParsedDescription>
-                )
-              })}
-            </span>
-          </div>
-
-          <div className="grid grid-rows-1 border border-stone-300 p-2">
-            <span>Actions: </span>
-            <span>
-              {actions.map((action, index) => {
-                return (
-                  <ParsedDescription
-                    description={action.feature.value}
-                    key={`${action}-${index}`}
-                  ></ParsedDescription>
-                )
-              })}
-            </span>
-          </div>
-
-          <div className="grid grid-rows-1 border border-stone-300 p-2">
-            <span>Proficiencies: </span>
-            <span>
-              {proficiencies.map((proficiency, index) => {
-                return (
-                  <div key={`${proficiency.feature.value.value}-${index}`}>
-                    <LabelsList
-                      fieldDefinitions={[
-                        {
-                          label:
-                            proficiency.feature.value.type === 'Lore'
-                              ? `Lore ${proficiency.feature.value.value}`
-                              : proficiency.feature.value.value,
-                          value: proficiency.feature.value.rank,
-                        },
-                      ]}
-                    ></LabelsList>
+          <div className="col-span-3 justify-self-center">
+            <div className="border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-full">
+              <div className="inline-flex gap-5">
+                {Object.keys(character.getAttributes()).map((attribute) => (
+                  <div
+                    className="grid grid-cols-1 justify-items-center"
+                    key={attribute}
+                  >
+                    <div className="font-medium">{attribute} </div>
+                    <div>
+                      {character.getAttributes()[attribute as Attribute] > 0 &&
+                        `+`}
+                      {character.getAttributes()[attribute as Attribute]}
+                    </div>
                   </div>
-                )
-              })}
-            </span>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="col-span-1 justify-self-center">
+            <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3 w-fit text-center">
+              <div>{character.getMaxHitpoints()}</div>
+              <div className="text-[10px] font-semibold">Hitpoints</div>
+            </div>
+          </div>
+          <div className="col-span-1 justify-self-center">
+            <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
+              <div className="grid grid-rows-2 grid-cols-2">
+                <span className="font-bold">Speed</span>
+                <span>{character.getSpeed()}</span>
+                <span className="font-bold">Size</span>
+                <span>{character.getSize()}</span>
+              </div>
+            </div>
+          </div>
+          <div className="col-span-3 justify-self-start">
+            <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
+              <div className="grid grid-rows-2 grid-cols-4 gap-1">
+                <span className="font-bold col-span-1">Resistances</span>
+                <span className="col-span-3">
+                  {resistances.map((resistance, index) => {
+                    return (
+                      <LabelsList
+                        key={`${resistance}-${index}`}
+                        fieldDefinitions={[
+                          {
+                            label: resistance.feature.value.damage_type,
+                            value: resistance.feature.value.value,
+                          },
+                        ]}
+                      ></LabelsList>
+                    )
+                  })}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="col-start-1 col-span-1">
+            <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl pr-3 pl-3">
+              <div className="grid grid-rows-2">
+                <div className="row-span-1">
+                  <div className="font-bold">Languages</div>
+                  <span className="text-xs">
+                    {languages.map((language, index) => (
+                      <span key={`${language.feature.value}-${index}`}>{`${
+                        language.feature.value
+                      }${index < languages.length - 1 ? ', ' : ''}`}</span>
+                    ))}
+                  </span>
+                </div>
+                <div className="row-span-1">
+                  <div className="font-bold">Senses</div>
+                  <span className="text-xs">
+                    {senses.map((sense, index) => {
+                      return (
+                        <>
+                          <ParsedDescription
+                            description={sense.feature.value}
+                            key={`${sense}-${index}`}
+                          ></ParsedDescription>
+                          {index < senses.length - 1 ? ', ' : ''}
+                        </>
+                      )
+                    })}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-start-5 col-span-4">
+            <div className="border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-full">
+              <FeaturesTabs
+                features={additionalFeatures}
+                actions={actions}
+                proficiencies={proficiencies}
+              ></FeaturesTabs>
+            </div>
           </div>
         </div>
-
-        <br />
-        <br />
-        <br />
       </div>
-    )
-  )
-}
-
-// TODO separate out things like changing Ancestry with the choices from the Ancestry...
-function AncestryEdit({
-  character,
-  onAncestryEdit,
-  onEdit,
-}: {
-  character: PlayerCharacter
-  onAncestryEdit: (ancestryId: string) => void
-  onEdit: (val: CharacterAncestry) => void
-}) {
-  const [ancestries, setAncestries] = useState<Ancestry[]>([])
-  const [heritages, setHeritages] = useState<Heritage[]>([])
-
-  useEffect(() => {
-    fetch('http://localhost:3000/api/ancestries', {
-      cache: 'no-store',
-    })
-      .then((result) => result.json())
-      .then((ancestries) => {
-        setAncestries(ancestries)
-      })
-  }, [])
-
-  useEffect(() => {
-    fetch(
-      `http://localhost:3000/api/heritages?ancestry=${character.getAncestryName()}`,
-      {
-        cache: 'no-store',
-      }
-    )
-      .then((result) => result.json())
-      .then((heritages) => {
-        setHeritages(heritages)
-      })
-  }, [character.getCharacter().ancestry.id])
-
-  const updateAncestry = (value: string) => {
-    onAncestryEdit(value)
-  }
-
-  const updateAncestryAttributeMethod = () => {
-    let val: CharacterAncestry = { ...character.getCharacter().ancestry }
-    val.free_attribute = !val.free_attribute
-    onEdit(val)
-  }
-
-  const updateAncestryAttribute = (value: Attribute, index: number) => {
-    let val: CharacterAncestry = { ...character.getCharacter().ancestry }
-    val.attribute_boost_selections[index] = value
-    onEdit(val)
-  }
-
-  const updateAncestryLanguage = (value: string, index: number) => {
-    let val: CharacterAncestry = { ...character.getCharacter().ancestry }
-    val.language_selections[index] = value
-    onEdit(val)
-  }
-
-  const updateHeritage = (value: string) => {
-    let val: CharacterAncestry = { ...character.getCharacter().ancestry }
-    val.heritage_id = value
-    onEdit(val)
-  }
-
-  const languageChoices: (string | undefined)[] =
-    character?.getCharacter().ancestry.language_selections
-
-  return (
-    <div className="inline-flex gap-5 border border-stone-300 p-2 items-center">
-      <span>
-        <h2>Ancestry</h2>
-        <select
-          className="bg-stone-800"
-          value={character.getAncestryId()}
-          onChange={(e) => updateAncestry(e.target.value)}
-        >
-          {ancestries.map((ancestry) => (
-            <option
-              key={ancestry._id.toString()}
-              value={ancestry._id.toString()}
-            >
-              {ancestry.name}
-            </option>
-          ))}
-        </select>
-      </span>
-      <span>
-        {character && (
-          <label>
-            <input
-              className="bg-stone-800"
-              type="checkbox"
-              checked={character.getCharacter().ancestry.free_attribute}
-              onChange={(e) => updateAncestryAttributeMethod()}
-            />
-            Freely assign attributes?
-          </label>
-        )}
-
-        <h2>Attributes</h2>
-        {character &&
-          character
-            .getCharacter()
-            .ancestry.attribute_boost_selections.map(
-              (choice: any, i: number) => {
-                return (
-                  <React.Fragment key={i}>
-                    <select
-                      className="bg-stone-800 mr-2"
-                      value={choice ?? ''}
-                      onChange={(e) =>
-                        updateAncestryAttribute(e.target.value as Attribute, i)
-                      }
-                    >
-                      <option value={choice}>{choice}</option>
-                      {character
-                        .getAttributeChoices()
-                        .ancestry[i].map((attribute) => (
-                          <option key={attribute} value={attribute}>
-                            {attribute}
-                          </option>
-                        ))}
-                    </select>
-                  </React.Fragment>
-                )
-              }
-            )}
-      </span>
-      {languageChoices.length > 0 && (
-        <span>
-          <h2>Languages</h2>
-          {character &&
-            languageChoices.map((choice: any, i: number) => (
-              <React.Fragment key={i}>
-                <select
-                  className="bg-stone-800 mr-2"
-                  value={choice ?? ''}
-                  onChange={(e) => updateAncestryLanguage(e.target.value, i)}
-                >
-                  <option value={choice}>{choice}</option>
-                  {character.getLanguageChoices().ancestry.map((language) => (
-                    <option key={language} value={language}>
-                      {language}
-                    </option>
-                  ))}
-                </select>
-              </React.Fragment>
-            ))}
-        </span>
-      )}
-      <span>
-        <h2>Heritage</h2>
-        <select
-          className="bg-stone-800"
-          value={character.getCharacter().ancestry.heritage_id}
-          onChange={(e) => updateHeritage(e.target.value)}
-        >
-          <option value=""></option>
-          {heritages.map((heritage) => (
-            <option
-              key={heritage._id.toString()}
-              value={heritage._id.toString()}
-            >
-              {heritage.name}
-            </option>
-          ))}
-        </select>
-      </span>
-    </div>
-  )
-}
-
-// TODO separate out things like changing Ancestry with the choices from the Ancestry...
-function BackgroundEdit({
-  character,
-  onBackgroundEdit,
-  onEdit,
-}: {
-  character: PlayerCharacter
-  onBackgroundEdit: (backgroundId: string) => void
-  onEdit: (val: CharacterBackground) => void
-}) {
-  const [backgrounds, setBackgrounds] = useState<Background[]>([])
-
-  useEffect(() => {
-    fetch('http://localhost:3000/api/backgrounds', {
-      cache: 'no-store',
-    })
-      .then((result) => result.json())
-      .then((backgrounds) => {
-        setBackgrounds(backgrounds)
-      })
-  }, [])
-
-  const updateBackground = (value: string) => {
-    onBackgroundEdit(value)
-  }
-
-  const updateAttribute = (value: Attribute, index: number) => {
-    let val: CharacterBackground = { ...character.getCharacter().background }
-    val.attribute_boost_selections[index] = value
-    onEdit(val)
-  }
-
-  return (
-    <div className="inline-flex gap-5 border border-stone-300 p-2 items-center">
-      <span>
-        <h2>Background</h2>
-        <select
-          className="bg-stone-800"
-          value={character.getBackgroundId()}
-          onChange={(e) => updateBackground(e.target.value)}
-        >
-          {backgrounds.map((background) => (
-            <option
-              key={background._id.toString()}
-              value={background._id.toString()}
-            >
-              {background.name}
-            </option>
-          ))}
-        </select>
-      </span>
-      <span>
-        <h2>Attributes</h2>
-        {character?.getCharacter()?.background &&
-          character
-            .getCharacter()
-            .background.attribute_boost_selections.map(
-              (choice: any, i: number) => {
-                return (
-                  <React.Fragment key={i}>
-                    <select
-                      className="bg-stone-800 mr-2"
-                      value={choice ?? ''}
-                      onChange={(e) =>
-                        updateAttribute(e.target.value as Attribute, i)
-                      }
-                    >
-                      <option value={choice}>{choice}</option>
-                      {character
-                        .getAttributeChoices()
-                        .background[i].map((attribute) => (
-                          <option key={attribute} value={attribute}>
-                            {attribute}
-                          </option>
-                        ))}
-                    </select>
-                  </React.Fragment>
-                )
-              }
-            )}
-      </span>
     </div>
   )
 }

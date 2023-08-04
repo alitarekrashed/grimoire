@@ -240,7 +240,6 @@ export class PlayerCharacter {
   private speed!: number
   private size!: string
   private attributes!: Attributes
-  private languages: string[] = []
   private traits: string[] = []
   private hitpoints: number = 0
   private features: SourcedFeature[] = []
@@ -276,6 +275,13 @@ export class PlayerCharacter {
     return this.character
   }
 
+  public updateName(name: string): PlayerCharacter {
+    let newCharacter = { ...this.character }
+    newCharacter.name = name
+    this.character = newCharacter
+    return this
+  }
+
   public async updateAncestry(ancestryId: string): Promise<PlayerCharacter> {
     let newCharacter = { ...this.character }
     newCharacter.ancestry.id = ancestryId
@@ -308,6 +314,19 @@ export class PlayerCharacter {
 
   public getAncestryName(): string {
     return this.ancestry.name
+  }
+
+  public getHeritageName(): string {
+    return this.heritage?.name ?? ''
+  }
+
+  public getLineageName(): string {
+    const ancestry = this.ancestry.name
+    let heritage: string = this.heritage?.name ?? ''
+    return `${this.background?.name ?? ''} ${heritage.replace(
+      ancestry,
+      ''
+    )} ${ancestry}`
   }
 
   public getSpeed(): number {
@@ -399,7 +418,10 @@ export class PlayerCharacter {
 
   public getLanguageChoices(): { ancestry: string[] } {
     return {
-      ancestry: getAncestryLanguageChoices(this.languages, this.ancestry),
+      ancestry: getAncestryLanguageChoices(
+        this.getLanguages().map((feature) => feature.feature.value),
+        this.ancestry
+      ),
     }
   }
 
