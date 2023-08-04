@@ -1,9 +1,9 @@
 'use client'
 
 import {
-    CharacterAncestry,
-    CharacterBackground,
-    CharacterEntity,
+  CharacterAncestry,
+  CharacterBackground,
+  CharacterEntity,
 } from '@/models/db/character-entity'
 import { Heritage } from '@/models/db/heritage'
 import { PlayerCharacter } from '@/models/player-character'
@@ -69,6 +69,7 @@ export default function CharacterBuilderModal({
   return (
     <>
       <Modal
+        size="large"
         trigger={
           <span
             className="text-[9px] border p-0.5 rounded-sm hover:bg-stone-600"

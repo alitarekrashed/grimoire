@@ -35,6 +35,7 @@ export function AncestryChoiceModal({
   return (
     <>
       <Modal
+        size="medium"
         trigger={
           <span className="bg-stone-700 p-1 rounded-md" tabIndex={0}>
             {ancestries.find((val) => val._id === ancestryId)?.name}
@@ -42,9 +43,9 @@ export function AncestryChoiceModal({
         }
         body={
           <div
-            className={`${roboto_condensed.className} grid grid-rows-1 grid-cols-8 h-full w-full`}
+            className={`${roboto_condensed.className} grid grid-rows-1 grid-cols-8 h-max min-h-full w-full`}
           >
-            <div className="col-span-1 grid grid-cols-1 auto-rows-min border-r border-r-stone-300/25">
+            <div className="col-span-1 grid grid-cols-1 auto-rows-min h-full border-r border-r-stone-300/25">
               {ancestries.map((ancestry) => (
                 <div className={`h-full`}>
                   <div

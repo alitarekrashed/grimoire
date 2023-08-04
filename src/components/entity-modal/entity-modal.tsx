@@ -21,6 +21,7 @@ export function EntityModal<T extends EntityModel>({ value }: { value: T }) {
   )
   return (
     <Modal
+      size="small"
       trigger={trigger}
       body={body}
       closeButtons={[<ModalCloseButton label="Close"></ModalCloseButton>]}
