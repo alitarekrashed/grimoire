@@ -87,14 +87,22 @@ export default function CharacterBuilderModal({
             onInteractOutside={(e) => e.preventDefault()}
           >
             <div className={`text-sm ${roboto_condensed.className}`}>
-              <span>Name </span>
-              <input
-                className="bg-stone-700 p-1 rounded-md"
-                value={name}
-                onChange={(e) => {
-                  updateName(e.target.value)
-                }}
-              ></input>
+              <div className="mb-2">
+                <span className="font-semibold">Name </span>
+                <input
+                  className="bg-stone-700 p-1 rounded-md"
+                  value={name}
+                  onChange={(e) => {
+                    updateName(e.target.value)
+                  }}
+                ></input>
+              </div>
+              <div>
+                <AncestryChoice
+                  ancestryId={character.getAncestryId()}
+                  onAncestryEdit={handleAncestryChange}
+                ></AncestryChoice>
+              </div>
             </div>
             <div className="mb-128"></div>
             <div className="mt-4">
@@ -124,6 +132,47 @@ export default function CharacterBuilderModal({
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
+    </>
+  )
+}
+
+function AncestryChoice({
+  ancestryId,
+  onAncestryEdit,
+}: {
+  ancestryId: string
+  onAncestryEdit: (ancestryId: string) => void
+}) {
+  const [ancestries, setAncestries] = useState<Ancestry[]>([])
+
+  useEffect(() => {
+    fetch('http://localhost:3000/api/ancestries', {
+      cache: 'no-store',
+    })
+      .then((result) => result.json())
+      .then((ancestries) => {
+        setAncestries(ancestries)
+      })
+  }, [])
+
+  const updateAncestry = (id: string) => {
+    onAncestryEdit(id)
+  }
+
+  return (
+    <>
+      <span className="font-semibold">Ancestry </span>
+      <select
+        className="bg-stone-700 p-1 rounded-md"
+        value={ancestryId}
+        onChange={(e) => updateAncestry(e.target.value)}
+      >
+        {ancestries.map((ancestry) => (
+          <option key={ancestry._id.toString()} value={ancestry._id.toString()}>
+            {ancestry.name}
+          </option>
+        ))}
+      </select>
     </>
   )
 }
