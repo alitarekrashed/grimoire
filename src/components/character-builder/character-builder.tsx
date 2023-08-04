@@ -73,7 +73,7 @@ export default function CharacterBuilderModal({
       <Dialog.Root>
         <Dialog.Trigger>
           <span
-            className="text-xs border p-0.5 rounded-sm hover:bg-stone-600"
+            className="text-[9px] border p-0.5 rounded-sm hover:bg-stone-600"
             tabIndex={0}
           >
             EDIT

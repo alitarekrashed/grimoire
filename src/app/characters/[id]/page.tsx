@@ -80,18 +80,23 @@ function CharacterDisplay({
 
   return (
     <div>
-      <div className={`ml-2 text-base ${roboto_condensed.className}`}>
-        {character.getCharacter().name}
-        <span className="ml-2">
-          <CharacterBuilderModal
-            playerCharacter={character}
-            onClose={onSave}
-          ></CharacterBuilderModal>
-        </span>
-      </div>
-      <div className={`ml-2 text-sm capitalize ${roboto_condensed.className}`}>
-        {character.getAncestryName()} Fighter Level{' '}
-        {character.getCharacter().level}
+      <div className="ml-2">
+        <div className={`text-base ${roboto_condensed.className}`}>
+          {character.getCharacter().name}
+          <span className="ml-2">
+            <CharacterBuilderModal
+              playerCharacter={character}
+              onClose={onSave}
+            ></CharacterBuilderModal>
+          </span>
+        </div>
+        <div className={`text-sm capitalize ${roboto_condensed.className}`}>
+          {character.getLineageName()} Fighter Level{' '}
+          {character.getCharacter().level}
+        </div>
+        <div>
+          <TraitsList traits={character.getTraits()}></TraitsList>
+        </div>
       </div>
       <div className="mb-128"></div>
       <div className="inline-flex gap-5 mb-2 items-center">
@@ -112,9 +117,6 @@ function CharacterDisplay({
         <div className="border border-stone-300 p-2">
           <span>Hitpoints: </span>
           <span>{character.getMaxHitpoints()}</span>
-        </div>
-        <div>
-          <TraitsList traits={character.getTraits()}></TraitsList>
         </div>
       </div>
       <br />
