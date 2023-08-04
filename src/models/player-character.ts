@@ -240,7 +240,6 @@ export class PlayerCharacter {
   private speed!: number
   private size!: string
   private attributes!: Attributes
-  private languages: string[] = []
   private traits: string[] = []
   private hitpoints: number = 0
   private features: SourcedFeature[] = []
@@ -406,7 +405,10 @@ export class PlayerCharacter {
 
   public getLanguageChoices(): { ancestry: string[] } {
     return {
-      ancestry: getAncestryLanguageChoices(this.languages, this.ancestry),
+      ancestry: getAncestryLanguageChoices(
+        this.getLanguages().map((feature) => feature.feature.value),
+        this.ancestry
+      ),
     }
   }
 
