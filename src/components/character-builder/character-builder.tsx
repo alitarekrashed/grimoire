@@ -9,7 +9,7 @@ import { Heritage } from '@/models/db/heritage'
 import { PlayerCharacter } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
 import React, { useEffect, useState } from 'react'
-import { Modal, ModalCloseButton } from '../modal/modal'
+import { Modal } from '../modal/modal'
 import { AncestryChoiceModal } from './ancestry-choice-modal'
 
 export default function CharacterBuilderModal({
@@ -113,14 +113,14 @@ export default function CharacterBuilderModal({
           </div>
         }
         closeButtons={[
-          <ModalCloseButton
-            label="Save"
-            onClick={() => onClose(character.getCharacter())}
-          ></ModalCloseButton>,
-          <ModalCloseButton
-            label="Cancel"
-            onClick={() => setCharacter(playerCharacter)}
-          ></ModalCloseButton>,
+          {
+            label: 'Save',
+            onClick: () => onClose(character.getCharacter()),
+          },
+          {
+            label: 'Cancel',
+            onClick: () => setCharacter(playerCharacter),
+          },
         ]}
       ></Modal>
     </>

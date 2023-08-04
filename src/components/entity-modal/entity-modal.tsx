@@ -2,7 +2,7 @@
 
 import { EntityModel } from '@/models/db/entity-model'
 import { CardFactory } from '@/utils/services/card-factory'
-import { Modal, ModalCloseButton } from '../modal/modal'
+import { Modal } from '../modal/modal'
 
 export function EntityModal<T extends EntityModel>({ value }: { value: T }) {
   const trigger = (
@@ -24,7 +24,12 @@ export function EntityModal<T extends EntityModel>({ value }: { value: T }) {
       size="small"
       trigger={trigger}
       body={body}
-      closeButtons={[<ModalCloseButton label="Close"></ModalCloseButton>]}
+      closeButtons={[
+        {
+          label: 'Close',
+          onClick: () => {},
+        },
+      ]}
     ></Modal>
   )
 }

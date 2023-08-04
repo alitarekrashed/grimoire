@@ -2,7 +2,7 @@ import { Ancestry } from '@/models/db/ancestry'
 import { roboto_condensed } from '@/utils/fonts'
 import { useEffect, useState } from 'react'
 import AncestryCard from '../ancestries/ancestry-card'
-import { Modal, ModalCloseButton } from '../modal/modal'
+import { Modal } from '../modal/modal'
 
 export function AncestryChoiceModal({
   ancestryId,
@@ -77,20 +77,19 @@ export function AncestryChoiceModal({
           </div>
         }
         closeButtons={[
-          <ModalCloseButton
-            label="Save"
-            onClick={() => updateAncestry(selected?._id.toString() ?? '')}
-          ></ModalCloseButton>,
-          <ModalCloseButton
-            label="Cancel"
-            onClick={() =>
+          {
+            label: 'Save',
+            onClick: () => updateAncestry(selected?._id.toString() ?? ''),
+          },
+          {
+            label: 'Cancel',
+            onClick: () =>
               setSelected(
                 ancestries.find(
                   (ancestry: Ancestry) => ancestry._id === ancestryId
                 )
-              )
-            }
-          ></ModalCloseButton>,
+              ),
+          },
         ]}
       ></Modal>
     </>
