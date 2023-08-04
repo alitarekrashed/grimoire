@@ -40,9 +40,10 @@ export function FeaturesTabs({
       </Tabs.Content>
       <Tabs.Content value="features">
         <span className="text-xs">
-          {features.map((feature, index) => {
+          {features.map((feature: SourcedFeature, index) => {
             return (
               <div className="mb-2" key={`${feature.feature.value}-${index}`}>
+                <span className="capitalize font-semibold">{`${feature.source} `}</span>
                 <ParsedDescription
                   description={feature.feature.value}
                 ></ParsedDescription>
