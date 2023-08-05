@@ -95,34 +95,38 @@ export default function CharacterBuilderModal({
         body={
           <div className="p-2">
             <div className={`text-sm ${roboto_condensed.className}`}>
-              <div className="mb-2">
-                <span className="font-semibold">Name </span>
-                <input
-                  className="bg-stone-700 p-1 rounded-md"
-                  value={name}
-                  onChange={(e) => {
-                    updateName(e.target.value)
-                  }}
-                ></input>
-              </div>
-              <div className="mb-2">
-                <AncestryChoiceModal
-                  ancestryId={character.getAncestryId()}
-                  onAncestryEdit={handleAncestryChange}
-                ></AncestryChoiceModal>
-              </div>
-              <div className="mb-2">
-                <HeritageChoiceModal
-                  heritageId={character.getHeritageId()}
-                  ancestry={character.getAncestry()}
-                  onHeritageChange={handleHeritageChange}
-                ></HeritageChoiceModal>
-              </div>
-              <div className="mb-2">
-                <BackgroundChoiceModal
-                  backgroundId={character.getBackgroundId()}
-                  onBackgroundChange={handleBackgroundChange}
-                ></BackgroundChoiceModal>
+              <div className="mb-2 inline-flex">
+                <div className="relative w-44 h-9 mr-2">
+                  <span className="text-stone-300 absolute top-0 text-[9px] pl-1.5">
+                    Name
+                  </span>
+                  <input
+                    className="absolute bottom-0 bg-transparent rounded-md h-full w-full pt-4 pl-1 border border-stone-300"
+                    value={name}
+                    onChange={(e) => {
+                      updateName(e.target.value)
+                    }}
+                  ></input>
+                </div>
+                <div className="mr-2">
+                  <AncestryChoiceModal
+                    ancestryId={character.getAncestryId()}
+                    onAncestryEdit={handleAncestryChange}
+                  ></AncestryChoiceModal>
+                </div>
+                <div className="mr-2">
+                  <HeritageChoiceModal
+                    heritageId={character.getHeritageId()}
+                    ancestry={character.getAncestry()}
+                    onHeritageChange={handleHeritageChange}
+                  ></HeritageChoiceModal>
+                </div>
+                <div>
+                  <BackgroundChoiceModal
+                    backgroundId={character.getBackgroundId()}
+                    onBackgroundChange={handleBackgroundChange}
+                  ></BackgroundChoiceModal>
+                </div>
               </div>
             </div>
             <div className="mt-4">
