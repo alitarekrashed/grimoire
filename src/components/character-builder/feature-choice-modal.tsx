@@ -43,9 +43,9 @@ export function FeatureChoiceModal<T extends EntityModel>({
         }
         body={
           <div
-            className={`${roboto_condensed.className} grid grid-rows-1 grid-cols-8 h-max min-h-full w-full`}
+            className={`${roboto_condensed.className} grid grid-rows-1 grid-cols-8 h-full min-h-full w-full`}
           >
-            <div className="col-span-1 grid grid-cols-1 auto-rows-min h-full border-r border-r-stone-300/25">
+            <div className="col-span-1 grid grid-cols-1 auto-rows-min h-full border-r border-r-stone-300/25 overflow-y-scroll">
               {entities.map((entity) => (
                 <div className={`h-full`} key={entity._id.toString()}>
                   <div
@@ -67,7 +67,7 @@ export function FeatureChoiceModal<T extends EntityModel>({
                 </div>
               ))}
             </div>
-            <div className="col-span-7 w-full h-full p-4">
+            <div className="col-span-7 w-full h-full p-4 overflow-y-scroll pb-16">
               {selected && (
                 <CardFactory card={selected} collapsible={false}></CardFactory>
               )}
