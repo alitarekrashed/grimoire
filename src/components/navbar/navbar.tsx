@@ -4,7 +4,7 @@ import React from 'react'
 import { SearchBar } from '../search-bar/search-bar'
 
 export default function Navbar() {
-  const navItemStyles = 'block p-2 hover:bg-stone-700 hover:rounded-lg'
+  const navItemStyles = 'block p-2 hover:bg-stone-600 hover:rounded-lg'
 
   const navItems = [
     {

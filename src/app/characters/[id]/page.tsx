@@ -12,6 +12,7 @@ import { useDebounce } from '@/utils/debounce'
 import { roboto_condensed, roboto_flex } from '@/utils/fonts'
 import { getPlayerCharacter } from '@/utils/services/player-character-service'
 import { usePathname } from 'next/navigation'
+import React from 'react'
 import { useEffect, useState } from 'react'
 
 export default function CharacterPage() {
@@ -176,13 +177,12 @@ function CharacterDisplay({
                   <span className="text-xs">
                     {senses.map((sense, index) => {
                       return (
-                        <>
+                        <React.Fragment key={`${sense}-${index}`}>
                           <ParsedDescription
                             description={sense.feature.value}
-                            key={`${sense}-${index}`}
                           ></ParsedDescription>
                           {index < senses.length - 1 ? ', ' : ''}
-                        </>
+                        </React.Fragment>
                       )
                     })}
                   </span>
