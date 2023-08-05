@@ -31,6 +31,7 @@ export function HeritageChoiceModal({
   return (
     <>
       <FeatureChoiceModal
+        label="Heritage"
         entities={heritages}
         initialId={heritageId}
         onSave={updateHeritage}

@@ -39,7 +39,7 @@ export function Modal({
                 {closeButtons.map((button) => (
                   <Dialog.Close key={button.label}>
                     <span
-                      className={`py-0.5 px-2 text-sm border border-stone-300 rounded-md ${roboto_flex.className} hover:bg-stone-500`}
+                      className={`py-0.5 px-2 text-sm border border-stone-300 rounded-md ${roboto_flex.className} hover:bg-stone-600`}
                       aria-label={button.label}
                       onClick={button.onClick}
                     >

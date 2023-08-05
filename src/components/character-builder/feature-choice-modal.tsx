@@ -5,10 +5,12 @@ import { useEffect, useState } from 'react'
 import { Modal } from '../modal/modal'
 
 export function FeatureChoiceModal<T extends EntityModel>({
+  label,
   entities,
   initialId,
   onSave,
 }: {
+  label: string
   entities: T[]
   initialId: string
   onSave: (entity: T) => void
@@ -29,8 +31,16 @@ export function FeatureChoiceModal<T extends EntityModel>({
       <Modal
         size="medium"
         trigger={
-          <span className="bg-stone-700 p-1 rounded-md" tabIndex={0}>
-            {saved && saved.name}
+          <span
+            className="bg-stone-900 border border-stone-300 rounded-md relative flex w-24 h-9 hover:bg-stone-600"
+            tabIndex={0}
+          >
+            <span className="text-stone-300 absolute top-0 left-1 text-[9px]">
+              {label}
+            </span>
+            <span className="absolute bottom-0 left-4">
+              {saved && saved.name}
+            </span>
           </span>
         }
         body={

@@ -137,7 +137,7 @@ export default function Card<T extends EntityModel>({
           <div className="flex justify-between align-middle text-[10px]">
             {onRemoved && (
               <button
-                className="border rounded-md border-stone-500 p-1 hover:bg-stone-700 bg-stone-900"
+                className="border rounded-md border-stone-500 p-1 hover:bg-stone-600 bg-stone-900"
                 onClick={() => onRemoved(data)}
               >
                 Remove

@@ -28,6 +28,7 @@ export function BackgroundChoiceModal({
   return (
     <>
       <FeatureChoiceModal
+        label="Background"
         entities={backgrounds}
         initialId={backgroundId}
         onSave={updateBackground}

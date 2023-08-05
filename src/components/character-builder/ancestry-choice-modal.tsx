@@ -28,6 +28,7 @@ export function AncestryChoiceModal({
   return (
     <>
       <FeatureChoiceModal
+        label="Ancestry"
         entities={ancestries}
         initialId={ancestryId}
         onSave={updateAncestry}

@@ -106,14 +106,12 @@ export default function CharacterBuilderModal({
                 ></input>
               </div>
               <div className="mb-2">
-                <span className="font-semibold">Ancestry </span>
                 <AncestryChoiceModal
                   ancestryId={character.getAncestryId()}
                   onAncestryEdit={handleAncestryChange}
                 ></AncestryChoiceModal>
               </div>
               <div className="mb-2">
-                <span className="font-semibold">Heritage </span>
                 <HeritageChoiceModal
                   heritageId={character.getHeritageId()}
                   ancestry={character.getAncestry()}
@@ -121,7 +119,6 @@ export default function CharacterBuilderModal({
                 ></HeritageChoiceModal>
               </div>
               <div className="mb-2">
-                <span className="font-semibold">Background </span>
                 <BackgroundChoiceModal
                   backgroundId={character.getBackgroundId()}
                   onBackgroundChange={handleBackgroundChange}

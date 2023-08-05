@@ -19,7 +19,7 @@ export function SearchResult({
   const level: string | undefined = buildLevelDisplay(data)
   return (
     <div
-      className="p-1 border-x border-t border-stone-300 hover:bg-stone-700 flex justify-between cursor-pointer"
+      className="p-1 border-x border-t border-stone-300 hover:bg-stone-600 flex justify-between cursor-pointer"
       onClick={handleClick}
     >
       <span>
