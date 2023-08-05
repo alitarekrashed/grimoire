@@ -12,6 +12,7 @@ import React, { useEffect, useState } from 'react'
 import { Modal } from '../modal/modal'
 import { AncestryChoiceModal } from './ancestry-choice-modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
+import { BackgroundChoiceModal } from './background-choice-modal'
 
 export default function CharacterBuilderModal({
   playerCharacter,
@@ -112,13 +113,20 @@ export default function CharacterBuilderModal({
                   onAncestryEdit={handleAncestryChange}
                 ></AncestryChoiceModal>
               </div>
-              <div>
+              <div className="mb-2">
                 <span className="font-semibold">Heritage </span>
                 <HeritageChoiceModal
                   heritageId={character.getHeritageId()}
                   ancestry={character.getAncestry()}
                   onHeritageChange={handleHeritageChange}
                 ></HeritageChoiceModal>
+              </div>
+              <div className="mb-2">
+                <span className="font-semibold">Background </span>
+                <BackgroundChoiceModal
+                  backgroundId={character.getBackgroundId()}
+                  onBackgroundChange={handleBackgroundChange}
+                ></BackgroundChoiceModal>
               </div>
             </div>
             <div className="mt-4">
