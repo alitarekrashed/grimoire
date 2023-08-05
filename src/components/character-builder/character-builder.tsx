@@ -13,6 +13,7 @@ import { Modal } from '../modal/modal'
 import { AncestryChoiceModal } from './ancestry-choice-modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { BackgroundChoiceModal } from './background-choice-modal'
+import { Attribute } from '@/models/db/ancestry'
 
 export default function CharacterBuilderModal({
   playerCharacter,
@@ -79,8 +80,6 @@ export default function CharacterBuilderModal({
     })
   }
 
-  //onClick={() => onClose(character.getCharacter())}
-
   return (
     <>
       <Modal
@@ -136,7 +135,6 @@ export default function CharacterBuilderModal({
               ></AncestryEdit>
               <BackgroundEdit
                 character={character}
-                onBackgroundEdit={handleBackgroundChange}
                 onEdit={handleBackgroundEdit}
               ></BackgroundEdit>
             </div>
@@ -165,21 +163,6 @@ function AncestryEdit({
   character: PlayerCharacter
   onEdit: (val: CharacterAncestry) => void
 }) {
-  const [heritages, setHeritages] = useState<Heritage[]>([])
-
-  useEffect(() => {
-    fetch(
-      `http://localhost:3000/api/heritages?ancestry=${character.getAncestryName()}`,
-      {
-        cache: 'no-store',
-      }
-    )
-      .then((result) => result.json())
-      .then((heritages) => {
-        setHeritages(heritages)
-      })
-  }, [character.getCharacter().ancestry.id])
-
   const updateAncestryAttributeMethod = () => {
     let val: CharacterAncestry = { ...character.getCharacter().ancestry }
     val.free_attribute = !val.free_attribute
@@ -195,12 +178,6 @@ function AncestryEdit({
   const updateAncestryLanguage = (value: string, index: number) => {
     let val: CharacterAncestry = { ...character.getCharacter().ancestry }
     val.language_selections[index] = value
-    onEdit(val)
-  }
-
-  const updateHeritage = (value: string) => {
-    let val: CharacterAncestry = { ...character.getCharacter().ancestry }
-    val.heritage_id = value
     onEdit(val)
   }
 
@@ -273,24 +250,6 @@ function AncestryEdit({
             ))}
         </span>
       )}
-      <span>
-        <span>Heritage</span>
-        <select
-          className="bg-stone-700"
-          value={character.getCharacter().ancestry.heritage_id}
-          onChange={(e) => updateHeritage(e.target.value)}
-        >
-          <option value=""></option>
-          {heritages.map((heritage) => (
-            <option
-              key={heritage._id.toString()}
-              value={heritage._id.toString()}
-            >
-              {heritage.name}
-            </option>
-          ))}
-        </select>
-      </span>
     </div>
   )
 }
@@ -298,29 +257,11 @@ function AncestryEdit({
 // TODO separate out things like changing Ancestry with the choices from the Ancestry...
 function BackgroundEdit({
   character,
-  onBackgroundEdit,
   onEdit,
 }: {
   character: PlayerCharacter
-  onBackgroundEdit: (backgroundId: string) => void
   onEdit: (val: CharacterBackground) => void
 }) {
-  const [backgrounds, setBackgrounds] = useState<Background[]>([])
-
-  useEffect(() => {
-    fetch('http://localhost:3000/api/backgrounds', {
-      cache: 'no-store',
-    })
-      .then((result) => result.json())
-      .then((backgrounds) => {
-        setBackgrounds(backgrounds)
-      })
-  }, [])
-
-  const updateBackground = (value: string) => {
-    onBackgroundEdit(value)
-  }
-
   const updateAttribute = (value: Attribute, index: number) => {
     let val: CharacterBackground = { ...character.getCharacter().background }
     val.attribute_boost_selections[index] = value
@@ -329,23 +270,6 @@ function BackgroundEdit({
 
   return (
     <div className="inline-flex gap-5 border border-stone-300 p-2 items-center">
-      <span>
-        <span>Background</span>
-        <select
-          className="bg-stone-700"
-          value={character.getBackgroundId()}
-          onChange={(e) => updateBackground(e.target.value)}
-        >
-          {backgrounds.map((background) => (
-            <option
-              key={background._id.toString()}
-              value={background._id.toString()}
-            >
-              {background.name}
-            </option>
-          ))}
-        </select>
-      </span>
       <span>
         <span>Attributes</span>
         {character?.getCharacter()?.background &&
