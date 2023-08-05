@@ -316,6 +316,14 @@ export class PlayerCharacter {
     return this.ancestry.name
   }
 
+  public getAncestry(): Ancestry {
+    return this.ancestry
+  }
+
+  public getHeritageId(): string {
+    return this.heritage?._id.toString() ?? ''
+  }
+
   public getHeritageName(): string {
     return this.heritage?.name ?? ''
   }

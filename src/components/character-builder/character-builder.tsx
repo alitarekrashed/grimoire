@@ -11,6 +11,7 @@ import { roboto_condensed } from '@/utils/fonts'
 import React, { useEffect, useState } from 'react'
 import { Modal } from '../modal/modal'
 import { AncestryChoiceModal } from './ancestry-choice-modal'
+import { HeritageChoiceModal } from './heritage-choice-modal'
 
 export default function CharacterBuilderModal({
   playerCharacter,
@@ -34,6 +35,19 @@ export default function CharacterBuilderModal({
 
   const handleAncestryChange = (ancestryId: string) => {
     character.updateAncestry(ancestryId).then((val) => {
+      setCharacter(val)
+    })
+  }
+
+  const handleHeritageChange = (heritageId: string) => {
+    let newCharacter: CharacterEntity = {
+      ...character!.getCharacter(),
+    }
+    newCharacter.ancestry = {
+      ...newCharacter.ancestry,
+      heritage_id: heritageId,
+    }
+    PlayerCharacter.build(newCharacter).then((val) => {
       setCharacter(val)
     })
   }
@@ -91,12 +105,20 @@ export default function CharacterBuilderModal({
                   }}
                 ></input>
               </div>
-              <div>
+              <div className="mb-2">
                 <span className="font-semibold">Ancestry </span>
                 <AncestryChoiceModal
                   ancestryId={character.getAncestryId()}
                   onAncestryEdit={handleAncestryChange}
                 ></AncestryChoiceModal>
+              </div>
+              <div>
+                <span className="font-semibold">Heritage </span>
+                <HeritageChoiceModal
+                  heritageId={character.getHeritageId()}
+                  ancestry={character.getAncestry()}
+                  onHeritageChange={handleHeritageChange}
+                ></HeritageChoiceModal>
               </div>
             </div>
             <div className="mt-4">
