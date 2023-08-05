@@ -129,6 +129,7 @@ export default function CharacterBuilderModal({
                 </div>
               </div>
             </div>
+            <div className="mb-128"></div>
             <div className="mt-4">
               <AncestryEdit
                 character={character}

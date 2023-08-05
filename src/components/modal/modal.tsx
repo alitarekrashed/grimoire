@@ -30,7 +30,7 @@ export function Modal({
         <Dialog.Overlay className="bg-stone-950 opacity-40 fixed h-full inset-0"></Dialog.Overlay>
         <div className={`fixed ${modalSize()}`}>
           <Dialog.Content
-            className={`bg-stone-900 rounded-md focus:outline-none border border-stone-300/20 h-full overflow-y-scroll`}
+            className={`bg-stone-900 rounded-md focus:outline-none border border-stone-300/20 h-full overflow-y-scroll pb-10`}
           >
             <Dialog.Title />
             {body}
