@@ -14,6 +14,7 @@ import { AncestryChoiceModal } from './ancestry-choice-modal'
 import { AttributesModal } from './attributes-modal'
 import { BackgroundChoiceModal } from './background-choice-modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
+import { LanguagesModal } from './languages-modal'
 
 export default function CharacterBuilderModal({
   playerCharacter,
@@ -66,12 +67,10 @@ export default function CharacterBuilderModal({
     })
   }
 
-  const handleAncestryEdit = (ancestry: CharacterAncestry) => {
-    let newCharacter: CharacterEntity = {
-      ...character!.getCharacter(),
-      ancestry: ancestry,
-    }
-    PlayerCharacter.build(newCharacter).then((val) => {
+  const handleLanguageChange = (chosenLanguages: stirng[]) => {
+    let updated: CharacterEntity = cloneDeep(character.getCharacter())
+    updated.ancestry.language_selections = chosenLanguages
+    PlayerCharacter.build(updated).then((val) => {
       setCharacter(val)
     })
   }
@@ -129,7 +128,7 @@ export default function CharacterBuilderModal({
                     onBackgroundChange={handleBackgroundChange}
                   ></BackgroundChoiceModal>
                 </div>
-                <div>
+                <div className="mr-2">
                   <AttributesModal
                     characterAncestry={character.getCharacter().ancestry}
                     ancestry={character.getAncestry()}
@@ -138,15 +137,16 @@ export default function CharacterBuilderModal({
                     onAttributeUpdate={handleAttributeChange}
                   ></AttributesModal>
                 </div>
+                <div>
+                  <LanguagesModal
+                    onLanguagesUpdate={handleLanguageChange}
+                    characterAncestry={character.getCharacter().ancestry}
+                    ancestry={character.getAncestry()}
+                  ></LanguagesModal>
+                </div>
               </div>
             </div>
             <div className="mb-128"></div>
-            <div className="mt-4">
-              <AncestryEdit
-                character={character}
-                onEdit={handleAncestryEdit}
-              ></AncestryEdit>
-            </div>
           </div>
         }
         closeButtons={[
@@ -161,50 +161,5 @@ export default function CharacterBuilderModal({
         ]}
       ></Modal>
     </>
-  )
-}
-
-// TODO separate out things like changing Ancestry with the choices from the Ancestry...
-function AncestryEdit({
-  character,
-  onEdit,
-}: {
-  character: PlayerCharacter
-  onEdit: (val: CharacterAncestry) => void
-}) {
-  const updateAncestryLanguage = (value: string, index: number) => {
-    let val: CharacterAncestry = { ...character.getCharacter().ancestry }
-    val.language_selections[index] = value
-    onEdit(val)
-  }
-
-  const languageChoices: (string | undefined)[] =
-    character?.getCharacter().ancestry.language_selections
-
-  return (
-    <div>
-      {languageChoices.length > 0 && (
-        <span>
-          <span>Languages</span>
-          {character &&
-            languageChoices.map((choice: any, i: number) => (
-              <React.Fragment key={i}>
-                <select
-                  className="bg-stone-700 mr-2"
-                  value={choice ?? ''}
-                  onChange={(e) => updateAncestryLanguage(e.target.value, i)}
-                >
-                  <option value={choice}>{choice}</option>
-                  {character.getLanguageChoices().ancestry.map((language) => (
-                    <option key={language} value={language}>
-                      {language}
-                    </option>
-                  ))}
-                </select>
-              </React.Fragment>
-            ))}
-        </span>
-      )}
-    </div>
   )
 }
