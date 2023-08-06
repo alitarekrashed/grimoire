@@ -30,6 +30,16 @@ export interface SourcedFeature {
   feature: Feature
 }
 
+export interface AttributeSelections {
+  ancestry: Attribute[]
+  background: Attribute[]
+}
+
+export interface AttributeOptions {
+  ancestry: Attribute[][]
+  background: Attribute[][]
+}
+
 const ATTRIBUTES: Attribute[] = [
   'Strength',
   'Dexterity',
@@ -406,10 +416,14 @@ export class PlayerCharacter {
       .map((feature) => feature)
   }
 
-  public getAttributeChoices(): {
-    ancestry: Attribute[][]
-    background: Attribute[][]
-  } {
+  public getAttributeSelections(): AttributeSelections {
+    return {
+      ancestry: this.character.ancestry.attribute_boost_selections,
+      background: this.character.background.attribute_boost_selections,
+    }
+  }
+
+  public getAttributeChoices(): AttributeOptions {
     return {
       ancestry: getAncestryAttributeChoices(
         this.character.ancestry,

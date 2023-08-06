@@ -14,6 +14,8 @@ import { AncestryChoiceModal } from './ancestry-choice-modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { BackgroundChoiceModal } from './background-choice-modal'
 import { Attribute } from '@/models/db/ancestry'
+import { AttributesModal } from './attributes-modal'
+import { cloneDeep } from 'lodash'
 
 export default function CharacterBuilderModal({
   playerCharacter,
@@ -50,6 +52,14 @@ export default function CharacterBuilderModal({
       heritage_id: heritageId,
     }
     PlayerCharacter.build(newCharacter).then((val) => {
+      setCharacter(val)
+    })
+  }
+
+  const handleAttributeChange = (ancestry: CharacterAncestry) => {
+    let updated: CharacterEntity = cloneDeep(character.getCharacter())
+    updated.ancestry = ancestry
+    PlayerCharacter.build(updated).then((val) => {
       setCharacter(val)
     })
   }
@@ -121,11 +131,18 @@ export default function CharacterBuilderModal({
                     onHeritageChange={handleHeritageChange}
                   ></HeritageChoiceModal>
                 </div>
-                <div>
+                <div className="mr-2">
                   <BackgroundChoiceModal
                     backgroundId={character.getBackgroundId()}
                     onBackgroundChange={handleBackgroundChange}
                   ></BackgroundChoiceModal>
+                </div>
+                <div>
+                  <AttributesModal
+                    characterAncestry={character.getCharacter().ancestry}
+                    ancestry={character.getAncestry()}
+                    onAttributeUpdate={handleAttributeChange}
+                  ></AttributesModal>
                 </div>
               </div>
             </div>
