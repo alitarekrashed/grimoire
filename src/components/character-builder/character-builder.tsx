@@ -5,15 +5,15 @@ import {
   CharacterBackground,
   CharacterEntity,
 } from '@/models/db/character-entity'
-import { Heritage } from '@/models/db/heritage'
 import { PlayerCharacter } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
+import { cloneDeep } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Modal } from '../modal/modal'
 import { AncestryChoiceModal } from './ancestry-choice-modal'
-import { HeritageChoiceModal } from './heritage-choice-modal'
+import { AttributesModal } from './attributes-modal'
 import { BackgroundChoiceModal } from './background-choice-modal'
-import { Attribute } from '@/models/db/ancestry'
+import { HeritageChoiceModal } from './heritage-choice-modal'
 
 export default function CharacterBuilderModal({
   playerCharacter,
@@ -54,6 +54,18 @@ export default function CharacterBuilderModal({
     })
   }
 
+  const handleAttributeChange = (
+    ancestry: CharacterAncestry,
+    background: CharacterBackground
+  ) => {
+    let updated: CharacterEntity = cloneDeep(character.getCharacter())
+    updated.ancestry = ancestry
+    updated.background = background
+    PlayerCharacter.build(updated).then((val) => {
+      setCharacter(val)
+    })
+  }
+
   const handleAncestryEdit = (ancestry: CharacterAncestry) => {
     let newCharacter: CharacterEntity = {
       ...character!.getCharacter(),
@@ -66,16 +78,6 @@ export default function CharacterBuilderModal({
 
   const handleBackgroundChange = (backgroundId: string) => {
     character.updateBackground(backgroundId).then((val) => {
-      setCharacter(val)
-    })
-  }
-
-  const handleBackgroundEdit = (background: CharacterBackground) => {
-    let newCharacter: CharacterEntity = {
-      ...character!.getCharacter(),
-      background: background,
-    }
-    PlayerCharacter.build(newCharacter).then((val) => {
       setCharacter(val)
     })
   }
@@ -121,11 +123,20 @@ export default function CharacterBuilderModal({
                     onHeritageChange={handleHeritageChange}
                   ></HeritageChoiceModal>
                 </div>
-                <div>
+                <div className="mr-2">
                   <BackgroundChoiceModal
                     backgroundId={character.getBackgroundId()}
                     onBackgroundChange={handleBackgroundChange}
                   ></BackgroundChoiceModal>
+                </div>
+                <div>
+                  <AttributesModal
+                    characterAncestry={character.getCharacter().ancestry}
+                    ancestry={character.getAncestry()}
+                    characterBackground={character.getCharacter().background}
+                    background={character.getBackground()}
+                    onAttributeUpdate={handleAttributeChange}
+                  ></AttributesModal>
                 </div>
               </div>
             </div>
@@ -135,10 +146,6 @@ export default function CharacterBuilderModal({
                 character={character}
                 onEdit={handleAncestryEdit}
               ></AncestryEdit>
-              <BackgroundEdit
-                character={character}
-                onEdit={handleBackgroundEdit}
-              ></BackgroundEdit>
             </div>
           </div>
         }
@@ -165,18 +172,6 @@ function AncestryEdit({
   character: PlayerCharacter
   onEdit: (val: CharacterAncestry) => void
 }) {
-  const updateAncestryAttributeMethod = () => {
-    let val: CharacterAncestry = { ...character.getCharacter().ancestry }
-    val.free_attribute = !val.free_attribute
-    onEdit(val)
-  }
-
-  const updateAncestryAttribute = (value: Attribute, index: number) => {
-    let val: CharacterAncestry = { ...character.getCharacter().ancestry }
-    val.attribute_boost_selections[index] = value
-    onEdit(val)
-  }
-
   const updateAncestryLanguage = (value: string, index: number) => {
     let val: CharacterAncestry = { ...character.getCharacter().ancestry }
     val.language_selections[index] = value
@@ -187,49 +182,7 @@ function AncestryEdit({
     character?.getCharacter().ancestry.language_selections
 
   return (
-    <div className="inline-flex gap-5 border border-stone-300 p-2 items-center">
-      <span>
-        {character && (
-          <label>
-            <input
-              className="bg-stone-700"
-              type="checkbox"
-              checked={character.getCharacter().ancestry.free_attribute}
-              onChange={(e) => updateAncestryAttributeMethod()}
-            />
-            Freely assign attributes?
-          </label>
-        )}
-
-        <span>Attributes</span>
-        {character &&
-          character
-            .getCharacter()
-            .ancestry.attribute_boost_selections.map(
-              (choice: any, i: number) => {
-                return (
-                  <React.Fragment key={i}>
-                    <select
-                      className="bg-stone-700 mr-2"
-                      value={choice ?? ''}
-                      onChange={(e) =>
-                        updateAncestryAttribute(e.target.value as Attribute, i)
-                      }
-                    >
-                      <option value={choice}>{choice}</option>
-                      {character
-                        .getAttributeChoices()
-                        .ancestry[i].map((attribute) => (
-                          <option key={attribute} value={attribute}>
-                            {attribute}
-                          </option>
-                        ))}
-                    </select>
-                  </React.Fragment>
-                )
-              }
-            )}
-      </span>
+    <div>
       {languageChoices.length > 0 && (
         <span>
           <span>Languages</span>
@@ -252,56 +205,6 @@ function AncestryEdit({
             ))}
         </span>
       )}
-    </div>
-  )
-}
-
-// TODO separate out things like changing Ancestry with the choices from the Ancestry...
-function BackgroundEdit({
-  character,
-  onEdit,
-}: {
-  character: PlayerCharacter
-  onEdit: (val: CharacterBackground) => void
-}) {
-  const updateAttribute = (value: Attribute, index: number) => {
-    let val: CharacterBackground = { ...character.getCharacter().background }
-    val.attribute_boost_selections[index] = value
-    onEdit(val)
-  }
-
-  return (
-    <div className="inline-flex gap-5 border border-stone-300 p-2 items-center">
-      <span>
-        <span>Attributes</span>
-        {character?.getCharacter()?.background &&
-          character
-            .getCharacter()
-            .background.attribute_boost_selections.map(
-              (choice: any, i: number) => {
-                return (
-                  <React.Fragment key={i}>
-                    <select
-                      className="bg-stone-700 mr-2"
-                      value={choice ?? ''}
-                      onChange={(e) =>
-                        updateAttribute(e.target.value as Attribute, i)
-                      }
-                    >
-                      <option value={choice}>{choice}</option>
-                      {character
-                        .getAttributeChoices()
-                        .background[i].map((attribute) => (
-                          <option key={attribute} value={attribute}>
-                            {attribute}
-                          </option>
-                        ))}
-                    </select>
-                  </React.Fragment>
-                )
-              }
-            )}
-      </span>
     </div>
   )
 }

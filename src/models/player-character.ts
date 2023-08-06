@@ -1,4 +1,4 @@
-import { Ancestry, Attribute, AttributeModifier } from './db/ancestry'
+import { Ancestry, Attribute } from './db/ancestry'
 import { Background, ProficiencyFeatureValue } from './db/background'
 import {
   CharacterAncestry,
@@ -14,7 +14,6 @@ import {
   featureMatcher,
 } from './db/feature'
 import { Heritage } from './db/heritage'
-import { Resistance } from './resistance'
 
 export interface Attributes {
   Strength: number
@@ -28,6 +27,16 @@ export interface Attributes {
 export interface SourcedFeature {
   source: string
   feature: Feature
+}
+
+export interface AttributeSelections {
+  ancestry: Attribute[]
+  background: Attribute[]
+}
+
+export interface AttributeOptions {
+  ancestry: Attribute[][]
+  background: Attribute[][]
 }
 
 const ATTRIBUTES: Attribute[] = [
@@ -54,53 +63,6 @@ function buildChoiceSelectionArray(
     }
   }
   return values
-}
-
-function getAncestryAttributeChoices(
-  characterAncestry: CharacterAncestry,
-  ancestry: Ancestry
-) {
-  if (characterAncestry.free_attribute === false) {
-    return getAncestryDefaultAttributeChoices(characterAncestry, ancestry)
-  } else {
-    return getAncestryFreeAttributeChoices(characterAncestry, ancestry)
-  }
-}
-
-function getAncestryDefaultAttributeChoices(
-  characterAncestry: CharacterAncestry,
-  ancestry: Ancestry
-) {
-  let options: Attribute[][] = ancestry.attribute_boosts
-    .filter((choices) => choices.length)
-    .filter((choices) => choices[0] === 'Free')
-    .map(() => [...ATTRIBUTES])
-
-  for (let i = 0; i < options.length; i++) {
-    options[i] = options[i].filter(
-      (option: any) =>
-        ancestry.attribute_boosts
-          .filter((attribute) => attribute.length === 1)
-          .map((attribute: AttributeModifier[]) => attribute[0])
-          .indexOf(option) === -1 &&
-        characterAncestry.attribute_boost_selections.indexOf(option) === -1
-    )
-  }
-  return options
-}
-
-function getAncestryFreeAttributeChoices(
-  characterAncestry: CharacterAncestry,
-  ancestries: Ancestry
-) {
-  let options: Attribute[][] = [[...ATTRIBUTES], [...ATTRIBUTES]]
-
-  for (let i = 0; i < options.length; i++) {
-    options[i] = options[i].filter((option: any) => {
-      return characterAncestry.attribute_boost_selections.indexOf(option) === -1
-    })
-  }
-  return options
 }
 
 function getAncestryLanguageChoices(
@@ -188,30 +150,6 @@ function calculateAncestryFreeAttributeModifications(
     .forEach((val) => (attributes[val!] += 1))
 
   return attributes
-}
-
-function getBackgroundAttributeChoices(
-  characterBackground: CharacterBackground,
-  background: Background
-) {
-  let options: Attribute[][] = background.attributes.map(
-    (choices: AttributeModifier[]) => {
-      if (choices.length === 1 && choices[0] === 'Free') {
-        return [...ATTRIBUTES]
-      } else {
-        return choices as Attribute[]
-      }
-    }
-  )
-
-  for (let i = 0; i < options.length; i++) {
-    options[i] = options[i].filter(
-      (option: Attribute) =>
-        characterBackground.attribute_boost_selections.indexOf(option) === -1
-    )
-  }
-
-  return options
 }
 
 function calculateBackgroundAttributeModifications(
@@ -320,6 +258,10 @@ export class PlayerCharacter {
     return this.ancestry
   }
 
+  public getBackground(): Background {
+    return this.background!
+  }
+
   public getHeritageId(): string {
     return this.heritage?._id.toString() ?? ''
   }
@@ -406,21 +348,10 @@ export class PlayerCharacter {
       .map((feature) => feature)
   }
 
-  public getAttributeChoices(): {
-    ancestry: Attribute[][]
-    background: Attribute[][]
-  } {
+  public getAttributeSelections(): AttributeSelections {
     return {
-      ancestry: getAncestryAttributeChoices(
-        this.character.ancestry,
-        this.ancestry
-      ),
-      background: this.background
-        ? getBackgroundAttributeChoices(
-            this.character.background,
-            this.background
-          )
-        : [],
+      ancestry: this.character.ancestry.attribute_boost_selections,
+      background: this.character.background.attribute_boost_selections,
     }
   }
 
