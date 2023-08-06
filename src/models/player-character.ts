@@ -65,16 +65,6 @@ function buildChoiceSelectionArray(
   return values
 }
 
-function getAncestryLanguageChoices(
-  knownLanguages: string[],
-  ancestry: Ancestry
-): string[] {
-  let options = ancestry.languages.options
-  options = options.filter((option) => knownLanguages.indexOf(option) === -1)
-
-  return options
-}
-
 function calculateAncestryAttributeModifications(
   characterAncestry: CharacterAncestry,
   ancestry: Ancestry
@@ -352,15 +342,6 @@ export class PlayerCharacter {
     return {
       ancestry: this.character.ancestry.attribute_boost_selections,
       background: this.character.background.attribute_boost_selections,
-    }
-  }
-
-  public getLanguageChoices(): { ancestry: string[] } {
-    return {
-      ancestry: getAncestryLanguageChoices(
-        this.getLanguages().map((feature) => feature.feature.value),
-        this.ancestry
-      ),
     }
   }
 
