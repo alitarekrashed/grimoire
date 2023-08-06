@@ -134,59 +134,64 @@ export function AttributesModal({
 
   const body = (
     <>
-      <div className={`${roboto_condensed.className} text-sm p-2`}>
-        <div className="w-fit flex items-center h-fit">
-          <label>
-            <input
-              className="bg-stone-700 mt-0.5"
-              type="checkbox"
-              checked={modifiedAncestry.free_attribute}
-              onChange={(e) => {
-                let updated = cloneDeep(modifiedAncestry)
-                updated.free_attribute = !modifiedAncestry.free_attribute
-                if (updated.free_attribute) {
-                  updated.attribute_boost_selections = [undefined!, undefined!]
-                } else {
-                  updated.attribute_boost_selections = [undefined!]
-                }
-                setModifiedAncestry(updated)
-              }}
-            />
-            <span className="mr-2 float-left">
-              Freely assign ancestry attributes
+      <div className={`${roboto_condensed.className} text-sm p-2 w-full`}>
+        <div className="flex flex-col flex-wrap mb-4">
+          <div className="">Ancestry</div>
+          <div className="">
+            {modifiedAncestry.attribute_boost_selections.map(
+              (choice: any, i: number) => {
+                return (
+                  <React.Fragment key={i}>
+                    <select
+                      className="bg-stone-700 mr-2 rounded-md"
+                      value={choice ?? ''}
+                      onChange={(e) => {
+                        let updated = cloneDeep(modifiedAncestry)
+                        updated.attribute_boost_selections[i] = e.target
+                          .value as Attribute
+                        setModifiedAncestry(updated)
+                      }}
+                    >
+                      <option value={choice}>{choice}</option>
+                      {choices.ancestry[i]?.map((attribute) => (
+                        <option key={attribute} value={attribute}>
+                          {attribute}
+                        </option>
+                      ))}
+                    </select>
+                  </React.Fragment>
+                )
+              }
+            )}
+            <span className="w-fit inline-flex items-center h-fit">
+              <label>
+                <input
+                  className="bg-stone-700 mt-0.5"
+                  type="checkbox"
+                  checked={modifiedAncestry.free_attribute}
+                  onChange={(e) => {
+                    let updated = cloneDeep(modifiedAncestry)
+                    updated.free_attribute = !modifiedAncestry.free_attribute
+                    if (updated.free_attribute) {
+                      updated.attribute_boost_selections = [
+                        undefined!,
+                        undefined!,
+                      ]
+                    } else {
+                      updated.attribute_boost_selections = [undefined!]
+                    }
+                    setModifiedAncestry(updated)
+                  }}
+                />
+                <span className="mr-2 float-left">
+                  Freely assign ancestry attributes
+                </span>
+              </label>
             </span>
-          </label>
+          </div>
         </div>
         <span>
-          <span>Ancestry</span>
-          {modifiedAncestry.attribute_boost_selections.map(
-            (choice: any, i: number) => {
-              return (
-                <React.Fragment key={i}>
-                  <select
-                    className="bg-stone-700 mr-2 rounded-md"
-                    value={choice ?? ''}
-                    onChange={(e) => {
-                      let updated = cloneDeep(modifiedAncestry)
-                      updated.attribute_boost_selections[i] = e.target
-                        .value as Attribute
-                      setModifiedAncestry(updated)
-                    }}
-                  >
-                    <option value={choice}>{choice}</option>
-                    {choices.ancestry[i]?.map((attribute) => (
-                      <option key={attribute} value={attribute}>
-                        {attribute}
-                      </option>
-                    ))}
-                  </select>
-                </React.Fragment>
-              )
-            }
-          )}
-        </span>
-        <span>
-          <span>Background</span>
+          <div>Background</div>
           {modifiedBackground.attribute_boost_selections.map(
             (choice: any, i: number) => {
               return (
