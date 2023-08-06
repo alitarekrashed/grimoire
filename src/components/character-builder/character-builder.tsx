@@ -56,9 +56,13 @@ export default function CharacterBuilderModal({
     })
   }
 
-  const handleAttributeChange = (ancestry: CharacterAncestry) => {
+  const handleAttributeChange = (
+    ancestry: CharacterAncestry,
+    background: CharacterBackground
+  ) => {
     let updated: CharacterEntity = cloneDeep(character.getCharacter())
     updated.ancestry = ancestry
+    updated.background = background
     PlayerCharacter.build(updated).then((val) => {
       setCharacter(val)
     })
@@ -141,6 +145,8 @@ export default function CharacterBuilderModal({
                   <AttributesModal
                     characterAncestry={character.getCharacter().ancestry}
                     ancestry={character.getAncestry()}
+                    characterBackground={character.getCharacter().background}
+                    background={character.getBackground()}
                     onAttributeUpdate={handleAttributeChange}
                   ></AttributesModal>
                 </div>

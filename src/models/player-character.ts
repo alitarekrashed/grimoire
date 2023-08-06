@@ -330,6 +330,10 @@ export class PlayerCharacter {
     return this.ancestry
   }
 
+  public getBackground(): Background {
+    return this.background!
+  }
+
   public getHeritageId(): string {
     return this.heritage?._id.toString() ?? ''
   }

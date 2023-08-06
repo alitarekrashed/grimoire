@@ -5,9 +5,13 @@ import {
 import { Modal } from '../modal/modal'
 import React, { useEffect, useState } from 'react'
 import { roboto_condensed } from '@/utils/fonts'
-import { CharacterAncestry } from '@/models/db/character-entity'
-import { Ancestry, Attribute } from '@/models/db/ancestry'
+import {
+  CharacterAncestry,
+  CharacterBackground,
+} from '@/models/db/character-entity'
+import { Ancestry, Attribute, AttributeModifier } from '@/models/db/ancestry'
 import { clone, cloneDeep } from 'lodash'
+import { Background } from '@/models/db/background'
 
 const ATTRIBUTES: Attribute[] = [
   'Strength',
@@ -62,20 +66,55 @@ function getAncestryFreeAttributeChoices(characterAncestry: CharacterAncestry) {
   return options
 }
 
+function getBackgroundAttributeChoices(
+  characterBackground: CharacterBackground,
+  background: Background
+) {
+  let options: Attribute[][] = background.attributes.map(
+    (choices: AttributeModifier[]) => {
+      if (choices.length === 1 && choices[0] === 'Free') {
+        return [...ATTRIBUTES]
+      } else {
+        return choices as Attribute[]
+      }
+    }
+  )
+
+  for (let i = 0; i < options.length; i++) {
+    options[i] = options[i].filter(
+      (option: Attribute) =>
+        characterBackground.attribute_boost_selections.indexOf(option) === -1
+    )
+  }
+
+  return options
+}
+
 export function AttributesModal({
   onAttributeUpdate,
   characterAncestry,
+  characterBackground,
   ancestry,
+  background,
 }: {
-  onAttributeUpdate: (value: CharacterAncestry) => void
+  onAttributeUpdate: (
+    characterAncestry: CharacterAncestry,
+    characterBackground: CharacterBackground
+  ) => void
   characterAncestry: CharacterAncestry
+  characterBackground: CharacterBackground
   ancestry: Ancestry
+  background: Background
 }) {
   const [modifiedAncestry, setModifiedAncestry] =
     useState<CharacterAncestry>(characterAncestry)
-  const [choices, setChoices] = useState<Attribute[][]>(
-    getAncestryAttributeChoices(modifiedAncestry, ancestry)
-  )
+  const [modifiedBackground, setModifiedBackground] =
+    useState<CharacterBackground>(characterBackground)
+
+  const [choices, setChoices] = useState<AttributeOptions>({
+    ancestry: getAncestryAttributeChoices(modifiedAncestry, ancestry),
+    background: getBackgroundAttributeChoices(modifiedBackground, background),
+  })
 
   const trigger = (
     <span
@@ -87,9 +126,11 @@ export function AttributesModal({
   )
 
   useEffect(() => {
-    console.log(getAncestryAttributeChoices(modifiedAncestry, ancestry))
-    setChoices(getAncestryAttributeChoices(modifiedAncestry, ancestry))
-  }, [modifiedAncestry])
+    setChoices({
+      ancestry: getAncestryAttributeChoices(modifiedAncestry, ancestry),
+      background: getBackgroundAttributeChoices(modifiedBackground, background),
+    })
+  }, [modifiedAncestry, modifiedBackground])
 
   const body = (
     <>
@@ -117,7 +158,7 @@ export function AttributesModal({
           </label>
         </div>
         <span>
-          <span>Attributes</span>
+          <span>Ancestry</span>
           {modifiedAncestry.attribute_boost_selections.map(
             (choice: any, i: number) => {
               return (
@@ -133,7 +174,35 @@ export function AttributesModal({
                     }}
                   >
                     <option value={choice}>{choice}</option>
-                    {choices[i]?.map((attribute) => (
+                    {choices.ancestry[i]?.map((attribute) => (
+                      <option key={attribute} value={attribute}>
+                        {attribute}
+                      </option>
+                    ))}
+                  </select>
+                </React.Fragment>
+              )
+            }
+          )}
+        </span>
+        <span>
+          <span>Background</span>
+          {modifiedBackground.attribute_boost_selections.map(
+            (choice: any, i: number) => {
+              return (
+                <React.Fragment key={i}>
+                  <select
+                    className="bg-stone-700 mr-2 rounded-md"
+                    value={choice ?? ''}
+                    onChange={(e) => {
+                      let updated = cloneDeep(modifiedBackground)
+                      updated.attribute_boost_selections[i] = e.target
+                        .value as Attribute
+                      setModifiedBackground(updated)
+                    }}
+                  >
+                    <option value={choice}>{choice}</option>
+                    {choices.background[i]?.map((attribute) => (
                       <option key={attribute} value={attribute}>
                         {attribute}
                       </option>
@@ -155,7 +224,7 @@ export function AttributesModal({
         {
           label: 'Save',
           onClick: () => {
-            onAttributeUpdate(modifiedAncestry)
+            onAttributeUpdate(modifiedAncestry, modifiedBackground)
           },
         },
         {
