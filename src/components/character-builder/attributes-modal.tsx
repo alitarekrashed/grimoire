@@ -231,6 +231,7 @@ export function AttributesModal({
           label: 'Cancel',
           onClick: () => {
             setModifiedAncestry(characterAncestry)
+            setModifiedBackground(characterBackground)
           },
         },
       ]}
