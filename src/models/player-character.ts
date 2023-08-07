@@ -16,6 +16,7 @@ import {
   featureMatcher,
 } from './db/feature'
 import { Heritage } from './db/heritage'
+import { Source } from 'postcss'
 
 export interface Attributes {
   Strength: number
@@ -555,19 +556,36 @@ export class PlayerCharacter {
           .map((value) => value.feature.value)
       )
 
-      const resolvedFeats: Feat[][] = await Promise.all(
-        feats.map((feat) => PlayerCharacter.getFeat(feat))
-      )
+      let resolveFeats = async (feats: string[]): Promise<SourcedFeature[]> => {
+        let resolvedFeatures: SourcedFeature[] = []
+        const resolvedFeats: Feat[][] = await Promise.all(
+          feats.map((feat) => PlayerCharacter.getFeat(feat))
+        )
 
-      resolvedFeats
-        .map((feat: Feat[]) => feat[0])
-        .forEach((feat: Feat) => {
-          allFeatures.push(
-            ...feat.features.map((feature: Feature) => {
-              return { source: feat.name, feature: feature }
-            })
-          )
-        })
+        let additionalFeats: string[] = []
+        resolvedFeats
+          .map((feat: Feat[]) => feat[0])
+          .forEach((feat: Feat) => {
+            resolvedFeatures.push(
+              ...feat.features
+                .filter((feature) => feature.type !== 'FEAT')
+                .map((feature: Feature) => {
+                  return { source: feat.name, feature: feature }
+                })
+            )
+            additionalFeats.push(
+              ...feat.features
+                .filter((feature) => feature.type === 'FEAT')
+                .map((feature) => feature.value)
+            )
+          })
+
+        if (additionalFeats.length > 0) {
+          resolvedFeatures.push(...(await resolveFeats(additionalFeats)))
+        }
+        return resolvedFeatures
+      }
+      allFeatures.push(...(await resolveFeats(feats)))
     }
 
     const pc = new PlayerCharacter(

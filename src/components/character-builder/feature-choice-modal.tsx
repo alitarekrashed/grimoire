@@ -30,7 +30,7 @@ export function FeatureChoiceModal<T extends EntityModel>({
     )
     setSelected(entity)
     setSaved(entity)
-    onSave(entity!)
+    // TODO ALI whenever the input changes, if entity is undefined, should we be calling onSave to update the underlying character?))
   }, [entities, initialId])
 
   return (
