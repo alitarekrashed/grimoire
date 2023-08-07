@@ -3,6 +3,7 @@ import { ParsedDescription } from '../parsed-description/parsed-description'
 import { SourcedFeature } from '@/models/player-character'
 import { LabelsList } from '../labels-list/labels-list'
 import styles from './features-tabs.module.css'
+import { ActionInlineDisplay } from '../actions/action-inline-display'
 
 export function FeaturesTabs({
   features,
@@ -28,14 +29,12 @@ export function FeaturesTabs({
       </Tabs.List>
       <Tabs.Content value="actions">
         <span className="text-xs">
-          {actions.map((action, index) => {
-            return (
-              <ParsedDescription
-                description={action.feature.value}
-                key={`${action}-${index}`}
-              ></ParsedDescription>
-            )
-          })}
+          {actions.map((action, index) => (
+            <ActionInlineDisplay
+              key={`${action}-${index}`}
+              actionName={action.feature.value}
+            ></ActionInlineDisplay>
+          ))}
         </span>
       </Tabs.Content>
       <Tabs.Content value="features">
