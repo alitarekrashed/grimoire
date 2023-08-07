@@ -22,7 +22,7 @@ export function AncestryFeatChoiceModal({
       .then((feats) => {
         setFeats(feats)
       })
-  }, [])
+  }, [traits])
 
   return (
     <>
