@@ -34,7 +34,8 @@ export async function searchEntities(search?: string): Promise<EntityModel[]> {
 
 export async function getAllEntities<T extends EntityModel>(
   entity_types: ModelType[],
-  name?: string
+  name?: string,
+  traits?: string[]
 ): Promise<WithId<T>[]> {
   const collection = await getEntitiesCollection<T>()
 
@@ -49,6 +50,12 @@ export async function getAllEntities<T extends EntityModel>(
     search = {
       ...search,
       name: { $regex: name, $options: 'i' },
+    }
+  }
+  if (traits && traits.length > 0) {
+    search = {
+      ...search,
+      traits: { $in: traits },
     }
   }
   return collection.find(search).sort('name', 1).toArray()

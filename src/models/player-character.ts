@@ -1,3 +1,4 @@
+import { resolve } from 'path'
 import { Ancestry, Attribute } from './db/ancestry'
 import { Background, ProficiencyFeatureValue } from './db/background'
 import {
@@ -10,10 +11,12 @@ import {
   ConditionalFeatureValue,
   Feature,
   FeatureType,
+  ModifierFeatureValue,
   ResistanceFeatureValue,
   featureMatcher,
 } from './db/feature'
 import { Heritage } from './db/heritage'
+import { Source } from 'postcss'
 
 export interface Attributes {
   Strength: number
@@ -47,6 +50,36 @@ const ATTRIBUTES: Attribute[] = [
   'Wisdom',
   'Charisma',
 ]
+
+async function resolveFeats(feats: string[]): Promise<SourcedFeature[]> {
+  let resolvedFeatures: SourcedFeature[] = []
+  const resolvedFeats: Feat[][] = await Promise.all(
+    feats.map((feat) => PlayerCharacter.getFeat(feat))
+  )
+
+  let additionalFeats: string[] = []
+  resolvedFeats
+    .map((feat: Feat[]) => feat[0])
+    .forEach((feat: Feat) => {
+      resolvedFeatures.push(
+        ...feat.features
+          .filter((feature) => feature.type !== 'FEAT')
+          .map((feature: Feature) => {
+            return { source: feat.name, feature: feature }
+          })
+      )
+      additionalFeats.push(
+        ...feat.features
+          .filter((feature) => feature.type === 'FEAT')
+          .map((feature) => feature.value)
+      )
+    })
+
+  if (additionalFeats.length > 0) {
+    resolvedFeatures.push(...(await resolveFeats(additionalFeats)))
+  }
+  return resolvedFeatures
+}
 
 function buildChoiceSelectionArray(
   count: number,
@@ -180,7 +213,18 @@ export class PlayerCharacter {
     private background?: Background
   ) {
     this.level = character.level
-    this.speed = this.ancestry.speed
+
+    // TODO ALI need a better way to handle this, also need to check the type of modifier to ensure we aren't double counting circumtance bonuses etc.
+    this.speed =
+      this.ancestry.speed +
+      this.allFeatures
+        .filter(
+          (value) =>
+            value.feature.type === 'MODIFIER' &&
+            (value.feature.value as ModifierFeatureValue).type === 'Speed'
+        )
+        .map((value) => value.feature.value.modifier.value)
+        .reduce((sum, val) => sum + val, 0)
     this.size = this.ancestry.size
     this.attributes = {
       Strength: 0,
@@ -301,6 +345,10 @@ export class PlayerCharacter {
     return this.features
       .filter((feature) => feature.feature.type === 'MISC')
       .map((feature) => feature)
+  }
+
+  public getLevelFeatures(): SourcedFeature[] {
+    return this.character.features['1']
   }
 
   public getResistances(): SourcedFeature[] {
@@ -468,6 +516,16 @@ export class PlayerCharacter {
       : undefined
   }
 
+  static async getFeat(name: string) {
+    return name
+      ? await (
+          await fetch(`http://localhost:3000/api/feats?name=${name}`, {
+            cache: 'no-store',
+          })
+        ).json()
+      : undefined
+  }
+
   static async build(character: CharacterEntity): Promise<PlayerCharacter> {
     const [ancestry, heritage, background] = await Promise.all([
       PlayerCharacter.getAncestry(character.ancestry.id),
@@ -510,6 +568,9 @@ export class PlayerCharacter {
         })
       )
     }
+
+    let feats: string[] = []
+
     if (background) {
       allFeatures.push(
         ...background.skills.map((skill: ProficiencyFeatureValue) => {
@@ -520,18 +581,16 @@ export class PlayerCharacter {
         })
       )
 
-      let bgFeat: Feat[] = await (
-        await fetch(`http://localhost:3000/api/feats?name=${background.feat}`, {
-          cache: 'no-store',
-        })
-      ).json()
-
-      allFeatures.push(
-        ...bgFeat[0].features.map((feature: Feature) => {
-          return { source: bgFeat[0].name, feature: feature }
-        })
-      )
+      feats.push(background.feat)
     }
+
+    feats.push(
+      ...character.features[1]
+        .filter((value) => value.feature.type === 'FEAT')
+        .map((value) => value.feature.value)
+    )
+
+    allFeatures.push(...(await resolveFeats(feats)))
 
     const pc = new PlayerCharacter(
       character,

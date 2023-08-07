@@ -79,7 +79,6 @@ export function LanguagesModal({
       })}
     </div>
   )
-  console.log(modifiedAncestry)
   return (
     <Modal
       size="small"

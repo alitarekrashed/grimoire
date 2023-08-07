@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb'
 import { Attribute } from './ancestry'
+import { SourcedFeature } from '../player-character'
 
 export interface CharacterEntity {
   _id: string | ObjectId
@@ -7,6 +8,7 @@ export interface CharacterEntity {
   level: number
   ancestry: CharacterAncestry
   background: CharacterBackground
+  features: { '1': SourcedFeature[] }
 }
 
 export interface CharacterAncestry {

@@ -8,12 +8,24 @@ export type FeatureType =
   | 'CONDITIONAL'
   | 'PROFICIENCY'
   | 'LANGUAGE'
+  | 'MODIFIER'
+  | 'FEAT'
 export type CalculationFormula = 'half-level'
 export type ConditionalOperator = 'has'
+export type ModifierType = 'Perception' | 'Speed'
 
 export interface Feature {
   type: FeatureType
   value: any
+}
+
+export interface ModifierFeatureValue {
+  type: ModifierType
+  condition?: 'string'
+  modifier: {
+    value: number
+    type?: 'circumstance'
+  }
 }
 
 export interface ResistanceFeatureValue {
