@@ -9,6 +9,7 @@ export type FeatureType =
   | 'PROFICIENCY'
   | 'LANGUAGE'
   | 'MODIFIER'
+  | 'FEAT'
 export type CalculationFormula = 'half-level'
 export type ConditionalOperator = 'has'
 

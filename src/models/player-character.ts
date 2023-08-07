@@ -1,3 +1,4 @@
+import { resolve } from 'path'
 import { Ancestry, Attribute } from './db/ancestry'
 import { Background, ProficiencyFeatureValue } from './db/background'
 import {
@@ -468,6 +469,16 @@ export class PlayerCharacter {
       : undefined
   }
 
+  static async getFeat(name: string) {
+    return name
+      ? await (
+          await fetch(`http://localhost:3000/api/feats?name=${name}`, {
+            cache: 'no-store',
+          })
+        ).json()
+      : undefined
+  }
+
   static async build(character: CharacterEntity): Promise<PlayerCharacter> {
     const [ancestry, heritage, background] = await Promise.all([
       PlayerCharacter.getAncestry(character.ancestry.id),
@@ -520,17 +531,29 @@ export class PlayerCharacter {
         })
       )
 
-      let bgFeat: Feat[] = await (
-        await fetch(`http://localhost:3000/api/feats?name=${background.feat}`, {
-          cache: 'no-store',
-        })
-      ).json()
-
-      allFeatures.push(
-        ...bgFeat[0].features.map((feature: Feature) => {
-          return { source: bgFeat[0].name, feature: feature }
-        })
+      let feats: string[] = []
+      feats.push(background.feat)
+      feats.push(
+        ...character.features[1]
+          .filter((value) => value.feature.type === 'FEAT')
+          .map((value) => value.feature.value)
       )
+
+      const resolvedFeats: Feat[][] = await Promise.all(
+        feats.map((feat) => PlayerCharacter.getFeat(feat))
+      )
+
+      console.log(resolvedFeats)
+
+      resolvedFeats
+        .map((feat: Feat[]) => feat[0])
+        .forEach((feat: Feat) => {
+          allFeatures.push(
+            ...feat.features.map((feature: Feature) => {
+              return { source: feat.name, feature: feature }
+            })
+          )
+        })
     }
 
     const pc = new PlayerCharacter(
