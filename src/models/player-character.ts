@@ -304,6 +304,10 @@ export class PlayerCharacter {
       .map((feature) => feature)
   }
 
+  public getLevelFeatures(): SourcedFeature[] {
+    return this.character.features['1']
+  }
+
   public getResistances(): SourcedFeature[] {
     return this.features
       .filter((feature) => feature.feature.type === 'RESISTANCE')

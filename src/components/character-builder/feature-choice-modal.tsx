@@ -8,19 +8,25 @@ export function FeatureChoiceModal<T extends EntityModel>({
   label,
   entities,
   initialId,
+  idField,
   onSave,
 }: {
   label: string
   entities: T[]
   initialId: string
+  idField?: keyof EntityModel
   onSave: (entity: T) => void
 }) {
   const [saved, setSaved] = useState<T>()
   const [selected, setSelected] = useState<T>()
 
+  const resolveIdField: () => keyof EntityModel = () => idField ?? '_id'
+
   useEffect(() => {
     const entity = entities.find(
-      (entity: EntityModel) => entity._id === initialId
+      (entity: EntityModel) =>
+        entity[resolveIdField()].toString().toLowerCase() ===
+        initialId.toString().toLowerCase()
     )
     setSelected(entity)
     setSaved(entity)
@@ -47,16 +53,22 @@ export function FeatureChoiceModal<T extends EntityModel>({
           >
             <div className="col-span-1 grid grid-cols-1 auto-rows-min h-full border-r border-r-stone-300/25 overflow-y-scroll">
               {entities.map((entity) => (
-                <div className={`h-full`} key={entity._id.toString()}>
+                <div
+                  className={`h-full`}
+                  key={entity[resolveIdField()].toString()}
+                >
                   <div
                     className={`w-full pl-2 pr-4 border-b border-b-stone-300/25 data-[state=active]:text-rose-400 data-[state=active]:border-b-rose-300`}
-                    data-value={entity._id}
-                    data-state={entity._id === selected?._id && 'active'}
+                    data-value={entity[resolveIdField()]}
+                    data-state={
+                      entity[resolveIdField()] ===
+                        (selected && selected[resolveIdField()]) && 'active'
+                    }
                     onClick={(e) => {
                       setSelected(
                         entities.find(
                           (entity: T) =>
-                            entity._id ===
+                            entity[resolveIdField()] ===
                             (e.target as HTMLElement).dataset.value
                         )
                       )
@@ -86,7 +98,11 @@ export function FeatureChoiceModal<T extends EntityModel>({
             label: 'Cancel',
             onClick: () => {
               setSelected(
-                entities.find((entity: T) => entity._id === initialId)
+                entities.find(
+                  (entity: T) =>
+                    entity[resolveIdField()].toString().toLowerCase() ===
+                    initialId.toString().toLowerCase()
+                )
               )
             },
           },

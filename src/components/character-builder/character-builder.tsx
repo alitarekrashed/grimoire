@@ -15,6 +15,8 @@ import { AttributesModal } from './attributes-modal'
 import { BackgroundChoiceModal } from './background-choice-modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LanguagesModal } from './languages-modal'
+import { AncestryFeatChoiceModal } from './ancestry-feat.modal'
+import { Feat } from '@/models/db/feat'
 
 export default function CharacterBuilderModal({
   playerCharacter,
@@ -67,7 +69,7 @@ export default function CharacterBuilderModal({
     })
   }
 
-  const handleLanguageChange = (chosenLanguages: stirng[]) => {
+  const handleLanguageChange = (chosenLanguages: string[]) => {
     let updated: CharacterEntity = cloneDeep(character.getCharacter())
     updated.ancestry.language_selections = chosenLanguages
     PlayerCharacter.build(updated).then((val) => {
@@ -79,6 +81,11 @@ export default function CharacterBuilderModal({
     character.updateBackground(backgroundId).then((val) => {
       setCharacter(val)
     })
+  }
+
+  const handleFeatChange = (feat: Feat) => {
+    console.log('feat saved!')
+    console.log(feat)
   }
 
   return (
@@ -144,6 +151,18 @@ export default function CharacterBuilderModal({
                     ancestry={character.getAncestry()}
                   ></LanguagesModal>
                 </div>
+              </div>
+              <div>
+                {character.getLevelFeatures().map((value) => {
+                  return (
+                    <AncestryFeatChoiceModal
+                      key={`${value.source}-1`}
+                      existingFeatName={value.feature.value}
+                      traits={character.getTraits()}
+                      onChange={handleFeatChange}
+                    ></AncestryFeatChoiceModal>
+                  )
+                })}
               </div>
             </div>
             <div className="mb-128"></div>

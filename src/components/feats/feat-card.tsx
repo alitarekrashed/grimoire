@@ -20,16 +20,18 @@ export default function FeatCard({
 }) {
   const attributes = (
     <div className="text-sm">
-      <LabelsList
-        fieldDefinitions={[
-          {
-            label: 'Prerequisites',
-            value: value.prerequisites
-              .map((val) => renderPrerequisite(val))
-              .join('; '),
-          },
-        ]}
-      ></LabelsList>
+      {value?.prerequisites && (
+        <LabelsList
+          fieldDefinitions={[
+            {
+              label: 'Prerequisites',
+              value: value.prerequisites
+                .map((val) => renderPrerequisite(val))
+                .join('; '),
+            },
+          ]}
+        ></LabelsList>
+      )}
     </div>
   )
   return (
