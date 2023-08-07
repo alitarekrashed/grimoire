@@ -51,6 +51,36 @@ const ATTRIBUTES: Attribute[] = [
   'Charisma',
 ]
 
+async function resolveFeats(feats: string[]): Promise<SourcedFeature[]> {
+  let resolvedFeatures: SourcedFeature[] = []
+  const resolvedFeats: Feat[][] = await Promise.all(
+    feats.map((feat) => PlayerCharacter.getFeat(feat))
+  )
+
+  let additionalFeats: string[] = []
+  resolvedFeats
+    .map((feat: Feat[]) => feat[0])
+    .forEach((feat: Feat) => {
+      resolvedFeatures.push(
+        ...feat.features
+          .filter((feature) => feature.type !== 'FEAT')
+          .map((feature: Feature) => {
+            return { source: feat.name, feature: feature }
+          })
+      )
+      additionalFeats.push(
+        ...feat.features
+          .filter((feature) => feature.type === 'FEAT')
+          .map((feature) => feature.value)
+      )
+    })
+
+  if (additionalFeats.length > 0) {
+    resolvedFeatures.push(...(await resolveFeats(additionalFeats)))
+  }
+  return resolvedFeatures
+}
+
 function buildChoiceSelectionArray(
   count: number,
   choices: any[],
@@ -538,6 +568,9 @@ export class PlayerCharacter {
         })
       )
     }
+
+    let feats: string[] = []
+
     if (background) {
       allFeatures.push(
         ...background.skills.map((skill: ProficiencyFeatureValue) => {
@@ -548,45 +581,16 @@ export class PlayerCharacter {
         })
       )
 
-      let feats: string[] = []
       feats.push(background.feat)
-      feats.push(
-        ...character.features[1]
-          .filter((value) => value.feature.type === 'FEAT')
-          .map((value) => value.feature.value)
-      )
-
-      let resolveFeats = async (feats: string[]): Promise<SourcedFeature[]> => {
-        let resolvedFeatures: SourcedFeature[] = []
-        const resolvedFeats: Feat[][] = await Promise.all(
-          feats.map((feat) => PlayerCharacter.getFeat(feat))
-        )
-
-        let additionalFeats: string[] = []
-        resolvedFeats
-          .map((feat: Feat[]) => feat[0])
-          .forEach((feat: Feat) => {
-            resolvedFeatures.push(
-              ...feat.features
-                .filter((feature) => feature.type !== 'FEAT')
-                .map((feature: Feature) => {
-                  return { source: feat.name, feature: feature }
-                })
-            )
-            additionalFeats.push(
-              ...feat.features
-                .filter((feature) => feature.type === 'FEAT')
-                .map((feature) => feature.value)
-            )
-          })
-
-        if (additionalFeats.length > 0) {
-          resolvedFeatures.push(...(await resolveFeats(additionalFeats)))
-        }
-        return resolvedFeatures
-      }
-      allFeatures.push(...(await resolveFeats(feats)))
     }
+
+    feats.push(
+      ...character.features[1]
+        .filter((value) => value.feature.type === 'FEAT')
+        .map((value) => value.feature.value)
+    )
+
+    allFeatures.push(...(await resolveFeats(feats)))
 
     const pc = new PlayerCharacter(
       character,
