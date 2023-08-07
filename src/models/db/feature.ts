@@ -12,6 +12,7 @@ export type FeatureType =
   | 'FEAT'
 export type CalculationFormula = 'half-level'
 export type ConditionalOperator = 'has'
+export type ModifierType = 'Perception' | 'Speed'
 
 export interface Feature {
   type: FeatureType
@@ -19,12 +20,11 @@ export interface Feature {
 }
 
 export interface ModifierFeatureValue {
-  type: 'SKILL'
-  statistic: 'Perception'
-  condition: 'string'
+  type: ModifierType
+  condition?: 'string'
   modifier: {
     value: number
-    type: 'circumstance'
+    type?: 'circumstance'
   }
 }
 
