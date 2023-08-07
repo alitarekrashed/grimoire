@@ -4,6 +4,7 @@ import { ChangeEvent, useState } from 'react'
 import { SearchResult } from './search-result'
 import { ysabeau_semibold, ysabeau_thin } from '@/utils/fonts'
 import { EntityModel } from '@/models/db/entity-model'
+import { baseRecordPageRouteFactory } from '@/utils/entity-url.factory'
 
 export function SearchBar({ size }: { size?: 'small' | 'large' }) {
   const router = useRouter()
@@ -75,7 +76,9 @@ export function SearchBar({ size }: { size?: 'small' | 'large' }) {
                   data={suggestion}
                   handleClick={() =>
                     router.push(
-                      `/reference/${getRoute(suggestion)}/${suggestion._id}`
+                      `${baseRecordPageRouteFactory(suggestion.entity_type)}/${
+                        suggestion._id
+                      }`
                     )
                   }
                 ></SearchResult>
@@ -86,30 +89,4 @@ export function SearchBar({ size }: { size?: 'small' | 'large' }) {
       </div>
     </>
   )
-}
-
-function getRoute(data: EntityModel): string {
-  switch (data.entity_type) {
-    case 'EQUIPMENT':
-    case 'EQUIPMENT_WITH_VARIANTS':
-      return 'equipment'
-    case 'SPELL':
-      return 'spells'
-    case 'CONDITION':
-      return 'conditions'
-    case 'TRAIT':
-      return 'traits'
-    case 'ANCESTRY':
-      return 'ancestries'
-    case 'RULE':
-      return 'rules'
-    case 'HERITAGE':
-      return 'heritages'
-    case 'ACTION':
-      return 'actions'
-    case 'BACKGROUND':
-      return 'backgrounds'
-    case 'FEAT':
-      return 'feats'
-  }
 }

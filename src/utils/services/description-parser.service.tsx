@@ -1,15 +1,9 @@
 import EntityHoverableDescription from '@/components/entity-hoverable-description/entity-description-hover'
+import { EntityModal } from '@/components/entity-modal/entity-modal'
 import { EntityModel, ModelType } from '@/models/db/entity-model'
 import { isString } from 'lodash'
 import React from 'react'
-import { retrieveCondition } from './condition.service'
-import { retrieveEquipment } from './equipment.service'
-import { retrieveSpell } from './spell.service'
-import { retrieveTrait } from './trait.service'
-import { retrieveRule } from './rule.service'
-import { retrieveAction } from './action.service'
-import { EntityModal } from '@/components/entity-modal/entity-modal'
-import { retrieveFeat } from './feat.service'
+import { retrieveEntity } from './reference-lookup.service'
 
 export function parseDescription(description: any[]): Promise<any[]> {
   return (async () => {
@@ -96,12 +90,10 @@ export function createComponentsForType(
   type: ModelType
 ): Promise<any[]> {
   return (async () => {
-    let lookupFunction: (key: any) => Promise<EntityModel> =
-      lookupFunctionFactory(type)
     let lowercasedKey = type.toLowerCase()
     const key = currentPart.split(`@${lowercasedKey}:`)[1].match(/^[^@]*/)![0]
     let tokens: any[] = currentPart.split(`@${lowercasedKey}:${key}@`)
-    const entity: EntityModel = await lookupFunction(key)
+    const entity: EntityModel = await retrieveEntity(key, type)
     let newParts: any[] = []
 
     for (let j = 0; j < tokens.length; j++) {
@@ -127,29 +119,6 @@ export function createComponentsForType(
     }
     return newParts
   })()
-}
-
-function lookupFunctionFactory(
-  type: ModelType
-): (key: any) => Promise<EntityModel> {
-  switch (type) {
-    case 'CONDITION':
-      return retrieveCondition
-    case 'TRAIT':
-      return retrieveTrait
-    case 'EQUIPMENT':
-      return retrieveEquipment
-    case 'SPELL':
-      return retrieveSpell
-    case 'RULE':
-      return retrieveRule
-    case 'ACTION':
-      return retrieveAction
-    case 'FEAT':
-      return retrieveFeat
-    default:
-      return () => undefined!
-  }
 }
 
 function displayComponentFactory(
