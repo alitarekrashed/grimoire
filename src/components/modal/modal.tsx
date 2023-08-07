@@ -30,6 +30,7 @@ export function Modal({
         <Dialog.Overlay className="bg-stone-950 opacity-40 fixed h-full inset-0"></Dialog.Overlay>
         <div className={`fixed ${modalSize()}`}>
           <Dialog.Content
+            onInteractOutside={(e) => e.preventDefault()}
             className={`bg-stone-900 rounded-md focus:outline-none border border-stone-300/20 h-full`}
           >
             <Dialog.Title />
