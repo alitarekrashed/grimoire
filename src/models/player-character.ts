@@ -547,8 +547,6 @@ export class PlayerCharacter {
         feats.map((feat) => PlayerCharacter.getFeat(feat))
       )
 
-      console.log(resolvedFeats)
-
       resolvedFeats
         .map((feat: Feat[]) => feat[0])
         .forEach((feat: Feat) => {

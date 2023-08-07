@@ -20,7 +20,6 @@ export function AncestryFeatChoiceModal({
     })
       .then((result) => result.json())
       .then((feats) => {
-        console.log(feats)
         setFeats(feats)
       })
   }, [])
