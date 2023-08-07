@@ -1,5 +1,6 @@
 'use client'
 
+import CalculatedDisplay from '@/components/calculated-display/calculated-display'
 import { TraitsList } from '@/components/card/traits-list'
 import CharacterBuilderModal from '@/components/character-builder/character-builder'
 import { FeaturesTabs } from '@/components/character-display/features-tabs'
@@ -131,7 +132,9 @@ function CharacterDisplay({
             <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
               <div className="grid grid-rows-2 grid-cols-2">
                 <span className="font-bold">Speed</span>
-                <span>{character.getSpeed()}</span>
+                <CalculatedDisplay
+                  values={character.getSpeed()}
+                ></CalculatedDisplay>
                 <span className="font-bold">Size</span>
                 <span>{character.getSize()}</span>
               </div>

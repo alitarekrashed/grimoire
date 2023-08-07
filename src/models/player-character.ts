@@ -17,6 +17,7 @@ import {
 } from './db/feature'
 import { Heritage } from './db/heritage'
 import { Source } from 'postcss'
+import { ModifierValue } from '@/components/calculated-display/calculated-display'
 
 export interface Attributes {
   Strength: number
@@ -198,7 +199,7 @@ function calculateBackgroundAttributeModifications(
 
 export class PlayerCharacter {
   private level!: number
-  private speed!: number
+  private speed!: ModifierValue[]
   private size!: string
   private attributes!: Attributes
   private traits: string[] = []
@@ -214,17 +215,23 @@ export class PlayerCharacter {
   ) {
     this.level = character.level
 
-    // TODO ALI need a better way to handle this, also need to check the type of modifier to ensure we aren't double counting circumtance bonuses etc.
-    this.speed =
-      this.ancestry.speed +
-      this.allFeatures
+    this.speed = [
+      { value: this.ancestry.speed, source: `Base (${ancestry.name})` },
+    ]
+    this.speed.push(
+      ...this.allFeatures
         .filter(
           (value) =>
             value.feature.type === 'MODIFIER' &&
             (value.feature.value as ModifierFeatureValue).type === 'Speed'
         )
-        .map((value) => value.feature.value.modifier.value)
-        .reduce((sum, val) => sum + val, 0)
+        .map((value) => {
+          return {
+            ...value.feature.value.modifier,
+            source: value.source,
+          }
+        })
+    )
     this.size = this.ancestry.size
     this.attributes = {
       Strength: 0,
@@ -313,7 +320,7 @@ export class PlayerCharacter {
     )} ${ancestry}`
   }
 
-  public getSpeed(): number {
+  public getSpeed(): ModifierValue[] {
     return this.speed
   }
 
