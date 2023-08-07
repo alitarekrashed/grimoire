@@ -5,7 +5,7 @@ import { EntityModel } from '@/models/db/entity-model'
 import { roboto_serif } from '@/utils/fonts'
 import * as Collapsible from '@radix-ui/react-collapsible'
 import * as Separator from '@radix-ui/react-separator'
-import { RefObject, useCallback, useEffect, useState } from 'react'
+import { RefObject, useEffect, useState } from 'react'
 import {
   ActivationDescription,
   buildActionValue,
