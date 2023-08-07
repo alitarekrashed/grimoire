@@ -30,6 +30,7 @@ export function FeatureChoiceModal<T extends EntityModel>({
     )
     setSelected(entity)
     setSaved(entity)
+    onSave(entity!)
   }, [entities, initialId])
 
   return (
