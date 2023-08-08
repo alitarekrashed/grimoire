@@ -1,9 +1,6 @@
 import { Ancestry, Attribute, AttributeModifier } from '@/models/db/ancestry'
 import { Background } from '@/models/db/background'
-import {
-  CharacterAncestry,
-  CharacterEntity,
-} from '@/models/db/character-entity'
+import { CharacterEntity } from '@/models/db/character-entity'
 import { ClassEntity } from '@/models/db/class_entity'
 import { AttributeOptions } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
@@ -21,11 +18,10 @@ const ATTRIBUTES: Attribute[] = [
 ]
 
 function getAncestryAttributeChoices(
-  characterAncestry: CharacterAncestry,
   character: CharacterEntity,
   ancestry: Ancestry
 ) {
-  if (characterAncestry.free_attribute === false) {
+  if (character.attributes.free_ancestry_attribute_selection === false) {
     return getAncestryDefaultAttributeChoices(character, ancestry)
   } else {
     return getAncestryFreeAttributeChoices(character)
@@ -109,32 +105,24 @@ function getClassAttributeChoices(
 export function AttributesModal({
   onAttributeUpdate,
   characterEntity,
-  characterAncestry,
   ancestry,
   background,
   classEntity,
 }: {
   onAttributeUpdate: (character: CharacterEntity) => void
   characterEntity: CharacterEntity
-  characterAncestry: CharacterAncestry
   ancestry: Ancestry
   background: Background
   classEntity: ClassEntity
 }) {
   const [characterState, setCharacterState] = useState<{
     character: CharacterEntity
-    ancestry: CharacterAncestry
   }>({
     character: characterEntity,
-    ancestry: characterAncestry,
   })
 
   const [choices, setChoices] = useState<AttributeOptions>({
-    ancestry: getAncestryAttributeChoices(
-      characterState.ancestry,
-      characterState.character,
-      ancestry
-    ),
+    ancestry: getAncestryAttributeChoices(characterState.character, ancestry),
     background: getBackgroundAttributeChoices(
       characterState.character,
       background
@@ -153,11 +141,7 @@ export function AttributesModal({
 
   useEffect(() => {
     setChoices({
-      ancestry: getAncestryAttributeChoices(
-        characterState.ancestry,
-        characterState.character,
-        ancestry
-      ),
+      ancestry: getAncestryAttributeChoices(characterState.character, ancestry),
       background: getBackgroundAttributeChoices(
         characterState.character,
         background
@@ -202,12 +186,19 @@ export function AttributesModal({
                 <input
                   className="bg-stone-700 mt-0.5"
                   type="checkbox"
-                  checked={characterState.ancestry.free_attribute}
+                  checked={
+                    characterState.character.attributes
+                      .free_ancestry_attribute_selection
+                  }
                   onChange={(e) => {
                     let updated = cloneDeep(characterState)
-                    updated.ancestry.free_attribute =
-                      !characterState.ancestry.free_attribute
-                    if (updated.ancestry.free_attribute) {
+                    updated.character.attributes.free_ancestry_attribute_selection =
+                      !characterState.character.attributes
+                        .free_ancestry_attribute_selection
+                    if (
+                      updated.character.attributes
+                        .free_ancestry_attribute_selection
+                    ) {
                       updated.character.attributes.ancestry = [
                         undefined!,
                         undefined!,
@@ -300,7 +291,6 @@ export function AttributesModal({
           onClick: () => {
             setCharacterState({
               character: characterEntity,
-              ancestry: characterAncestry,
             })
           },
         },

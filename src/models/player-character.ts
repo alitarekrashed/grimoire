@@ -97,11 +97,10 @@ function buildChoiceSelectionArray(
 }
 
 function calculateAncestryAttributeModifications(
-  characterAncestry: CharacterAncestry,
   character: CharacterEntity,
   ancestry: Ancestry
 ) {
-  if (characterAncestry.free_attribute === false) {
+  if (character.attributes.free_ancestry_attribute_selection === false) {
     return calculateAncestryDefaultAttributeModifications(character, ancestry)
   } else {
     return calculateAncestryFreeAttributeModifications(character)
@@ -445,7 +444,6 @@ export class PlayerCharacter {
     }
 
     const ancestryMods: any = calculateAncestryAttributeModifications(
-      this.character.ancestry,
       this.character,
       this.ancestry
     )

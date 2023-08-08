@@ -14,6 +14,7 @@ export interface CharacterEntity {
 }
 
 export interface CharacterAttributes {
+  free_ancestry_attribute_selection: boolean
   ancestry: Attribute[]
   background: Attribute[]
   class: Attribute[]
@@ -23,7 +24,6 @@ export interface CharacterAttributes {
 export interface CharacterAncestry {
   id: string
   language_selections: string[]
-  free_attribute: boolean
   heritage_id: string
 }
 
