@@ -3,6 +3,7 @@
 import {
   CharacterAncestry,
   CharacterBackground,
+  CharacterClass,
   CharacterEntity,
 } from '@/models/db/character-entity'
 import { PlayerCharacter } from '@/models/player-character'
@@ -59,11 +60,13 @@ export default function CharacterBuilderModal({
 
   const handleAttributeChange = (
     ancestry: CharacterAncestry,
-    background: CharacterBackground
+    background: CharacterBackground,
+    characterClass: CharacterClass
   ) => {
     let updated: CharacterEntity = cloneDeep(character.getCharacter())
     updated.ancestry = ancestry
     updated.background = background
+    updated.character_class = characterClass
     PlayerCharacter.build(updated).then((val) => {
       setCharacter(val)
     })
@@ -144,6 +147,8 @@ export default function CharacterBuilderModal({
                     ancestry={character.getAncestry()}
                     characterBackground={character.getCharacter().background}
                     background={character.getBackground()}
+                    characterClass={character.getCharacter().character_class}
+                    classEntity={character.getClassEntity()}
                     onAttributeUpdate={handleAttributeChange}
                   ></AttributesModal>
                 </div>

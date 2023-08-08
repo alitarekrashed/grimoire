@@ -4,6 +4,7 @@ import { Background, ProficiencyFeatureValue } from './db/background'
 import {
   CharacterAncestry,
   CharacterBackground,
+  CharacterClass,
   CharacterEntity,
 } from './db/character-entity'
 import { Feat } from './db/feat'
@@ -37,11 +38,13 @@ export interface SourcedFeature {
 export interface AttributeSelections {
   ancestry: Attribute[]
   background: Attribute[]
+  class: Attribute[]
 }
 
 export interface AttributeOptions {
   ancestry: Attribute[][]
   background: Attribute[][]
+  class: Attribute[][]
 }
 
 const ATTRIBUTES: Attribute[] = [
@@ -198,6 +201,27 @@ function calculateBackgroundAttributeModifications(
   return attributes
 }
 
+function calculateClassAttributeModifications(
+  characterClass: CharacterClass,
+  classEntity: ClassEntity
+) {
+  let attributes: any = {}
+  ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
+
+  characterClass.attribute_boost_selections = buildChoiceSelectionArray(
+    classEntity.key_ability.length,
+    characterClass.attribute_boost_selections,
+    [],
+    undefined
+  )
+
+  characterClass.attribute_boost_selections
+    .filter((val) => val)
+    .forEach((val) => (attributes[val!] += 1))
+
+  return attributes
+}
+
 export class PlayerCharacter {
   private level!: number
   private speed!: ModifierValue[]
@@ -305,6 +329,10 @@ export class PlayerCharacter {
     return this.background!
   }
 
+  public getClassEntity(): ClassEntity {
+    return this.classEntity!
+  }
+
   public getHeritageId(): string {
     return this.heritage?._id.toString() ?? ''
   }
@@ -399,6 +427,7 @@ export class PlayerCharacter {
     return {
       ancestry: this.character.ancestry.attribute_boost_selections,
       background: this.character.background.attribute_boost_selections,
+      class: this.character.character_class.attribute_boost_selections,
     }
   }
 
@@ -440,6 +469,14 @@ export class PlayerCharacter {
         )
       : undefined
 
+    // TODO calculate modifications here for class here
+    const classMods: any = this.classEntity
+      ? calculateClassAttributeModifications(
+          this.character.character_class,
+          this.classEntity
+        )
+      : undefined
+
     Object.keys(ancestryMods).forEach(
       (attribute: string) => (attributes[attribute] += ancestryMods[attribute])
     )
@@ -447,6 +484,10 @@ export class PlayerCharacter {
     Object.keys(backgroundMods).forEach(
       (attribute: string) =>
         (attributes[attribute] += backgroundMods[attribute])
+    )
+
+    Object.keys(classMods).forEach(
+      (attribute: string) => (attributes[attribute] += classMods[attribute])
     )
 
     this.attributes = attributes
