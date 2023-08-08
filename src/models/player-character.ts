@@ -1,7 +1,7 @@
 import { ModifierValue } from '@/components/calculated-display/calculated-display'
 import { Ancestry, Attribute } from './db/ancestry'
 import { Background, ProficiencyFeatureValue } from './db/background'
-import { CharacterAncestry, CharacterEntity } from './db/character-entity'
+import { CharacterEntity } from './db/character-entity'
 import { ClassEntity } from './db/class_entity'
 import { Feat } from './db/feat'
 import {
@@ -578,7 +578,7 @@ export class PlayerCharacter {
       PlayerCharacter.getAncestry(character.ancestry.id),
       PlayerCharacter.getHeritage(character.ancestry.heritage_id),
       PlayerCharacter.getBackground(character.background.id),
-      PlayerCharacter.getClass(character.character_class.id),
+      PlayerCharacter.getClass(character.class_id),
     ])
 
     const allFeatures: SourcedFeature[] = []
