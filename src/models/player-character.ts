@@ -276,7 +276,7 @@ export class PlayerCharacter {
 
   public async updateAncestry(ancestryId: string): Promise<PlayerCharacter> {
     let updated = cloneDeep(this.character)
-    updated.ancestry.id = ancestryId
+    updated.ancestry_id = ancestryId
     updated.attributes.ancestry = []
     updated.languages = []
     updated.heritage_id = ''
@@ -574,7 +574,7 @@ export class PlayerCharacter {
 
   static async build(character: CharacterEntity): Promise<PlayerCharacter> {
     const [ancestry, heritage, background, classEntity] = await Promise.all([
-      PlayerCharacter.getAncestry(character.ancestry.id),
+      PlayerCharacter.getAncestry(character.ancestry_id),
       PlayerCharacter.getHeritage(character.heritage_id),
       PlayerCharacter.getBackground(character.background_id),
       PlayerCharacter.getClass(character.class_id),

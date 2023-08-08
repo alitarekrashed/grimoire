@@ -8,10 +8,10 @@ export interface CharacterEntity {
   level: number
   attributes: CharacterAttributes
   languages: string[]
+  ancestry_id: string
   background_id: string
   class_id: string
   heritage_id: string
-  ancestry: CharacterAncestry
   features: { '1': SourcedFeature[] }
 }
 
@@ -21,8 +21,4 @@ export interface CharacterAttributes {
   background: Attribute[]
   class: Attribute[]
   level_1: Attribute[]
-}
-
-export interface CharacterAncestry {
-  id: string
 }
