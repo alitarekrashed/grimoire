@@ -1,23 +1,18 @@
 'use client'
 
-import {
-  CharacterAncestry,
-  CharacterBackground,
-  CharacterClass,
-  CharacterEntity,
-} from '@/models/db/character-entity'
+import { CharacterEntity } from '@/models/db/character-entity'
+import { Feat } from '@/models/db/feat'
 import { PlayerCharacter } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Modal } from '../modal/modal'
 import { AncestryChoiceModal } from './ancestry-choice-modal'
+import { AncestryFeatChoiceModal } from './ancestry-feat.modal'
 import { AttributesModal } from './attributes-modal'
 import { BackgroundChoiceModal } from './background-choice-modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LanguagesModal } from './languages-modal'
-import { AncestryFeatChoiceModal } from './ancestry-feat.modal'
-import { Feat } from '@/models/db/feat'
 
 export default function CharacterBuilderModal({
   playerCharacter,
@@ -46,27 +41,16 @@ export default function CharacterBuilderModal({
   }
 
   const handleHeritageChange = (heritageId: string) => {
-    let newCharacter: CharacterEntity = {
-      ...character!.getCharacter(),
-    }
-    newCharacter.ancestry = {
-      ...newCharacter.ancestry,
-      heritage_id: heritageId,
-    }
-    PlayerCharacter.build(newCharacter).then((val) => {
+    let updated: CharacterEntity = cloneDeep(character!.getCharacter())
+    updated.heritage_id = heritageId
+    PlayerCharacter.build(updated).then((val) => {
       setCharacter(val)
     })
   }
 
-  const handleAttributeChange = (
-    ancestry: CharacterAncestry,
-    background: CharacterBackground,
-    characterClass: CharacterClass
-  ) => {
+  const handleAttributeChange = (characterEntity: CharacterEntity) => {
     let updated: CharacterEntity = cloneDeep(character.getCharacter())
-    updated.ancestry = ancestry
-    updated.background = background
-    updated.character_class = characterClass
+    updated.attributes = characterEntity.attributes
     PlayerCharacter.build(updated).then((val) => {
       setCharacter(val)
     })
@@ -74,7 +58,7 @@ export default function CharacterBuilderModal({
 
   const handleLanguageChange = (chosenLanguages: string[]) => {
     let updated: CharacterEntity = cloneDeep(character.getCharacter())
-    updated.ancestry.language_selections = chosenLanguages
+    updated.languages = chosenLanguages
     PlayerCharacter.build(updated).then((val) => {
       setCharacter(val)
     })
@@ -143,11 +127,9 @@ export default function CharacterBuilderModal({
                 </div>
                 <div className="mr-2">
                   <AttributesModal
-                    characterAncestry={character.getCharacter().ancestry}
+                    characterEntity={character.getCharacter()}
                     ancestry={character.getAncestry()}
-                    characterBackground={character.getCharacter().background}
                     background={character.getBackground()}
-                    characterClass={character.getCharacter().character_class}
                     classEntity={character.getClassEntity()}
                     onAttributeUpdate={handleAttributeChange}
                   ></AttributesModal>
@@ -155,7 +137,7 @@ export default function CharacterBuilderModal({
                 <div>
                   <LanguagesModal
                     onLanguagesUpdate={handleLanguageChange}
-                    characterAncestry={character.getCharacter().ancestry}
+                    character={character.getCharacter()}
                     ancestry={character.getAncestry()}
                   ></LanguagesModal>
                 </div>

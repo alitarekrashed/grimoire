@@ -1,12 +1,8 @@
-import { resolve } from 'path'
+import { ModifierValue } from '@/components/calculated-display/calculated-display'
 import { Ancestry, Attribute } from './db/ancestry'
 import { Background, ProficiencyFeatureValue } from './db/background'
-import {
-  CharacterAncestry,
-  CharacterBackground,
-  CharacterClass,
-  CharacterEntity,
-} from './db/character-entity'
+import { CharacterEntity } from './db/character-entity'
+import { ClassEntity } from './db/class_entity'
 import { Feat } from './db/feat'
 import {
   ConditionalFeatureValue,
@@ -17,9 +13,7 @@ import {
   featureMatcher,
 } from './db/feature'
 import { Heritage } from './db/heritage'
-import { Source } from 'postcss'
-import { ModifierValue } from '@/components/calculated-display/calculated-display'
-import { ClassEntity } from './db/class_entity'
+import { cloneDeep } from 'lodash'
 
 export interface Attributes {
   Strength: number
@@ -39,12 +33,6 @@ export interface AttributeSelections {
   ancestry: Attribute[]
   background: Attribute[]
   class: Attribute[]
-}
-
-export interface AttributeOptions {
-  ancestry: Attribute[][]
-  background: Attribute[][]
-  class: Attribute[][]
 }
 
 const ATTRIBUTES: Attribute[] = [
@@ -104,24 +92,18 @@ function buildChoiceSelectionArray(
 }
 
 function calculateAncestryAttributeModifications(
-  characterAncestry: CharacterAncestry,
+  character: CharacterEntity,
   ancestry: Ancestry
 ) {
-  if (characterAncestry.free_attribute === false) {
-    return calculateAncestryDefaultAttributeModifications(
-      characterAncestry,
-      ancestry
-    )
+  if (character.attributes.free_ancestry_attribute_selection === false) {
+    return calculateAncestryDefaultAttributeModifications(character, ancestry)
   } else {
-    return calculateAncestryFreeAttributeModifications(
-      characterAncestry,
-      ancestry
-    )
+    return calculateAncestryFreeAttributeModifications(character)
   }
 }
 
 function calculateAncestryDefaultAttributeModifications(
-  characterAncestry: CharacterAncestry,
+  character: CharacterEntity,
   ancestry: Ancestry
 ) {
   let attributes: any = {}
@@ -143,14 +125,14 @@ function calculateAncestryDefaultAttributeModifications(
     attributes[attribute as Attribute] -= 1
   })
 
-  characterAncestry.attribute_boost_selections = buildChoiceSelectionArray(
+  character.attributes.ancestry = buildChoiceSelectionArray(
     choiceCount,
-    characterAncestry.attribute_boost_selections,
+    character.attributes.ancestry,
     staticBoosts,
     undefined
   )
 
-  characterAncestry.attribute_boost_selections
+  character.attributes.ancestry
     .filter((val) => val)
     .forEach((val) => (attributes[val!] += 1))
 
@@ -158,22 +140,21 @@ function calculateAncestryDefaultAttributeModifications(
 }
 
 function calculateAncestryFreeAttributeModifications(
-  characterAncestry: CharacterAncestry,
-  ancestry: Ancestry
+  character: CharacterEntity
 ) {
   let attributes: any = {}
   ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
 
   const choiceCount = [['Free'], ['Free']].length
 
-  characterAncestry.attribute_boost_selections = buildChoiceSelectionArray(
+  character.attributes.ancestry = buildChoiceSelectionArray(
     choiceCount,
-    characterAncestry.attribute_boost_selections,
+    character.attributes.ancestry,
     [],
     undefined
   )
 
-  characterAncestry.attribute_boost_selections
+  character.attributes.ancestry
     .filter((val) => val)
     .forEach((val) => (attributes[val!] += 1))
 
@@ -181,20 +162,20 @@ function calculateAncestryFreeAttributeModifications(
 }
 
 function calculateBackgroundAttributeModifications(
-  characterBackground: CharacterBackground,
+  character: CharacterEntity,
   background: Background
 ) {
   let attributes: any = {}
   ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
 
-  characterBackground.attribute_boost_selections = buildChoiceSelectionArray(
+  character.attributes.background = buildChoiceSelectionArray(
     background.attributes.length,
-    characterBackground.attribute_boost_selections,
+    character.attributes.background,
     [],
     undefined
   )
 
-  characterBackground.attribute_boost_selections
+  character.attributes.background
     .filter((val) => val)
     .forEach((val) => (attributes[val!] += 1))
 
@@ -202,20 +183,31 @@ function calculateBackgroundAttributeModifications(
 }
 
 function calculateClassAttributeModifications(
-  characterClass: CharacterClass,
+  character: CharacterEntity,
   classEntity: ClassEntity
 ) {
   let attributes: any = {}
   ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
 
-  characterClass.attribute_boost_selections = buildChoiceSelectionArray(
+  character.attributes.class = buildChoiceSelectionArray(
     classEntity.key_ability.length,
-    characterClass.attribute_boost_selections,
+    character.attributes.class,
     [],
     undefined
   )
 
-  characterClass.attribute_boost_selections
+  character.attributes.class
+    .filter((val) => val)
+    .forEach((val) => (attributes[val!] += 1))
+
+  return attributes
+}
+
+function calculateLevelAttributeModifications(character: CharacterEntity) {
+  let attributes: any = {}
+  ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
+
+  character.attributes.level_1
     .filter((val) => val)
     .forEach((val) => (attributes[val!] += 1))
 
@@ -288,11 +280,11 @@ export class PlayerCharacter {
   }
 
   public async updateAncestry(ancestryId: string): Promise<PlayerCharacter> {
-    let newCharacter = { ...this.character }
-    newCharacter.ancestry.id = ancestryId
-    newCharacter.ancestry.attribute_boost_selections = []
-    newCharacter.ancestry.language_selections = []
-    newCharacter.ancestry.heritage_id = ''
+    let updated = cloneDeep(this.character)
+    updated.ancestry_id = ancestryId
+    updated.attributes.ancestry = []
+    updated.languages = []
+    updated.heritage_id = ''
     return await PlayerCharacter.build(this.character)
   }
 
@@ -300,8 +292,8 @@ export class PlayerCharacter {
     backgroundId: string
   ): Promise<PlayerCharacter> {
     let newCharacter = { ...this.character }
-    newCharacter.background.id = backgroundId
-    newCharacter.background.attribute_boost_selections = []
+    newCharacter.background_id = backgroundId
+    newCharacter.attributes.background = []
     return await PlayerCharacter.build(newCharacter)
   }
 
@@ -425,26 +417,24 @@ export class PlayerCharacter {
 
   public getAttributeSelections(): AttributeSelections {
     return {
-      ancestry: this.character.ancestry.attribute_boost_selections,
-      background: this.character.background.attribute_boost_selections,
-      class: this.character.character_class.attribute_boost_selections,
+      ancestry: this.character.attributes.ancestry,
+      background: this.character.attributes.background,
+      class: this.character.attributes.class,
     }
   }
 
   private calculateLanguages() {
-    let languages = []
-
     const additionalLanguages =
       this.attributes.Intelligence + (this.ancestry.languages.additional ?? 0)
 
     const languageSelections = buildChoiceSelectionArray(
       additionalLanguages,
-      this.character.ancestry.language_selections,
+      this.character.languages,
       [],
       ''
     )
 
-    this.character.ancestry.language_selections = languageSelections
+    this.character.languages = languageSelections
   }
 
   private calculateAttributes() {
@@ -458,24 +448,22 @@ export class PlayerCharacter {
     }
 
     const ancestryMods: any = calculateAncestryAttributeModifications(
-      this.character.ancestry,
+      this.character,
       this.ancestry
     )
 
     const backgroundMods: any = this.background
       ? calculateBackgroundAttributeModifications(
-          this.character.background,
+          this.character,
           this.background
         )
       : undefined
 
-    // TODO calculate modifications here for class here
     const classMods: any = this.classEntity
-      ? calculateClassAttributeModifications(
-          this.character.character_class,
-          this.classEntity
-        )
+      ? calculateClassAttributeModifications(this.character, this.classEntity)
       : undefined
+
+    const level1Mods: any = calculateLevelAttributeModifications(this.character)
 
     Object.keys(ancestryMods).forEach(
       (attribute: string) => (attributes[attribute] += ancestryMods[attribute])
@@ -488,6 +476,10 @@ export class PlayerCharacter {
 
     Object.keys(classMods).forEach(
       (attribute: string) => (attributes[attribute] += classMods[attribute])
+    )
+
+    Object.keys(level1Mods).forEach(
+      (attribute: string) => (attributes[attribute] += level1Mods[attribute])
     )
 
     this.attributes = attributes
@@ -592,10 +584,10 @@ export class PlayerCharacter {
 
   static async build(character: CharacterEntity): Promise<PlayerCharacter> {
     const [ancestry, heritage, background, classEntity] = await Promise.all([
-      PlayerCharacter.getAncestry(character.ancestry.id),
-      PlayerCharacter.getHeritage(character.ancestry.heritage_id),
-      PlayerCharacter.getBackground(character.background.id),
-      PlayerCharacter.getClass(character.character_class.id),
+      PlayerCharacter.getAncestry(character.ancestry_id),
+      PlayerCharacter.getHeritage(character.heritage_id),
+      PlayerCharacter.getBackground(character.background_id),
+      PlayerCharacter.getClass(character.class_id),
     ])
 
     const allFeatures: SourcedFeature[] = []
@@ -616,7 +608,7 @@ export class PlayerCharacter {
       })
     )
     allFeatures.push(
-      ...character.ancestry.language_selections.map((language: string) => {
+      ...character.languages.map((language: string) => {
         return {
           source: ancestry.name,
           feature: { type: 'LANGUAGE' as FeatureType, value: language },
