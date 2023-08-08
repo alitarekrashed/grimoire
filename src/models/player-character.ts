@@ -13,6 +13,7 @@ import {
   featureMatcher,
 } from './db/feature'
 import { Heritage } from './db/heritage'
+import { cloneDeep } from 'lodash'
 
 export interface Attributes {
   Strength: number
@@ -274,11 +275,11 @@ export class PlayerCharacter {
   }
 
   public async updateAncestry(ancestryId: string): Promise<PlayerCharacter> {
-    let newCharacter = { ...this.character }
-    newCharacter.ancestry.id = ancestryId
-    newCharacter.attributes.ancestry = []
-    newCharacter.ancestry.language_selections = []
-    newCharacter.ancestry.heritage_id = ''
+    let updated = cloneDeep(this.character)
+    updated.ancestry.id = ancestryId
+    updated.attributes.ancestry = []
+    updated.ancestry.language_selections = []
+    updated.heritage_id = ''
     return await PlayerCharacter.build(this.character)
   }
 
@@ -576,7 +577,7 @@ export class PlayerCharacter {
   static async build(character: CharacterEntity): Promise<PlayerCharacter> {
     const [ancestry, heritage, background, classEntity] = await Promise.all([
       PlayerCharacter.getAncestry(character.ancestry.id),
-      PlayerCharacter.getHeritage(character.ancestry.heritage_id),
+      PlayerCharacter.getHeritage(character.heritage_id),
       PlayerCharacter.getBackground(character.background_id),
       PlayerCharacter.getClass(character.class_id),
     ])

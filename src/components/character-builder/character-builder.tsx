@@ -41,14 +41,9 @@ export default function CharacterBuilderModal({
   }
 
   const handleHeritageChange = (heritageId: string) => {
-    let newCharacter: CharacterEntity = {
-      ...character!.getCharacter(),
-    }
-    newCharacter.ancestry = {
-      ...newCharacter.ancestry,
-      heritage_id: heritageId,
-    }
-    PlayerCharacter.build(newCharacter).then((val) => {
+    let updated: CharacterEntity = cloneDeep(character!.getCharacter())
+    updated.heritage_id = heritageId
+    PlayerCharacter.build(updated).then((val) => {
       setCharacter(val)
     })
   }
