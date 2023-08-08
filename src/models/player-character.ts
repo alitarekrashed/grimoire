@@ -18,6 +18,7 @@ import {
 import { Heritage } from './db/heritage'
 import { Source } from 'postcss'
 import { ModifierValue } from '@/components/calculated-display/calculated-display'
+import { ClassEntity } from './db/class_entity'
 
 export interface Attributes {
   Strength: number
@@ -211,7 +212,8 @@ export class PlayerCharacter {
     private ancestry: Ancestry,
     private allFeatures: SourcedFeature[],
     private heritage?: Heritage,
-    private background?: Background
+    private background?: Background,
+    private classEntity?: ClassEntity
   ) {
     this.level = character.level
 
@@ -457,6 +459,10 @@ export class PlayerCharacter {
 
   private initializeHitpoints() {
     this.hitpoints += this.ancestry.hitpoints
+    if (this.classEntity) {
+      this.hitpoints += this.classEntity.hitpoints +=
+        this.attributes.Constitution
+    }
   }
 
   private addFeatureToCharacter(feature: SourcedFeature) {
@@ -523,6 +529,16 @@ export class PlayerCharacter {
       : undefined
   }
 
+  static async getClass(id: string) {
+    return id
+      ? await (
+          await fetch(`http://localhost:3000/api/classes/${id}`, {
+            cache: 'no-store',
+          })
+        ).json()
+      : undefined
+  }
+
   static async getFeat(name: string) {
     return name
       ? await (
@@ -534,10 +550,11 @@ export class PlayerCharacter {
   }
 
   static async build(character: CharacterEntity): Promise<PlayerCharacter> {
-    const [ancestry, heritage, background] = await Promise.all([
+    const [ancestry, heritage, background, classEntity] = await Promise.all([
       PlayerCharacter.getAncestry(character.ancestry.id),
       PlayerCharacter.getHeritage(character.ancestry.heritage_id),
       PlayerCharacter.getBackground(character.background.id),
+      PlayerCharacter.getClass(character.character_class.id),
     ])
 
     const allFeatures: SourcedFeature[] = []
@@ -604,7 +621,8 @@ export class PlayerCharacter {
       ancestry,
       allFeatures,
       heritage,
-      background
+      background,
+      classEntity
     )
     return pc
   }

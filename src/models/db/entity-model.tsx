@@ -25,3 +25,4 @@ export type ModelType =
   | 'ACTION'
   | 'BACKGROUND'
   | 'FEAT'
+  | 'CLASS'
