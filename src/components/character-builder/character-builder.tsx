@@ -58,7 +58,7 @@ export default function CharacterBuilderModal({
 
   const handleLanguageChange = (chosenLanguages: string[]) => {
     let updated: CharacterEntity = cloneDeep(character.getCharacter())
-    updated.ancestry.language_selections = chosenLanguages
+    updated.languages = chosenLanguages
     PlayerCharacter.build(updated).then((val) => {
       setCharacter(val)
     })
@@ -137,7 +137,7 @@ export default function CharacterBuilderModal({
                 <div>
                   <LanguagesModal
                     onLanguagesUpdate={handleLanguageChange}
-                    characterAncestry={character.getCharacter().ancestry}
+                    character={character.getCharacter()}
                     ancestry={character.getAncestry()}
                   ></LanguagesModal>
                 </div>

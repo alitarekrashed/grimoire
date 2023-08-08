@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
-import { Modal } from '../modal/modal'
-import { CharacterAncestry } from '@/models/db/character-entity'
 import { Ancestry } from '@/models/db/ancestry'
-import React from 'react'
-import { cloneDeep } from 'lodash'
+import { CharacterEntity } from '@/models/db/character-entity'
 import { roboto_condensed } from '@/utils/fonts'
+import { cloneDeep } from 'lodash'
+import React, { useEffect, useState } from 'react'
+import { Modal } from '../modal/modal'
 
 function getAncestryLanguageChoices(
   knownLanguages: string[],
@@ -19,24 +18,24 @@ function getAncestryLanguageChoices(
 }
 
 export function LanguagesModal({
-  characterAncestry,
+  character,
   ancestry,
   onLanguagesUpdate,
 }: {
-  characterAncestry: CharacterAncestry
+  character: CharacterEntity
   ancestry: Ancestry
   onLanguagesUpdate: (languages: string[]) => void
 }) {
-  const [modifiedAncestry, setModifiedAncestry] = useState<CharacterAncestry>()
+  const [modifiedCharacter, setModifiedCharacter] = useState<CharacterEntity>()
   const [choices, setChoices] = useState<string[]>([])
 
   useEffect(() => {
     setChoices(getAncestryLanguageChoices(ancestry.languages.given, ancestry))
-  }, [modifiedAncestry])
+  }, [modifiedCharacter])
 
   useEffect(() => {
-    setModifiedAncestry(cloneDeep(characterAncestry))
-  }, [characterAncestry])
+    setModifiedCharacter(cloneDeep(character))
+  }, [character])
 
   const trigger = (
     <span
@@ -49,24 +48,23 @@ export function LanguagesModal({
 
   const body = (
     <div className={`${roboto_condensed.className} p-2`}>
-      {modifiedAncestry?.language_selections.map((choice: any, i: number) => {
+      {modifiedCharacter?.languages.map((choice: any, i: number) => {
         return (
           <React.Fragment key={i}>
             <select
               className="bg-stone-700 mr-2 rounded-md"
               value={choice ?? ''}
               onChange={(e) => {
-                let updated = cloneDeep(modifiedAncestry)!
-                updated.language_selections[i] = e.target.value as Attribute
-                setModifiedAncestry(updated)
+                let updated = cloneDeep(modifiedCharacter)!
+                updated.languages[i] = e.target.value as Attribute
+                setModifiedCharacter(updated)
               }}
             >
               <option value={choice}>{choice}</option>
               {choices
                 .filter(
                   (choice) =>
-                    modifiedAncestry?.language_selections.includes(choice) ===
-                    false
+                    modifiedCharacter?.languages.includes(choice) === false
                 )
                 .map((language) => (
                   <option key={language} value={language}>
@@ -88,13 +86,13 @@ export function LanguagesModal({
         {
           label: 'Save',
           onClick: () => {
-            onLanguagesUpdate(modifiedAncestry?.language_selections ?? [])
+            onLanguagesUpdate(modifiedCharacter?.languages ?? [])
           },
         },
         {
           label: 'Cancel',
           onClick: () => {
-            onLanguagesUpdate(characterAncestry.language_selections)
+            onLanguagesUpdate(character.languages)
           },
         },
       ]}

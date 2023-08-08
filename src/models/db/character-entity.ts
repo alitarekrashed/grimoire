@@ -7,6 +7,7 @@ export interface CharacterEntity {
   name: string
   level: number
   attributes: CharacterAttributes
+  languages: string[]
   background_id: string
   class_id: string
   heritage_id: string
@@ -24,6 +25,4 @@ export interface CharacterAttributes {
 
 export interface CharacterAncestry {
   id: string
-  language_selections: string[]
-  heritage_id: string
 }

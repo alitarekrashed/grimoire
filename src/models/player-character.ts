@@ -278,7 +278,7 @@ export class PlayerCharacter {
     let updated = cloneDeep(this.character)
     updated.ancestry.id = ancestryId
     updated.attributes.ancestry = []
-    updated.ancestry.language_selections = []
+    updated.languages = []
     updated.heritage_id = ''
     return await PlayerCharacter.build(this.character)
   }
@@ -419,19 +419,17 @@ export class PlayerCharacter {
   }
 
   private calculateLanguages() {
-    let languages = []
-
     const additionalLanguages =
       this.attributes.Intelligence + (this.ancestry.languages.additional ?? 0)
 
     const languageSelections = buildChoiceSelectionArray(
       additionalLanguages,
-      this.character.ancestry.language_selections,
+      this.character.languages,
       [],
       ''
     )
 
-    this.character.ancestry.language_selections = languageSelections
+    this.character.languages = languageSelections
   }
 
   private calculateAttributes() {
@@ -600,7 +598,7 @@ export class PlayerCharacter {
       })
     )
     allFeatures.push(
-      ...character.ancestry.language_selections.map((language: string) => {
+      ...character.languages.map((language: string) => {
         return {
           source: ancestry.name,
           feature: { type: 'LANGUAGE' as FeatureType, value: language },
