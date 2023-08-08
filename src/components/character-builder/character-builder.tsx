@@ -1,23 +1,18 @@
 'use client'
 
-import {
-  CharacterAncestry,
-  CharacterBackground,
-  CharacterClass,
-  CharacterEntity,
-} from '@/models/db/character-entity'
+import { CharacterEntity } from '@/models/db/character-entity'
+import { Feat } from '@/models/db/feat'
 import { PlayerCharacter } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Modal } from '../modal/modal'
 import { AncestryChoiceModal } from './ancestry-choice-modal'
+import { AncestryFeatChoiceModal } from './ancestry-feat.modal'
 import { AttributesModal } from './attributes-modal'
 import { BackgroundChoiceModal } from './background-choice-modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LanguagesModal } from './languages-modal'
-import { AncestryFeatChoiceModal } from './ancestry-feat.modal'
-import { Feat } from '@/models/db/feat'
 
 export default function CharacterBuilderModal({
   playerCharacter,
@@ -58,12 +53,7 @@ export default function CharacterBuilderModal({
     })
   }
 
-  const handleAttributeChange = (
-    characterEntity: CharacterEntity,
-    ancestry: CharacterAncestry,
-    background: CharacterBackground,
-    characterClass: CharacterClass
-  ) => {
+  const handleAttributeChange = (characterEntity: CharacterEntity) => {
     let updated: CharacterEntity = cloneDeep(character.getCharacter())
     updated.attributes = characterEntity.attributes
     PlayerCharacter.build(updated).then((val) => {
@@ -145,9 +135,7 @@ export default function CharacterBuilderModal({
                     characterEntity={character.getCharacter()}
                     characterAncestry={character.getCharacter().ancestry}
                     ancestry={character.getAncestry()}
-                    characterBackground={character.getCharacter().background}
                     background={character.getBackground()}
-                    characterClass={character.getCharacter().character_class}
                     classEntity={character.getClassEntity()}
                     onAttributeUpdate={handleAttributeChange}
                   ></AttributesModal>

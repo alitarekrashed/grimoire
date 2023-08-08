@@ -2,17 +2,14 @@ import { Ancestry, Attribute, AttributeModifier } from '@/models/db/ancestry'
 import { Background } from '@/models/db/background'
 import {
   CharacterAncestry,
-  CharacterBackground,
-  CharacterClass,
   CharacterEntity,
 } from '@/models/db/character-entity'
+import { ClassEntity } from '@/models/db/class_entity'
 import { AttributeOptions } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Modal } from '../modal/modal'
-import { ClassEntity } from '@/models/db/class_entity'
-import { CharacterEncoding } from 'crypto'
 
 const ATTRIBUTES: Attribute[] = [
   'Strength',
@@ -113,22 +110,13 @@ export function AttributesModal({
   onAttributeUpdate,
   characterEntity,
   characterAncestry,
-  characterBackground,
-  characterClass,
   ancestry,
   background,
   classEntity,
 }: {
-  onAttributeUpdate: (
-    character: CharacterEntity,
-    characterAncestry: CharacterAncestry,
-    characterBackground: CharacterBackground,
-    characterClass: CharacterClass
-  ) => void
+  onAttributeUpdate: (character: CharacterEntity) => void
   characterEntity: CharacterEntity
   characterAncestry: CharacterAncestry
-  characterBackground: CharacterBackground
-  characterClass: CharacterClass
   ancestry: Ancestry
   background: Background
   classEntity: ClassEntity
@@ -136,13 +124,9 @@ export function AttributesModal({
   const [characterState, setCharacterState] = useState<{
     character: CharacterEntity
     ancestry: CharacterAncestry
-    background: CharacterBackground
-    class: CharacterClass
   }>({
     character: characterEntity,
     ancestry: characterAncestry,
-    background: characterBackground,
-    class: characterClass,
   })
 
   const [choices, setChoices] = useState<AttributeOptions>({
@@ -308,12 +292,7 @@ export function AttributesModal({
         {
           label: 'Save',
           onClick: () => {
-            onAttributeUpdate(
-              characterState.character,
-              characterState.ancestry,
-              characterState.background,
-              characterState.class
-            )
+            onAttributeUpdate(characterState.character)
           },
         },
         {
@@ -322,8 +301,6 @@ export function AttributesModal({
             setCharacterState({
               character: characterEntity,
               ancestry: characterAncestry,
-              background: characterBackground,
-              class: characterClass,
             })
           },
         },
