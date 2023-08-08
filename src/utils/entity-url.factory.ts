@@ -24,6 +24,8 @@ export function baseApiRouteFactory(type: ModelType) {
       return 'http://localhost:3000/api/backgrounds'
     case 'FEAT':
       return 'http://localhost:3000/api/feats'
+    case 'CLASS':
+      return 'http://localhost:3000/api/classes'
     default: // throw exception?
   }
 }
@@ -52,6 +54,8 @@ export function baseRecordPageRouteFactory(type: ModelType) {
       return 'http://localhost:3000/reference/backgrounds'
     case 'FEAT':
       return 'http://localhost:3000/reference/feats'
+    case 'CLASS':
+      return 'http://localhost:3000/reference/classes'
     default: // throw exception?
   }
 }

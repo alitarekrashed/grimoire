@@ -4,6 +4,7 @@ import { Background, ProficiencyFeatureValue } from './db/background'
 import {
   CharacterAncestry,
   CharacterBackground,
+  CharacterClass,
   CharacterEntity,
 } from './db/character-entity'
 import { Feat } from './db/feat'
@@ -18,6 +19,7 @@ import {
 import { Heritage } from './db/heritage'
 import { Source } from 'postcss'
 import { ModifierValue } from '@/components/calculated-display/calculated-display'
+import { ClassEntity } from './db/class_entity'
 
 export interface Attributes {
   Strength: number
@@ -36,11 +38,13 @@ export interface SourcedFeature {
 export interface AttributeSelections {
   ancestry: Attribute[]
   background: Attribute[]
+  class: Attribute[]
 }
 
 export interface AttributeOptions {
   ancestry: Attribute[][]
   background: Attribute[][]
+  class: Attribute[][]
 }
 
 const ATTRIBUTES: Attribute[] = [
@@ -197,6 +201,27 @@ function calculateBackgroundAttributeModifications(
   return attributes
 }
 
+function calculateClassAttributeModifications(
+  characterClass: CharacterClass,
+  classEntity: ClassEntity
+) {
+  let attributes: any = {}
+  ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
+
+  characterClass.attribute_boost_selections = buildChoiceSelectionArray(
+    classEntity.key_ability.length,
+    characterClass.attribute_boost_selections,
+    [],
+    undefined
+  )
+
+  characterClass.attribute_boost_selections
+    .filter((val) => val)
+    .forEach((val) => (attributes[val!] += 1))
+
+  return attributes
+}
+
 export class PlayerCharacter {
   private level!: number
   private speed!: ModifierValue[]
@@ -211,7 +236,8 @@ export class PlayerCharacter {
     private ancestry: Ancestry,
     private allFeatures: SourcedFeature[],
     private heritage?: Heritage,
-    private background?: Background
+    private background?: Background,
+    private classEntity?: ClassEntity
   ) {
     this.level = character.level
 
@@ -301,6 +327,10 @@ export class PlayerCharacter {
 
   public getBackground(): Background {
     return this.background!
+  }
+
+  public getClassEntity(): ClassEntity {
+    return this.classEntity!
   }
 
   public getHeritageId(): string {
@@ -397,6 +427,7 @@ export class PlayerCharacter {
     return {
       ancestry: this.character.ancestry.attribute_boost_selections,
       background: this.character.background.attribute_boost_selections,
+      class: this.character.character_class.attribute_boost_selections,
     }
   }
 
@@ -438,6 +469,14 @@ export class PlayerCharacter {
         )
       : undefined
 
+    // TODO calculate modifications here for class here
+    const classMods: any = this.classEntity
+      ? calculateClassAttributeModifications(
+          this.character.character_class,
+          this.classEntity
+        )
+      : undefined
+
     Object.keys(ancestryMods).forEach(
       (attribute: string) => (attributes[attribute] += ancestryMods[attribute])
     )
@@ -445,6 +484,10 @@ export class PlayerCharacter {
     Object.keys(backgroundMods).forEach(
       (attribute: string) =>
         (attributes[attribute] += backgroundMods[attribute])
+    )
+
+    Object.keys(classMods).forEach(
+      (attribute: string) => (attributes[attribute] += classMods[attribute])
     )
 
     this.attributes = attributes
@@ -457,6 +500,10 @@ export class PlayerCharacter {
 
   private initializeHitpoints() {
     this.hitpoints += this.ancestry.hitpoints
+    if (this.classEntity) {
+      this.hitpoints += this.classEntity.hitpoints +=
+        this.attributes.Constitution
+    }
   }
 
   private addFeatureToCharacter(feature: SourcedFeature) {
@@ -523,6 +570,16 @@ export class PlayerCharacter {
       : undefined
   }
 
+  static async getClass(id: string) {
+    return id
+      ? await (
+          await fetch(`http://localhost:3000/api/classes/${id}`, {
+            cache: 'no-store',
+          })
+        ).json()
+      : undefined
+  }
+
   static async getFeat(name: string) {
     return name
       ? await (
@@ -534,10 +591,11 @@ export class PlayerCharacter {
   }
 
   static async build(character: CharacterEntity): Promise<PlayerCharacter> {
-    const [ancestry, heritage, background] = await Promise.all([
+    const [ancestry, heritage, background, classEntity] = await Promise.all([
       PlayerCharacter.getAncestry(character.ancestry.id),
       PlayerCharacter.getHeritage(character.ancestry.heritage_id),
       PlayerCharacter.getBackground(character.background.id),
+      PlayerCharacter.getClass(character.character_class.id),
     ])
 
     const allFeatures: SourcedFeature[] = []
@@ -604,7 +662,8 @@ export class PlayerCharacter {
       ancestry,
       allFeatures,
       heritage,
-      background
+      background,
+      classEntity
     )
     return pc
   }

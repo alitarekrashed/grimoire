@@ -3,12 +3,14 @@ import { Background } from '@/models/db/background'
 import {
   CharacterAncestry,
   CharacterBackground,
+  CharacterClass,
 } from '@/models/db/character-entity'
 import { AttributeOptions } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Modal } from '../modal/modal'
+import { ClassEntity } from '@/models/db/class_entity'
 
 const ATTRIBUTES: Attribute[] = [
   'Strength',
@@ -87,26 +89,54 @@ function getBackgroundAttributeChoices(
   return options
 }
 
+function getClassAttributeChoices(
+  characterClass: CharacterClass,
+  classEntity: ClassEntity
+) {
+  let options: Attribute[][] = classEntity.key_ability.map(
+    (choices: AttributeModifier[]) => choices as Attribute[]
+  )
+
+  for (let i = 0; i < options.length; i++) {
+    options[i] = options[i].filter(
+      (option: Attribute) =>
+        characterClass.attribute_boost_selections.indexOf(option) === -1
+    )
+  }
+
+  return options
+}
+
 export function AttributesModal({
   onAttributeUpdate,
   characterAncestry,
   characterBackground,
+  characterClass,
   ancestry,
   background,
+  classEntity,
 }: {
   onAttributeUpdate: (
     characterAncestry: CharacterAncestry,
-    characterBackground: CharacterBackground
+    characterBackground: CharacterBackground,
+    characterClass: CharacterClass
   ) => void
   characterAncestry: CharacterAncestry
   characterBackground: CharacterBackground
+  characterClass: CharacterClass
   ancestry: Ancestry
   background: Background
+  classEntity: ClassEntity
 }) {
   const [characterState, setCharacterState] = useState<{
     ancestry: CharacterAncestry
     background: CharacterBackground
-  }>({ ancestry: characterAncestry, background: characterBackground })
+    class: CharacterClass
+  }>({
+    ancestry: characterAncestry,
+    background: characterBackground,
+    class: characterClass,
+  })
 
   const [choices, setChoices] = useState<AttributeOptions>({
     ancestry: getAncestryAttributeChoices(characterState.ancestry, ancestry),
@@ -114,6 +144,7 @@ export function AttributesModal({
       characterState.background,
       background
     ),
+    class: getClassAttributeChoices(characterState.class, classEntity),
   })
 
   const trigger = (
@@ -132,6 +163,7 @@ export function AttributesModal({
         characterState.background,
         background
       ),
+      class: getClassAttributeChoices(characterState.class, classEntity),
     })
   }, [characterState])
 
@@ -194,7 +226,7 @@ export function AttributesModal({
             </span>
           </div>
         </div>
-        <span>
+        <div className="mb-4">
           <div>Background</div>
           {characterState.background.attribute_boost_selections.map(
             (choice: any, i: number) => {
@@ -221,7 +253,35 @@ export function AttributesModal({
               )
             }
           )}
-        </span>
+        </div>
+        <div>
+          <div>Class Key Attribute</div>
+          {characterState.class.attribute_boost_selections.map(
+            (choice: any, i: number) => {
+              return (
+                <React.Fragment key={i}>
+                  <select
+                    className="bg-stone-700 mr-2 rounded-md"
+                    value={choice ?? ''}
+                    onChange={(e) => {
+                      let updated = cloneDeep(characterState)
+                      updated.class.attribute_boost_selections[i] = e.target
+                        .value as Attribute
+                      setCharacterState(updated)
+                    }}
+                  >
+                    <option value={choice}>{choice}</option>
+                    {choices.class[i]?.map((attribute) => (
+                      <option key={attribute} value={attribute}>
+                        {attribute}
+                      </option>
+                    ))}
+                  </select>
+                </React.Fragment>
+              )
+            }
+          )}
+        </div>
       </div>
     </>
   )
@@ -235,7 +295,8 @@ export function AttributesModal({
           onClick: () => {
             onAttributeUpdate(
               characterState.ancestry,
-              characterState.background
+              characterState.background,
+              characterState.class
             )
           },
         },
@@ -245,6 +306,7 @@ export function AttributesModal({
             setCharacterState({
               ancestry: characterAncestry,
               background: characterBackground,
+              class: characterClass,
             })
           },
         },
