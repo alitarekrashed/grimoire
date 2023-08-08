@@ -35,12 +35,6 @@ export interface AttributeSelections {
   class: Attribute[]
 }
 
-export interface AttributeOptions {
-  ancestry: Attribute[][]
-  background: Attribute[][]
-  class: Attribute[][]
-}
-
 const ATTRIBUTES: Attribute[] = [
   'Strength',
   'Dexterity',
@@ -203,6 +197,17 @@ function calculateClassAttributeModifications(
   )
 
   character.attributes.class
+    .filter((val) => val)
+    .forEach((val) => (attributes[val!] += 1))
+
+  return attributes
+}
+
+function calculateLevelAttributeModifications(character: CharacterEntity) {
+  let attributes: any = {}
+  ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
+
+  character.attributes.level_1
     .filter((val) => val)
     .forEach((val) => (attributes[val!] += 1))
 
@@ -454,10 +459,11 @@ export class PlayerCharacter {
         )
       : undefined
 
-    // TODO calculate modifications here for class here
     const classMods: any = this.classEntity
       ? calculateClassAttributeModifications(this.character, this.classEntity)
       : undefined
+
+    const level1Mods: any = calculateLevelAttributeModifications(this.character)
 
     Object.keys(ancestryMods).forEach(
       (attribute: string) => (attributes[attribute] += ancestryMods[attribute])
@@ -470,6 +476,10 @@ export class PlayerCharacter {
 
     Object.keys(classMods).forEach(
       (attribute: string) => (attributes[attribute] += classMods[attribute])
+    )
+
+    Object.keys(level1Mods).forEach(
+      (attribute: string) => (attributes[attribute] += level1Mods[attribute])
     )
 
     this.attributes = attributes

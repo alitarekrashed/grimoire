@@ -2,7 +2,6 @@ import { Ancestry, Attribute, AttributeModifier } from '@/models/db/ancestry'
 import { Background } from '@/models/db/background'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { ClassEntity } from '@/models/db/class_entity'
-import { AttributeOptions } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
 import React, { useEffect, useState } from 'react'
@@ -16,6 +15,13 @@ const ATTRIBUTES: Attribute[] = [
   'Wisdom',
   'Charisma',
 ]
+
+export interface AttributeOptions {
+  ancestry: Attribute[][]
+  background: Attribute[][]
+  class: Attribute[][]
+  level_1: Attribute[][]
+}
 
 function getAncestryAttributeChoices(
   character: CharacterEntity,
@@ -102,6 +108,23 @@ function getClassAttributeChoices(
   return options
 }
 
+function getLevelAttributeChoices(character: CharacterEntity) {
+  let options: Attribute[][] = [
+    [...ATTRIBUTES],
+    [...ATTRIBUTES],
+    [...ATTRIBUTES],
+    [...ATTRIBUTES],
+  ]
+
+  for (let i = 0; i < options.length; i++) {
+    options[i] = options[i].filter(
+      (option: Attribute) => character.attributes.level_1.indexOf(option) === -1
+    )
+  }
+
+  return options
+}
+
 export function AttributesModal({
   onAttributeUpdate,
   characterEntity,
@@ -128,6 +151,7 @@ export function AttributesModal({
       background
     ),
     class: getClassAttributeChoices(characterState.character, classEntity),
+    level_1: getLevelAttributeChoices(characterState.character),
   })
 
   const trigger = (
@@ -147,6 +171,7 @@ export function AttributesModal({
         background
       ),
       class: getClassAttributeChoices(characterState.character, classEntity),
+      level_1: getLevelAttributeChoices(characterState.character),
     })
   }, [characterState])
 
@@ -244,7 +269,7 @@ export function AttributesModal({
             }
           )}
         </div>
-        <div>
+        <div className="mb-4">
           <div>Class Key Attribute</div>
           {characterState.character.attributes.class.map(
             (choice: any, i: number) => {
@@ -262,6 +287,34 @@ export function AttributesModal({
                   >
                     <option value={choice}>{choice}</option>
                     {choices.class[i]?.map((attribute) => (
+                      <option key={attribute} value={attribute}>
+                        {attribute}
+                      </option>
+                    ))}
+                  </select>
+                </React.Fragment>
+              )
+            }
+          )}
+        </div>
+        <div className="mb-4">
+          <div>Level 1 Attributes</div>
+          {characterState.character.attributes.level_1.map(
+            (choice: any, i: number) => {
+              return (
+                <React.Fragment key={i}>
+                  <select
+                    className="bg-stone-700 mr-2 rounded-md"
+                    value={choice ?? ''}
+                    onChange={(e) => {
+                      let updated = cloneDeep(characterState)
+                      updated.character.attributes.level_1[i] = e.target
+                        .value as Attribute
+                      setCharacterState(updated)
+                    }}
+                  >
+                    <option value={choice}>{choice}</option>
+                    {choices.level_1[i]?.map((attribute) => (
                       <option key={attribute} value={attribute}>
                         {attribute}
                       </option>
