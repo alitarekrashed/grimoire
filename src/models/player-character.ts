@@ -286,7 +286,7 @@ export class PlayerCharacter {
     backgroundId: string
   ): Promise<PlayerCharacter> {
     let newCharacter = { ...this.character }
-    newCharacter.background.id = backgroundId
+    newCharacter.background_id = backgroundId
     newCharacter.attributes.background = []
     return await PlayerCharacter.build(newCharacter)
   }
@@ -577,7 +577,7 @@ export class PlayerCharacter {
     const [ancestry, heritage, background, classEntity] = await Promise.all([
       PlayerCharacter.getAncestry(character.ancestry.id),
       PlayerCharacter.getHeritage(character.ancestry.heritage_id),
-      PlayerCharacter.getBackground(character.background.id),
+      PlayerCharacter.getBackground(character.background_id),
       PlayerCharacter.getClass(character.class_id),
     ])
 

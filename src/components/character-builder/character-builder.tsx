@@ -133,7 +133,6 @@ export default function CharacterBuilderModal({
                 <div className="mr-2">
                   <AttributesModal
                     characterEntity={character.getCharacter()}
-                    characterAncestry={character.getCharacter().ancestry}
                     ancestry={character.getAncestry()}
                     background={character.getBackground()}
                     classEntity={character.getClassEntity()}
