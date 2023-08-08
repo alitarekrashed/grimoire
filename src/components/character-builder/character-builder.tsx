@@ -72,7 +72,11 @@ export default function CharacterBuilderModal({
 
   const handleFeatChange = (index: number) => (feat: Feat) => {
     let updated = cloneDeep(character.getCharacter())
-    updated.features['1'][index].feature.value = feat.name
+    if (feat) {
+      updated.features['1'][index].feature.value = feat.name
+    } else {
+      updated.features['1'][index].feature.value = undefined!
+    }
     PlayerCharacter.build(updated).then((val) => {
       setCharacter(val)
     })
@@ -147,7 +151,9 @@ export default function CharacterBuilderModal({
                   return (
                     <AncestryFeatChoiceModal
                       key={`${value.source}-${index}`}
-                      existingFeatName={value.feature.value}
+                      existingFeatName={
+                        value.feature.value ? value.feature.value : ''
+                      }
                       traits={character.getTraits()}
                       onChange={handleFeatChange(index)}
                     ></AncestryFeatChoiceModal>
