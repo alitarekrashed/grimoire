@@ -138,20 +138,14 @@ export function AttributesModal({
   background: Background
   classEntity: ClassEntity
 }) {
-  const [characterState, setCharacterState] = useState<{
-    character: CharacterEntity
-  }>({
-    character: characterEntity,
-  })
+  const [modifiedCharacter, setModifiedCharacter] =
+    useState<CharacterEntity>(characterEntity)
 
   const [choices, setChoices] = useState<AttributeOptions>({
-    ancestry: getAncestryAttributeChoices(characterState.character, ancestry),
-    background: getBackgroundAttributeChoices(
-      characterState.character,
-      background
-    ),
-    class: getClassAttributeChoices(characterState.character, classEntity),
-    level_1: getLevelAttributeChoices(characterState.character),
+    ancestry: getAncestryAttributeChoices(modifiedCharacter, ancestry),
+    background: getBackgroundAttributeChoices(modifiedCharacter, background),
+    class: getClassAttributeChoices(modifiedCharacter, classEntity),
+    level_1: getLevelAttributeChoices(modifiedCharacter),
   })
 
   const trigger = (
@@ -165,15 +159,12 @@ export function AttributesModal({
 
   useEffect(() => {
     setChoices({
-      ancestry: getAncestryAttributeChoices(characterState.character, ancestry),
-      background: getBackgroundAttributeChoices(
-        characterState.character,
-        background
-      ),
-      class: getClassAttributeChoices(characterState.character, classEntity),
-      level_1: getLevelAttributeChoices(characterState.character),
+      ancestry: getAncestryAttributeChoices(modifiedCharacter, ancestry),
+      background: getBackgroundAttributeChoices(modifiedCharacter, background),
+      class: getClassAttributeChoices(modifiedCharacter, classEntity),
+      level_1: getLevelAttributeChoices(modifiedCharacter),
     })
-  }, [characterState])
+  }, [modifiedCharacter])
 
   const body = (
     <>
@@ -181,7 +172,7 @@ export function AttributesModal({
         <div className="flex flex-col flex-wrap mb-4">
           <div className="">Ancestry</div>
           <div className="">
-            {characterState.character.attributes.ancestry.map(
+            {modifiedCharacter.attributes.ancestry.map(
               (choice: any, i: number) => {
                 return (
                   <React.Fragment key={i}>
@@ -189,10 +180,10 @@ export function AttributesModal({
                       className="bg-stone-700 mr-2 rounded-md"
                       value={choice ?? ''}
                       onChange={(e) => {
-                        let updated = cloneDeep(characterState)
-                        updated.character.attributes.ancestry[i] = e.target
+                        let updated = cloneDeep(modifiedCharacter)
+                        updated.attributes.ancestry[i] = e.target
                           .value as Attribute
-                        setCharacterState(updated)
+                        setModifiedCharacter(updated)
                       }}
                     >
                       <option value={choice}>{choice}</option>
@@ -212,26 +203,20 @@ export function AttributesModal({
                   className="bg-stone-700 mt-0.5"
                   type="checkbox"
                   checked={
-                    characterState.character.attributes
+                    modifiedCharacter.attributes
                       .free_ancestry_attribute_selection
                   }
                   onChange={(e) => {
-                    let updated = cloneDeep(characterState)
-                    updated.character.attributes.free_ancestry_attribute_selection =
-                      !characterState.character.attributes
+                    let updated = cloneDeep(modifiedCharacter)
+                    updated.attributes.free_ancestry_attribute_selection =
+                      !modifiedCharacter.attributes
                         .free_ancestry_attribute_selection
-                    if (
-                      updated.character.attributes
-                        .free_ancestry_attribute_selection
-                    ) {
-                      updated.character.attributes.ancestry = [
-                        undefined!,
-                        undefined!,
-                      ]
+                    if (updated.attributes.free_ancestry_attribute_selection) {
+                      updated.attributes.ancestry = [undefined!, undefined!]
                     } else {
-                      updated.character.attributes.ancestry = [undefined!]
+                      updated.attributes.ancestry = [undefined!]
                     }
-                    setCharacterState(updated)
+                    setModifiedCharacter(updated)
                   }}
                 />
                 <span className="mr-2 float-left">
@@ -243,7 +228,7 @@ export function AttributesModal({
         </div>
         <div className="mb-4">
           <div>Background</div>
-          {characterState.character.attributes.background.map(
+          {modifiedCharacter.attributes.background.map(
             (choice: any, i: number) => {
               return (
                 <React.Fragment key={i}>
@@ -251,10 +236,10 @@ export function AttributesModal({
                     className="bg-stone-700 mr-2 rounded-md"
                     value={choice ?? ''}
                     onChange={(e) => {
-                      let updated = cloneDeep(characterState)
-                      updated.character.attributes.background[i] = e.target
+                      let updated = cloneDeep(modifiedCharacter)
+                      updated.attributes.background[i] = e.target
                         .value as Attribute
-                      setCharacterState(updated)
+                      setModifiedCharacter(updated)
                     }}
                   >
                     <option value={choice}>{choice}</option>
@@ -271,35 +256,32 @@ export function AttributesModal({
         </div>
         <div className="mb-4">
           <div>Class Key Attribute</div>
-          {characterState.character.attributes.class.map(
-            (choice: any, i: number) => {
-              return (
-                <React.Fragment key={i}>
-                  <select
-                    className="bg-stone-700 mr-2 rounded-md"
-                    value={choice ?? ''}
-                    onChange={(e) => {
-                      let updated = cloneDeep(characterState)
-                      updated.character.attributes.class[i] = e.target
-                        .value as Attribute
-                      setCharacterState(updated)
-                    }}
-                  >
-                    <option value={choice}>{choice}</option>
-                    {choices.class[i]?.map((attribute) => (
-                      <option key={attribute} value={attribute}>
-                        {attribute}
-                      </option>
-                    ))}
-                  </select>
-                </React.Fragment>
-              )
-            }
-          )}
+          {modifiedCharacter.attributes.class.map((choice: any, i: number) => {
+            return (
+              <React.Fragment key={i}>
+                <select
+                  className="bg-stone-700 mr-2 rounded-md"
+                  value={choice ?? ''}
+                  onChange={(e) => {
+                    let updated = cloneDeep(modifiedCharacter)
+                    updated.attributes.class[i] = e.target.value as Attribute
+                    setModifiedCharacter(updated)
+                  }}
+                >
+                  <option value={choice}>{choice}</option>
+                  {choices.class[i]?.map((attribute) => (
+                    <option key={attribute} value={attribute}>
+                      {attribute}
+                    </option>
+                  ))}
+                </select>
+              </React.Fragment>
+            )
+          })}
         </div>
         <div className="mb-4">
           <div>Level 1 Attributes</div>
-          {characterState.character.attributes.level_1.map(
+          {modifiedCharacter.attributes.level_1.map(
             (choice: any, i: number) => {
               return (
                 <React.Fragment key={i}>
@@ -307,10 +289,10 @@ export function AttributesModal({
                     className="bg-stone-700 mr-2 rounded-md"
                     value={choice ?? ''}
                     onChange={(e) => {
-                      let updated = cloneDeep(characterState)
-                      updated.character.attributes.level_1[i] = e.target
+                      let updated = cloneDeep(modifiedCharacter)
+                      updated.attributes.level_1[i] = e.target
                         .value as Attribute
-                      setCharacterState(updated)
+                      setModifiedCharacter(updated)
                     }}
                   >
                     <option value={choice}>{choice}</option>
@@ -336,15 +318,13 @@ export function AttributesModal({
         {
           label: 'Save',
           onClick: () => {
-            onAttributeUpdate(characterState.character)
+            onAttributeUpdate(modifiedCharacter)
           },
         },
         {
           label: 'Cancel',
           onClick: () => {
-            setCharacterState({
-              character: characterEntity,
-            })
+            setModifiedCharacter(characterEntity)
           },
         },
       ]}
