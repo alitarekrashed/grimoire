@@ -273,9 +273,9 @@ export class PlayerCharacter {
   }
 
   public updateName(name: string): PlayerCharacter {
-    let newCharacter = { ...this.character }
-    newCharacter.name = name
-    this.character = newCharacter
+    let updated = cloneDeep(this.character)
+    updated.name = name
+    this.character = updated
     return this
   }
 
@@ -285,16 +285,16 @@ export class PlayerCharacter {
     updated.attributes.ancestry = []
     updated.languages = []
     updated.heritage_id = ''
-    return await PlayerCharacter.build(this.character)
+    return await PlayerCharacter.build(updated)
   }
 
   public async updateBackground(
     backgroundId: string
   ): Promise<PlayerCharacter> {
-    let newCharacter = { ...this.character }
-    newCharacter.background_id = backgroundId
-    newCharacter.attributes.background = []
-    return await PlayerCharacter.build(newCharacter)
+    let updated = cloneDeep(this.character)
+    updated.background_id = backgroundId
+    updated.attributes.background = []
+    return await PlayerCharacter.build(updated)
   }
 
   public getTraits(): string[] {
@@ -302,11 +302,11 @@ export class PlayerCharacter {
   }
 
   public getAncestryId(): string {
-    return this.ancestry._id.toString()
+    return this.character.ancestry_id
   }
 
   public getBackgroundId(): string {
-    return this.background?._id.toString() ?? ''
+    return this.character.background_id
   }
 
   public getAncestryName(): string {
@@ -326,7 +326,7 @@ export class PlayerCharacter {
   }
 
   public getHeritageId(): string {
-    return this.heritage?._id.toString() ?? ''
+    return this.character.heritage_id
   }
 
   public getHeritageName(): string {
@@ -643,6 +643,7 @@ export class PlayerCharacter {
 
     feats.push(
       ...character.features[1]
+        .filter((value) => value?.feature?.value)
         .filter((value) => value.feature.type === 'FEAT')
         .map((value) => value.feature.value)
     )

@@ -32,6 +32,7 @@ export function AncestryFeatChoiceModal({
         initialId={existingFeatName}
         idField="name"
         onSave={onChange}
+        onClear={() => onChange(undefined!)}
       ></FeatureChoiceModal>
     </>
   )

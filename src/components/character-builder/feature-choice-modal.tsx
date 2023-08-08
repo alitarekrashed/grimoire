@@ -10,12 +10,14 @@ export function FeatureChoiceModal<T extends EntityModel>({
   initialId,
   idField,
   onSave,
+  onClear,
 }: {
   label: string
   entities: T[]
   initialId: string
   idField?: keyof EntityModel
   onSave: (entity: T) => void
+  onClear?: () => void
 }) {
   const [saved, setSaved] = useState<T>()
   const [selected, setSelected] = useState<T>()
@@ -30,7 +32,18 @@ export function FeatureChoiceModal<T extends EntityModel>({
     )
     setSelected(entity)
     setSaved(entity)
-    // TODO ALI whenever the input changes, if entity is undefined, should we be calling onSave to update the underlying character?))
+
+    // i should look into seeing if there's a way to clean this up.
+    // basically this allows a modal's value to be completely cleared if the set id is not in the entities list...
+    if (
+      onClear &&
+      initialId &&
+      entity === undefined &&
+      entities &&
+      entities.length > 0
+    ) {
+      onClear()
+    }
   }, [entities, initialId])
 
   return (
