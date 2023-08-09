@@ -24,7 +24,9 @@ import {
   CalculatedProficiency,
   SavingThrowAttributes,
   SavingThrowType,
+  SkillAttributes,
   SkillType,
+  generateUntrainedSkillMap,
 } from './statistic'
 
 export interface Attributes {
@@ -537,7 +539,7 @@ export class PlayerCharacter {
       DifficultyClass: Map<string, ProficiencyRank>
     } = {
       Perception: new Map<string, ProficiencyRank>(),
-      Skill: new Map<string, ProficiencyRank>(),
+      Skill: generateUntrainedSkillMap(),
       Lore: new Map<string, ProficiencyRank>(),
       SavingThrow: new Map<SavingThrowType, ProficiencyRank>(),
       Weapon: new Map<string, ProficiencyRank>(),
@@ -595,6 +597,20 @@ export class PlayerCharacter {
         modifier:
           RankModifierMap[rank] +
           this.attributes[SavingThrowAttributes.get(type) as Attribute],
+      })
+    })
+    return result
+  }
+
+  public getSkills(): Map<SkillType, CalculatedProficiency> {
+    const skills = this.getProficiencies().Skill
+    const result = new Map()
+    skills.forEach((rank, type) => {
+      result.set(type, {
+        rank: rank,
+        modifier:
+          RankModifierMap[rank] +
+          this.attributes[SkillAttributes.get(type) as Attribute],
       })
     })
     return result

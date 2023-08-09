@@ -57,3 +57,11 @@ export interface CalculatedProficiency {
   rank: ProficiencyRank
   modifier: number
 }
+
+export function generateUntrainedSkillMap(): Map<SkillType, ProficiencyRank> {
+  const result = new Map()
+  skillAttributes.forEach((value) => {
+    result.set(value[0], 'untrained')
+  })
+  return result
+}
