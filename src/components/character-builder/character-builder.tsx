@@ -180,6 +180,9 @@ export default function CharacterBuilderModal({
               <div>
                 <SkillsModal
                   character={character.getCharacter()}
+                  // basically what we're trying to say here is "filter out Class Level 1 proficiencies when passing in existing profs"
+                  // the reasoning is that since all the values for Class Level 1 profs are encapsulated within this modal, it can just
+                  // check itself for its values
                   proficiencies={character.getSkills('1')}
                   onSkillsUpdate={handleSkillChange}
                 ></SkillsModal>
