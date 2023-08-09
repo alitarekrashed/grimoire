@@ -4,6 +4,7 @@ import { SourcedFeature } from '@/models/player-character'
 import { LabelsList } from '../labels-list/labels-list'
 import styles from './features-tabs.module.css'
 import { ActionInlineDisplay } from '../actions/action-inline-display'
+import { ProficiencyType } from '@/models/db/background'
 
 export function FeaturesTabs({
   features,
@@ -12,7 +13,12 @@ export function FeaturesTabs({
 }: {
   features: SourcedFeature[]
   actions: SourcedFeature[]
-  proficiencies: SourcedFeature[]
+  proficiencies: {
+    Perception: SourcedFeature[]
+    Skill: SourcedFeature[]
+    Lore: SourcedFeature[]
+    SavingThrow: SourcedFeature[]
+  }
 }) {
   return (
     <Tabs.Root defaultValue="actions">
@@ -53,20 +59,29 @@ export function FeaturesTabs({
       </Tabs.Content>
       <Tabs.Content value="proficiencies">
         <span className="text-xs">
-          {proficiencies.map((proficiency, index) => {
+          {Object.keys(proficiencies).map((type: string) => {
             return (
-              <div key={`${proficiency.feature.value.value}-${index}`}>
-                <LabelsList
-                  fieldDefinitions={[
-                    {
-                      label:
-                        proficiency.feature.value.type === 'Lore'
-                          ? `Lore ${proficiency.feature.value.value}`
-                          : proficiency.feature.value.value,
-                      value: proficiency.feature.value.rank,
-                    },
-                  ]}
-                ></LabelsList>
+              <div>
+                <span className="font-semibold">{type}</span>
+                {proficiencies[type as ProficiencyType].map(
+                  (proficiency, index) => {
+                    return (
+                      <div key={`${proficiency.feature.value.value}-${index}`}>
+                        <LabelsList
+                          fieldDefinitions={[
+                            {
+                              label:
+                                proficiency.feature.value.type === 'Lore'
+                                  ? `Lore ${proficiency.feature.value.value}`
+                                  : proficiency.feature.value.value,
+                              value: proficiency.feature.value.rank,
+                            },
+                          ]}
+                        ></LabelsList>
+                      </div>
+                    )
+                  }
+                )}
               </div>
             )
           })}

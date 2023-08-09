@@ -1,6 +1,10 @@
 import { ModifierValue } from '@/components/calculated-display/calculated-display'
 import { Ancestry, Attribute } from './db/ancestry'
-import { Background, ProficiencyFeatureValue } from './db/background'
+import {
+  Background,
+  ProficiencyFeatureValue,
+  ProficiencyType,
+} from './db/background'
 import { CharacterEntity } from './db/character-entity'
 import { ClassEntity } from './db/class_entity'
 import { Feat } from './db/feat'
@@ -409,10 +413,32 @@ export class PlayerCharacter {
       .map((feature) => feature)
   }
 
-  public getProficiencies(): SourcedFeature[] {
-    return this.features
+  public getProficiencies(): {
+    Perception: SourcedFeature[]
+    Skill: SourcedFeature[]
+    Lore: SourcedFeature[]
+    SavingThrow: SourcedFeature[]
+  } {
+    const proficiencyMap: {
+      Perception: SourcedFeature[]
+      Skill: SourcedFeature[]
+      Lore: SourcedFeature[]
+      SavingThrow: SourcedFeature[]
+    } = {
+      Perception: [],
+      Skill: [],
+      Lore: [],
+      SavingThrow: [],
+    }
+    this.features
       .filter((feature) => feature.feature.type === 'PROFICIENCY')
-      .map((feature) => feature)
+      .forEach((sourced: SourcedFeature) => {
+        const proficency = sourced.feature.value as ProficiencyFeatureValue
+        proficiencyMap[sourced.feature.value.type as ProficiencyType].push(
+          sourced
+        )
+      })
+    return proficiencyMap
   }
 
   public getAttributeSelections(): AttributeSelections {
