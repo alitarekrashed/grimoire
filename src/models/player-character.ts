@@ -23,7 +23,6 @@ import { Heritage } from './db/heritage'
 import {
   CalculatedProficiency,
   SavingThrowAttributes,
-  SavingThrowStatistics,
   SavingThrowType,
   SkillType,
 } from './statistic'
@@ -587,16 +586,16 @@ export class PlayerCharacter {
     return false
   }
 
-  public getSavingThrows(): SavingThrowStatistics {
+  public getSavingThrows(): Map<SavingThrowType, CalculatedProficiency> {
     const savingThrows = this.getProficiencies().SavingThrow
-    const result: any = {}
+    const result = new Map()
     savingThrows.forEach((rank, type) => {
-      result[type] = {
+      result.set(type, {
         rank: rank,
         modifier:
           RankModifierMap[rank] +
           this.attributes[SavingThrowAttributes.get(type) as Attribute],
-      }
+      })
     })
     return result
   }

@@ -9,6 +9,7 @@ import { ParsedDescription } from '@/components/parsed-description/parsed-descri
 import { Attribute } from '@/models/db/ancestry'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { PlayerCharacter } from '@/models/player-character'
+import { SavingThrowType } from '@/models/statistic'
 import { useDebounce } from '@/utils/debounce'
 import { roboto_condensed, roboto_flex } from '@/utils/fonts'
 import { getPlayerCharacter } from '@/utils/services/player-character-service'
@@ -194,26 +195,14 @@ function CharacterDisplay({
           </div>
           <div className="inline-flex flex-col text-center">
             <div className="inline-flex gap-2">
-              {Object.keys(character.getSavingThrows()).map((value: string) => (
-                <div key={value}>
-                  <div className="font-semibold">{value}</div>
-                  <span className="text-xs">
-                    {
-                      character.getSavingThrows()[
-                        value as 'Will' | 'Fortitude' | 'Reflex'
-                      ].rank
-                    }
-                  </span>
+              {[...character.getSavingThrows().entries()].map((entry) => (
+                <div key={entry[0]}>
+                  <div className="font-semibold">{entry[0]}</div>
+                  <span className="text-xs">{entry[1].rank}</span>
                   <div>
                     <span>
-                      {(character.getSavingThrows()[
-                        value as 'Will' | 'Fortitude' | 'Reflex'
-                      ].modifier >= 0
-                        ? ' +'
-                        : ' -') +
-                        character.getSavingThrows()[
-                          value as 'Will' | 'Fortitude' | 'Reflex'
-                        ].modifier}
+                      {(entry[1].modifier >= 0 ? ' +' : ' -') +
+                        entry[1].modifier}
                     </span>
                   </div>
                 </div>

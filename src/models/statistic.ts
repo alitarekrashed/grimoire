@@ -57,9 +57,3 @@ export interface CalculatedProficiency {
   rank: ProficiencyRank
   modifier: number
 }
-
-export interface SavingThrowStatistics {
-  Will: CalculatedProficiency
-  Fortitude: CalculatedProficiency
-  Reflex: CalculatedProficiency
-}
