@@ -596,6 +596,7 @@ export class PlayerCharacter {
         rank: rank,
         modifier:
           RankModifierMap[rank] +
+          this.level +
           this.attributes[SavingThrowAttributes.get(type) as Attribute],
       })
     })
@@ -610,6 +611,7 @@ export class PlayerCharacter {
         rank: rank,
         modifier:
           RankModifierMap[rank] +
+          this.level +
           this.attributes[SkillAttributes.get(type) as Attribute],
       })
     })
@@ -621,7 +623,9 @@ export class PlayerCharacter {
     return {
       rank: perception.get('Perception')!,
       modifier:
-        RankModifierMap[perception.get('Perception')!] + this.attributes.Wisdom,
+        RankModifierMap[perception.get('Perception')!] +
+        this.level +
+        this.attributes.Wisdom,
     }
   }
 
