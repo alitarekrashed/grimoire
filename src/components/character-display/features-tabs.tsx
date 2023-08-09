@@ -18,6 +18,8 @@ export function FeaturesTabs({
     Skill: Map<string, ProficiencyRank>
     Lore: Map<string, ProficiencyRank>
     SavingThrow: Map<string, ProficiencyRank>
+    Weapons: Map<string, ProficiencyRank>
+    Defense: Map<string, ProficiencyRank>
   }
 }) {
   return (
