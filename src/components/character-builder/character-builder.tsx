@@ -180,7 +180,7 @@ export default function CharacterBuilderModal({
               <div>
                 <SkillsModal
                   character={character.getCharacter()}
-                  proficiencies={character.getSkills()}
+                  proficiencies={character.getSkills('1')}
                   onSkillsUpdate={handleSkillChange}
                 ></SkillsModal>
               </div>

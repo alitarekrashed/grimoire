@@ -57,10 +57,6 @@ export function SkillsModal({
     )
   }
 
-  const currentSelections = skillSelections.map(
-    (choice: SourcedFeature) => choice.feature.value.value
-  )
-
   const body = (
     <div className={`${roboto_condensed.className} p-2`}>
       {skillSelections.map((choice: SourcedFeature, i: number) => {
@@ -84,7 +80,30 @@ export function SkillsModal({
               </option>
               {choices
                 .filter((choice) => {
-                  if (currentSelections.includes(choice)) {
+                  if (skillSelection.configuration.options !== 'Free') {
+                    console.log(choice)
+                    console.log(
+                      modifiedCharacter?.features['1']
+                        .filter(
+                          (sourced) =>
+                            sourced.feature.type === 'SKILL_SELECTION'
+                        )
+                        .map(
+                          (choice: SourcedFeature) => choice.feature.value.value
+                        )
+                    )
+                    console.log(skillSelection)
+                  }
+                  if (
+                    modifiedCharacter?.features['1']
+                      .filter(
+                        (sourced) => sourced.feature.type === 'SKILL_SELECTION'
+                      )
+                      .map(
+                        (choice: SourcedFeature) => choice.feature.value.value
+                      )
+                      .includes(choice)
+                  ) {
                     return false
                   }
                   if (skillSelection.configuration.options === 'Free') {
