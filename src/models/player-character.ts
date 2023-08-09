@@ -419,17 +419,26 @@ export class PlayerCharacter {
     Skill: Map<string, ProficiencyRank>
     Lore: Map<string, ProficiencyRank>
     SavingThrow: Map<string, ProficiencyRank>
+    Weapon: Map<string, ProficiencyRank>
+    Defense: Map<string, ProficiencyRank>
+    DifficultyClass: Map<string, ProficiencyRank>
   } {
     const proficiencyMap: {
       Perception: Map<string, ProficiencyRank>
       Skill: Map<string, ProficiencyRank>
       Lore: Map<string, ProficiencyRank>
       SavingThrow: Map<string, ProficiencyRank>
+      Weapon: Map<string, ProficiencyRank>
+      Defense: Map<string, ProficiencyRank>
+      DifficultyClass: Map<string, ProficiencyRank>
     } = {
       Perception: new Map<string, ProficiencyRank>(),
       Skill: new Map<string, ProficiencyRank>(),
       Lore: new Map<string, ProficiencyRank>(),
       SavingThrow: new Map<string, ProficiencyRank>(),
+      Weapon: new Map<string, ProficiencyRank>(),
+      Defense: new Map<string, ProficiencyRank>(),
+      DifficultyClass: new Map<string, ProficiencyRank>(),
     }
 
     this.features
