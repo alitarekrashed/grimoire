@@ -145,6 +145,7 @@ export default function CharacterBuilderModal({
                     ancestry={character.getAncestry()}
                   ></LanguagesModal>
                 </div>
+                <div>banana!</div>
               </div>
               <div>
                 {character

@@ -20,6 +20,13 @@ import {
   featureMatcher,
 } from './db/feature'
 import { Heritage } from './db/heritage'
+import {
+  CalculatedProficiency,
+  SavingThrowAttributes,
+  SavingThrowStatistics,
+  SavingThrowType,
+  SkillType,
+} from './statistic'
 
 export interface Attributes {
   Strength: number
@@ -514,9 +521,9 @@ export class PlayerCharacter {
 
   public getProficiencies(): {
     Perception: Map<string, ProficiencyRank>
-    Skill: Map<string, ProficiencyRank>
+    Skill: Map<SkillType, ProficiencyRank>
     Lore: Map<string, ProficiencyRank>
-    SavingThrow: Map<string, ProficiencyRank>
+    SavingThrow: Map<SavingThrowType, ProficiencyRank>
     Weapon: Map<string, ProficiencyRank>
     Defense: Map<string, ProficiencyRank>
     DifficultyClass: Map<string, ProficiencyRank>
@@ -533,7 +540,7 @@ export class PlayerCharacter {
       Perception: new Map<string, ProficiencyRank>(),
       Skill: new Map<string, ProficiencyRank>(),
       Lore: new Map<string, ProficiencyRank>(),
-      SavingThrow: new Map<string, ProficiencyRank>(),
+      SavingThrow: new Map<SavingThrowType, ProficiencyRank>(),
       Weapon: new Map<string, ProficiencyRank>(),
       Defense: new Map<string, ProficiencyRank>(),
       DifficultyClass: new Map<string, ProficiencyRank>(),
@@ -557,7 +564,15 @@ export class PlayerCharacter {
           }
         }
       })
-    return proficiencyMap
+    return proficiencyMap as {
+      Perception: Map<string, ProficiencyRank>
+      Skill: Map<SkillType, ProficiencyRank>
+      Lore: Map<string, ProficiencyRank>
+      SavingThrow: Map<SavingThrowType, ProficiencyRank>
+      Weapon: Map<string, ProficiencyRank>
+      Defense: Map<string, ProficiencyRank>
+      DifficultyClass: Map<string, ProficiencyRank>
+    }
   }
 
   private greaterThan(
@@ -572,34 +587,21 @@ export class PlayerCharacter {
     return false
   }
 
-  public getSavingThrows(): {
-    Will: { rank: string; modifier: number }
-    Fortitude: { rank: string; modifier: number }
-    Reflex: { rank: string; modifier: number }
-  } {
+  public getSavingThrows(): SavingThrowStatistics {
     const savingThrows = this.getProficiencies().SavingThrow
-    return {
-      Will: {
-        rank: savingThrows.get('Will')!,
+    const result: any = {}
+    savingThrows.forEach((rank, type) => {
+      result[type] = {
+        rank: rank,
         modifier:
-          RankModifierMap[savingThrows.get('Will')!] + this.attributes.Wisdom,
-      },
-      Fortitude: {
-        rank: savingThrows.get('Fortitude')!,
-        modifier:
-          RankModifierMap[savingThrows.get('Fortitude')!] +
-          this.attributes.Constitution,
-      },
-      Reflex: {
-        rank: savingThrows.get('Reflex')!,
-        modifier:
-          RankModifierMap[savingThrows.get('Reflex')!] +
-          this.attributes.Dexterity,
-      },
-    }
+          RankModifierMap[rank] +
+          this.attributes[SavingThrowAttributes.get(type) as Attribute],
+      }
+    })
+    return result
   }
 
-  public getPerception(): { rank: string; modifier: number } {
+  public getPerception(): CalculatedProficiency {
     const perception = this.getProficiencies().Perception
     return {
       rank: perception.get('Perception')!,
