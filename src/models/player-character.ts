@@ -324,6 +324,8 @@ export class PlayerCharacter {
                 }
               }, 0) as number
 
+            // TODO ALI instead of creating MULTIPLE skill_selection entities when we hit this point, maybe it's value should just be a list
+            // then we can just .push or .splice in order to increase or reduce the size of the list in the consolidation step...
             if (currentNumber < expectedNumber) {
               const toAdd = expectedNumber - currentNumber
               const values: SourcedFeature[] = []
@@ -398,6 +400,7 @@ export class PlayerCharacter {
             feature: {
               type: 'PROFICIENCY',
               value: {
+                // TODO this shouldn't be 'max rank' ... we should be storing the actual rank in the selection entity on the character
                 rank: sourced.feature.value.configuration.max_rank,
                 type: 'Skill',
                 value: sourced.feature.value.value,
