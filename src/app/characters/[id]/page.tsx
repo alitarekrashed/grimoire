@@ -221,6 +221,23 @@ function CharacterDisplay({
             </div>
             <div className="mt-4">Saving throws</div>
           </div>
+          <div className="text-center">
+            <div className="inline-flex gap-2">
+              <div>
+                <div className="font-semibold">Perception</div>
+                <span className="text-xs">
+                  {character.getPerception().rank}
+                </span>
+                <div>
+                  <span>
+                    {(character.getPerception().modifier >= 0 ? ' +' : ' -') +
+                      character.getPerception().modifier}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="col-start-5 col-span-4">
             <div className="border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-full">
               <FeaturesTabs

@@ -492,6 +492,20 @@ export class PlayerCharacter {
     }
   }
 
+  public getPerception(): { rank: string; modifier: number } {
+    const perception = this.getProficiencies().Perception
+    console.log({
+      rank: perception.get('Perception')!,
+      modifier:
+        RankModifierMap[perception.get('Perception')!] + this.attributes.Wisdom,
+    })
+    return {
+      rank: perception.get('Perception')!,
+      modifier:
+        RankModifierMap[perception.get('Perception')!] + this.attributes.Wisdom,
+    }
+  }
+
   public getAttributeSelections(): AttributeSelections {
     return {
       ancestry: this.character.attributes.ancestry,
