@@ -16,6 +16,7 @@ import {
   FeatureType,
   ModifierFeatureValue,
   ResistanceFeatureValue,
+  SkillSelectionFeatureValue,
   featureMatcher,
 } from './db/feature'
 import { Heritage } from './db/heritage'
@@ -270,6 +271,103 @@ export class PlayerCharacter {
     this.initializeTraits()
     this.initializeHitpoints()
 
+    if (classEntity) {
+      classEntity.features['1']
+        .filter((feature: Feature) => feature.type === 'SKILL_SELECTION')
+        .forEach((feature: Feature) => {
+          const classSkillSelections = character.features['1']
+            .filter((sourced: SourcedFeature) => sourced.source === 'CLASS')
+            .map((sourced: SourcedFeature) => sourced.feature)
+            .filter((feature: Feature) => feature.type === 'SKILL_SELECTION')
+            .map(
+              (feature: Feature) => feature.value as SkillSelectionFeatureValue
+            )
+
+          const skillSelection = feature.value as SkillSelectionFeatureValue
+          if (!skillSelection.configuration.formula) {
+            if (
+              classSkillSelections.filter(
+                (selection) => !selection.configuration.formula
+              ).length === 0
+            ) {
+              const value: SourcedFeature = {
+                source: 'CLASS',
+                feature: {
+                  type: 'SKILL_SELECTION',
+                  value: {
+                    ...skillSelection,
+                    value: null,
+                  },
+                },
+              }
+              character.features['1'].push(value)
+            }
+          } else {
+            const currentNumber = classSkillSelections.filter(
+              (selection) => selection.configuration.formula
+            ).length
+
+            const expectedNumber: number =
+              skillSelection.configuration.formula.reduce((prev, curr) => {
+                if (typeof curr === 'number') {
+                  return (prev as number) + curr
+                } else {
+                  return (prev as number) + this.attributes[curr]
+                }
+              }, 0) as number
+
+            if (currentNumber < expectedNumber) {
+              const toAdd = expectedNumber - currentNumber
+              const values: SourcedFeature[] = []
+              for (let i = 0; i < toAdd; i++) {
+                values.push({
+                  source: 'CLASS',
+                  feature: {
+                    type: 'SKILL_SELECTION',
+                    value: {
+                      ...skillSelection,
+                      value: null,
+                    },
+                  },
+                })
+              }
+              character.features['1'].push(...values)
+            } else if (currentNumber > expectedNumber) {
+              let removalCounter = currentNumber - expectedNumber
+              const toRemove = []
+              for (
+                let i = character.features['1'].length - 1;
+                i >= 0 && removalCounter > 0;
+                i--
+              ) {
+                const currentFeature = character.features['1'][i]
+                if (
+                  currentFeature.source === 'CLASS' &&
+                  currentFeature.feature.type === 'SKILL_SELECTION' &&
+                  currentFeature.feature.value.configuration.formula
+                ) {
+                  toRemove.push(currentFeature)
+                  removalCounter -= 1
+                }
+              }
+              toRemove.forEach((item) => {
+                const index = character.features['1'].indexOf(item)
+                character.features['1'].splice(index, 1)
+              })
+            }
+          }
+        })
+
+      const skillSelections = character.features['1']
+        .filter((sourced: SourcedFeature) => sourced.source === 'CLASS')
+        .filter(
+          (sourced: SourcedFeature) =>
+            sourced.feature.type === 'SKILL_SELECTION'
+        )
+      this.allFeatures.push(...skillSelections)
+      console.log(skillSelections)
+    }
+
     this.allFeatures.forEach((feature) => this.addFeatureToCharacter(feature))
   }
 
@@ -503,11 +601,6 @@ export class PlayerCharacter {
 
   public getPerception(): { rank: string; modifier: number } {
     const perception = this.getProficiencies().Perception
-    console.log({
-      rank: perception.get('Perception')!,
-      modifier:
-        RankModifierMap[perception.get('Perception')!] + this.attributes.Wisdom,
-    })
     return {
       rank: perception.get('Perception')!,
       modifier:

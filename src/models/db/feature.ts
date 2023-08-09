@@ -1,4 +1,6 @@
 import { SourcedFeature } from '../player-character'
+import { Attribute, AttributeModifier } from './ancestry'
+import { ProficiencyRank } from './background'
 
 export type FeatureType =
   | 'SENSE'
@@ -10,6 +12,7 @@ export type FeatureType =
   | 'LANGUAGE'
   | 'MODIFIER'
   | 'FEAT'
+  | 'SKILL_SELECTION'
 export type CalculationFormula = 'half-level'
 export type ConditionalOperator = 'has'
 export type ModifierType = 'Perception' | 'Speed'
@@ -43,6 +46,17 @@ export interface ConditionalFeatureValue {
 export interface Conditional {
   operator: ConditionalOperator
   operand: Feature
+}
+
+export interface SkillSelectionFeatureValue {
+  configuration: SkillSelectionConfiguration
+  value: string
+}
+
+export interface SkillSelectionConfiguration {
+  options: string[] | 'Free'
+  max_rank: ProficiencyRank
+  formula?: (number | Attribute)[]
 }
 
 export function featureMatcher(other: SourcedFeature) {
