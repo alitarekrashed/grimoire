@@ -366,6 +366,25 @@ export class PlayerCharacter {
           }
         })
 
+      character.features['1']
+        .filter(
+          (sourced) =>
+            sourced.source === 'CLASS' &&
+            sourced.feature.type === 'SKILL_SELECTION'
+        )
+        .forEach((sourced) => {
+          const value =
+            this.allFeatures.filter(
+              (val) =>
+                val.feature.type === 'PROFICIENCY' &&
+                val.feature.value.type === 'Skill' &&
+                val.feature.value.value === sourced.feature.value.value
+            ).length === 0
+              ? sourced.feature.value.value
+              : null
+          sourced.feature.value.value = value
+        })
+
       const skillSelections: SourcedFeature[] = character.features['1']
         .filter((sourced: SourcedFeature) => sourced.source === 'CLASS')
         .filter(
