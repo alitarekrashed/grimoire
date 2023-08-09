@@ -8,7 +8,13 @@ export interface Background extends EntityModel {
 }
 
 export type ProficiencyType = 'Lore' | 'Skill' | 'Perception' | 'SavingThrow'
-export type ProficiencyRank = 'trained' | 'expert'
+export type ProficiencyRank = 'untrained' | 'trained' | 'expert'
+
+export const RankModifierMap = {
+  untrained: 0,
+  trained: 2,
+  expert: 4,
+}
 
 export interface ProficiencyFeatureValue {
   type: ProficiencyType

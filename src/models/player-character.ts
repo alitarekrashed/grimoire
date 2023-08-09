@@ -1,9 +1,11 @@
 import { ModifierValue } from '@/components/calculated-display/calculated-display'
+import { cloneDeep } from 'lodash'
 import { Ancestry, Attribute } from './db/ancestry'
 import {
   Background,
   ProficiencyFeatureValue,
-  ProficiencyType,
+  ProficiencyRank,
+  RankModifierMap,
 } from './db/background'
 import { CharacterEntity } from './db/character-entity'
 import { ClassEntity } from './db/class_entity'
@@ -17,7 +19,6 @@ import {
   featureMatcher,
 } from './db/feature'
 import { Heritage } from './db/heritage'
-import { cloneDeep } from 'lodash'
 
 export interface Attributes {
   Strength: number
@@ -414,31 +415,81 @@ export class PlayerCharacter {
   }
 
   public getProficiencies(): {
-    Perception: SourcedFeature[]
-    Skill: SourcedFeature[]
-    Lore: SourcedFeature[]
-    SavingThrow: SourcedFeature[]
+    Perception: Map<string, ProficiencyRank>
+    Skill: Map<string, ProficiencyRank>
+    Lore: Map<string, ProficiencyRank>
+    SavingThrow: Map<string, ProficiencyRank>
   } {
     const proficiencyMap: {
-      Perception: SourcedFeature[]
-      Skill: SourcedFeature[]
-      Lore: SourcedFeature[]
-      SavingThrow: SourcedFeature[]
+      Perception: Map<string, ProficiencyRank>
+      Skill: Map<string, ProficiencyRank>
+      Lore: Map<string, ProficiencyRank>
+      SavingThrow: Map<string, ProficiencyRank>
     } = {
-      Perception: [],
-      Skill: [],
-      Lore: [],
-      SavingThrow: [],
+      Perception: new Map<string, ProficiencyRank>(),
+      Skill: new Map<string, ProficiencyRank>(),
+      Lore: new Map<string, ProficiencyRank>(),
+      SavingThrow: new Map<string, ProficiencyRank>(),
     }
+
     this.features
       .filter((feature) => feature.feature.type === 'PROFICIENCY')
       .forEach((sourced: SourcedFeature) => {
         const proficency = sourced.feature.value as ProficiencyFeatureValue
-        proficiencyMap[sourced.feature.value.type as ProficiencyType].push(
-          sourced
-        )
+        if (proficiencyMap[proficency.type].has(proficency.value) == false) {
+          proficiencyMap[proficency.type].set(proficency.value, proficency.rank)
+        } else {
+          const existingRank = proficiencyMap[proficency.type].get(
+            proficency.value
+          )
+          if (this.greaterThan(proficency.rank, existingRank!)) {
+            proficiencyMap[proficency.type].set(
+              proficency.value,
+              proficency.rank
+            )
+          }
+        }
       })
     return proficiencyMap
+  }
+
+  private greaterThan(
+    thisRank: ProficiencyRank,
+    other: ProficiencyRank
+  ): boolean {
+    if (other === 'untrained') {
+      return true
+    } else if (other === 'trained') {
+      return thisRank === 'trained' || thisRank === 'expert'
+    }
+    return false
+  }
+
+  public getSavingThrows(): {
+    Will: { rank: string; modifier: number }
+    Fortitude: { rank: string; modifier: number }
+    Reflex: { rank: string; modifier: number }
+  } {
+    const savingThrows = this.getProficiencies().SavingThrow
+    return {
+      Will: {
+        rank: savingThrows.get('Will')!,
+        modifier:
+          RankModifierMap[savingThrows.get('Will')!] + this.attributes.Wisdom,
+      },
+      Fortitude: {
+        rank: savingThrows.get('Fortitude')!,
+        modifier:
+          RankModifierMap[savingThrows.get('Fortitude')!] +
+          this.attributes.Constitution,
+      },
+      Reflex: {
+        rank: savingThrows.get('Reflex')!,
+        modifier:
+          RankModifierMap[savingThrows.get('Reflex')!] +
+          this.attributes.Dexterity,
+      },
+    }
   }
 
   public getAttributeSelections(): AttributeSelections {
@@ -677,13 +728,6 @@ export class PlayerCharacter {
         })
       }
     })
-
-    feats.push(
-      ...character.features[1]
-        .filter((value) => value.feature.value)
-        .filter((value) => value.feature.type === 'FEAT')
-        .map((value) => value.feature.value)
-    )
 
     allFeatures.push(...(await resolveFeats(feats)))
 

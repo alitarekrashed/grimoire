@@ -14,10 +14,10 @@ export function FeaturesTabs({
   features: SourcedFeature[]
   actions: SourcedFeature[]
   proficiencies: {
-    Perception: SourcedFeature[]
-    Skill: SourcedFeature[]
-    Lore: SourcedFeature[]
-    SavingThrow: SourcedFeature[]
+    Perception: Map<string, ProficiencyRank>
+    Skill: Map<string, ProficiencyRank>
+    Lore: Map<string, ProficiencyRank>
+    SavingThrow: Map<string, ProficiencyRank>
   }
 }) {
   return (
@@ -59,22 +59,25 @@ export function FeaturesTabs({
       </Tabs.Content>
       <Tabs.Content value="proficiencies">
         <span className="text-xs">
-          {Object.keys(proficiencies).map((type: string) => {
+          {Object.keys(proficiencies).map((type: string, index) => {
             return (
-              <div>
+              <div key={`${type}-${index}`}>
                 <span className="font-semibold">{type}</span>
-                {proficiencies[type as ProficiencyType].map(
-                  (proficiency, index) => {
+                {Array.from(proficiencies[type as ProficiencyType].keys()).map(
+                  (proficiency: string, index) => {
                     return (
-                      <div key={`${proficiency.feature.value.value}-${index}`}>
+                      <div key={`${proficiency}-${index}`}>
                         <LabelsList
                           fieldDefinitions={[
                             {
                               label:
-                                proficiency.feature.value.type === 'Lore'
-                                  ? `Lore ${proficiency.feature.value.value}`
-                                  : proficiency.feature.value.value,
-                              value: proficiency.feature.value.rank,
+                                type === 'Lore'
+                                  ? `Lore ${proficiency}`
+                                  : proficiency,
+                              value:
+                                proficiencies[type as ProficiencyType].get(
+                                  proficiency
+                                ),
                             },
                           ]}
                         ></LabelsList>

@@ -147,18 +147,21 @@ export default function CharacterBuilderModal({
                 </div>
               </div>
               <div>
-                {character.getLevelFeatures().map((value, index) => {
-                  return (
-                    <AncestryFeatChoiceModal
-                      key={`${value.source}-${index}`}
-                      existingFeatName={
-                        value.feature.value ? value.feature.value : ''
-                      }
-                      traits={character.getTraits()}
-                      onChange={handleFeatChange(index)}
-                    ></AncestryFeatChoiceModal>
-                  )
-                })}
+                {character
+                  .getLevelFeatures()
+                  .filter((sourced) => sourced.source === 'ANCESTRY')
+                  .map((value, index) => {
+                    return (
+                      <AncestryFeatChoiceModal
+                        key={`${value.source}-${index}`}
+                        existingFeatName={
+                          value.feature.value ? value.feature.value : ''
+                        }
+                        traits={character.getTraits()}
+                        onChange={handleFeatChange(index)}
+                      ></AncestryFeatChoiceModal>
+                    )
+                  })}
               </div>
             </div>
             <div className="mb-128"></div>
