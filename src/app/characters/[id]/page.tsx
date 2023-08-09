@@ -13,8 +13,7 @@ import { useDebounce } from '@/utils/debounce'
 import { roboto_condensed, roboto_flex } from '@/utils/fonts'
 import { getPlayerCharacter } from '@/utils/services/player-character-service'
 import { usePathname } from 'next/navigation'
-import React from 'react'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 export default function CharacterPage() {
   const path: string[] = usePathname().split('/')
@@ -142,7 +141,7 @@ function CharacterDisplay({
           </div>
           <div className="col-span-3 justify-self-start">
             <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
-              <div className="grid grid-rows-2 grid-cols-4 gap-1">
+              <div className="grid grid-rows-2 grid-cols-3 gap-1">
                 <span className="font-bold col-span-1">Resistances</span>
                 <span className="col-span-3">
                   {resistances.map((resistance, index) => {
@@ -193,6 +192,52 @@ function CharacterDisplay({
               </div>
             </div>
           </div>
+          <div className="inline-flex flex-col text-center">
+            <div className="inline-flex gap-2">
+              {Object.keys(character.getSavingThrows()).map((value: string) => (
+                <div key={value}>
+                  <div className="font-semibold">{value}</div>
+                  <span className="text-xs">
+                    {
+                      character.getSavingThrows()[
+                        value as 'Will' | 'Fortitude' | 'Reflex'
+                      ].rank
+                    }
+                  </span>
+                  <div>
+                    <span>
+                      {(character.getSavingThrows()[
+                        value as 'Will' | 'Fortitude' | 'Reflex'
+                      ].modifier >= 0
+                        ? ' +'
+                        : ' -') +
+                        character.getSavingThrows()[
+                          value as 'Will' | 'Fortitude' | 'Reflex'
+                        ].modifier}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4">Saving throws</div>
+          </div>
+          <div className="text-center">
+            <div className="inline-flex gap-2">
+              <div>
+                <div className="font-semibold">Perception</div>
+                <span className="text-xs">
+                  {character.getPerception().rank}
+                </span>
+                <div>
+                  <span>
+                    {(character.getPerception().modifier >= 0 ? ' +' : ' -') +
+                      character.getPerception().modifier}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="col-start-5 col-span-4">
             <div className="border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-full">
               <FeaturesTabs

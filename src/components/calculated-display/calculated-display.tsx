@@ -31,7 +31,7 @@ export default function CalculatedDisplay({
             >
               {values.map((value: ModifierValue, index: number) => (
                 <span key={`${value.source}-${value.type}`}>
-                  {index > 0 && (value.value >= 0 ? ' + ' : ' - ')}{' '}
+                  {index > 0 && (value.value >= 0 ? ' + ' : ' - ')}
                   {value.value}
                   &nbsp;[{value.source}]
                 </span>
