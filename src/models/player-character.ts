@@ -590,7 +590,9 @@ export class PlayerCharacter {
       PlayerCharacter.getClass(character.class_id),
     ])
 
+    let feats: string[] = []
     const allFeatures: SourcedFeature[] = []
+
     allFeatures.push(
       ...ancestry.features.map((feature: Feature) => {
         return {
@@ -626,8 +628,6 @@ export class PlayerCharacter {
       )
     }
 
-    let feats: string[] = []
-
     if (background) {
       allFeatures.push(
         ...background.skills.map((skill: ProficiencyFeatureValue) => {
@@ -641,9 +641,20 @@ export class PlayerCharacter {
       feats.push(background.feat)
     }
 
+    character.features['1'].forEach((sourced: SourcedFeature) => {
+      if (sourced.feature.type === 'FEAT') {
+        feats.push(sourced.feature.value)
+      } else if (sourced.feature.type === 'PROFICIENCY') {
+        allFeatures.push({
+          source: classEntity.name,
+          feature: sourced.feature,
+        })
+      }
+    })
+
     feats.push(
       ...character.features[1]
-        .filter((value) => value?.feature?.value)
+        .filter((value) => value.feature.value)
         .filter((value) => value.feature.type === 'FEAT')
         .map((value) => value.feature.value)
     )

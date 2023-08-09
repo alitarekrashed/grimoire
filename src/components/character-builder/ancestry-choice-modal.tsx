@@ -22,7 +22,6 @@ export function AncestryChoiceModal({
   }, [])
 
   const updateAncestry = (ancestry: Ancestry) => {
-    console.log(ancestry)
     onAncestryEdit(ancestry._id.toString())
   }
 
