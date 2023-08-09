@@ -13,6 +13,7 @@ import { AttributesModal } from './attributes-modal'
 import { BackgroundChoiceModal } from './background-choice-modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LanguagesModal } from './languages-modal'
+import { SkillsModal } from './skills-modal'
 
 export default function CharacterBuilderModal({
   playerCharacter,
@@ -73,10 +74,22 @@ export default function CharacterBuilderModal({
   const handleFeatChange = (index: number) => (feat: Feat) => {
     let updated = cloneDeep(character.getCharacter())
     if (feat) {
-      updated.features['1'][index].feature.value = feat.name
+      updated.features['1'].filter((sourced) => sourced.source === 'ANCESTRY')[
+        index
+      ].feature.value = feat.name
     } else {
-      updated.features['1'][index].feature.value = undefined!
+      updated.features['1'].filter((sourced) => sourced.source === 'ANCESTRY')[
+        index
+      ].feature.value = undefined!
     }
+    PlayerCharacter.build(updated).then((val) => {
+      setCharacter(val)
+    })
+  }
+
+  const handleSkillChange = (features: { '1': SourcedFeature[] }) => {
+    let updated = cloneDeep(character.getCharacter())
+    updated.features = features
     PlayerCharacter.build(updated).then((val) => {
       setCharacter(val)
     })
@@ -163,6 +176,13 @@ export default function CharacterBuilderModal({
                       ></AncestryFeatChoiceModal>
                     )
                   })}
+              </div>
+              <div>
+                <SkillsModal
+                  character={character.getCharacter()}
+                  proficiencies={character.getSkills()}
+                  onSkillsUpdate={handleSkillChange}
+                ></SkillsModal>
               </div>
             </div>
             <div className="mb-128"></div>

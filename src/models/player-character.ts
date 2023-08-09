@@ -366,12 +366,26 @@ export class PlayerCharacter {
           }
         })
 
-      const skillSelections = character.features['1']
+      const skillSelections: SourcedFeature[] = character.features['1']
         .filter((sourced: SourcedFeature) => sourced.source === 'CLASS')
         .filter(
           (sourced: SourcedFeature) =>
             sourced.feature.type === 'SKILL_SELECTION'
         )
+        .filter((sourced: SourcedFeature) => sourced.feature.value.value)
+        .map((sourced: SourcedFeature) => {
+          return {
+            source: sourced.source,
+            feature: {
+              type: 'PROFICIENCY',
+              value: {
+                rank: sourced.feature.value.configuration.max_rank,
+                type: 'Skill',
+                value: sourced.feature.value.value,
+              },
+            },
+          }
+        })
       this.allFeatures.push(...skillSelections)
       console.log(skillSelections)
     }
