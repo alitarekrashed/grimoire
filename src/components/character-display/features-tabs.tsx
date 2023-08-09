@@ -4,7 +4,7 @@ import { SourcedFeature } from '@/models/player-character'
 import { LabelsList } from '../labels-list/labels-list'
 import styles from './features-tabs.module.css'
 import { ActionInlineDisplay } from '../actions/action-inline-display'
-import { ProficiencyType } from '@/models/db/background'
+import { ProficiencyRank, ProficiencyType } from '@/models/db/background'
 
 export function FeaturesTabs({
   features,
@@ -18,8 +18,9 @@ export function FeaturesTabs({
     Skill: Map<string, ProficiencyRank>
     Lore: Map<string, ProficiencyRank>
     SavingThrow: Map<string, ProficiencyRank>
-    Weapons: Map<string, ProficiencyRank>
+    Weapon: Map<string, ProficiencyRank>
     Defense: Map<string, ProficiencyRank>
+    DifficultyClass: Map<string, ProficiencyRank>
   }
 }) {
   return (

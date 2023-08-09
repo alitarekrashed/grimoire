@@ -14,6 +14,7 @@ export type ProficiencyType =
   | 'SavingThrow'
   | 'Weapon'
   | 'Defense'
+  | 'DifficultyClass'
 export type ProficiencyRank = 'untrained' | 'trained' | 'expert'
 
 export const RankModifierMap = {
