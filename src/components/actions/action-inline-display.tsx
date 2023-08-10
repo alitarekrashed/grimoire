@@ -37,7 +37,7 @@ export function ActionInlineDisplay({
     <>
       {action && (
         <Collapsible.Root defaultOpen={false}>
-          <Collapsible.Trigger className="w-full flex justify-start hover:bg-stone-300/40 hover:rounded-sm">
+          <Collapsible.Trigger className="w-full flex justify-start rounded-sm bg-stone-300/40 hover:bg-stone-500/40">
             <span className="ml-1 mr-1">{action.name}</span>
             <ActionRenderer
               activation={action.activation}
