@@ -41,12 +41,21 @@ export function SkillsModal({
     setUpdatedFeatures(cloneDeep(skillFeatures))
   }, [skillFeatures])
 
+  let totalCount = 0
+  let setCount = 0
+  skillFeatures.forEach((sourced) => {
+    totalCount += sourced.feature.value.value.length
+    setCount += sourced.feature.value.value.filter(
+      (value: string) => value
+    ).length
+  })
+
   const trigger = (
     <span
       className="border border-stone-300 rounded-md relative flex w-44 h-9 p-1 justify-center items-center hover:bg-stone-600"
       tabIndex={0}
     >
-      Skills
+      Skills {setCount}/{totalCount}
     </span>
   )
 

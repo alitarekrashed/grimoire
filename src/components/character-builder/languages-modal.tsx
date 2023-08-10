@@ -37,12 +37,19 @@ export function LanguagesModal({
     setModifiedCharacter(cloneDeep(character))
   }, [character])
 
+  let totalCount = 0
+  let setCount = 0
+  character.languages.forEach((language) => {
+    totalCount += 1
+    setCount += language ? 1 : 0
+  })
+
   const trigger = (
     <span
       className="border border-stone-300 rounded-md relative flex w-44 h-9 p-1 justify-center items-center hover:bg-stone-600"
       tabIndex={0}
     >
-      Languages
+      Languages {setCount}/{totalCount}
     </span>
   )
 
