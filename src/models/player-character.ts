@@ -65,11 +65,18 @@ async function resolveFeats(feats: string[]): Promise<SourcedFeature[]> {
     .forEach((feat: Feat) => {
       resolvedFeatures.push(
         ...feat.features
+          .filter((feature) => !feature.value.action)
           .filter((feature) => feature.type !== 'FEAT')
           .map((feature: Feature) => {
             return { source: feat.name, feature: feature }
           })
       )
+      if (feat.action) {
+        resolvedFeatures.push({
+          source: feat.name,
+          feature: { type: 'ACTION', value: feat.action },
+        })
+      }
       additionalFeats.push(
         ...feat.features
           .filter((feature) => feature.type === 'FEAT')
