@@ -1,11 +1,13 @@
 'use client'
 
-import { Background } from '@/models/db/background'
-import { RefObject } from 'react'
-import Card from '../card/card'
 import { Feat, Prerequisite, PrerequisiteSkillValue } from '@/models/db/feat'
+import { RefObject, useEffect, useState } from 'react'
+import Card from '../card/card'
 import { LabelsList } from '../labels-list/labels-list'
-import { render } from 'react-dom'
+import { Activation } from '@/models/db/activation'
+import { retrieveEntity } from '@/utils/services/reference-lookup.service'
+import { Action } from '@/models/db/action'
+import { EntityModel } from '@/models/db/entity-model'
 
 export default function FeatCard({
   reference,
@@ -16,8 +18,23 @@ export default function FeatCard({
   reference?: RefObject<HTMLDivElement>
   value: Feat
   collapsible?: boolean
-  onRemoved?: (item: Feat) => void
+  onRemoved?: (item: Feat | Action) => void
 }) {
+  const [entity, setEntity] = useState<Feat | Action>()
+  const [activation, setActivation] = useState<Activation>()
+
+  useEffect(() => {
+    if (value.action) {
+      retrieveEntity(value.action, 'ACTION').then((action: EntityModel) => {
+        setEntity(action as Action)
+        setActivation((action as Action).activation)
+      })
+    } else {
+      setEntity(value)
+      setActivation(undefined)
+    }
+  }, [value])
+
   const attributes = (
     <div className="text-sm">
       {value?.prerequisites && (
@@ -37,9 +54,11 @@ export default function FeatCard({
   return (
     <Card
       reference={reference}
-      data={value}
+      data={entity!}
       type="Feat"
+      level={value.level}
       attributes={attributes}
+      activation={activation}
       traits={value.traits}
       collapsible={collapsible}
       onRemoved={onRemoved}
