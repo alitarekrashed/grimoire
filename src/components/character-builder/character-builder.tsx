@@ -25,11 +25,20 @@ export default function CharacterBuilderModal({
 }) {
   const [character, setCharacter] = useState<PlayerCharacter>(playerCharacter)
   const [name, setName] = useState<string>(playerCharacter.getCharacter().name)
+  const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
     setCharacter(playerCharacter)
     setName(playerCharacter.getCharacter().name)
   }, [playerCharacter])
+
+  const updatePlayerCharacter = (updated: CharacterEntity) => {
+    setLoading(true)
+    PlayerCharacter.build(updated).then((val) => {
+      setCharacter(val)
+      setLoading(false)
+    })
+  }
 
   const updateName = (value: string) => {
     setName(value)
@@ -45,9 +54,7 @@ export default function CharacterBuilderModal({
   const handleHeritageChange = (heritageId: string) => {
     let updated: CharacterEntity = cloneDeep(character!.getCharacter())
     updated.heritage_id = heritageId
-    PlayerCharacter.build(updated).then((val) => {
-      setCharacter(val)
-    })
+    updatePlayerCharacter(updated)
   }
 
   const handleAttributeChange = (characterEntity: CharacterEntity) => {
@@ -224,6 +231,7 @@ export default function CharacterBuilderModal({
           {
             label: 'Save',
             onClick: () => onClose(character.getCharacter()),
+            disabled: loading,
           },
           {
             label: 'Cancel',
