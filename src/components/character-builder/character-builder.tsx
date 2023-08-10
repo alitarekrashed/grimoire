@@ -1,7 +1,7 @@
 'use client'
 
 import { CharacterEntity } from '@/models/db/character-entity'
-import { Feat } from '@/models/db/feat'
+import { FeatureType } from '@/models/db/feature'
 import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
@@ -14,7 +14,6 @@ import { BackgroundChoiceModal } from './background-choice-modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LanguagesModal } from './languages-modal'
 import { SkillsModal } from './skills-modal'
-import { FeatureType } from '@/models/db/feature'
 
 export default function CharacterBuilderModal({
   playerCharacter,
