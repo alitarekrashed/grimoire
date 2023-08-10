@@ -14,6 +14,7 @@ import { BackgroundChoiceModal } from './background-choice-modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LanguagesModal } from './languages-modal'
 import { SkillsModal } from './skills-modal'
+import { ClassFeatChoiceModal } from './class-feat.modal'
 
 export default function CharacterBuilderModal({
   playerCharacter,
@@ -152,47 +153,71 @@ export default function CharacterBuilderModal({
                     ancestry={character.getAncestry()}
                   ></LanguagesModal>
                 </div>
-                <div>banana!</div>
               </div>
-              <div>
-                {character
-                  .getLevelFeatures()
-                  .filter((sourced) => sourced.source === 'ANCESTRY')
-                  .map((value, index) => {
-                    return (
-                      <AncestryFeatChoiceModal
-                        key={`${value.source}-${index}`}
-                        existingFeat={value}
-                        existingFeatName={
-                          value.feature.value ? value.feature.value : ''
-                        }
-                        traits={character.getTraits()}
-                        onChange={handleFeatureUpdate('ANCESTRY', 'FEAT')}
-                      ></AncestryFeatChoiceModal>
-                    )
-                  })}
-              </div>
-              <div>
-                <SkillsModal
-                  skillFeatures={character
+              <div className="inline-flex gap-2">
+                <div>
+                  {character
+                    .getLevelFeatures()
+                    .filter((sourced) => sourced.source === 'ANCESTRY')
+                    .map((value, index) => {
+                      return (
+                        <AncestryFeatChoiceModal
+                          key={`${value.source}-${index}`}
+                          existingFeat={value}
+                          existingFeatName={
+                            value.feature.value ? value.feature.value : ''
+                          }
+                          traits={character.getTraits()}
+                          onChange={handleFeatureUpdate('ANCESTRY', 'FEAT')}
+                        ></AncestryFeatChoiceModal>
+                      )
+                    })}
+                </div>
+                <div>
+                  <SkillsModal
+                    skillFeatures={character
+                      .getLevelFeatures()
+                      .filter(
+                        (sourced) =>
+                          sourced.source === 'CLASS' &&
+                          sourced.feature.type === 'SKILL_SELECTION'
+                      )}
+                    // basically what we're trying to say here is "filter out Class Level 1 proficiencies when passing in existing profs"
+                    // the reasoning is that since all the values for Class Level 1 profs are encapsulated within this modal, it can just
+                    // check itself for its values
+                    proficiencies={character.getSkills('1')}
+                    onSkillsUpdate={handleFeatureUpdate(
+                      'CLASS',
+                      'SKILL_SELECTION'
+                    )}
+                  ></SkillsModal>
+                </div>
+                <div>
+                  {character
                     .getLevelFeatures()
                     .filter(
                       (sourced) =>
                         sourced.source === 'CLASS' &&
-                        sourced.feature.type === 'SKILL_SELECTION'
-                    )}
-                  // basically what we're trying to say here is "filter out Class Level 1 proficiencies when passing in existing profs"
-                  // the reasoning is that since all the values for Class Level 1 profs are encapsulated within this modal, it can just
-                  // check itself for its values
-                  proficiencies={character.getSkills('1')}
-                  onSkillsUpdate={handleFeatureUpdate(
-                    'CLASS',
-                    'SKILL_SELECTION'
-                  )}
-                ></SkillsModal>
+                        sourced.feature.type === 'CLASS_FEAT_SELECTION'
+                    )
+                    .map((value, index) => {
+                      return (
+                        <ClassFeatChoiceModal
+                          key={`${value.source}-${index}`}
+                          existingFeat={value}
+                          traits={[
+                            character.getClassEntity().name.toLowerCase(),
+                          ]}
+                          onChange={handleFeatureUpdate(
+                            'CLASS',
+                            'CLASS_FEAT_SELECTION'
+                          )}
+                        ></ClassFeatChoiceModal>
+                      )
+                    })}
+                </div>
               </div>
             </div>
-            <div className="mb-128"></div>
           </div>
         }
         closeButtons={[
