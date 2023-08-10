@@ -283,20 +283,20 @@ export class PlayerCharacter {
       classEntity.features['1']
         .filter((feature: Feature) => feature.type === 'SKILL_SELECTION')
         .forEach((feature: Feature) => {
-          const classSkillSelections = character.features['1']
-            .filter((sourced: SourcedFeature) => sourced.source === 'CLASS')
-            .map((sourced: SourcedFeature) => sourced.feature)
-            .filter((feature: Feature) => feature.type === 'SKILL_SELECTION')
-            .map(
-              (feature: Feature) => feature.value as SkillSelectionFeatureValue
-            )
+          const classSkillSelections: SourcedFeature[] = character.features[
+            '1'
+          ].filter(
+            (sourced: SourcedFeature) =>
+              sourced.source === 'CLASS' &&
+              sourced.feature.type === 'SKILL_SELECTION'
+          )
 
           const skillSelection = feature.value as SkillSelectionFeatureValue
           if (!skillSelection.configuration.formula) {
             if (
-              classSkillSelections.filter(
-                (selection) => !selection.configuration.formula
-              ).length === 0
+              !classSkillSelections.find(
+                (sourced) => !sourced.feature.value.configuration.formula
+              )
             ) {
               const value: SourcedFeature = {
                 source: 'CLASS',
@@ -304,17 +304,13 @@ export class PlayerCharacter {
                   type: 'SKILL_SELECTION',
                   value: {
                     ...skillSelection,
-                    value: null,
+                    value: [null],
                   },
                 },
               }
               character.features['1'].push(value)
             }
           } else {
-            const currentNumber = classSkillSelections.filter(
-              (selection) => selection.configuration.formula
-            ).length
-
             const expectedNumber: number =
               skillSelection.configuration.formula.reduce((prev, curr) => {
                 if (typeof curr === 'number') {
@@ -324,46 +320,45 @@ export class PlayerCharacter {
                 }
               }, 0) as number
 
+            // TODO i need to create one if one does not exist!
+            let classSkillSelection = classSkillSelections.find(
+              (sourced) => sourced.feature.value.configuration.formula
+            )
+            if (!classSkillSelection) {
+              const values = []
+              for (let i = 0; i < expectedNumber; i++) {
+                values.push(null)
+              }
+              let classSkillSelection: SourcedFeature = {
+                source: 'CLASS',
+                feature: {
+                  type: 'SKILL_SELECTION',
+                  value: {
+                    ...skillSelection,
+                    value: [values],
+                  },
+                },
+              }
+              character.features['1'].push(classSkillSelection)
+            }
+
+            const currentNumber =
+              classSkillSelection!.feature.value.value.length
+
             // TODO ALI instead of creating MULTIPLE skill_selection entities when we hit this point, maybe it's value should just be a list
             // then we can just .push or .splice in order to increase or reduce the size of the list in the consolidation step...
             if (currentNumber < expectedNumber) {
               const toAdd = expectedNumber - currentNumber
-              const values: SourcedFeature[] = []
               for (let i = 0; i < toAdd; i++) {
-                values.push({
-                  source: 'CLASS',
-                  feature: {
-                    type: 'SKILL_SELECTION',
-                    value: {
-                      ...skillSelection,
-                      value: null,
-                    },
-                  },
-                })
+                classSkillSelection?.feature.value.value.push(null)
               }
-              character.features['1'].push(...values)
             } else if (currentNumber > expectedNumber) {
               let removalCounter = currentNumber - expectedNumber
-              const toRemove = []
-              for (
-                let i = character.features['1'].length - 1;
-                i >= 0 && removalCounter > 0;
-                i--
-              ) {
-                const currentFeature = character.features['1'][i]
-                if (
-                  currentFeature.source === 'CLASS' &&
-                  currentFeature.feature.type === 'SKILL_SELECTION' &&
-                  currentFeature.feature.value.configuration.formula
-                ) {
-                  toRemove.push(currentFeature)
-                  removalCounter -= 1
-                }
-              }
-              toRemove.forEach((item) => {
-                const index = character.features['1'].indexOf(item)
-                character.features['1'].splice(index, 1)
-              })
+              classSkillSelection!.feature.value.value.splice(
+                classSkillSelection!.feature.value.value.length -
+                  removalCounter,
+                removalCounter
+              )
             }
           }
         })
@@ -375,41 +370,46 @@ export class PlayerCharacter {
             sourced.feature.type === 'SKILL_SELECTION'
         )
         .forEach((sourced) => {
-          const value =
-            this.allFeatures.filter(
-              (val) =>
-                val.feature.type === 'PROFICIENCY' &&
-                val.feature.value.type === 'Skill' &&
-                val.feature.value.value === sourced.feature.value.value
-            ).length === 0
-              ? sourced.feature.value.value
-              : null
-          sourced.feature.value.value = value
+          sourced.feature.value.value.forEach(
+            (skill: string, index: number) => {
+              const value =
+                this.allFeatures.filter(
+                  (val) =>
+                    val.feature.type === 'PROFICIENCY' &&
+                    val.feature.value.type === 'Skill' &&
+                    val.feature.value.value === skill
+                ).length === 0
+                  ? skill
+                  : null
+              sourced.feature.value.value[index] = value
+            }
+          )
         })
 
-      const skillSelections: SourcedFeature[] = character.features['1']
+      character.features['1']
         .filter((sourced: SourcedFeature) => sourced.source === 'CLASS')
         .filter(
           (sourced: SourcedFeature) =>
             sourced.feature.type === 'SKILL_SELECTION'
         )
         .filter((sourced: SourcedFeature) => sourced.feature.value.value)
-        .map((sourced: SourcedFeature) => {
-          return {
-            source: sourced.source,
-            feature: {
-              type: 'PROFICIENCY',
-              value: {
-                // TODO this shouldn't be 'max rank' ... we should be storing the actual rank in the selection entity on the character
-                rank: sourced.feature.value.configuration.max_rank,
-                type: 'Skill',
-                value: sourced.feature.value.value,
+        .forEach((sourced: SourcedFeature) => {
+          const values = sourced.feature.value.value.map((skill: string) => {
+            return {
+              source: sourced.source,
+              feature: {
+                type: 'PROFICIENCY',
+                value: {
+                  // TODO this shouldn't be 'max rank' ... we should be storing the actual rank in the selection entity on the character
+                  rank: sourced.feature.value.configuration.max_rank,
+                  type: 'Skill',
+                  value: skill,
+                },
               },
-            },
-          }
+            }
+          })
+          this.allFeatures.push(...values)
         })
-      this.allFeatures.push(...skillSelections)
-      console.log(skillSelections)
     }
 
     this.allFeatures.forEach((feature) => this.addFeatureToCharacter(feature))

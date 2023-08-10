@@ -22,15 +22,15 @@ function getSkillChoices(
 }
 
 export function SkillsModal({
-  character,
+  skillFeatures,
   proficiencies,
   onSkillsUpdate,
 }: {
-  character: CharacterEntity
+  skillFeatures: SourcedFeature[]
   proficiencies: Map<SkillType, CalculatedProficiency>
-  onSkillsUpdate: (feature: { '1': SourcedFeature[] }) => void
+  onSkillsUpdate: (features: SourcedFeature[]) => void
 }) {
-  const [modifiedCharacter, setModifiedCharacter] = useState<CharacterEntity>()
+  const [updatedFeatures, setUpdatedFeatures] = useState<SourcedFeature[]>()
   const [choices, setChoices] = useState<string[]>([])
 
   useEffect(() => {
@@ -38,8 +38,8 @@ export function SkillsModal({
   }, [proficiencies])
 
   useEffect(() => {
-    setModifiedCharacter(cloneDeep(character))
-  }, [character])
+    setUpdatedFeatures(cloneDeep(skillFeatures))
+  }, [skillFeatures])
 
   const trigger = (
     <span
@@ -50,60 +50,35 @@ export function SkillsModal({
     </span>
   )
 
-  let skillSelections: SourcedFeature[] = []
-  if (modifiedCharacter) {
-    skillSelections = modifiedCharacter.features['1'].filter(
-      (sourced) => sourced.feature.type === 'SKILL_SELECTION'
-    )
-  }
+  console.log(skillFeatures)
+  const skillChoices =
+    updatedFeatures &&
+    updatedFeatures.map((sourced: SourcedFeature, index) => {
+      const skillSelection = sourced.feature.value as SkillSelectionFeatureValue
 
-  const body = (
-    <div className={`${roboto_condensed.className} p-2`}>
-      {skillSelections.map((choice: SourcedFeature, i: number) => {
-        const skillSelection = choice.feature
-          .value as SkillSelectionFeatureValue
+      return skillSelection.value.map((skill: string, innerIndex) => {
         return (
-          <React.Fragment key={i}>
+          <React.Fragment key={`${skill}-${index}-${innerIndex}`}>
             <select
               className="bg-stone-700 mr-2 rounded-md"
-              value={skillSelection.value ?? ''}
+              value={skill ?? ''}
               onChange={(e) => {
-                let updated = cloneDeep(modifiedCharacter)!
-                updated.features['1'].filter(
-                  (sourced) => sourced.feature.type === 'SKILL_SELECTION'
-                )[i].feature.value.value = e.target.value
-                setModifiedCharacter(updated)
+                let updated = cloneDeep(updatedFeatures)!
+                updated[index].feature.value.value[innerIndex] = e.target.value
+                setUpdatedFeatures(updated)
               }}
             >
-              <option value={skillSelection.value}>
-                {skillSelection.value}
-              </option>
+              <option value={skill}>{skill}</option>
               {choices
-                .filter((choice) => {
-                  if (skillSelection.configuration.options !== 'Free') {
-                    console.log(choice)
-                    console.log(
-                      modifiedCharacter?.features['1']
-                        .filter(
-                          (sourced) =>
-                            sourced.feature.type === 'SKILL_SELECTION'
-                        )
-                        .map(
-                          (choice: SourcedFeature) => choice.feature.value.value
-                        )
+                .filter((choice: string) => {
+                  console.log(choice)
+                  console.log(skillSelection)
+                  const alreadyChosen = updatedFeatures
+                    .map(
+                      (feature: SourcedFeature) => feature.feature.value.value
                     )
-                    console.log(skillSelection)
-                  }
-                  if (
-                    modifiedCharacter?.features['1']
-                      .filter(
-                        (sourced) => sourced.feature.type === 'SKILL_SELECTION'
-                      )
-                      .map(
-                        (choice: SourcedFeature) => choice.feature.value.value
-                      )
-                      .includes(choice)
-                  ) {
+                    .some((skills: string[]) => skills.includes(choice))
+                  if (alreadyChosen) {
                     return false
                   }
                   if (skillSelection.configuration.options === 'Free') {
@@ -120,8 +95,11 @@ export function SkillsModal({
             </select>
           </React.Fragment>
         )
-      })}
-    </div>
+      })
+    })
+
+  const body = updatedFeatures && (
+    <div className={`${roboto_condensed.className} p-2`}>{skillChoices}</div>
   )
   return (
     <Modal
@@ -132,13 +110,13 @@ export function SkillsModal({
         {
           label: 'Save',
           onClick: () => {
-            onSkillsUpdate(modifiedCharacter?.features ?? character.features)
+            onSkillsUpdate(updatedFeatures ?? [])
           },
         },
         {
           label: 'Cancel',
           onClick: () => {
-            onSkillsUpdate(character.features)
+            onSkillsUpdate(skillFeatures)
           },
         },
       ]}

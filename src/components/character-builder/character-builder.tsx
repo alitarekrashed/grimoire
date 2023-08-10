@@ -2,7 +2,7 @@
 
 import { CharacterEntity } from '@/models/db/character-entity'
 import { Feat } from '@/models/db/feat'
-import { PlayerCharacter } from '@/models/player-character'
+import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
 import { useEffect, useState } from 'react'
@@ -87,9 +87,17 @@ export default function CharacterBuilderModal({
     })
   }
 
-  const handleSkillChange = (features: { '1': SourcedFeature[] }) => {
+  const handleSkillChange = (features: SourcedFeature[]) => {
     let updated = cloneDeep(character.getCharacter())
-    updated.features = features
+    const toReplace = updated.features['1'].filter(
+      (sourced) =>
+        sourced.source === 'CLASS' && sourced.feature.type === 'SKILL_SELECTION'
+    )
+    toReplace.forEach((item) => {
+      const index = updated.features['1'].indexOf(item)
+      updated.features['1'].splice(index, 1)
+    })
+    updated.features['1'].push(...features)
     PlayerCharacter.build(updated).then((val) => {
       setCharacter(val)
     })
@@ -179,7 +187,13 @@ export default function CharacterBuilderModal({
               </div>
               <div>
                 <SkillsModal
-                  character={character.getCharacter()}
+                  skillFeatures={character
+                    .getLevelFeatures()
+                    .filter(
+                      (sourced) =>
+                        sourced.source === 'CLASS' &&
+                        sourced.feature.type === 'SKILL_SELECTION'
+                    )}
                   // basically what we're trying to say here is "filter out Class Level 1 proficiencies when passing in existing profs"
                   // the reasoning is that since all the values for Class Level 1 profs are encapsulated within this modal, it can just
                   // check itself for its values

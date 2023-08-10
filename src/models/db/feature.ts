@@ -50,7 +50,7 @@ export interface Conditional {
 
 export interface SkillSelectionFeatureValue {
   configuration: SkillSelectionConfiguration
-  value: string
+  value: string[]
 }
 
 export interface SkillSelectionConfiguration {
