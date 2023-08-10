@@ -1,8 +1,8 @@
 'use client'
 
 import { CharacterEntity } from '@/models/db/character-entity'
-import { Feat } from '@/models/db/feat'
-import { PlayerCharacter } from '@/models/player-character'
+import { FeatureType } from '@/models/db/feature'
+import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
 import { useEffect, useState } from 'react'
@@ -13,6 +13,7 @@ import { AttributesModal } from './attributes-modal'
 import { BackgroundChoiceModal } from './background-choice-modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LanguagesModal } from './languages-modal'
+import { SkillsModal } from './skills-modal'
 
 export default function CharacterBuilderModal({
   playerCharacter,
@@ -70,17 +71,23 @@ export default function CharacterBuilderModal({
     })
   }
 
-  const handleFeatChange = (index: number) => (feat: Feat) => {
-    let updated = cloneDeep(character.getCharacter())
-    if (feat) {
-      updated.features['1'][index].feature.value = feat.name
-    } else {
-      updated.features['1'][index].feature.value = undefined!
+  const handleFeatureUpdate =
+    (source: string, featureType: FeatureType) =>
+    (features: SourcedFeature[]) => {
+      let updated = cloneDeep(character.getCharacter())
+      const toReplace = updated.features['1'].filter(
+        (sourced) =>
+          sourced.source === source && sourced.feature.type === featureType
+      )
+      toReplace.forEach((item) => {
+        const index = updated.features['1'].indexOf(item)
+        updated.features['1'].splice(index, 1)
+      })
+      updated.features['1'].push(...features)
+      PlayerCharacter.build(updated).then((val) => {
+        setCharacter(val)
+      })
     }
-    PlayerCharacter.build(updated).then((val) => {
-      setCharacter(val)
-    })
-  }
 
   return (
     <>
@@ -145,6 +152,7 @@ export default function CharacterBuilderModal({
                     ancestry={character.getAncestry()}
                   ></LanguagesModal>
                 </div>
+                <div>banana!</div>
               </div>
               <div>
                 {character
@@ -154,14 +162,34 @@ export default function CharacterBuilderModal({
                     return (
                       <AncestryFeatChoiceModal
                         key={`${value.source}-${index}`}
+                        existingFeat={value}
                         existingFeatName={
                           value.feature.value ? value.feature.value : ''
                         }
                         traits={character.getTraits()}
-                        onChange={handleFeatChange(index)}
+                        onChange={handleFeatureUpdate('ANCESTRY', 'FEAT')}
                       ></AncestryFeatChoiceModal>
                     )
                   })}
+              </div>
+              <div>
+                <SkillsModal
+                  skillFeatures={character
+                    .getLevelFeatures()
+                    .filter(
+                      (sourced) =>
+                        sourced.source === 'CLASS' &&
+                        sourced.feature.type === 'SKILL_SELECTION'
+                    )}
+                  // basically what we're trying to say here is "filter out Class Level 1 proficiencies when passing in existing profs"
+                  // the reasoning is that since all the values for Class Level 1 profs are encapsulated within this modal, it can just
+                  // check itself for its values
+                  proficiencies={character.getSkills('1')}
+                  onSkillsUpdate={handleFeatureUpdate(
+                    'CLASS',
+                    'SKILL_SELECTION'
+                  )}
+                ></SkillsModal>
               </div>
             </div>
             <div className="mb-128"></div>

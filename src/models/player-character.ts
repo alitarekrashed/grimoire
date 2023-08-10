@@ -16,9 +16,18 @@ import {
   FeatureType,
   ModifierFeatureValue,
   ResistanceFeatureValue,
+  SkillSelectionFeatureValue,
   featureMatcher,
 } from './db/feature'
 import { Heritage } from './db/heritage'
+import {
+  CalculatedProficiency,
+  SavingThrowAttributes,
+  SavingThrowType,
+  SkillAttributes,
+  SkillType,
+  generateUntrainedSkillMap,
+} from './statistic'
 
 export interface Attributes {
   Strength: number
@@ -32,12 +41,6 @@ export interface Attributes {
 export interface SourcedFeature {
   source: string
   feature: Feature
-}
-
-export interface AttributeSelections {
-  ancestry: Attribute[]
-  background: Attribute[]
-  class: Attribute[]
 }
 
 const ATTRIBUTES: Attribute[] = [
@@ -57,6 +60,7 @@ async function resolveFeats(feats: string[]): Promise<SourcedFeature[]> {
 
   let additionalFeats: string[] = []
   resolvedFeats
+    .filter((val) => val)
     .map((feat: Feat[]) => feat[0])
     .forEach((feat: Feat) => {
       resolvedFeatures.push(
@@ -270,7 +274,152 @@ export class PlayerCharacter {
     this.initializeTraits()
     this.initializeHitpoints()
 
+    if (classEntity) {
+      classEntity.features['1']
+        .filter((feature: Feature) => feature.type === 'SKILL_SELECTION')
+        .forEach((feature: Feature) => {
+          this.reconcileSkillOptionsWithClass(character, feature)
+        })
+
+      this.clearOutSkillsAlreadyPresentOnClass(character)
+
+      this.convertSkillSelectionsIntoProficiencyFeaturesAndAddToCharacter(
+        character
+      )
+    }
+
     this.allFeatures.forEach((feature) => this.addFeatureToCharacter(feature))
+  }
+
+  private convertSkillSelectionsIntoProficiencyFeaturesAndAddToCharacter(
+    character: CharacterEntity
+  ) {
+    character.features['1']
+      .filter((sourced: SourcedFeature) => sourced.source === 'CLASS')
+      .filter(
+        (sourced: SourcedFeature) => sourced.feature.type === 'SKILL_SELECTION'
+      )
+      .filter((sourced: SourcedFeature) => sourced.feature.value.value)
+      .forEach((sourced: SourcedFeature) => {
+        const values = sourced.feature.value.value.map((skill: string) => {
+          return {
+            source: sourced.source,
+            feature: {
+              type: 'PROFICIENCY',
+              value: {
+                // TODO this shouldn't be 'max rank' ... we should be storing the actual rank in the selection entity on the character
+                rank: sourced.feature.value.configuration.max_rank,
+                type: 'Skill',
+                value: skill,
+              },
+            },
+          }
+        })
+        this.allFeatures.push(...values)
+      })
+  }
+
+  private clearOutSkillsAlreadyPresentOnClass(character: CharacterEntity) {
+    character.features['1']
+      .filter(
+        (sourced) =>
+          sourced.source === 'CLASS' &&
+          sourced.feature.type === 'SKILL_SELECTION'
+      )
+      .forEach((sourced) => {
+        sourced.feature.value.value.forEach((skill: string, index: number) => {
+          const value =
+            this.allFeatures.filter(
+              (val) =>
+                val.feature.type === 'PROFICIENCY' &&
+                val.feature.value.type === 'Skill' &&
+                val.feature.value.value === skill
+            ).length === 0
+              ? skill
+              : null
+          sourced.feature.value.value[index] = value
+        })
+      })
+  }
+
+  private reconcileSkillOptionsWithClass(
+    character: CharacterEntity,
+    feature: Feature
+  ) {
+    const classSkillSelections: SourcedFeature[] = character.features[
+      '1'
+    ].filter(
+      (sourced: SourcedFeature) =>
+        sourced.source === 'CLASS' && sourced.feature.type === 'SKILL_SELECTION'
+    )
+
+    const skillSelection = feature.value as SkillSelectionFeatureValue
+    if (!skillSelection.configuration.formula) {
+      if (
+        !classSkillSelections.find(
+          (sourced) => !sourced.feature.value.configuration.formula
+        )
+      ) {
+        const value: SourcedFeature = {
+          source: 'CLASS',
+          feature: {
+            type: 'SKILL_SELECTION',
+            value: {
+              ...skillSelection,
+              value: [null],
+            },
+          },
+        }
+        character.features['1'].push(value)
+      }
+    } else {
+      const expectedNumber: number =
+        skillSelection.configuration.formula.reduce((prev, curr) => {
+          if (typeof curr === 'number') {
+            return (prev as number) + curr
+          } else {
+            return (prev as number) + this.attributes[curr]
+          }
+        }, 0) as number
+
+      let classSkillSelection = classSkillSelections.find(
+        (sourced) => sourced.feature.value.configuration.formula
+      )
+      if (!classSkillSelection) {
+        const values = []
+        for (let i = 0; i < expectedNumber; i++) {
+          values.push(null)
+        }
+        let classSkillSelection: SourcedFeature = {
+          source: 'CLASS',
+          feature: {
+            type: 'SKILL_SELECTION',
+            value: {
+              ...skillSelection,
+              value: [values],
+            },
+          },
+        }
+        character.features['1'].push(classSkillSelection)
+      }
+
+      const currentNumber = classSkillSelection!.feature.value.value.length
+
+      // TODO ALI instead of creating MULTIPLE skill_selection entities when we hit this point, maybe it's value should just be a list
+      // then we can just .push or .splice in order to increase or reduce the size of the list in the consolidation step...
+      if (currentNumber < expectedNumber) {
+        const toAdd = expectedNumber - currentNumber
+        for (let i = 0; i < toAdd; i++) {
+          classSkillSelection?.feature.value.value.push(null)
+        }
+      } else if (currentNumber > expectedNumber) {
+        let removalCounter = currentNumber - expectedNumber
+        classSkillSelection!.feature.value.value.splice(
+          classSkillSelection!.feature.value.value.length - removalCounter,
+          removalCounter
+        )
+      }
+    }
   }
 
   public getCharacter(): CharacterEntity {
@@ -414,11 +563,11 @@ export class PlayerCharacter {
       .map((feature) => feature)
   }
 
-  public getProficiencies(): {
+  public getProficiencies(level?: string): {
     Perception: Map<string, ProficiencyRank>
-    Skill: Map<string, ProficiencyRank>
+    Skill: Map<SkillType, ProficiencyRank>
     Lore: Map<string, ProficiencyRank>
-    SavingThrow: Map<string, ProficiencyRank>
+    SavingThrow: Map<SavingThrowType, ProficiencyRank>
     Weapon: Map<string, ProficiencyRank>
     Defense: Map<string, ProficiencyRank>
     DifficultyClass: Map<string, ProficiencyRank>
@@ -433,16 +582,24 @@ export class PlayerCharacter {
       DifficultyClass: Map<string, ProficiencyRank>
     } = {
       Perception: new Map<string, ProficiencyRank>(),
-      Skill: new Map<string, ProficiencyRank>(),
+      Skill: generateUntrainedSkillMap(),
       Lore: new Map<string, ProficiencyRank>(),
-      SavingThrow: new Map<string, ProficiencyRank>(),
+      SavingThrow: new Map<SavingThrowType, ProficiencyRank>(),
       Weapon: new Map<string, ProficiencyRank>(),
       Defense: new Map<string, ProficiencyRank>(),
       DifficultyClass: new Map<string, ProficiencyRank>(),
     }
 
     this.features
-      .filter((feature) => feature.feature.type === 'PROFICIENCY')
+      .filter((feature) => {
+        if (level) {
+          return (
+            feature.feature.type === 'PROFICIENCY' && feature.source !== 'CLASS'
+          )
+        } else {
+          return feature.feature.type === 'PROFICIENCY'
+        }
+      })
       .forEach((sourced: SourcedFeature) => {
         const proficency = sourced.feature.value as ProficiencyFeatureValue
         if (proficiencyMap[proficency.type].has(proficency.value) == false) {
@@ -459,7 +616,15 @@ export class PlayerCharacter {
           }
         }
       })
-    return proficiencyMap
+    return proficiencyMap as {
+      Perception: Map<string, ProficiencyRank>
+      Skill: Map<SkillType, ProficiencyRank>
+      Lore: Map<string, ProficiencyRank>
+      SavingThrow: Map<SavingThrowType, ProficiencyRank>
+      Weapon: Map<string, ProficiencyRank>
+      Defense: Map<string, ProficiencyRank>
+      DifficultyClass: Map<string, ProficiencyRank>
+    }
   }
 
   private greaterThan(
@@ -474,52 +639,44 @@ export class PlayerCharacter {
     return false
   }
 
-  public getSavingThrows(): {
-    Will: { rank: string; modifier: number }
-    Fortitude: { rank: string; modifier: number }
-    Reflex: { rank: string; modifier: number }
-  } {
+  public getSavingThrows(): Map<SavingThrowType, CalculatedProficiency> {
     const savingThrows = this.getProficiencies().SavingThrow
-    return {
-      Will: {
-        rank: savingThrows.get('Will')!,
+    const result = new Map()
+    savingThrows.forEach((rank, type) => {
+      result.set(type, {
+        rank: rank,
         modifier:
-          RankModifierMap[savingThrows.get('Will')!] + this.attributes.Wisdom,
-      },
-      Fortitude: {
-        rank: savingThrows.get('Fortitude')!,
-        modifier:
-          RankModifierMap[savingThrows.get('Fortitude')!] +
-          this.attributes.Constitution,
-      },
-      Reflex: {
-        rank: savingThrows.get('Reflex')!,
-        modifier:
-          RankModifierMap[savingThrows.get('Reflex')!] +
-          this.attributes.Dexterity,
-      },
-    }
-  }
-
-  public getPerception(): { rank: string; modifier: number } {
-    const perception = this.getProficiencies().Perception
-    console.log({
-      rank: perception.get('Perception')!,
-      modifier:
-        RankModifierMap[perception.get('Perception')!] + this.attributes.Wisdom,
+          RankModifierMap[rank] +
+          this.level +
+          this.attributes[SavingThrowAttributes.get(type) as Attribute],
+      })
     })
+    return result
+  }
+
+  public getSkills(level?: string): Map<SkillType, CalculatedProficiency> {
+    const skills = this.getProficiencies(level).Skill
+    const result = new Map()
+    skills.forEach((rank, type) => {
+      result.set(type, {
+        rank: rank,
+        modifier:
+          RankModifierMap[rank] +
+          this.level +
+          this.attributes[SkillAttributes.get(type) as Attribute],
+      })
+    })
+    return result
+  }
+
+  public getPerception(): CalculatedProficiency {
+    const perception = this.getProficiencies().Perception
     return {
       rank: perception.get('Perception')!,
       modifier:
-        RankModifierMap[perception.get('Perception')!] + this.attributes.Wisdom,
-    }
-  }
-
-  public getAttributeSelections(): AttributeSelections {
-    return {
-      ancestry: this.character.attributes.ancestry,
-      background: this.character.attributes.background,
-      class: this.character.attributes.class,
+        RankModifierMap[perception.get('Perception')!] +
+        this.level +
+        this.attributes.Wisdom,
     }
   }
 
