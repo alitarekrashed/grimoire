@@ -50,7 +50,6 @@ export function SkillsModal({
     </span>
   )
 
-  console.log(skillFeatures)
   const skillChoices =
     updatedFeatures &&
     updatedFeatures.map((sourced: SourcedFeature, index) => {
@@ -71,8 +70,6 @@ export function SkillsModal({
               <option value={skill}>{skill}</option>
               {choices
                 .filter((choice: string) => {
-                  console.log(choice)
-                  console.log(skillSelection)
                   const alreadyChosen = updatedFeatures
                     .map(
                       (feature: SourcedFeature) => feature.feature.value.value

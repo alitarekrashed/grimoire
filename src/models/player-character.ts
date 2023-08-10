@@ -66,6 +66,7 @@ async function resolveFeats(feats: string[]): Promise<SourcedFeature[]> {
 
   let additionalFeats: string[] = []
   resolvedFeats
+    .filter((val) => val)
     .map((feat: Feat[]) => feat[0])
     .forEach((feat: Feat) => {
       resolvedFeatures.push(

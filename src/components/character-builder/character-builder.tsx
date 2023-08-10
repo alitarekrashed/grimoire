@@ -14,6 +14,7 @@ import { BackgroundChoiceModal } from './background-choice-modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LanguagesModal } from './languages-modal'
 import { SkillsModal } from './skills-modal'
+import { FeatureType } from '@/models/db/feature'
 
 export default function CharacterBuilderModal({
   playerCharacter,
@@ -71,37 +72,23 @@ export default function CharacterBuilderModal({
     })
   }
 
-  const handleFeatChange = (index: number) => (feat: Feat) => {
-    let updated = cloneDeep(character.getCharacter())
-    if (feat) {
-      updated.features['1'].filter((sourced) => sourced.source === 'ANCESTRY')[
-        index
-      ].feature.value = feat.name
-    } else {
-      updated.features['1'].filter((sourced) => sourced.source === 'ANCESTRY')[
-        index
-      ].feature.value = undefined!
+  const handleFeatureUpdate =
+    (source: string, featureType: FeatureType) =>
+    (features: SourcedFeature[]) => {
+      let updated = cloneDeep(character.getCharacter())
+      const toReplace = updated.features['1'].filter(
+        (sourced) =>
+          sourced.source === source && sourced.feature.type === featureType
+      )
+      toReplace.forEach((item) => {
+        const index = updated.features['1'].indexOf(item)
+        updated.features['1'].splice(index, 1)
+      })
+      updated.features['1'].push(...features)
+      PlayerCharacter.build(updated).then((val) => {
+        setCharacter(val)
+      })
     }
-    PlayerCharacter.build(updated).then((val) => {
-      setCharacter(val)
-    })
-  }
-
-  const handleSkillChange = (features: SourcedFeature[]) => {
-    let updated = cloneDeep(character.getCharacter())
-    const toReplace = updated.features['1'].filter(
-      (sourced) =>
-        sourced.source === 'CLASS' && sourced.feature.type === 'SKILL_SELECTION'
-    )
-    toReplace.forEach((item) => {
-      const index = updated.features['1'].indexOf(item)
-      updated.features['1'].splice(index, 1)
-    })
-    updated.features['1'].push(...features)
-    PlayerCharacter.build(updated).then((val) => {
-      setCharacter(val)
-    })
-  }
 
   return (
     <>
@@ -176,11 +163,12 @@ export default function CharacterBuilderModal({
                     return (
                       <AncestryFeatChoiceModal
                         key={`${value.source}-${index}`}
+                        existingFeat={value}
                         existingFeatName={
                           value.feature.value ? value.feature.value : ''
                         }
                         traits={character.getTraits()}
-                        onChange={handleFeatChange(index)}
+                        onChange={handleFeatureUpdate('ANCESTRY', 'FEAT')}
                       ></AncestryFeatChoiceModal>
                     )
                   })}
@@ -198,7 +186,10 @@ export default function CharacterBuilderModal({
                   // the reasoning is that since all the values for Class Level 1 profs are encapsulated within this modal, it can just
                   // check itself for its values
                   proficiencies={character.getSkills('1')}
-                  onSkillsUpdate={handleSkillChange}
+                  onSkillsUpdate={handleFeatureUpdate(
+                    'CLASS',
+                    'SKILL_SELECTION'
+                  )}
                 ></SkillsModal>
               </div>
             </div>
