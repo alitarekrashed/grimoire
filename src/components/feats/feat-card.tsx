@@ -54,7 +54,7 @@ export default function FeatCard({
   return (
     <Card
       reference={reference}
-      data={entity!}
+      data={entity ?? value}
       type="Feat"
       level={value.level}
       attributes={attributes}
