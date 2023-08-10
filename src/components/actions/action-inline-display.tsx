@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import styles from './action-inline-display.module.css'
 import { ActionRenderer } from '../activation-displays/action-renderer'
 import { Feat } from '@/models/db/feat'
+import { ParsedDescription } from '../parsed-description/parsed-description'
 
 export function ActionInlineDisplay({
   actionName,
@@ -47,10 +48,16 @@ export function ActionInlineDisplay({
             {action.activation.trigger && (
               <div className="ml-1 mb-1">
                 <span className="font-semibold">Trigger </span>
-                {action.activation.trigger}
+                <ParsedDescription
+                  description={action.activation.trigger}
+                ></ParsedDescription>
               </div>
             )}
-            <div className="ml-1">{action.description}</div>
+            <div className="ml-1">
+              <ParsedDescription
+                description={action.description}
+              ></ParsedDescription>
+            </div>
           </Collapsible.Content>
         </Collapsible.Root>
       )}
