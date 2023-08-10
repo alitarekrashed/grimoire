@@ -18,23 +18,8 @@ export default function FeatCard({
   reference?: RefObject<HTMLDivElement>
   value: Feat
   collapsible?: boolean
-  onRemoved?: (item: Feat | Action) => void
+  onRemoved?: (item: Feat) => void
 }) {
-  const [entity, setEntity] = useState<Feat | Action>()
-  const [activation, setActivation] = useState<Activation>()
-
-  useEffect(() => {
-    if (value.action) {
-      retrieveEntity(value.action, 'ACTION').then((action: EntityModel) => {
-        setEntity(action as Action)
-        setActivation((action as Action).activation)
-      })
-    } else {
-      setEntity(value)
-      setActivation(undefined)
-    }
-  }, [value])
-
   const attributes = (
     <div className="text-sm">
       {value?.prerequisites && (
@@ -54,11 +39,11 @@ export default function FeatCard({
   return (
     <Card
       reference={reference}
-      data={entity ?? value}
+      data={value}
       type="Feat"
       level={value.level}
       attributes={attributes}
-      activation={activation}
+      activation={value.activation}
       traits={value.traits}
       collapsible={collapsible}
       onRemoved={onRemoved}

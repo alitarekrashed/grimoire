@@ -1,3 +1,4 @@
+import { Activation } from './activation'
 import { ProficiencyRank } from './background'
 import { EntityModel } from './entity-model'
 import { Feature } from './feature'
@@ -7,7 +8,7 @@ export interface Feat extends EntityModel {
   features: Feature[]
   level: number
   prerequisites: Prerequisite[]
-  action?: string
+  activation?: Activation
 }
 
 export type PrerequisiteType = 'SKILL'

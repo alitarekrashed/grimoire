@@ -71,10 +71,10 @@ async function resolveFeats(feats: string[]): Promise<SourcedFeature[]> {
             return { source: feat.name, feature: feature }
           })
       )
-      if (feat.action) {
+      if (feat.activation) {
         resolvedFeatures.push({
           source: feat.name,
-          feature: { type: 'ACTION', value: feat.action },
+          feature: { type: 'ACTION', value: feat },
         })
       }
       additionalFeats.push(

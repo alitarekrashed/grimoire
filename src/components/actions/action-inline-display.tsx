@@ -5,14 +5,31 @@ import * as Collapsible from '@radix-ui/react-collapsible'
 import { useEffect, useState } from 'react'
 import styles from './action-inline-display.module.css'
 import { ActionRenderer } from '../activation-displays/action-renderer'
+import { Feat } from '@/models/db/feat'
 
-export function ActionInlineDisplay({ actionName }: { actionName: string }) {
+export function ActionInlineDisplay({
+  actionName,
+}: {
+  actionName: string | Feat
+}) {
   const [action, setAction] = useState<Action>()
 
   useEffect(() => {
-    retrieveEntity(actionName, 'ACTION').then((value: EntityModel) => {
-      setAction(value as Action)
-    })
+    if (typeof actionName === 'string') {
+      retrieveEntity(actionName, 'ACTION').then((value: EntityModel) => {
+        setAction(value as Action)
+      })
+    } else {
+      // TODO this is a stop gap, really i need a smarter way to render Feat Actions vs regular actions...
+      setAction({
+        description: actionName.description,
+        _id: actionName._id,
+        activation: actionName.activation!,
+        name: actionName.name.toLowerCase(),
+        source: actionName.source,
+        entity_type: 'ACTION',
+      })
+    }
   }, [actionName])
 
   return (

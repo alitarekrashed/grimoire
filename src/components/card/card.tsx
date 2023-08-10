@@ -55,7 +55,9 @@ export default function Card<T extends EntityModel>({
   } else if (
     activation &&
     isActionLongerThanTurn(activation.num_actions) === false &&
-    (data.entity_type === 'SPELL' || data.entity_type === 'ACTION')
+    (data.entity_type === 'SPELL' ||
+      data.entity_type === 'ACTION' ||
+      data.entity_type === 'FEAT')
   ) {
     activationType = 'title'
   }
