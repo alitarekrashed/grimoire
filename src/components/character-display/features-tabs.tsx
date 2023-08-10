@@ -39,10 +39,11 @@ export function FeaturesTabs({
       <Tabs.Content value="actions">
         <span className="text-xs">
           {actions.map((action, index) => (
-            <ActionInlineDisplay
-              key={`${action}-${index}`}
-              actionName={action.feature.value}
-            ></ActionInlineDisplay>
+            <div key={`${action}-${index}`} className="mb-1">
+              <ActionInlineDisplay
+                actionName={action.feature.value}
+              ></ActionInlineDisplay>
+            </div>
           ))}
         </span>
       </Tabs.Content>

@@ -65,11 +65,18 @@ async function resolveFeats(feats: string[]): Promise<SourcedFeature[]> {
     .forEach((feat: Feat) => {
       resolvedFeatures.push(
         ...feat.features
+          .filter((feature) => !feature.value.action)
           .filter((feature) => feature.type !== 'FEAT')
           .map((feature: Feature) => {
             return { source: feat.name, feature: feature }
           })
       )
+      if (feat.activation) {
+        resolvedFeatures.push({
+          source: feat.name,
+          feature: { type: 'ACTION', value: feat },
+        })
+      }
       additionalFeats.push(
         ...feat.features
           .filter((feature) => feature.type === 'FEAT')
@@ -899,9 +906,15 @@ export class PlayerCharacter {
     }
 
     character.features['1'].forEach((sourced: SourcedFeature) => {
-      if (sourced.feature.type === 'FEAT') {
+      if (
+        sourced.feature.type === 'FEAT' ||
+        sourced.feature.type === 'CLASS_FEAT_SELECTION'
+      ) {
         feats.push(sourced.feature.value)
-      } else if (sourced.feature.type === 'PROFICIENCY') {
+      } else if (
+        sourced.feature.type === 'PROFICIENCY' ||
+        sourced.feature.type === 'ACTION'
+      ) {
         allFeatures.push({
           source: classEntity.name,
           feature: sourced.feature,

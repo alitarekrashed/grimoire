@@ -1,5 +1,5 @@
 import { SourcedFeature } from '../player-character'
-import { Attribute, AttributeModifier } from './ancestry'
+import { Attribute } from './ancestry'
 import { ProficiencyRank } from './background'
 
 export type FeatureType =
@@ -13,6 +13,7 @@ export type FeatureType =
   | 'MODIFIER'
   | 'FEAT'
   | 'SKILL_SELECTION'
+  | 'CLASS_FEAT_SELECTION'
 export type CalculationFormula = 'half-level'
 export type ConditionalOperator = 'has'
 export type ModifierType = 'Perception' | 'Speed'

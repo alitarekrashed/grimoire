@@ -1,6 +1,9 @@
 import { Ancestry, Attribute, AttributeModifier } from '@/models/db/ancestry'
 import { Background } from '@/models/db/background'
-import { CharacterEntity } from '@/models/db/character-entity'
+import {
+  CharacterAttributes,
+  CharacterEntity,
+} from '@/models/db/character-entity'
 import { ClassEntity } from '@/models/db/class_entity'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
@@ -148,12 +151,25 @@ export function AttributesModal({
     level_1: getLevelAttributeChoices(modifiedCharacter),
   })
 
+  let totalCount = 0
+  let setCount = 0
+  ;['ancestry', 'background', 'class', 'level_1'].forEach((key) => {
+    ;(
+      characterEntity.attributes[
+        key as keyof CharacterAttributes
+      ] as Attribute[]
+    ).forEach((attribute) => {
+      totalCount += 1
+      setCount += attribute ? 1 : 0
+    })
+  })
+
   const trigger = (
     <span
       className="border border-stone-300 rounded-md relative flex w-44 h-9 p-1 justify-center items-center hover:bg-stone-600"
       tabIndex={0}
     >
-      Attributes
+      Attributes {setCount}/{totalCount}
     </span>
   )
 
