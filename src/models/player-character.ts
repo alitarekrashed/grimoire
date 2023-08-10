@@ -236,7 +236,7 @@ export class PlayerCharacter {
   private size!: string
   private attributes!: Attributes
   private traits: string[] = []
-  private hitpoints: number = 0
+  private hitpoints!: ModifierValue[]
   private features: SourcedFeature[] = []
 
   private constructor(
@@ -249,23 +249,7 @@ export class PlayerCharacter {
   ) {
     this.level = character.level
 
-    this.speed = [
-      { value: this.ancestry.speed, source: `Base (${ancestry.name})` },
-    ]
-    this.speed.push(
-      ...this.allFeatures
-        .filter(
-          (value) =>
-            value.feature.type === 'MODIFIER' &&
-            (value.feature.value as ModifierFeatureValue).type === 'Speed'
-        )
-        .map((value) => {
-          return {
-            ...value.feature.value.modifier,
-            source: value.source,
-          }
-        })
-    )
+    this.initializeSpeed(ancestry)
     this.size = this.ancestry.size
     this.attributes = {
       Strength: 0,
@@ -279,7 +263,7 @@ export class PlayerCharacter {
     this.calculateLanguages()
 
     this.initializeTraits()
-    this.initializeHitpoints()
+    this.initializeHitpoints(ancestry)
 
     if (classEntity) {
       classEntity.features['1']
@@ -511,7 +495,7 @@ export class PlayerCharacter {
     return this.size
   }
 
-  public getMaxHitpoints(): number {
+  public getMaxHitpoints(): ModifierValue[] {
     return this.hitpoints
   }
 
@@ -754,12 +738,39 @@ export class PlayerCharacter {
     this.heritage?.traits && this.traits.push(...this.heritage.traits)
   }
 
-  private initializeHitpoints() {
-    this.hitpoints += this.ancestry.hitpoints
+  private initializeHitpoints(ancestry: Ancestry) {
+    this.hitpoints = [
+      {
+        value: this.ancestry.hitpoints,
+        source: `Ancestry (${ancestry.name})`,
+      },
+    ]
     if (this.classEntity) {
-      this.hitpoints += this.classEntity.hitpoints +=
-        this.attributes.Constitution
+      this.hitpoints.push({
+        value: this.classEntity.hitpoints + this.attributes.Constitution,
+        source: `Class Level 1 (${this.classEntity.name})`,
+      })
     }
+  }
+
+  private initializeSpeed(ancestry: Ancestry) {
+    this.speed = [
+      { value: this.ancestry.speed, source: `Ancestry (${ancestry.name})` },
+    ]
+    this.speed.push(
+      ...this.allFeatures
+        .filter(
+          (value) =>
+            value.feature.type === 'MODIFIER' &&
+            (value.feature.value as ModifierFeatureValue).type === 'Speed'
+        )
+        .map((value) => {
+          return {
+            ...value.feature.value.modifier,
+            source: value.source,
+          }
+        })
+    )
   }
 
   private addFeatureToCharacter(feature: SourcedFeature) {

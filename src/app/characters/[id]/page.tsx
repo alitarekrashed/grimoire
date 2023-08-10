@@ -124,7 +124,11 @@ function CharacterDisplay({
           </div>
           <div className="col-span-1 justify-self-center">
             <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3 w-fit text-center">
-              <div>{character.getMaxHitpoints()}</div>
+              <div>
+                <CalculatedDisplay
+                  values={character.getMaxHitpoints()}
+                ></CalculatedDisplay>
+              </div>
               <div className="text-[10px] font-semibold">Hitpoints</div>
             </div>
           </div>
