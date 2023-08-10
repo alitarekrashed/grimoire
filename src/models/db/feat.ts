@@ -7,6 +7,7 @@ export interface Feat extends EntityModel {
   features: Feature[]
   level: number
   prerequisites: Prerequisite[]
+  action?: string
 }
 
 export type PrerequisiteType = 'SKILL'

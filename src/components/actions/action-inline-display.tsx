@@ -27,6 +27,12 @@ export function ActionInlineDisplay({ actionName }: { actionName: string }) {
             ></ActionRenderer>
           </Collapsible.Trigger>
           <Collapsible.Content className={`${styles.actionDescription}`}>
+            {action.activation.trigger && (
+              <div className="ml-1 mb-1">
+                <span className="font-semibold">Trigger </span>
+                {action.activation.trigger}
+              </div>
+            )}
             <div className="ml-1">{action.description}</div>
           </Collapsible.Content>
         </Collapsible.Root>
