@@ -46,8 +46,10 @@ export default function CharacterBuilderModal({
   }
 
   const handleAncestryChange = (ancestryId: string) => {
+    setLoading(true)
     character.updateAncestry(ancestryId).then((val) => {
       setCharacter(val)
+      setLoading(false)
     })
   }
 
@@ -60,22 +62,20 @@ export default function CharacterBuilderModal({
   const handleAttributeChange = (characterEntity: CharacterEntity) => {
     let updated: CharacterEntity = cloneDeep(character.getCharacter())
     updated.attributes = characterEntity.attributes
-    PlayerCharacter.build(updated).then((val) => {
-      setCharacter(val)
-    })
+    updatePlayerCharacter(updated)
   }
 
   const handleLanguageChange = (chosenLanguages: string[]) => {
     let updated: CharacterEntity = cloneDeep(character.getCharacter())
     updated.languages = chosenLanguages
-    PlayerCharacter.build(updated).then((val) => {
-      setCharacter(val)
-    })
+    updatePlayerCharacter(updated)
   }
 
   const handleBackgroundChange = (backgroundId: string) => {
+    setLoading(true)
     character.updateBackground(backgroundId).then((val) => {
       setCharacter(val)
+      setLoading(false)
     })
   }
 
@@ -92,9 +92,7 @@ export default function CharacterBuilderModal({
         updated.features['1'].splice(index, 1)
       })
       updated.features['1'].push(...features)
-      PlayerCharacter.build(updated).then((val) => {
-        setCharacter(val)
-      })
+      updatePlayerCharacter(updated)
     }
 
   return (
