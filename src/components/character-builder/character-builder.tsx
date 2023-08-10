@@ -15,7 +15,7 @@ import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LanguagesModal } from './languages-modal'
 import { SkillsModal } from './skills-modal'
 import { ClassFeatChoiceModal } from './class-feat.modal'
-import styles from './character-builder.module.css'
+import { LoadingSpinner } from '../loading-spinner/loading-spinner'
 
 export default function CharacterBuilderModal({
   playerCharacter,
@@ -110,14 +110,7 @@ export default function CharacterBuilderModal({
         }
         body={
           <>
-            {loading && (
-              <div className={`${styles.ldsRing}`}>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-              </div>
-            )}
+            <LoadingSpinner loading={loading}></LoadingSpinner>
             <div className="p-2">
               <div className={`text-sm ${roboto_condensed.className}`}>
                 <div className="mb-2 inline-flex">

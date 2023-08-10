@@ -1,6 +1,6 @@
 /* https://loading.io/css/ */
 .ldsRing {
-  @apply bg-stone-950/60 rounded-sm border border-stone-950/60;
+  @apply bg-stone-950/60 rounded-sm;
   z-index: 2;
   position: absolute;
   display: flex;

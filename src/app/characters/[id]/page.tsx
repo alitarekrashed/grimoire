@@ -5,6 +5,7 @@ import { TraitsList } from '@/components/card/traits-list'
 import CharacterBuilderModal from '@/components/character-builder/character-builder'
 import { FeaturesTabs } from '@/components/character-display/features-tabs'
 import { LabelsList } from '@/components/labels-list/labels-list'
+import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner'
 import { ParsedDescription } from '@/components/parsed-description/parsed-description'
 import { Attribute } from '@/models/db/ancestry'
 import { CharacterEntity } from '@/models/db/character-entity'
@@ -21,10 +22,13 @@ export default function CharacterPage() {
   const id = path[path.length - 1]
 
   const [character, setCharacter] = useState<PlayerCharacter>()
+  const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
+    setLoading(true)
     getPlayerCharacter(id).then((character: PlayerCharacter) => {
       setCharacter(character)
+      setLoading(false)
     })
   }, [])
 
@@ -47,14 +51,17 @@ export default function CharacterPage() {
   })
 
   const handleClose = (char: CharacterEntity) => {
+    setLoading(true)
     PlayerCharacter.build(char).then((val) => {
       setCharacter(val)
+      setLoading(false)
       debouncedRequest()
     })
   }
 
   return (
     <div className={`h-full ${roboto_flex.className}`}>
+      <LoadingSpinner loading={loading}></LoadingSpinner>
       {character && (
         <>
           <CharacterDisplay
