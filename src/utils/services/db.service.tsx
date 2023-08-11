@@ -8,6 +8,7 @@ import {
   Document,
   WithId,
   InsertOneResult,
+  DeleteResult,
 } from 'mongodb'
 import { EntityModel, ModelType } from '@/models/db/entity-model'
 import clientPromise from '../mongodb'
@@ -150,4 +151,19 @@ export async function updateCharacterById(
   }
 
   return await collection.replaceOne(search, character)
+}
+
+export async function deleteCharacterById(
+  id: string | ObjectId
+): Promise<DeleteResult> {
+  const collection: Collection<CharacterEntity> =
+    await getCharactersCollection()
+
+  let search: Filter<CharacterEntity> = {}
+  search = {
+    ...search,
+    _id: new ObjectId(id),
+  }
+
+  return await collection.deleteOne(search)
 }

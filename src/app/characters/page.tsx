@@ -34,10 +34,28 @@ export default function CharactersPage() {
       })
   }, [])
 
+  const handleRefresh = () => {
+    setLoading(true)
+    fetch('http://localhost:3000/api/characters', {
+      cache: 'no-store',
+    })
+      .then((result) => result.json())
+      .then((characters) => {
+        Promise.all(
+          characters.map((character: CharacterEntity) =>
+            PlayerCharacter.build(character)
+          )
+        ).then((playerCharacters) => {
+          setPlayerCharacters(playerCharacters)
+          setLoading(false)
+        })
+      })
+  }
+
   return (
     <div className="w-full h-full">
       {loading && (
-        <div className="fixed top-0 left-0 w-screen h-screen">
+        <div className="fixed top-0 left-0 w-screen h-screen z-50">
           <LoadingSpinner loading={loading}></LoadingSpinner>
         </div>
       )}
@@ -51,6 +69,7 @@ export default function CharactersPage() {
               >
                 <CharacterContextMenu
                   character={playerCharacter.getCharacter()}
+                  onActionComplete={handleRefresh}
                 ></CharacterContextMenu>
                 <div className="hover:bg-stone-600 p-2 scroll-p-10 min-h-full h-max w-full ">
                   <div

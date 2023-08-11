@@ -8,8 +8,10 @@ import { useEffect, useRef, useState } from 'react'
 
 export function CharacterContextMenu({
   character,
+  onActionComplete,
 }: {
   character: CharacterEntity
+  onActionComplete: () => void
 }) {
   const router = useRouter()
   const [open, setOpen] = useState<boolean>(false)
@@ -46,8 +48,21 @@ export function CharacterContextMenu({
       body: JSON.stringify(newCharacter),
     })
       .then((result) => result.json())
-      .then((result: InsertOneResult<CharacterEntity>) => {
-        router.push(`/characters/${result.insertedId}`)
+      .then(() => {
+        onActionComplete()
+      })
+  }
+
+  const handleDelete = (characterEntity: CharacterEntity) => (e: any) => {
+    fetch(`http://localhost:3000/api/characters/${characterEntity._id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((result) => result.json())
+      .then(() => {
+        onActionComplete()
       })
   }
 
@@ -86,6 +101,12 @@ export function CharacterContextMenu({
               onClick={handleCopy(character)}
             >
               Copy
+            </div>
+            <div
+              className="border-b border-stone-300 text-center hover:bg-rose-700 cursor-pointer"
+              onClick={handleDelete(character)}
+            >
+              Delete
             </div>
           </div>
         </div>

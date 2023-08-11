@@ -1,4 +1,5 @@
 import {
+  deleteCharacterById,
   getCharacterById,
   updateCharacterById,
 } from '@/utils/services/db.service'
@@ -26,6 +27,21 @@ export async function POST(
   const body = await request.json()
   delete body._id
   const data = await updateCharacterById(params.id, body)
+
+  if (data) {
+    return NextResponse.json(data)
+  } else {
+    return new Response(null, {
+      status: 404,
+    })
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const data = await deleteCharacterById(params.id)
 
   if (data) {
     return NextResponse.json(data)
