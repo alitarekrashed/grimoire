@@ -41,18 +41,18 @@ export default function CharactersPage() {
           <LoadingSpinner loading={loading}></LoadingSpinner>
         </div>
       )}
-      <div className={`${roboto.className}  w-full h-full flex flex-col p-4`}>
+      <div className={`${roboto.className} w-full h-full flex flex-col p-4`}>
         {playerCharacters && (
-          <div className="inline-flex bg-stone-900 h-full w-full rounded border border-bg-stone-300 p-4">
+          <div className="inline-flex gap-2 bg-stone-900 h-full w-full rounded border border-bg-stone-300 p-4">
             {playerCharacters.map((playerCharacter) => (
               <div
                 key={playerCharacter.getCharacter()._id.toString()}
-                className="w-fit h-fit relative"
+                className="w-1/5 h-1/4 overflow-scroll relative bg-stone-800 rounded border border-bg-stone-300"
               >
                 <CharacterContextMenu
                   character={playerCharacter.getCharacter()}
                 ></CharacterContextMenu>
-                <div className=" bg-stone-800 rounded border border-bg-stone-300 hover:bg-stone-600 p-2 h-full w-full drop-shadow-lg">
+                <div className="hover:bg-stone-600 p-2 scroll-p-10 min-h-full h-max w-full ">
                   <div
                     className="cursor-pointer"
                     onClick={() => {
@@ -63,7 +63,7 @@ export default function CharactersPage() {
                   >
                     <div className="w-full h-full">
                       <div className="flex">
-                        <div className="border-b w-fit mb-4">
+                        <div className="w-4/5 mb-4">
                           {playerCharacter.getCharacter().name}
                         </div>
                       </div>

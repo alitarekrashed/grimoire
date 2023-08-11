@@ -1,6 +1,8 @@
 import { CharacterEntity } from '@/models/db/character-entity'
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { cloneDeep } from 'lodash'
+import { InsertOneResult } from 'mongodb'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
@@ -33,7 +35,20 @@ export function CharacterContextMenu({
   }
 
   const handleCopy = (characterEntity: CharacterEntity) => (e: any) => {
-    console.log(characterEntity)
+    const newCharacter = cloneDeep(characterEntity)
+    newCharacter.name = `Copy of ${newCharacter.name}`
+    newCharacter._id = undefined!
+    fetch('http://localhost:3000/api/characters', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newCharacter),
+    })
+      .then((result) => result.json())
+      .then((result: InsertOneResult<CharacterEntity>) => {
+        router.push(`/characters/${result.insertedId}`)
+      })
   }
 
   const handleView = (characterEntity: CharacterEntity) => (e: any) => {
