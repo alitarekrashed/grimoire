@@ -7,6 +7,7 @@ import {
   UpdateResult,
   Document,
   WithId,
+  InsertOneResult,
 } from 'mongodb'
 import { EntityModel, ModelType } from '@/models/db/entity-model'
 import clientPromise from '../mongodb'
@@ -124,6 +125,15 @@ export async function getCharacterById(
   }
 
   return await collection.findOne(search)
+}
+
+export async function createCharacter(
+  character: CharacterEntity
+): Promise<InsertOneResult<CharacterEntity>> {
+  const collection: Collection<CharacterEntity> =
+    await getCharactersCollection()
+
+  return await collection.insertOne(character)
 }
 
 export async function updateCharacterById(

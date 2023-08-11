@@ -5,7 +5,7 @@ import { SearchBar } from '../search-bar/search-bar'
 import { usePathname } from 'next/navigation'
 
 export default function Navbar() {
-  const navItemStyles = 'block p-2 hover:bg-stone-600'
+  const navItemStyles = 'block p-2'
   const path: string[] = usePathname().split('/')
 
   const navItems = [
