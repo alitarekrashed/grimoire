@@ -5,6 +5,7 @@ import {
   Ysabeau,
   Roboto_Condensed,
   Roboto_Flex,
+  Roboto,
 } from 'next/font/google'
 
 export const inter = Inter({ subsets: ['latin'] })
@@ -13,6 +14,10 @@ export const dm_serif_display = DM_Serif_Display({
   subsets: ['latin'],
 })
 export const roboto_serif = Roboto_Serif({ subsets: ['latin'] })
+export const roboto = Roboto({
+  weight: ['300', '400', '700'],
+  subsets: ['latin'],
+})
 export const roboto_condensed = Roboto_Condensed({
   weight: ['300', '400', '700'],
   subsets: ['latin'],

@@ -5,11 +5,6 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  const allEquipment = await (
-    await fetch('http://localhost:3000/api/equipment?keepCollapsed=true', {
-      cache: 'no-store',
-    })
-  ).json()
   const data = await getEntityById(params.id, [
     'EQUIPMENT',
     'EQUIPMENT_WITH_VARIANTS',
