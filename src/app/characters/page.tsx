@@ -51,7 +51,9 @@ export default function CharactersPage() {
                   href={`/characters/${playerCharacter.getCharacter()._id}`}
                 >
                   <div className="w-full h-full">
-                    <div>{playerCharacter.getCharacter().name}</div>
+                    <div className="border-b w-fit mb-1">
+                      {playerCharacter.getCharacter().name}
+                    </div>
                     <div>{playerCharacter.getLineageName()}</div>
                     <div>{`${playerCharacter.getClassEntity().name} Level ${
                       playerCharacter.getCharacter().level
