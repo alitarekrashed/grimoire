@@ -2,34 +2,60 @@
 import * as NavigationMenu from '@radix-ui/react-navigation-menu'
 import React from 'react'
 import { SearchBar } from '../search-bar/search-bar'
+import { usePathname } from 'next/navigation'
 
 export default function Navbar() {
-  const navItemStyles = 'block p-2 hover:bg-stone-600 hover:rounded-lg'
+  const navItemStyles = 'block p-2 hover:bg-stone-600'
+  const path: string[] = usePathname().split('/')
 
   const navItems = [
     {
       title: 'Home',
       link: '/',
+      className:
+        path.length === 1 && path[0] === ''
+          ? 'bg-rose-800 hover:bg-rose-500 rounded-l-lg'
+          : 'rounded-l-lg',
     },
     {
       title: 'Characters',
       link: '/characters',
+      className:
+        path[path.length - 1] === 'characters'
+          ? 'bg-rose-800 hover:bg-rose-500'
+          : '',
     },
     {
       title: 'Equipment',
       link: '/reference/equipment',
+      className:
+        path[path.length - 1] === 'equipment'
+          ? 'bg-rose-800 hover:bg-rose-500'
+          : '',
     },
     {
       title: 'Spells',
       link: '/reference/spells',
+      className:
+        path[path.length - 1] === 'spells'
+          ? 'bg-rose-800 hover:bg-rose-500'
+          : '',
     },
     {
       title: 'Conditions',
       link: '/reference/conditions',
+      className:
+        path[path.length - 1] === 'conditions'
+          ? 'bg-rose-800 hover:bg-rose-500'
+          : '',
     },
     {
       title: 'Traits',
       link: '/reference/traits',
+      className:
+        path[path.length - 1] === 'traits'
+          ? 'bg-rose-800 hover:bg-rose-500'
+          : '',
     },
   ]
 
@@ -41,7 +67,9 @@ export default function Navbar() {
             <React.Fragment key={item.title}>
               <NavigationMenu.Item>
                 <NavigationMenu.Link href={item.link}>
-                  <span className={`${navItemStyles}`}>{item.title}</span>
+                  <span className={`${navItemStyles} ${item.className}`}>
+                    {item.title}
+                  </span>
                 </NavigationMenu.Link>
               </NavigationMenu.Item>
 

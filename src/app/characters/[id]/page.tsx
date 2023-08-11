@@ -61,7 +61,11 @@ export default function CharacterPage() {
 
   return (
     <div className={`h-full ${roboto_flex.className}`}>
-      <LoadingSpinner loading={loading}></LoadingSpinner>
+      {loading && (
+        <div className="fixed top-0 left-0 w-screen h-screen">
+          <LoadingSpinner loading={loading}></LoadingSpinner>
+        </div>
+      )}
       {character && (
         <>
           <CharacterDisplay
