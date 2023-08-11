@@ -40,11 +40,8 @@ export default function CharactersPage() {
         </div>
       )}
       <div className={`${roboto.className} w-full h-full flex flex-col p-4`}>
-        <div className="text-xl mx-auto rounded border border-bg-stone-300 p-2">
-          Characters
-        </div>
         {playerCharacters && (
-          <div className="mt-4 inline-flex h-full w-full rounded border border-bg-stone-300 p-4">
+          <div className="inline-flex h-full w-full rounded border border-bg-stone-300 p-4">
             {playerCharacters.map((playerCharacter) => (
               <div
                 className="rounded border border-bg-stone-300 hover:bg-stone-600 p-2 w-fit h-fit"
