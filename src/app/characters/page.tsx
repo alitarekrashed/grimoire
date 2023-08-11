@@ -46,34 +46,36 @@ export default function CharactersPage() {
           <div className="inline-flex bg-stone-900 h-full w-full rounded border border-bg-stone-300 p-4">
             {playerCharacters.map((playerCharacter) => (
               <div
-                className=" bg-stone-800 rounded border border-bg-stone-300 hover:bg-stone-600 p-2 w-fit h-fit drop-shadow-lg	"
                 key={playerCharacter.getCharacter()._id.toString()}
+                className="w-fit h-fit relative"
               >
-                <div
-                  className="cursor-pointer"
-                  onClick={() => {
-                    router.push(
-                      `/characters/${playerCharacter.getCharacter()._id}`
-                    )
-                  }}
-                >
-                  <div className="w-full h-full">
-                    <CharacterContextMenu
-                      character={playerCharacter.getCharacter()}
-                    ></CharacterContextMenu>
-                    <div className="flex">
-                      <div className="border-b w-fit mb-4">
-                        {playerCharacter.getCharacter().name}
+                <CharacterContextMenu
+                  character={playerCharacter.getCharacter()}
+                ></CharacterContextMenu>
+                <div className=" bg-stone-800 rounded border border-bg-stone-300 hover:bg-stone-600 p-2 h-full w-full drop-shadow-lg">
+                  <div
+                    className="cursor-pointer"
+                    onClick={() => {
+                      router.push(
+                        `/characters/${playerCharacter.getCharacter()._id}`
+                      )
+                    }}
+                  >
+                    <div className="w-full h-full">
+                      <div className="flex">
+                        <div className="border-b w-fit mb-4">
+                          {playerCharacter.getCharacter().name}
+                        </div>
                       </div>
-                    </div>
-                    <div>{playerCharacter.getLineageName()}</div>
-                    <div>{`${playerCharacter.getClassEntity().name} Level ${
-                      playerCharacter.getCharacter().level
-                    }`}</div>
-                    <div className="mt-2 lowercase">
-                      <TraitsList
-                        traits={playerCharacter.getTraits()}
-                      ></TraitsList>
+                      <div>{playerCharacter.getLineageName()}</div>
+                      <div>{`${playerCharacter.getClassEntity().name} Level ${
+                        playerCharacter.getCharacter().level
+                      }`}</div>
+                      <div className="mt-2 lowercase">
+                        <TraitsList
+                          traits={playerCharacter.getTraits()}
+                        ></TraitsList>
+                      </div>
                     </div>
                   </div>
                 </div>
