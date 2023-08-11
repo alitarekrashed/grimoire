@@ -39,12 +39,12 @@ export default function CharactersPage() {
           <LoadingSpinner loading={loading}></LoadingSpinner>
         </div>
       )}
-      <div className={`${roboto.className} w-full h-full flex flex-col p-4`}>
+      <div className={`${roboto.className}  w-full h-full flex flex-col p-4`}>
         {playerCharacters && (
-          <div className="inline-flex h-full w-full rounded border border-bg-stone-300 p-4">
+          <div className="inline-flex bg-stone-900 h-full w-full rounded border border-bg-stone-300 p-4">
             {playerCharacters.map((playerCharacter) => (
               <div
-                className="rounded border border-bg-stone-300 hover:bg-stone-600 p-2 w-fit h-fit"
+                className=" bg-stone-800 rounded border border-bg-stone-300 hover:bg-stone-600 p-2 w-fit h-fit drop-shadow-lg	"
                 key={playerCharacter.getCharacter()._id.toString()}
               >
                 <Link
