@@ -1,14 +1,12 @@
 'use client'
 
 import { TraitsList } from '@/components/card/traits-list'
+import { CharacterContextMenu } from '@/components/character-display/character-context-menu'
 import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { PlayerCharacter } from '@/models/player-character'
 import { roboto } from '@/utils/fonts'
-import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import Link from 'next/link'
-import router, { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export default function CharactersPage() {
@@ -60,17 +58,9 @@ export default function CharactersPage() {
                   }}
                 >
                   <div className="w-full h-full">
-                    <button
-                      className="bg-stone-700 fixed top-2 right-2 rounded-full px-[8px] border border-stone-300 hover:bg-stone-500"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                      }}
-                      onClickCapture={(e) => {
-                        e.stopPropagation()
-                      }}
-                    >
-                      <FontAwesomeIcon size="2xs" icon={faEllipsis} />
-                    </button>
+                    <CharacterContextMenu
+                      character={playerCharacter.getCharacter()}
+                    ></CharacterContextMenu>
                     <div className="flex">
                       <div className="border-b w-fit mb-4">
                         {playerCharacter.getCharacter().name}
