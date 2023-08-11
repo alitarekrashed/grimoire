@@ -5,10 +5,14 @@ import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { PlayerCharacter } from '@/models/player-character'
 import { roboto } from '@/utils/fonts'
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
+import router, { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export default function CharactersPage() {
+  const router = useRouter()
   const [playerCharacters, setPlayerCharacters] = useState<PlayerCharacter[]>(
     []
   )
@@ -47,12 +51,30 @@ export default function CharactersPage() {
                 className=" bg-stone-800 rounded border border-bg-stone-300 hover:bg-stone-600 p-2 w-fit h-fit drop-shadow-lg	"
                 key={playerCharacter.getCharacter()._id.toString()}
               >
-                <Link
-                  href={`/characters/${playerCharacter.getCharacter()._id}`}
+                <div
+                  className="cursor-pointer"
+                  onClick={() => {
+                    router.push(
+                      `/characters/${playerCharacter.getCharacter()._id}`
+                    )
+                  }}
                 >
                   <div className="w-full h-full">
-                    <div className="border-b w-fit mb-1">
-                      {playerCharacter.getCharacter().name}
+                    <button
+                      className="bg-stone-700 fixed top-2 right-2 rounded-full px-[8px] border border-stone-300 hover:bg-stone-500"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                      }}
+                      onClickCapture={(e) => {
+                        e.stopPropagation()
+                      }}
+                    >
+                      <FontAwesomeIcon size="2xs" icon={faEllipsis} />
+                    </button>
+                    <div className="flex">
+                      <div className="border-b w-fit mb-4">
+                        {playerCharacter.getCharacter().name}
+                      </div>
                     </div>
                     <div>{playerCharacter.getLineageName()}</div>
                     <div>{`${playerCharacter.getClassEntity().name} Level ${
@@ -64,7 +86,7 @@ export default function CharactersPage() {
                       ></TraitsList>
                     </div>
                   </div>
-                </Link>
+                </div>
               </div>
             ))}
           </div>
