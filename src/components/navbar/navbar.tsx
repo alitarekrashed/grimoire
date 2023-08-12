@@ -15,7 +15,7 @@ export default function Navbar() {
       className:
         path.length === 1 && path[0] === ''
           ? 'bg-rose-800 hover:bg-rose-500 rounded-l-lg'
-          : 'rounded-l-lg',
+          : 'rounded-l-lg hover:bg-stone-600',
     },
     {
       title: 'Characters',
@@ -23,7 +23,7 @@ export default function Navbar() {
       className:
         path[path.length - 1] === 'characters'
           ? 'bg-rose-800 hover:bg-rose-500'
-          : '',
+          : 'hover:bg-stone-600',
     },
     {
       title: 'Equipment',
@@ -31,7 +31,7 @@ export default function Navbar() {
       className:
         path[path.length - 1] === 'equipment'
           ? 'bg-rose-800 hover:bg-rose-500'
-          : '',
+          : 'hover:bg-stone-600',
     },
     {
       title: 'Spells',
@@ -39,7 +39,7 @@ export default function Navbar() {
       className:
         path[path.length - 1] === 'spells'
           ? 'bg-rose-800 hover:bg-rose-500'
-          : '',
+          : 'hover:bg-stone-600',
     },
     {
       title: 'Conditions',
@@ -47,7 +47,7 @@ export default function Navbar() {
       className:
         path[path.length - 1] === 'conditions'
           ? 'bg-rose-800 hover:bg-rose-500'
-          : '',
+          : 'hover:bg-stone-600',
     },
     {
       title: 'Traits',
@@ -55,7 +55,7 @@ export default function Navbar() {
       className:
         path[path.length - 1] === 'traits'
           ? 'bg-rose-800 hover:bg-rose-500'
-          : '',
+          : 'hover:bg-stone-600',
     },
   ]
 

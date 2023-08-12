@@ -97,14 +97,24 @@ function CharacterDisplay({
       <div className="ml-2">
         <div className="grid grid-cols-9 gap-6">
           <div className="col-start-1">
-            <div className="text-base">
+            <div className="text-base inline-flex">
               {character.getCharacter().name}
-              <span className="ml-2 align-bottom">
-                <CharacterBuilderModal
-                  playerCharacter={character}
-                  onClose={onSave}
-                ></CharacterBuilderModal>
-              </span>
+              <div>
+                <span className="ml-2 align-bottom">
+                  <CharacterBuilderModal
+                    trigger={
+                      <button
+                        className="text-[9px] border rounded-md hover:bg-stone-600 w-full"
+                        tabIndex={0}
+                      >
+                        MANAGE
+                      </button>
+                    }
+                    playerCharacter={character}
+                    onClose={onSave}
+                  ></CharacterBuilderModal>
+                </span>
+              </div>
             </div>
             <div className="text-xs capitalize">
               <div>{character.getLineageName()}</div>

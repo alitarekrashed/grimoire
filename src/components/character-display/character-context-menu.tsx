@@ -5,6 +5,7 @@ import { cloneDeep } from 'lodash'
 import { InsertOneResult } from 'mongodb'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { EditCharacterButton } from './edit-character-button'
 
 export function CharacterContextMenu({
   character,
@@ -15,6 +16,7 @@ export function CharacterContextMenu({
 }) {
   const router = useRouter()
   const [open, setOpen] = useState<boolean>(false)
+  const [modalOpen, setModalOpen] = useState<boolean>(false)
   const wrapperRef = useRef(null)
 
   const useOutsideAlerter = (ref: any) => {
@@ -83,7 +85,7 @@ export function CharacterContextMenu({
       >
         <FontAwesomeIcon size="2xs" icon={faEllipsis} />
       </button>
-      {open && (
+      {(open || modalOpen) && (
         <div
           ref={wrapperRef}
           className="bg-stone-600 border border-stone-300 -mt-3 ml-3 rounded-md fixed w-32 h-32 cursor-default"
@@ -95,6 +97,16 @@ export function CharacterContextMenu({
               onClick={handleView(character)}
             >
               View
+            </div>
+            <div className="border-b border-stone-300 text-center hover:bg-stone-300/30 cursor-pointer w-full">
+              <EditCharacterButton
+                character={character}
+                onClick={() => setModalOpen(true)}
+                onSave={() => {
+                  setModalOpen(false)
+                  onActionComplete()
+                }}
+              ></EditCharacterButton>
             </div>
             <div
               className="border-b border-stone-300 text-center hover:bg-stone-300/30 cursor-pointer"
