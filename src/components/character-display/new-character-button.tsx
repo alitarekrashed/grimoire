@@ -7,8 +7,18 @@ import { PlayerCharacter } from '@/models/player-character'
 import { ClassEntity } from '@/models/db/class_entity'
 import { Feature } from '@/models/db/feature'
 
-export function NewCharacterButton() {
+export function NewCharacterButton({ onSave }: { onSave: () => void }) {
   const [playerCharacter, setPlayerCharacter] = useState<PlayerCharacter>()
+
+  const handleSave = (char: CharacterEntity) => {
+    fetch(`http://localhost:3000/api/characters`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(char),
+    }).then(() => onSave())
+  }
 
   useEffect(() => {
     PlayerCharacter.getClass('64d24e0ece00a34d75caa847').then(
@@ -32,7 +42,7 @@ export function NewCharacterButton() {
           features: {
             '1': fighter.features['1'].map((feature: Feature) => {
               if (feature.type === 'SKILL_SELECTION') {
-                feature.value.value = []
+                feature.value.value = [null]
               }
               return { source: 'CLASS', feature: feature }
             }),
@@ -61,7 +71,7 @@ export function NewCharacterButton() {
           </span>
         }
         playerCharacter={playerCharacter}
-        onClose={() => {}}
+        onClose={handleSave}
       ></CharacterBuilderModal>
     )
   )

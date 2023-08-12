@@ -64,7 +64,7 @@ export default function CharactersPage() {
       )}
       <div className={`${roboto.className} w-full h-full flex flex-col p-4`}>
         <div className="absolute top-0 left-0 -my-6 ml-4">
-          <NewCharacterButton></NewCharacterButton>
+          <NewCharacterButton onSave={handleRefresh}></NewCharacterButton>
         </div>
         {playerCharacters && (
           <div className="inline-flex gap-2 bg-stone-900 h-full w-full rounded border border-bg-stone-300 p-4">
