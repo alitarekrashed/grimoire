@@ -25,7 +25,7 @@ export function Modal({
   }
   return (
     <Dialog.Root>
-      <Dialog.Trigger>{trigger}</Dialog.Trigger>
+      <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="bg-stone-950 opacity-40 fixed h-full inset-0"></Dialog.Overlay>
         <div className={`fixed z-[100] ${modalSize()}`}>

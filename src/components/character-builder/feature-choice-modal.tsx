@@ -51,7 +51,7 @@ export function FeatureChoiceModal<T extends EntityModel>({
       <Modal
         size="medium"
         trigger={
-          <span
+          <button
             className="border border-stone-300 rounded-md relative flex w-44 h-9 p-1 hover:bg-stone-600"
             tabIndex={0}
           >
@@ -59,7 +59,7 @@ export function FeatureChoiceModal<T extends EntityModel>({
               {label}
             </span>
             <span className="absolute bottom-0">{saved && saved.name}</span>
-          </span>
+          </button>
         }
         body={
           <div

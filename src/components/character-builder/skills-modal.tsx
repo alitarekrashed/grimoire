@@ -51,12 +51,12 @@ export function SkillsModal({
   })
 
   const trigger = (
-    <span
+    <button
       className="border border-stone-300 rounded-md relative flex w-44 h-9 p-1 justify-center items-center hover:bg-stone-600"
       tabIndex={0}
     >
       Skills {setCount}/{totalCount}
-    </span>
+    </button>
   )
 
   const skillChoices =

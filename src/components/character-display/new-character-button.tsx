@@ -61,14 +61,15 @@ export function NewCharacterButton({ onSave }: { onSave: () => void }) {
       }
     )
   }, [])
+
   return (
     playerCharacter && (
       <CharacterBuilderModal
         trigger={
-          <span className="py-1 px-5 rounded-md bg-stone-800 border border-stone-300 hover:bg-stone-600">
+          <button className="py-1 px-5 rounded-md bg-stone-800 border border-stone-300 hover:bg-stone-600">
             <FontAwesomeIcon className="mr-1" size="2xs" icon={faPlus} />
             New
-          </span>
+          </button>
         }
         playerCharacter={playerCharacter}
         onClose={handleSave}
