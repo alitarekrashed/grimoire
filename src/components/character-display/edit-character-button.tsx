@@ -33,13 +33,13 @@ export function EditCharacterButton({
     <CharacterBuilderModal
       trigger={
         <button className="w-full" onClick={onClick}>
-          Edit
+          Manage
         </button>
       }
       playerCharacter={playerCharacter}
       onClose={handleSave}
     ></CharacterBuilderModal>
   ) : (
-    <span>Edit</span>
+    <span>Manage</span>
   )
 }
