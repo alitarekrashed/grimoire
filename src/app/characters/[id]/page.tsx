@@ -101,6 +101,14 @@ function CharacterDisplay({
               {character.getCharacter().name}
               <span className="ml-2 align-bottom">
                 <CharacterBuilderModal
+                  trigger={
+                    <span
+                      className="text-[9px] border p-0.5 rounded-sm hover:bg-stone-600"
+                      tabIndex={0}
+                    >
+                      EDIT
+                    </span>
+                  }
                   playerCharacter={character}
                   onClose={onSave}
                 ></CharacterBuilderModal>

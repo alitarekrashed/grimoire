@@ -5,7 +5,7 @@ import { FeatureType } from '@/models/db/feature'
 import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { Modal } from '../modal/modal'
 import { AncestryChoiceModal } from './ancestry-choice-modal'
 import { AncestryFeatChoiceModal } from './ancestry-feat.modal'
@@ -18,9 +18,11 @@ import { ClassFeatChoiceModal } from './class-feat.modal'
 import { LoadingSpinner } from '../loading-spinner/loading-spinner'
 
 export default function CharacterBuilderModal({
+  trigger,
   playerCharacter,
   onClose,
 }: {
+  trigger: ReactNode
   playerCharacter: PlayerCharacter
   onClose: (character: CharacterEntity) => void
 }) {
@@ -100,14 +102,7 @@ export default function CharacterBuilderModal({
     <>
       <Modal
         size="large"
-        trigger={
-          <span
-            className="text-[9px] border p-0.5 rounded-sm hover:bg-stone-600"
-            tabIndex={0}
-          >
-            EDIT
-          </span>
-        }
+        trigger={trigger}
         body={
           <>
             <LoadingSpinner loading={loading}></LoadingSpinner>
