@@ -8,7 +8,7 @@ import {
   RankModifierMap,
 } from './db/background'
 import { CharacterEntity } from './db/character-entity'
-import { ClassEntity } from './db/class_entity'
+import { ClassEntity } from './db/class-entity'
 import { Feat } from './db/feat'
 import {
   ConditionalFeatureValue,
@@ -924,7 +924,8 @@ export class PlayerCharacter {
         feats.push(sourced.feature.value)
       } else if (
         sourced.feature.type === 'PROFICIENCY' ||
-        sourced.feature.type === 'ACTION'
+        sourced.feature.type === 'ACTION' ||
+        sourced.feature.type === 'MISC'
       ) {
         allFeatures.push({
           source: classEntity.name,
