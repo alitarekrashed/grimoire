@@ -442,6 +442,24 @@ export class PlayerCharacter {
     return await PlayerCharacter.build(updated)
   }
 
+  public async updateClass(classEntity: ClassEntity): Promise<PlayerCharacter> {
+    let updated = cloneDeep(this.character)
+    updated.class_id = classEntity._id.toString()
+    updated.attributes.class = []
+    updated.features['1'] = updated.features['1'].filter(
+      (value) => value.source !== 'CLASS'
+    )
+    updated.features['1'].push(
+      ...classEntity.features['1'].map((feature: Feature) => {
+        if (feature.type === 'SKILL_SELECTION') {
+          feature.value.value = [null]
+        }
+        return { source: 'CLASS', feature: feature }
+      })
+    )
+    return await PlayerCharacter.build(updated)
+  }
+
   public getTraits(): string[] {
     return this.traits
   }

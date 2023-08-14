@@ -16,6 +16,7 @@ import { LanguagesModal } from './languages-modal'
 import { SkillsModal } from './skills-modal'
 import { ClassFeatChoiceModal } from './class-feat.modal'
 import { LoadingSpinner } from '../loading-spinner/loading-spinner'
+import { ClassChoiceModal } from './class-choice-modal'
 
 export default function CharacterBuilderModal({
   trigger,
@@ -82,6 +83,14 @@ export default function CharacterBuilderModal({
     })
   }
 
+  const handleClassChange = (classEntity: classEntity) => {
+    setLoading(true)
+    character.updateClass(classEntity).then((val) => {
+      setCharacter(val)
+      setLoading(false)
+    })
+  }
+
   const handleFeatureUpdate =
     (source: string, featureType: FeatureType) =>
     (features: SourcedFeature[]) => {
@@ -139,6 +148,12 @@ export default function CharacterBuilderModal({
                       backgroundId={character.getBackgroundId()}
                       onBackgroundChange={handleBackgroundChange}
                     ></BackgroundChoiceModal>
+                  </div>
+                  <div className="mr-2">
+                    <ClassChoiceModal
+                      classId={character.getClassEntity()._id.toString()}
+                      onClassChange={handleClassChange}
+                    ></ClassChoiceModal>
                   </div>
                   <div className="mr-2">
                     <AttributesModal
