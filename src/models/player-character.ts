@@ -611,7 +611,10 @@ export class PlayerCharacter {
       })
       .forEach((sourced: SourcedFeature) => {
         const proficency = sourced.feature.value as ProficiencyFeatureValue
-        if (proficiencyMap[proficency.type].has(proficency.value) == false) {
+        if (
+          proficency.value &&
+          proficiencyMap[proficency.type].has(proficency.value) == false
+        ) {
           proficiencyMap[proficency.type].set(proficency.value, proficency.rank)
         } else {
           const existingRank = proficiencyMap[proficency.type].get(
@@ -673,6 +676,19 @@ export class PlayerCharacter {
           RankModifierMap[rank] +
           this.level +
           this.attributes[SkillAttributes.get(type) as Attribute],
+      })
+    })
+    return result
+  }
+
+  public getLores(level?: string): Map<string, CalculatedProficiency> {
+    const skills = this.getProficiencies(level).Lore
+    const result = new Map()
+    skills.forEach((rank, type) => {
+      result.set(type, {
+        rank: rank,
+        modifier:
+          RankModifierMap[rank] + this.level + this.attributes['Intelligence'],
       })
     })
     return result

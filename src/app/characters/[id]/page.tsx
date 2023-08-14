@@ -277,6 +277,17 @@ function CharacterDisplay({
                 </div>
               </div>
             ))}
+            {[...character.getLores().entries()].map((entry) => (
+              <div className="inline-flex gap-2" key={entry[0]}>
+                <div className="font-semibold">Lore {entry[0]}</div>
+                <span className="text-xs">{entry[1].rank}</span>
+                <div>
+                  <span>
+                    {(entry[1].modifier >= 0 ? ' +' : ' -') + entry[1].modifier}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

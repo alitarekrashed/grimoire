@@ -251,7 +251,7 @@ export default function CharacterBuilderModal({
             label: 'Cancel',
             onClick: () => {
               setCharacter(playerCharacter)
-              onCancel()
+              onCancel && onCancel()
             },
           },
         ]}
