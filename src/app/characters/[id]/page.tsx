@@ -118,7 +118,9 @@ function CharacterDisplay({
             </div>
             <div className="text-xs capitalize">
               <div>{character.getLineageName()}</div>
-              <div>{`Fighter Level ${character.getCharacter().level}`}</div>
+              <div className="capitalize">{`${
+                character.getClassEntity().name
+              } Level ${character.getCharacter().level}`}</div>
               <div className="mt-2 lowercase">
                 <TraitsList traits={character.getTraits()}></TraitsList>
               </div>

@@ -93,9 +93,9 @@ export default function CharactersPage() {
                         </div>
                       </div>
                       <div>{playerCharacter.getLineageName()}</div>
-                      <div>{`${playerCharacter.getClassEntity().name} Level ${
-                        playerCharacter.getCharacter().level
-                      }`}</div>
+                      <div className="capitalize">{`${
+                        playerCharacter.getClassEntity().name
+                      } Level ${playerCharacter.getCharacter().level}`}</div>
                       <div className="mt-2 lowercase">
                         <TraitsList
                           traits={playerCharacter.getTraits()}
