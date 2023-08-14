@@ -6,10 +6,12 @@ import CharacterBuilderModal from '../character-builder/character-builder'
 export function EditCharacterButton({
   onClick,
   onSave,
+  onCancel,
   character,
 }: {
   onClick: () => void
   onSave: () => void
+  onCancel: () => void
   character: CharacterEntity
 }) {
   const [playerCharacter, setPlayerCharacter] = useState<PlayerCharacter>()
@@ -38,6 +40,7 @@ export function EditCharacterButton({
       }
       playerCharacter={playerCharacter}
       onClose={handleSave}
+      onCancel={onCancel}
     ></CharacterBuilderModal>
   ) : (
     <span>Manage</span>

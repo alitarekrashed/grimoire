@@ -22,10 +22,12 @@ export default function CharacterBuilderModal({
   trigger,
   playerCharacter,
   onClose,
+  onCancel,
 }: {
   trigger: ReactNode
   playerCharacter: PlayerCharacter
   onClose: (character: CharacterEntity) => void
+  onCancel?: () => void
 }) {
   const [character, setCharacter] = useState<PlayerCharacter>(playerCharacter)
   const [name, setName] = useState<string>(playerCharacter.getCharacter().name)
@@ -247,7 +249,10 @@ export default function CharacterBuilderModal({
           },
           {
             label: 'Cancel',
-            onClick: () => setCharacter(playerCharacter),
+            onClick: () => {
+              setCharacter(playerCharacter)
+              onCancel()
+            },
           },
         ]}
       ></Modal>
