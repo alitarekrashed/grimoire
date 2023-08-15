@@ -3,6 +3,7 @@
 import CalculatedDisplay from '@/components/calculated-display/calculated-display'
 import { TraitsList } from '@/components/card/traits-list'
 import CharacterBuilderModal from '@/components/character-builder/character-builder'
+import { CharacterHeader } from '@/components/character-display/character-header'
 import { FeaturesTabs } from '@/components/character-display/features-tabs'
 import { LabelsList } from '@/components/labels-list/labels-list'
 import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner'
@@ -68,6 +69,10 @@ export default function CharacterPage() {
       )}
       {character && (
         <>
+          <CharacterHeader
+            character={character}
+            onBuilderClose={handleClose}
+          ></CharacterHeader>
           <CharacterDisplay
             character={character}
             onSave={handleClose}
@@ -94,70 +99,10 @@ function CharacterDisplay({
 
   return (
     <>
-      <div
-        className={`absolute pl-2 w-full ${roboto_condensed.className} border-b border-b-stone-300/40`}
-      >
-        <div className="text-base inline-flex items-center gap-2">
-          <div>{character.getCharacter().name}</div>
-          <div className="text-xs capitalize">{`${character.getLineageName()} ${
-            character.getClassEntity().name
-          } Level ${character.getCharacter().level}`}</div>
-          <div>
-            <span className="pl-2 align-bottom">
-              <CharacterBuilderModal
-                trigger={
-                  <button
-                    className="text-[9px] border rounded-md hover:bg-stone-600 w-full"
-                    tabIndex={0}
-                  >
-                    MANAGE
-                  </button>
-                }
-                playerCharacter={character}
-                onClose={onSave}
-              ></CharacterBuilderModal>
-            </span>
-          </div>
-        </div>
-        <div className="text-xs lowercase mb-2">
-          <TraitsList traits={character.getTraits()}></TraitsList>
-        </div>
-      </div>
-
       <div className={`text-sm p-2 ${roboto_condensed.className}`}>
         <div className="mb-[700px]"></div>
         <div className="ml-2">
           <div className="grid grid-cols-9 gap-6">
-            <div className="col-start-1">
-              <div className="text-base inline-flex">
-                {character.getCharacter().name}
-                <div>
-                  <span className="ml-2 align-bottom">
-                    <CharacterBuilderModal
-                      trigger={
-                        <button
-                          className="text-[9px] border rounded-md hover:bg-stone-600 w-full"
-                          tabIndex={0}
-                        >
-                          MANAGE
-                        </button>
-                      }
-                      playerCharacter={character}
-                      onClose={onSave}
-                    ></CharacterBuilderModal>
-                  </span>
-                </div>
-              </div>
-              <div className="text-xs capitalize">
-                <div>{character.getLineageName()}</div>
-                <div className="capitalize">{`${
-                  character.getClassEntity().name
-                } Level ${character.getCharacter().level}`}</div>
-                <div className="mt-2 lowercase">
-                  <TraitsList traits={character.getTraits()}></TraitsList>
-                </div>
-              </div>
-            </div>
             <div className="col-span-3 justify-self-center">
               <div className="border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-full">
                 <div className="inline-flex gap-5">
