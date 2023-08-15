@@ -132,18 +132,6 @@ function CharacterDisplay({
                 <div className="text-[10px] font-semibold">Hitpoints</div>
               </div>
             </div>
-            <div className="col-span-1 justify-self-center">
-              <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
-                <div className="grid grid-rows-2 grid-cols-2">
-                  <span className="font-bold">Speed</span>
-                  <CalculatedDisplay
-                    values={character.getSpeed()}
-                  ></CalculatedDisplay>
-                  <span className="font-bold">Size</span>
-                  <span>{character.getSize()}</span>
-                </div>
-              </div>
-            </div>
             <div className="col-span-3 justify-self-start">
               <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
                 <div className="grid grid-rows-2 grid-cols-3 gap-1">
