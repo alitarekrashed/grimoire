@@ -18,14 +18,13 @@ export default function RootLayout({
       <body
         className={`${dm_serif_display.className} min-h-screen flex wrap flex-col`}
       >
-        <div className="grid grid-cols-1 pt-5 w-full">
+        <div className="grid grid-cols-1 pt-1 w-full">
           <div
             className={`mb-4 ${ysabeau.className} flex self-center justify-self-center`}
           >
             <Navbar></Navbar>
           </div>
         </div>
-
         <div className="h-5/6 grow relative">{children}</div>
       </body>
     </html>
