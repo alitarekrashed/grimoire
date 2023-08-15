@@ -16,15 +16,18 @@ import { LanguagesModal } from './languages-modal'
 import { SkillsModal } from './skills-modal'
 import { ClassFeatChoiceModal } from './class-feat.modal'
 import { LoadingSpinner } from '../loading-spinner/loading-spinner'
+import { ClassChoiceModal } from './class-choice-modal'
 
 export default function CharacterBuilderModal({
   trigger,
   playerCharacter,
   onClose,
+  onCancel,
 }: {
   trigger: ReactNode
   playerCharacter: PlayerCharacter
   onClose: (character: CharacterEntity) => void
+  onCancel?: () => void
 }) {
   const [character, setCharacter] = useState<PlayerCharacter>(playerCharacter)
   const [name, setName] = useState<string>(playerCharacter.getCharacter().name)
@@ -77,6 +80,14 @@ export default function CharacterBuilderModal({
   const handleBackgroundChange = (backgroundId: string) => {
     setLoading(true)
     character.updateBackground(backgroundId).then((val) => {
+      setCharacter(val)
+      setLoading(false)
+    })
+  }
+
+  const handleClassChange = (classEntity: classEntity) => {
+    setLoading(true)
+    character.updateClass(classEntity).then((val) => {
       setCharacter(val)
       setLoading(false)
     })
@@ -139,6 +150,12 @@ export default function CharacterBuilderModal({
                       backgroundId={character.getBackgroundId()}
                       onBackgroundChange={handleBackgroundChange}
                     ></BackgroundChoiceModal>
+                  </div>
+                  <div className="mr-2">
+                    <ClassChoiceModal
+                      classId={character.getClassEntity()._id.toString()}
+                      onClassChange={handleClassChange}
+                    ></ClassChoiceModal>
                   </div>
                   <div className="mr-2">
                     <AttributesModal
@@ -232,7 +249,10 @@ export default function CharacterBuilderModal({
           },
           {
             label: 'Cancel',
-            onClick: () => setCharacter(playerCharacter),
+            onClick: () => {
+              setCharacter(playerCharacter)
+              onCancel && onCancel()
+            },
           },
         ]}
       ></Modal>

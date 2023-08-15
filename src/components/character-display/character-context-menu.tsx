@@ -106,6 +106,7 @@ export function CharacterContextMenu({
                   setModalOpen(false)
                   onActionComplete()
                 }}
+                onCancel={() => setModalOpen(false)}
               ></EditCharacterButton>
             </div>
             <div

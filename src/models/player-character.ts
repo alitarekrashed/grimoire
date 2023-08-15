@@ -8,7 +8,7 @@ import {
   RankModifierMap,
 } from './db/background'
 import { CharacterEntity } from './db/character-entity'
-import { ClassEntity } from './db/class_entity'
+import { ClassEntity } from './db/class-entity'
 import { Feat } from './db/feat'
 import {
   ConditionalFeatureValue,
@@ -442,6 +442,24 @@ export class PlayerCharacter {
     return await PlayerCharacter.build(updated)
   }
 
+  public async updateClass(classEntity: ClassEntity): Promise<PlayerCharacter> {
+    let updated = cloneDeep(this.character)
+    updated.class_id = classEntity._id.toString()
+    updated.attributes.class = []
+    updated.features['1'] = updated.features['1'].filter(
+      (value) => value.source !== 'CLASS'
+    )
+    updated.features['1'].push(
+      ...classEntity.features['1'].map((feature: Feature) => {
+        if (feature.type === 'SKILL_SELECTION') {
+          feature.value.value = [null]
+        }
+        return { source: 'CLASS', feature: feature }
+      })
+    )
+    return await PlayerCharacter.build(updated)
+  }
+
   public getTraits(): string[] {
     return this.traits
   }
@@ -593,7 +611,10 @@ export class PlayerCharacter {
       })
       .forEach((sourced: SourcedFeature) => {
         const proficency = sourced.feature.value as ProficiencyFeatureValue
-        if (proficiencyMap[proficency.type].has(proficency.value) == false) {
+        if (
+          proficency.value &&
+          proficiencyMap[proficency.type].has(proficency.value) == false
+        ) {
           proficiencyMap[proficency.type].set(proficency.value, proficency.rank)
         } else {
           const existingRank = proficiencyMap[proficency.type].get(
@@ -655,6 +676,19 @@ export class PlayerCharacter {
           RankModifierMap[rank] +
           this.level +
           this.attributes[SkillAttributes.get(type) as Attribute],
+      })
+    })
+    return result
+  }
+
+  public getLores(level?: string): Map<string, CalculatedProficiency> {
+    const skills = this.getProficiencies(level).Lore
+    const result = new Map()
+    skills.forEach((rank, type) => {
+      result.set(type, {
+        rank: rank,
+        modifier:
+          RankModifierMap[rank] + this.level + this.attributes['Intelligence'],
       })
     })
     return result
@@ -924,7 +958,8 @@ export class PlayerCharacter {
         feats.push(sourced.feature.value)
       } else if (
         sourced.feature.type === 'PROFICIENCY' ||
-        sourced.feature.type === 'ACTION'
+        sourced.feature.type === 'ACTION' ||
+        sourced.feature.type === 'MISC'
       ) {
         allFeatures.push({
           source: classEntity.name,

@@ -4,7 +4,7 @@ import CharacterBuilderModal from '../character-builder/character-builder'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { useEffect, useState } from 'react'
 import { PlayerCharacter } from '@/models/player-character'
-import { ClassEntity } from '@/models/db/class_entity'
+import { ClassEntity } from '@/models/db/class-entity'
 import { Feature } from '@/models/db/feature'
 
 export function NewCharacterButton({ onSave }: { onSave: () => void }) {
@@ -37,6 +37,8 @@ export function NewCharacterButton({ onSave }: { onSave: () => void }) {
           languages: [],
           ancestry_id: '64c86dc6ce00a34d75caa80f',
           background_id: '64c87a12ce00a34d75caa812',
+          // fighter: 64d24e0ece00a34d75caa847
+          // monk: 64d82344de539d6f569f9194
           class_id: '64d24e0ece00a34d75caa847',
           heritage_id: '',
           features: {

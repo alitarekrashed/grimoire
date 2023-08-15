@@ -23,6 +23,11 @@ export interface Feature {
   value: any
 }
 
+export interface MiscFeatureValue {
+  name?: string
+  value: string
+}
+
 export interface ModifierFeatureValue {
   type: ModifierType
   condition?: 'string'

@@ -118,7 +118,9 @@ function CharacterDisplay({
             </div>
             <div className="text-xs capitalize">
               <div>{character.getLineageName()}</div>
-              <div>{`Fighter Level ${character.getCharacter().level}`}</div>
+              <div className="capitalize">{`${
+                character.getClassEntity().name
+              } Level ${character.getCharacter().level}`}</div>
               <div className="mt-2 lowercase">
                 <TraitsList traits={character.getTraits()}></TraitsList>
               </div>
@@ -267,6 +269,17 @@ function CharacterDisplay({
             {[...character.getSkills().entries()].map((entry) => (
               <div className="inline-flex gap-2" key={entry[0]}>
                 <div className="font-semibold">{entry[0]}</div>
+                <span className="text-xs">{entry[1].rank}</span>
+                <div>
+                  <span>
+                    {(entry[1].modifier >= 0 ? ' +' : ' -') + entry[1].modifier}
+                  </span>
+                </div>
+              </div>
+            ))}
+            {[...character.getLores().entries()].map((entry) => (
+              <div className="inline-flex gap-2" key={entry[0]}>
+                <div className="font-semibold">Lore {entry[0]}</div>
                 <span className="text-xs">{entry[1].rank}</span>
                 <div>
                   <span>

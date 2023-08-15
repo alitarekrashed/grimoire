@@ -4,7 +4,7 @@ import {
   CharacterAttributes,
   CharacterEntity,
 } from '@/models/db/character-entity'
-import { ClassEntity } from '@/models/db/class_entity'
+import { ClassEntity } from '@/models/db/class-entity'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
 import React, { useEffect, useState } from 'react'
