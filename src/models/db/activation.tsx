@@ -13,6 +13,7 @@ export type ActionType =
   | 'reaction'
   | 'free'
   | '10 minutes'
+  | ''
 
 export function isActionLongerThanTurn(type: ActionType) {
   switch (type) {
