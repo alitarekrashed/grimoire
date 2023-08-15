@@ -1,4 +1,4 @@
-import { Activation } from './activation'
+import { Activation, SavingThrow } from './activation'
 import { ProficiencyRank } from './background'
 import { EntityModel } from './entity-model'
 import { Feature } from './feature'
@@ -9,6 +9,7 @@ export interface Feat extends EntityModel {
   level: number
   prerequisites: Prerequisite[]
   activation?: Activation
+  saving_throw?: SavingThrow
 }
 
 export type PrerequisiteType = 'SKILL' | 'OTHER'

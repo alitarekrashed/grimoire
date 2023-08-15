@@ -4,6 +4,7 @@ import { Feat, Prerequisite, PrerequisiteSkillValue } from '@/models/db/feat'
 import { RefObject } from 'react'
 import Card from '../card/card'
 import { LabelsList } from '../labels-list/labels-list'
+import { SavingThrowDisplay } from '../activation-displays/activation-description'
 
 export default function FeatCard({
   reference,
@@ -32,6 +33,15 @@ export default function FeatCard({
       )}
     </div>
   )
+
+  const additionalContent = value.saving_throw ? (
+    <div className="mt-2">
+      <SavingThrowDisplay value={value.saving_throw}></SavingThrowDisplay>
+    </div>
+  ) : (
+    <></>
+  )
+
   return (
     <Card
       reference={reference}
@@ -40,6 +50,7 @@ export default function FeatCard({
       level={value.level}
       attributes={attributes}
       activation={value.activation}
+      additionalContent={additionalContent}
       traits={value.traits}
       collapsible={collapsible}
       onRemoved={onRemoved}

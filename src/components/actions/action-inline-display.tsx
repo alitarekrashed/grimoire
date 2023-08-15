@@ -7,6 +7,7 @@ import styles from './action-inline-display.module.css'
 import { ActionRenderer } from '../activation-displays/action-renderer'
 import { Feat } from '@/models/db/feat'
 import { ParsedDescription } from '../parsed-description/parsed-description'
+import { SavingThrowDisplay } from '../activation-displays/activation-description'
 
 export function ActionInlineDisplay({
   actionName,
@@ -28,6 +29,7 @@ export function ActionInlineDisplay({
         activation: actionName.activation!,
         name: actionName.name.toLowerCase(),
         source: actionName.source,
+        saving_throw: actionName.saving_throw,
         entity_type: 'ACTION',
       })
     }
@@ -57,6 +59,11 @@ export function ActionInlineDisplay({
               <ParsedDescription
                 description={action.description}
               ></ParsedDescription>
+              {action.saving_throw && (
+                <SavingThrowDisplay
+                  value={action.saving_throw}
+                ></SavingThrowDisplay>
+              )}
             </div>
           </Collapsible.Content>
         </Collapsible.Root>
