@@ -1,14 +1,12 @@
 'use client'
 
 import { TraitsList } from '@/components/card/traits-list'
-import { CharacterContextMenu } from '@/components/character-display/character-context-menu'
-import { NewCharacterButton } from '@/components/character-display/new-character-button'
+import { CharacterContextMenu } from '@/components/characters-list/character-context-menu'
+import { NewCharacterButton } from '@/components/characters-list/new-character-button'
 import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { PlayerCharacter } from '@/models/player-character'
 import { roboto } from '@/utils/fonts'
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
