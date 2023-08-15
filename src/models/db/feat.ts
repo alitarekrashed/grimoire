@@ -11,7 +11,7 @@ export interface Feat extends EntityModel {
   activation?: Activation
 }
 
-export type PrerequisiteType = 'SKILL'
+export type PrerequisiteType = 'SKILL' | 'OTHER'
 
 export interface Prerequisite {
   type: PrerequisiteType
