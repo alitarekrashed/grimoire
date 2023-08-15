@@ -9,6 +9,7 @@ import { LabelsList } from '@/components/labels-list/labels-list'
 import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner'
 import { ParsedDescription } from '@/components/parsed-description/parsed-description'
 import { Attribute } from '@/models/db/ancestry'
+import { ProficiencyRank } from '@/models/db/background'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { PlayerCharacter } from '@/models/player-character'
 import { SavingThrowType } from '@/models/statistic'
@@ -68,19 +69,58 @@ export default function CharacterPage() {
         </div>
       )}
       {character && (
-        <>
+        <div className="bg-stone-900">
           <CharacterHeader
             character={character}
             onBuilderClose={handleClose}
           ></CharacterHeader>
+          <div className="flex flex-col text-xs w-fit text-center gap-1 m-2 p-2 rounded-md border border-b-stone-300 bg-stone-800">
+            <div className="mb-2 font-semibold">Skills</div>
+            {[...character.getSkills().entries()].map((entry) => (
+              <div className="flex" key={entry[0]}>
+                <span className="font-light text-[9px] rounded-full border border-b-stone-300 px-1 mr-1">
+                  {getRankSymbol(entry[1].rank)}
+                </span>
+                <div className="pr-2 mr-auto">{entry[0]}</div>
+                <div>
+                  {(entry[1].modifier >= 0 ? ' +' : ' -') + entry[1].modifier}
+                </div>
+              </div>
+            ))}
+            {[...character.getLores().entries()].map((entry) => (
+              <div className="flex" key={entry[0]}>
+                <span className="font-light text-[9px] rounded-full border border-b-stone-300 px-1 mr-1">
+                  {getRankSymbol(entry[1].rank)}
+                </span>
+                <div className="pr-2 mr-auto">Lore: {entry[0]}</div>
+                <div>
+                  <span>
+                    {(entry[1].modifier >= 0 ? ' +' : ' -') + entry[1].modifier}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
           <CharacterDisplay
             character={character}
             onSave={handleClose}
           ></CharacterDisplay>
-        </>
+        </div>
       )}
     </div>
   )
+}
+
+function getRankSymbol(rank: ProficiencyRank) {
+  switch (rank) {
+    case 'untrained':
+      return 'U'
+    case 'trained':
+      return 'T'
+    case 'expert':
+      return 'E'
+  }
 }
 
 function CharacterDisplay({
@@ -226,35 +266,6 @@ function CharacterDisplay({
                   proficiencies={proficiencies}
                 ></FeaturesTabs>
               </div>
-            </div>
-          </div>
-          <div className="inline-flex flex-col text-center">
-            <div className="mb-4">Skills</div>
-            <div className="flex flex-col gap-2">
-              {[...character.getSkills().entries()].map((entry) => (
-                <div className="inline-flex gap-2" key={entry[0]}>
-                  <div className="font-semibold">{entry[0]}</div>
-                  <span className="text-xs">{entry[1].rank}</span>
-                  <div>
-                    <span>
-                      {(entry[1].modifier >= 0 ? ' +' : ' -') +
-                        entry[1].modifier}
-                    </span>
-                  </div>
-                </div>
-              ))}
-              {[...character.getLores().entries()].map((entry) => (
-                <div className="inline-flex gap-2" key={entry[0]}>
-                  <div className="font-semibold">Lore {entry[0]}</div>
-                  <span className="text-xs">{entry[1].rank}</span>
-                  <div>
-                    <span>
-                      {(entry[1].modifier >= 0 ? ' +' : ' -') +
-                        entry[1].modifier}
-                    </span>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </div>
