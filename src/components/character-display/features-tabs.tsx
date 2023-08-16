@@ -50,7 +50,7 @@ export function FeaturesTabs({
 
   return (
     <Tabs.Root defaultValue="actions">
-      <Tabs.List className="flex gap-2 mb-2 border-b border-b-stone-300">
+      <Tabs.List className="flex gap-2 mb-2 border-b border-b-stone-300 text-sm font-light">
         <Tabs.Trigger value="actions" className={styles.tabHeader}>
           Actions
         </Tabs.Trigger>
