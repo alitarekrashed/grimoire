@@ -2,11 +2,8 @@
 
 import CalculatedDisplay from '@/components/calculated-display/calculated-display'
 import { CharacterHeader } from '@/components/character-display/character-header'
-import { CharacterSheetBox } from '@/components/character-display/character-sheet-box'
 import { FeaturesTabs } from '@/components/character-display/features-tabs'
-import { SavingThrowsDisplay } from '@/components/character-display/saving-throws-display'
-import { SkillDisplay } from '@/components/character-display/skill-display'
-import { SkillsDisplay } from '@/components/character-display/skills-display'
+import { ProficiencyModifiersColumn } from '@/components/character-display/proficiency-modifiers-column'
 import { LabelsList } from '@/components/labels-list/labels-list'
 import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner'
 import { ParsedDescription } from '@/components/parsed-description/parsed-description'
@@ -75,22 +72,9 @@ export default function CharacterPage() {
             onBuilderClose={handleClose}
           ></CharacterHeader>
           <div className="w-fit">
-            <CharacterSheetBox>
-              <div className="flex flex-col gap-1">
-                <SkillDisplay
-                  name="Perception"
-                  rank={character.getPerception().rank}
-                  modifier={character.getPerception().modifier}
-                ></SkillDisplay>
-                <SkillDisplay
-                  name="Class DC"
-                  rank={character.getClassDC().rank}
-                  modifier={character.getClassDC().modifier}
-                ></SkillDisplay>
-              </div>
-            </CharacterSheetBox>
-            <SavingThrowsDisplay character={character}></SavingThrowsDisplay>
-            <SkillsDisplay character={character}></SkillsDisplay>
+            <ProficiencyModifiersColumn
+              character={character}
+            ></ProficiencyModifiersColumn>
           </div>
           <CharacterDisplay
             character={character}
@@ -199,39 +183,6 @@ function CharacterDisplay({
                           </React.Fragment>
                         )
                       })}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="inline-flex flex-col text-center">
-              <div className="inline-flex gap-2">
-                {[...character.getSavingThrows().entries()].map((entry) => (
-                  <div key={entry[0]}>
-                    <div className="font-semibold">{entry[0]}</div>
-                    <span className="text-xs">{entry[1].rank}</span>
-                    <div>
-                      <span>
-                        {(entry[1].modifier >= 0 ? ' +' : ' -') +
-                          entry[1].modifier}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4">Saving throws</div>
-            </div>
-            <div className="text-center">
-              <div className="inline-flex gap-2">
-                <div>
-                  <div className="font-semibold">Perception</div>
-                  <span className="text-xs">
-                    {character.getPerception().rank}
-                  </span>
-                  <div>
-                    <span>
-                      {(character.getPerception().modifier >= 0 ? ' +' : ' -') +
-                        character.getPerception().modifier}
                     </span>
                   </div>
                 </div>
