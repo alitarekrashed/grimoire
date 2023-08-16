@@ -741,6 +741,48 @@ export class PlayerCharacter {
     }
   }
 
+  public getArmorClass(): ModifierValue[] {
+    const result: ModifierValue[] = []
+    result.push({
+      value: 10,
+      source: 'Base',
+    })
+
+    const equippedArmor = {
+      name: 'unarmored',
+      category: 'unarmored',
+      dex_cap: undefined,
+    }
+
+    if (
+      equippedArmor.dex_cap === undefined ||
+      this.attributes.Dexterity <= equippedArmor.dex_cap
+    ) {
+      result.push({
+        value: this.attributes.Dexterity,
+        source: 'Dexterity',
+      })
+    } else {
+      result.push({
+        value: equippedArmor.dex_cap,
+        source: `Dexterity (capped from ${equippedArmor.name})`,
+      })
+    }
+
+    const defenseProfs = this.getProficiencies().Defense
+    const profRank = defenseProfs.get(
+      equippedArmor.category === 'unarmored' ? 'unarmored defense' : ''
+    )!
+
+    if (profRank && profRank !== 'untrained') {
+      result.push({
+        value: RankModifierMap[profRank] + this.level,
+        source: `Proficiency (${equippedArmor.category})`,
+      })
+    }
+    return result
+  }
+
   private calculateLanguages() {
     const additionalLanguages =
       this.attributes.Intelligence + (this.ancestry.languages.additional ?? 0)
