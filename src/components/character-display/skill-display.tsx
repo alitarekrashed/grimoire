@@ -35,8 +35,8 @@ function getRankDisplay(rank: ProficiencyRank): {
     case 'untrained':
       return { symbol: 'U', color: '' }
     case 'trained':
-      return { symbol: 'T', color: 'bg-rose-300/50' }
+      return { symbol: 'T', color: 'bg-stone-400/50' }
     case 'expert':
-      return { symbol: 'E', color: 'bg-rose-500/75' }
+      return { symbol: 'E', color: 'bg-green-400/50' }
   }
 }
