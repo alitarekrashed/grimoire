@@ -29,7 +29,7 @@ export interface CharacterArmor {
 }
 
 export type ArmorCategory = 'unarmored' | 'light' | 'medium' | 'heavy'
-export type ArmorGroup = 'cloth'
+export type ArmorGroup = 'cloth' | 'chain'
 
 export interface ArmorDefinition {
   category: ArmorCategory

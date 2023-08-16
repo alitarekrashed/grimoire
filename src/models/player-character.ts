@@ -1,5 +1,5 @@
 import { ModifierValue } from '@/components/calculated-display/calculated-display'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, eq } from 'lodash'
 import { Ancestry, Attribute } from './db/ancestry'
 import {
   Background,
@@ -745,6 +745,7 @@ export class PlayerCharacter {
     }
   }
 
+  // TODO this needs some love/cleanup
   public getArmorClass(): ModifierValue[] {
     const result: ModifierValue[] = []
     result.push({
@@ -777,16 +778,43 @@ export class PlayerCharacter {
     }
 
     const defenseProfs = this.getProficiencies().Defense
-    const profRank = defenseProfs.get(
+    console.log(defenseProfs)
+    let minimumRank: ProficiencyRank = 'untrained'
+    if (defenseProfs.has('all armor')) {
+      if (this.greaterThan(defenseProfs.get('all armor')!, minimumRank)) {
+        minimumRank = defenseProfs.get('all armor')!
+      }
+    }
+
+    const category =
       equippedArmor.definition.category === 'unarmored'
         ? 'unarmored defense'
-        : ''
-    )!
+        : equippedArmor.definition.category
+    if (defenseProfs.has(category)) {
+      if (this.greaterThan(defenseProfs.get(category)!, minimumRank)) {
+        minimumRank = defenseProfs.get(category)!
+      }
+    }
 
-    if (profRank && profRank !== 'untrained') {
+    if (defenseProfs.has(equippedArmor.name)) {
+      if (
+        this.greaterThan(defenseProfs.get(equippedArmor.name)!, minimumRank)
+      ) {
+        minimumRank = defenseProfs.get(equippedArmor.name)!
+      }
+    }
+
+    if (minimumRank && minimumRank !== 'untrained') {
       result.push({
-        value: RankModifierMap[profRank] + this.level,
+        value: RankModifierMap[minimumRank] + this.level,
         source: `Proficiency (${equippedArmor.definition.category})`,
+      })
+    }
+
+    if (equippedArmor.definition.ac_bonus) {
+      result.push({
+        value: equippedArmor.definition.ac_bonus,
+        source: `AC Bonus (${equippedArmor.name})`,
       })
     }
     return result
