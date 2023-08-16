@@ -1,15 +1,14 @@
 import { PlayerCharacter } from '@/models/player-character'
-import { CharacterSheetBox } from './character-sheet-box'
-import CalculatedDisplay from '../calculated-display/calculated-display'
-import { LabelsList } from '../labels-list/labels-list'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faHeart,
   faHeartBroken,
   faShield,
   faShieldHalved,
-  faUserInjured,
 } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import CalculatedDisplay from '../calculated-display/calculated-display'
+import { LabelsList } from '../labels-list/labels-list'
+import { CharacterSheetBox } from './character-sheet-box'
 
 export function Defenses({ character }: { character: PlayerCharacter }) {
   return (

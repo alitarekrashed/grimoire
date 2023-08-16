@@ -30,7 +30,7 @@ export default function EntityHoverableDescription({
                 description={value.description}
               ></ParsedDescription>
             </div>
-            <HoverCard.Arrow className="fill-slate-600" />
+            <HoverCard.Arrow className="fill-stone-600" />
           </HoverCard.Content>
         </HoverCard.Portal>
       </HoverCard.Root>
