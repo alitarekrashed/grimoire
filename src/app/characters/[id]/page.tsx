@@ -1,19 +1,16 @@
 'use client'
 
 import CalculatedDisplay from '@/components/calculated-display/calculated-display'
-import { TraitsList } from '@/components/card/traits-list'
-import CharacterBuilderModal from '@/components/character-builder/character-builder'
 import { CharacterHeader } from '@/components/character-display/character-header'
 import { FeaturesTabs } from '@/components/character-display/features-tabs'
+import { SavingThrowsDisplay } from '@/components/character-display/saving-throws-display'
 import { SkillsDisplay } from '@/components/character-display/skills-display'
 import { LabelsList } from '@/components/labels-list/labels-list'
 import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner'
 import { ParsedDescription } from '@/components/parsed-description/parsed-description'
 import { Attribute } from '@/models/db/ancestry'
-import { ProficiencyRank } from '@/models/db/background'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { PlayerCharacter } from '@/models/player-character'
-import { SavingThrowType } from '@/models/statistic'
 import { useDebounce } from '@/utils/debounce'
 import { roboto_condensed, roboto_flex } from '@/utils/fonts'
 import { getPlayerCharacter } from '@/utils/services/player-character-service'
@@ -75,7 +72,8 @@ export default function CharacterPage() {
             character={character}
             onBuilderClose={handleClose}
           ></CharacterHeader>
-          <div>
+          <div className="w-fit">
+            <SavingThrowsDisplay character={character}></SavingThrowsDisplay>
             <SkillsDisplay character={character}></SkillsDisplay>
           </div>
           <CharacterDisplay
