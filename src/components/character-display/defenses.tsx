@@ -19,11 +19,12 @@ export function Defenses({ character }: { character: PlayerCharacter }) {
         <div className="flex gap-2 flex-row h-full">
           <div className="w-fit min-h-full text-sm text-center p-2">
             <div>
-              <FontAwesomeIcon
-                icon={faShield}
-                className="mr-1"
-              ></FontAwesomeIcon>
-
+              <span className="text-rose-500">
+                <FontAwesomeIcon
+                  icon={faShield}
+                  className="mr-1"
+                ></FontAwesomeIcon>
+              </span>
               <CalculatedDisplay
                 values={character.getArmorClass()}
               ></CalculatedDisplay>
@@ -32,10 +33,12 @@ export function Defenses({ character }: { character: PlayerCharacter }) {
           </div>
           <div className="w-fit min-h-full text-center p-2">
             <div className="text-sm">
-              <FontAwesomeIcon
-                icon={faHeart}
-                className="mr-1"
-              ></FontAwesomeIcon>
+              <span className="text-rose-500">
+                <FontAwesomeIcon
+                  icon={faHeart}
+                  className="mr-1"
+                ></FontAwesomeIcon>
+              </span>
               <span>
                 {character
                   .getMaxHitpoints()
@@ -53,10 +56,12 @@ export function Defenses({ character }: { character: PlayerCharacter }) {
             <div className="grid grid-cols-1 items-center p-2">
               {character.getResistances().length > 0 && (
                 <div className="flex">
-                  <FontAwesomeIcon
-                    icon={faShieldHalved}
-                    className="mr-1"
-                  ></FontAwesomeIcon>
+                  <span className="text-rose-500">
+                    <FontAwesomeIcon
+                      icon={faShieldHalved}
+                      className="mr-1"
+                    ></FontAwesomeIcon>
+                  </span>
                   <div className="pr-2 mr-auto font-medium">Resistances</div>
                   <div>
                     {character.getResistances().map((resistance, index) => {
@@ -77,11 +82,12 @@ export function Defenses({ character }: { character: PlayerCharacter }) {
               )}
               {character.getVulnerabilities().length > 0 && (
                 <div className="flex">
-                  <FontAwesomeIcon
-                    icon={faHeartBroken}
-                    className="mr-1"
-                  ></FontAwesomeIcon>
-
+                  <span className="text-rose-500">
+                    <FontAwesomeIcon
+                      icon={faHeartBroken}
+                      className="mr-1"
+                    ></FontAwesomeIcon>
+                  </span>
                   <div className="pr-2 mr-auto font-medium">
                     Vulnerabilities
                   </div>
