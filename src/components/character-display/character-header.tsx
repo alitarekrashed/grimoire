@@ -4,6 +4,8 @@ import { CharacterEntity } from '@/models/db/character-entity'
 import { TraitsList } from '../card/traits-list'
 import CalculatedDisplay from '../calculated-display/calculated-display'
 import { CharacterSheetBox } from './character-sheet-box'
+import { Attribute } from '@/models/db/ancestry'
+import { PlayerCharacter } from '@/models/player-character'
 
 export function CharacterHeader({
   character,
@@ -43,12 +45,12 @@ export function CharacterHeader({
           <TraitsList traits={character.getTraits()}></TraitsList>
         </div>
       </div>
-      <div className="w-fit">
+      <div className="w-fit align-top">
         <CharacterSheetBox>
           <div className="grid gap-x-6 grid-flow-col grid-cols-2 grid-rows-3">
             {Object.keys(character.getAttributes()).map((attribute) => (
               <div className="flex" key={attribute}>
-                <span className="mr-auto">{attribute}</span>
+                <span className="mr-auto uppercase font-thin">{attribute}</span>
                 <span>
                   {character.getAttributes()[attribute as Attribute] > 0 && `+`}
                   {character.getAttributes()[attribute as Attribute]}

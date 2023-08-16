@@ -9,9 +9,11 @@ export function ProficiencyModifiersColumn({
 }) {
   return (
     <>
-      <PerceptionAndClassDCDisplay
-        character={character}
-      ></PerceptionAndClassDCDisplay>
+      <div className="mt-2">
+        <PerceptionAndClassDCDisplay
+          character={character}
+        ></PerceptionAndClassDCDisplay>
+      </div>
       <SavingThrowsDisplay character={character}></SavingThrowsDisplay>
       <SkillsDisplay character={character}></SkillsDisplay>
     </>
