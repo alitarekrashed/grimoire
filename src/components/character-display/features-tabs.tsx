@@ -1,10 +1,9 @@
-import * as Tabs from '@radix-ui/react-tabs'
-import { ParsedDescription } from '../parsed-description/parsed-description'
-import { SourcedFeature } from '@/models/player-character'
-import { LabelsList } from '../labels-list/labels-list'
-import styles from './features-tabs.module.css'
-import { ActionInlineDisplay } from '../actions/action-inline-display'
 import { ProficiencyRank, ProficiencyType } from '@/models/db/background'
+import { SourcedFeature } from '@/models/player-character'
+import * as Tabs from '@radix-ui/react-tabs'
+import { ActionInlineDisplay } from '../actions/action-inline-display'
+import { ParsedDescription } from '../parsed-description/parsed-description'
+import styles from './features-tabs.module.css'
 import { SkillDisplay } from './skill-display'
 
 export function FeaturesTabs({
