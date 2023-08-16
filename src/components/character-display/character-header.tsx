@@ -52,7 +52,9 @@ export function CharacterHeader({
           <div className="grid gap-x-6 grid-flow-col grid-cols-2 grid-rows-3">
             {Object.keys(character.getAttributes()).map((attribute) => (
               <div className="flex" key={attribute}>
-                <span className="mr-auto uppercase font-thin">{attribute}</span>
+                <span className="pr-1 mr-auto uppercase font-thin">
+                  {attribute}
+                </span>
                 <span>
                   {character.getAttributes()[attribute as Attribute] > 0 && `+`}
                   {character.getAttributes()[attribute as Attribute]}
@@ -82,8 +84,8 @@ export function CharacterHeader({
         <CharacterSheetBox>
           <div className="h-full grid grid-flow-col grid-cols-1 grid-rows-2">
             <div className="flex">
-              <span className="mr-auto uppercase font-thin">Languages</span>
-              <span>
+              <span className="mr-2 uppercase font-thin">Languages</span>
+              <span className="mr-auto">
                 {character.getLanguages().map((language, index) => (
                   <span key={`${language.feature.value}-${index}`}>{`${
                     language.feature.value
@@ -94,8 +96,8 @@ export function CharacterHeader({
               </span>
             </div>
             <div className="flex">
-              <span className="mr-auto uppercase font-thin">Senses</span>
-              <span>
+              <span className="mr-2 uppercase font-thin">Senses</span>
+              <span className="mr-auto">
                 {character.getSenses().map((sense, index) => {
                   return (
                     <React.Fragment key={`${sense}-${index}`}>
@@ -106,7 +108,7 @@ export function CharacterHeader({
                     </React.Fragment>
                   )
                 })}
-              </span>{' '}
+              </span>
             </div>
           </div>
         </CharacterSheetBox>
