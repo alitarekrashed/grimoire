@@ -3,6 +3,7 @@
 import CalculatedDisplay from '@/components/calculated-display/calculated-display'
 import { CharacterHeader } from '@/components/character-display/character-header'
 import { CharacterSheetBox } from '@/components/character-display/character-sheet-box'
+import { Defenses } from '@/components/character-display/defenses'
 import { FeaturesTabs } from '@/components/character-display/features-tabs'
 import { ProficiencyModifiersColumn } from '@/components/character-display/proficiency-modifiers-column'
 import { LabelsList } from '@/components/labels-list/labels-list'
@@ -70,94 +71,29 @@ export default function CharacterPage() {
             character={character}
             onBuilderClose={handleClose}
           ></CharacterHeader>
-          <div className="flex p-2">
-            <div className="w-fit h-fit mr-2">
+          <div className="grid grid-rows-4 grid-cols-10 p-2 gap-1">
+            <div className="col-span-1 row-span-full">
               <ProficiencyModifiersColumn
                 character={character}
               ></ProficiencyModifiersColumn>
             </div>
-            <div className="w-1/3 mr-2">
-              <CharacterSheetBox>
-                <div className="flex flex-col gap-1 h-fit">
-                  <div className="mb-1 text-base font-semibold">Defenses</div>
-                  <div className="flex flex-row gap-5 h-full">
-                    <div className="ml-5 w-fit min-h-full text-center rounded-md border border-b-stone-300 bg-stone-700 p-2">
-                      <div>
-                        <span>
-                          {character
-                            .getMaxHitpoints()
-                            .reduce((sum, value) => sum + value.value, 0)}
-                        </span>
-                        <span className="mx-1">/</span>
-                        <CalculatedDisplay
-                          values={character.getMaxHitpoints()}
-                        ></CalculatedDisplay>
+            <div className="col-span-3 row-span-full grid grid-rows-4 gap-1">
+              <div className="row-span-1">
+                <Defenses character={character}></Defenses>
+              </div>
+              <div className="row-span-3">
+                <CharacterSheetBox>
+                  <div>
+                    <div className="flex flex-col gap-1 h-fit">
+                      <div className="mb-1 text-base font-semibold">
+                        Attacks
                       </div>
-                      <div className="text-sm font-medium">Hitpoints</div>
                     </div>
-                    {(character.getVulnerabilities().length > 0 ||
-                      character.getResistances().length > 0) && (
-                      <div className="grid grid-cols-1 items-center rounded-md border border-b-stone-300 bg-stone-700 p-2 min-h-full">
-                        {character.getResistances().length > 0 && (
-                          <div className="flex">
-                            <div className="pr-2 mr-auto font-medium">
-                              Resistances
-                            </div>
-                            <div>
-                              {character
-                                .getResistances()
-                                .map((resistance, index) => {
-                                  return (
-                                    <LabelsList
-                                      key={`${resistance}-${index}`}
-                                      fieldDefinitions={[
-                                        {
-                                          label:
-                                            resistance.feature.value
-                                              .damage_type,
-                                          value: resistance.feature.value.value,
-                                        },
-                                      ]}
-                                    ></LabelsList>
-                                  )
-                                })}
-                            </div>
-                          </div>
-                        )}
-                        {character.getVulnerabilities().length > 0 && (
-                          <div className="flex">
-                            <div className="pr-2 mr-auto font-medium">
-                              Vulnerabilities
-                            </div>
-                            <div>
-                              {character
-                                .getVulnerabilities()
-                                .map((vulnerability, index) => {
-                                  return (
-                                    <LabelsList
-                                      key={`${vulnerability}-${index}`}
-                                      fieldDefinitions={[
-                                        {
-                                          label:
-                                            vulnerability.feature.value
-                                              .damage_type,
-                                          value:
-                                            vulnerability.feature.value.value,
-                                        },
-                                      ]}
-                                    ></LabelsList>
-                                  )
-                                })}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
                   </div>
-                </div>
-              </CharacterSheetBox>
+                </CharacterSheetBox>
+              </div>
             </div>
-            <div className="w-full">
+            <div className="col-span-6 row-span-full">
               <CharacterSheetBox>
                 <FeaturesTabs
                   features={character.getAdditionalFeatures()}

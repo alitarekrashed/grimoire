@@ -8,17 +8,21 @@ export function ProficiencyModifiersColumn({
   character: PlayerCharacter
 }) {
   return (
-    <>
-      <div className="mb-2">
-        <PerceptionAndClassDCDisplay
-          character={character}
-        ></PerceptionAndClassDCDisplay>
+    <div className="h-fit grid grid-rows-4 gap-1">
+      <div className="row-span-1">
+        <div className="h-fit mb-1">
+          <PerceptionAndClassDCDisplay
+            character={character}
+          ></PerceptionAndClassDCDisplay>
+        </div>
+        <div className="h-fit">
+          <SavingThrowsDisplay character={character}></SavingThrowsDisplay>
+        </div>
       </div>
-      <div className="mb-2">
-        <SavingThrowsDisplay character={character}></SavingThrowsDisplay>
+      <div className="row-span-3">
+        <SkillsDisplay character={character}></SkillsDisplay>
       </div>
-      <SkillsDisplay character={character}></SkillsDisplay>
-    </>
+    </div>
   )
 }
 
