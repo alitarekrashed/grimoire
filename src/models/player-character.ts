@@ -7,7 +7,11 @@ import {
   ProficiencyRank,
   RankModifierMap,
 } from './db/background'
-import { CharacterEntity } from './db/character-entity'
+import {
+  ArmorDefinition,
+  CharacterArmor,
+  CharacterEntity,
+} from './db/character-entity'
 import { ClassEntity } from './db/class-entity'
 import { Feat } from './db/feat'
 import {
@@ -748,15 +752,18 @@ export class PlayerCharacter {
       source: 'Base',
     })
 
-    const equippedArmor = {
+    const equippedArmor: CharacterArmor = {
       name: 'unarmored',
-      category: 'unarmored',
-      dex_cap: undefined,
+      definition: {
+        category: 'unarmored',
+        group: 'cloth',
+        ac_bonus: 0,
+      },
     }
 
     if (
-      equippedArmor.dex_cap === undefined ||
-      this.attributes.Dexterity <= equippedArmor.dex_cap
+      equippedArmor.definition.dex_cap === undefined ||
+      this.attributes.Dexterity <= equippedArmor.definition.dex_cap
     ) {
       result.push({
         value: this.attributes.Dexterity,
@@ -764,20 +771,22 @@ export class PlayerCharacter {
       })
     } else {
       result.push({
-        value: equippedArmor.dex_cap,
+        value: equippedArmor.definition.dex_cap,
         source: `Dexterity (capped from ${equippedArmor.name})`,
       })
     }
 
     const defenseProfs = this.getProficiencies().Defense
     const profRank = defenseProfs.get(
-      equippedArmor.category === 'unarmored' ? 'unarmored defense' : ''
+      equippedArmor.definition.category === 'unarmored'
+        ? 'unarmored defense'
+        : ''
     )!
 
     if (profRank && profRank !== 'untrained') {
       result.push({
         value: RankModifierMap[profRank] + this.level,
-        source: `Proficiency (${equippedArmor.category})`,
+        source: `Proficiency (${equippedArmor.definition.category})`,
       })
     }
     return result

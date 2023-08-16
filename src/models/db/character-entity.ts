@@ -22,3 +22,21 @@ export interface CharacterAttributes {
   class: Attribute[]
   level_1: Attribute[]
 }
+
+export interface CharacterArmor {
+  name: string
+  definition: ArmorDefinition
+}
+
+export type ArmorCategory = 'unarmored' | 'light' | 'medium' | 'heavy'
+export type ArmorGroup = 'cloth'
+
+export interface ArmorDefinition {
+  category: ArmorCategory
+  group: ArmorGroup
+  ac_bonus: number
+  strength?: number
+  dex_cap?: number
+  check_penalty?: number
+  speed_penalty?: number
+}
