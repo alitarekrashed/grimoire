@@ -2,8 +2,10 @@
 
 import CalculatedDisplay from '@/components/calculated-display/calculated-display'
 import { CharacterHeader } from '@/components/character-display/character-header'
+import { CharacterSheetBox } from '@/components/character-display/character-sheet-box'
 import { FeaturesTabs } from '@/components/character-display/features-tabs'
 import { SavingThrowsDisplay } from '@/components/character-display/saving-throws-display'
+import { SkillDisplay } from '@/components/character-display/skill-display'
 import { SkillsDisplay } from '@/components/character-display/skills-display'
 import { LabelsList } from '@/components/labels-list/labels-list'
 import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner'
@@ -60,7 +62,7 @@ export default function CharacterPage() {
   }
 
   return (
-    <div className={`h-full ${roboto_flex.className}`}>
+    <div className={`h-screen overflow-y-scroll ${roboto_flex.className}`}>
       {loading && (
         <div className="fixed top-0 left-0 w-screen h-screen">
           <LoadingSpinner loading={loading}></LoadingSpinner>
@@ -73,6 +75,20 @@ export default function CharacterPage() {
             onBuilderClose={handleClose}
           ></CharacterHeader>
           <div className="w-fit">
+            <CharacterSheetBox>
+              <div className="flex flex-col gap-1">
+                <SkillDisplay
+                  name="Perception"
+                  rank={character.getPerception().rank}
+                  modifier={character.getPerception().modifier}
+                ></SkillDisplay>
+                <SkillDisplay
+                  name="Class DC"
+                  rank={character.getClassDC().rank}
+                  modifier={character.getClassDC().modifier}
+                ></SkillDisplay>
+              </div>
+            </CharacterSheetBox>
             <SavingThrowsDisplay character={character}></SavingThrowsDisplay>
             <SkillsDisplay character={character}></SkillsDisplay>
           </div>

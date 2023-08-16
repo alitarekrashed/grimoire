@@ -694,6 +694,17 @@ export class PlayerCharacter {
     return result
   }
 
+  public getClassDC(): CalculatedProficiency {
+    const classDC = this.getProficiencies().DifficultyClass
+    return {
+      rank: classDC.get('class DC')!,
+      modifier:
+        RankModifierMap[classDC.get('class DC')!] +
+        this.level +
+        this.attributes[this.character.attributes.class[0]],
+    }
+  }
+
   public getPerception(): CalculatedProficiency {
     const perception = this.getProficiencies().Perception
     return {
