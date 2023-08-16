@@ -8,9 +8,13 @@ export function Defenses({ character }: { character: PlayerCharacter }) {
     <CharacterSheetBox>
       <div className="flex flex-col gap-1 h-fit">
         <div className="mb-1 text-base font-semibold">Defenses</div>
-        <div className="flex flex-row gap-5 h-full">
-          <div className="ml-5 w-fit min-h-full text-center rounded-md border border-b-stone-300 bg-stone-700 p-2">
-            <div>
+        <div className="flex gap-2 flex-row h-full">
+          <div className="w-fit min-h-full text-sm text-center rounded-md border border-b-stone-300 bg-stone-700 p-2">
+            <div>10</div>
+            <div className="text-sm font-medium">Armor Class</div>
+          </div>
+          <div className="w-fit min-h-full text-center rounded-md border border-b-stone-300 bg-stone-700 p-2">
+            <div className="text-sm">
               <span>
                 {character
                   .getMaxHitpoints()
