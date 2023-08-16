@@ -138,37 +138,6 @@ function CharacterDisplay({
                 </div>
               </div>
             </div>
-            <div className="col-start-1 col-span-1">
-              <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl pr-3 pl-3">
-                <div className="grid grid-rows-2">
-                  <div className="row-span-1">
-                    <div className="font-bold">Languages</div>
-                    <span className="text-xs">
-                      {languages.map((language, index) => (
-                        <span key={`${language.feature.value}-${index}`}>{`${
-                          language.feature.value
-                        }${index < languages.length - 1 ? ', ' : ''}`}</span>
-                      ))}
-                    </span>
-                  </div>
-                  <div className="row-span-1">
-                    <div className="font-bold">Senses</div>
-                    <span className="text-xs">
-                      {senses.map((sense, index) => {
-                        return (
-                          <React.Fragment key={`${sense}-${index}`}>
-                            <ParsedDescription
-                              description={sense.feature.value}
-                            ></ParsedDescription>
-                            {index < senses.length - 1 ? ', ' : ''}
-                          </React.Fragment>
-                        )
-                      })}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
             <div className="col-start-5 col-span-4">
               <div className="border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-full">
                 <FeaturesTabs

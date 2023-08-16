@@ -6,6 +6,8 @@ import CalculatedDisplay from '../calculated-display/calculated-display'
 import { CharacterSheetBox } from './character-sheet-box'
 import { Attribute } from '@/models/db/ancestry'
 import { PlayerCharacter } from '@/models/player-character'
+import { ParsedDescription } from '../parsed-description/parsed-description'
+import React from 'react'
 
 export function CharacterHeader({
   character,
@@ -16,7 +18,7 @@ export function CharacterHeader({
 }) {
   return (
     <div
-      className={`flex flex-row gap-10 pl-2 w-full ${roboto_condensed.className} border-b border-b-stone-300/40`}
+      className={`flex flex-row gap-2 pb-1 pl-2 w-full ${roboto_condensed.className} border-b border-b-stone-300/40`}
     >
       <div className="flex flex-col">
         <div className="text-base flex items-center gap-2">
@@ -45,7 +47,7 @@ export function CharacterHeader({
           <TraitsList traits={character.getTraits()}></TraitsList>
         </div>
       </div>
-      <div className="w-fit align-top">
+      <div className="w-fit">
         <CharacterSheetBox>
           <div className="grid gap-x-6 grid-flow-col grid-cols-2 grid-rows-3">
             {Object.keys(character.getAttributes()).map((attribute) => (
@@ -60,19 +62,54 @@ export function CharacterHeader({
           </div>
         </CharacterSheetBox>
       </div>
-      <div className="text-sm self-center">
-        <div className="flex flex-row gap-8">
-          <div className="flex flex-col items-center gap-1">
-            <span className="font-bold">Speed</span>
-            <CalculatedDisplay
-              values={character.getSpeed()}
-            ></CalculatedDisplay>
+      <div className="w-fit">
+        <CharacterSheetBox>
+          <div className="h-full grid grid-flow-col grid-cols-1 grid-rows-2">
+            <div className="flex">
+              <span className="mr-auto uppercase font-thin">Speed</span>
+              <CalculatedDisplay
+                values={character.getSpeed()}
+              ></CalculatedDisplay>
+            </div>
+            <div className="flex">
+              <span className="mr-auto uppercase font-thin">Size</span>
+              <span>{character.getSize()}</span>
+            </div>
           </div>
-          <div className="flex flex-col items-center gap-1">
-            <span className="font-bold">Size</span>
-            <span>{character.getSize()}</span>
+        </CharacterSheetBox>
+      </div>
+      <div className="w-fit">
+        <CharacterSheetBox>
+          <div className="h-full grid grid-flow-col grid-cols-1 grid-rows-2">
+            <div className="flex">
+              <span className="mr-auto uppercase font-thin">Languages</span>
+              <span>
+                {character.getLanguages().map((language, index) => (
+                  <span key={`${language.feature.value}-${index}`}>{`${
+                    language.feature.value
+                  }${
+                    index < character.getLanguages().length - 1 ? ', ' : ''
+                  }`}</span>
+                ))}
+              </span>
+            </div>
+            <div className="flex">
+              <span className="mr-auto uppercase font-thin">Senses</span>
+              <span>
+                {character.getSenses().map((sense, index) => {
+                  return (
+                    <React.Fragment key={`${sense}-${index}`}>
+                      <ParsedDescription
+                        description={sense.feature.value}
+                      ></ParsedDescription>
+                      {index < character.getSenses().length - 1 ? ', ' : ''}
+                    </React.Fragment>
+                  )
+                })}
+              </span>{' '}
+            </div>
           </div>
-        </div>
+        </CharacterSheetBox>
       </div>
     </div>
   )
