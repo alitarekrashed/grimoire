@@ -5,6 +5,7 @@ import { LabelsList } from '../labels-list/labels-list'
 import styles from './features-tabs.module.css'
 import { ActionInlineDisplay } from '../actions/action-inline-display'
 import { ProficiencyRank, ProficiencyType } from '@/models/db/background'
+import { SkillDisplay } from './skill-display'
 
 export function FeaturesTabs({
   features,
@@ -81,28 +82,22 @@ export function FeaturesTabs({
       </Tabs.Content>
       <Tabs.Content value="proficiencies">
         <span className="text-xs">
-          {Object.keys(proficiencies).map((type: string, index) => {
+          {['Weapon', 'Defense'].map((type: string, index) => {
             return (
               <div key={`${type}-${index}`}>
                 <span className="font-semibold">{type}</span>
                 {Array.from(proficiencies[type as ProficiencyType].keys()).map(
                   (proficiency: string, index) => {
                     return (
-                      <div key={`${proficiency}-${index}`}>
-                        <LabelsList
-                          fieldDefinitions={[
-                            {
-                              label:
-                                type === 'Lore'
-                                  ? `Lore ${proficiency}`
-                                  : proficiency,
-                              value:
-                                proficiencies[type as ProficiencyType].get(
-                                  proficiency
-                                ),
-                            },
-                          ]}
-                        ></LabelsList>
+                      <div className="mb-1" key={`${proficiency}-${index}`}>
+                        <SkillDisplay
+                          name={proficiency}
+                          rank={
+                            proficiencies[type as ProficiencyType].get(
+                              proficiency
+                            )!
+                          }
+                        ></SkillDisplay>
                       </div>
                     )
                   }

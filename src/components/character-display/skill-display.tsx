@@ -8,7 +8,7 @@ export function SkillDisplay({
 }: {
   name: string
   rank: ProficiencyRank
-  modifier: number
+  modifier?: number
   prefix?: string
 }) {
   const rankDisplay = getRankDisplay(rank)
@@ -22,7 +22,7 @@ export function SkillDisplay({
       <div className="pr-2 mr-auto">{`${
         prefix ? prefix + ': ' : ''
       }${name}`}</div>
-      <div>{(modifier >= 0 ? ' +' : ' -') + modifier}</div>
+      {modifier && <div>{(modifier >= 0 ? ' +' : ' -') + modifier}</div>}
     </div>
   )
 }
