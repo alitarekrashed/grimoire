@@ -3,6 +3,7 @@ import CharacterBuilderModal from '../character-builder/character-builder'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { TraitsList } from '../card/traits-list'
 import CalculatedDisplay from '../calculated-display/calculated-display'
+import { CharacterSheetBox } from './character-sheet-box'
 
 export function CharacterHeader({
   character,
@@ -13,7 +14,7 @@ export function CharacterHeader({
 }) {
   return (
     <div
-      className={`flex flex-row gap-20 pl-2 w-full ${roboto_condensed.className} border-b border-b-stone-300/40`}
+      className={`flex flex-row gap-10 pl-2 w-full ${roboto_condensed.className} border-b border-b-stone-300/40`}
     >
       <div className="flex flex-col">
         <div className="text-base flex items-center gap-2">
@@ -41,6 +42,21 @@ export function CharacterHeader({
         <div className="flex items-end text-xs lowercase mb-2">
           <TraitsList traits={character.getTraits()}></TraitsList>
         </div>
+      </div>
+      <div className="w-fit">
+        <CharacterSheetBox>
+          <div className="grid gap-x-6 grid-flow-col grid-cols-2 grid-rows-3">
+            {Object.keys(character.getAttributes()).map((attribute) => (
+              <div className="flex" key={attribute}>
+                <span className="mr-auto">{attribute}</span>
+                <span>
+                  {character.getAttributes()[attribute as Attribute] > 0 && `+`}
+                  {character.getAttributes()[attribute as Attribute]}
+                </span>
+              </div>
+            ))}
+          </div>
+        </CharacterSheetBox>
       </div>
       <div className="text-sm self-center">
         <div className="flex flex-row gap-8">
