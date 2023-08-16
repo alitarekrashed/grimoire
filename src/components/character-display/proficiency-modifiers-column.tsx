@@ -49,7 +49,7 @@ function SavingThrowsDisplay({ character }: { character: PlayerCharacter }) {
   return (
     <CharacterSheetBox>
       <div className="flex flex-col gap-1">
-        <div className="mb-1 font-semibold">Saving Throws</div>
+        <div className="mb-1 font-semibold text-center">Saving Throws</div>
         {[...character.getSavingThrows().entries()].map((entry) => (
           <SkillDisplay
             key={entry[0]}
@@ -67,7 +67,7 @@ function SkillsDisplay({ character }: { character: PlayerCharacter }) {
   return (
     <CharacterSheetBox>
       <div className="flex flex-col gap-1">
-        <div className="mb-1 font-semibold">Skills</div>
+        <div className="mb-1 font-semibold text-center">Skills</div>
         {[...character.getSkills().entries()].map((entry) => (
           <SkillDisplay
             key={entry[0]}

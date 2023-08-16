@@ -7,15 +7,13 @@ import { FeaturesTabs } from '@/components/character-display/features-tabs'
 import { ProficiencyModifiersColumn } from '@/components/character-display/proficiency-modifiers-column'
 import { LabelsList } from '@/components/labels-list/labels-list'
 import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner'
-import { ParsedDescription } from '@/components/parsed-description/parsed-description'
-import { Attribute } from '@/models/db/ancestry'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { PlayerCharacter } from '@/models/player-character'
 import { useDebounce } from '@/utils/debounce'
-import { roboto_condensed, roboto_flex } from '@/utils/fonts'
+import { roboto_flex } from '@/utils/fonts'
 import { getPlayerCharacter } from '@/utils/services/player-character-service'
 import { usePathname } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function CharacterPage() {
   const path: string[] = usePathname().split('/')
@@ -78,9 +76,9 @@ export default function CharacterPage() {
                 character={character}
               ></ProficiencyModifiersColumn>
             </div>
-            <div className="w-1/3">
+            <div className="w-1/3 mr-2">
               <CharacterSheetBox>
-                <div className="flex flex-col gap-1 text-left h-fit">
+                <div className="flex flex-col gap-1 h-fit">
                   <div className="mb-1 text-base font-semibold">Defenses</div>
                   <div className="flex flex-row gap-5 h-full">
                     <div className="ml-5 w-fit min-h-full text-center rounded-md border border-b-stone-300 bg-stone-700 p-2">
@@ -149,49 +147,18 @@ export default function CharacterPage() {
                 </div>
               </CharacterSheetBox>
             </div>
-          </div>
-          <CharacterDisplay
-            character={character}
-            onSave={handleClose}
-          ></CharacterDisplay>
-        </div>
-      )}
-    </div>
-  )
-}
-
-function CharacterDisplay({
-  character,
-  onSave,
-}: {
-  character: PlayerCharacter
-  onSave: (character: CharacterEntity) => void
-}) {
-  const languages = character.getLanguages()
-  const senses = character.getSenses()
-  const additionalFeatures = character.getAdditionalFeatures()
-  const resistances = character.getResistances()
-  const actions = character.getActions()
-  const proficiencies = character.getProficiencies()
-
-  return (
-    <>
-      <div className={`text-sm p-2 ${roboto_condensed.className}`}>
-        <div className="mb-[700px]"></div>
-        <div className="ml-2">
-          <div className="grid grid-cols-9 gap-6">
-            <div className="col-start-5 col-span-4">
-              <div className="border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-full">
+            <div className="w-full">
+              <CharacterSheetBox>
                 <FeaturesTabs
-                  features={additionalFeatures}
-                  actions={actions}
-                  proficiencies={proficiencies}
+                  features={character.getAdditionalFeatures()}
+                  actions={character.getActions()}
+                  proficiencies={character.getProficiencies()}
                 ></FeaturesTabs>
-              </div>
+              </CharacterSheetBox>
             </div>
           </div>
         </div>
-      </div>
-    </>
+      )}
+    </div>
   )
 }
