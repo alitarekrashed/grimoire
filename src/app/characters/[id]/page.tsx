@@ -5,6 +5,7 @@ import { TraitsList } from '@/components/card/traits-list'
 import CharacterBuilderModal from '@/components/character-builder/character-builder'
 import { CharacterHeader } from '@/components/character-display/character-header'
 import { FeaturesTabs } from '@/components/character-display/features-tabs'
+import { SkillsDisplay } from '@/components/character-display/skills-display'
 import { LabelsList } from '@/components/labels-list/labels-list'
 import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner'
 import { ParsedDescription } from '@/components/parsed-description/parsed-description'
@@ -74,34 +75,9 @@ export default function CharacterPage() {
             character={character}
             onBuilderClose={handleClose}
           ></CharacterHeader>
-          <div className="flex flex-col text-xs w-fit text-center gap-1 m-2 p-2 rounded-md border border-b-stone-300 bg-stone-800">
-            <div className="mb-2 font-semibold">Skills</div>
-            {[...character.getSkills().entries()].map((entry) => (
-              <div className="flex" key={entry[0]}>
-                <span className="font-light text-[9px] rounded-full border border-b-stone-300 px-1 mr-1">
-                  {getRankSymbol(entry[1].rank)}
-                </span>
-                <div className="pr-2 mr-auto">{entry[0]}</div>
-                <div>
-                  {(entry[1].modifier >= 0 ? ' +' : ' -') + entry[1].modifier}
-                </div>
-              </div>
-            ))}
-            {[...character.getLores().entries()].map((entry) => (
-              <div className="flex" key={entry[0]}>
-                <span className="font-light text-[9px] rounded-full border border-b-stone-300 px-1 mr-1">
-                  {getRankSymbol(entry[1].rank)}
-                </span>
-                <div className="pr-2 mr-auto">Lore: {entry[0]}</div>
-                <div>
-                  <span>
-                    {(entry[1].modifier >= 0 ? ' +' : ' -') + entry[1].modifier}
-                  </span>
-                </div>
-              </div>
-            ))}
+          <div>
+            <SkillsDisplay character={character}></SkillsDisplay>
           </div>
-
           <CharacterDisplay
             character={character}
             onSave={handleClose}
@@ -110,17 +86,6 @@ export default function CharacterPage() {
       )}
     </div>
   )
-}
-
-function getRankSymbol(rank: ProficiencyRank) {
-  switch (rank) {
-    case 'untrained':
-      return 'U'
-    case 'trained':
-      return 'T'
-    case 'expert':
-      return 'E'
-  }
 }
 
 function CharacterDisplay({
