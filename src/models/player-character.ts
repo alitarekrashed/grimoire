@@ -11,6 +11,8 @@ import {
   ArmorDefinition,
   CharacterArmor,
   CharacterEntity,
+  CharacterWeapon,
+  WeaponDamageDefinition,
 } from './db/character-entity'
 import { ClassEntity } from './db/class-entity'
 import { Feat } from './db/feat'
@@ -755,6 +757,7 @@ export class PlayerCharacter {
 
     const equippedArmor: CharacterArmor = {
       name: 'unarmored',
+      traits: [],
       definition: {
         category: 'unarmored',
         group: 'cloth',
@@ -778,7 +781,6 @@ export class PlayerCharacter {
     }
 
     const defenseProfs = this.getProficiencies().Defense
-    console.log(defenseProfs)
     let minimumRank: ProficiencyRank = 'untrained'
     if (defenseProfs.has('all armor')) {
       if (this.greaterThan(defenseProfs.get('all armor')!, minimumRank)) {
@@ -807,6 +809,7 @@ export class PlayerCharacter {
     if (minimumRank && minimumRank !== 'untrained') {
       result.push({
         value: RankModifierMap[minimumRank] + this.level,
+        // TODO use the actual set one, not always the category
         source: `Proficiency (${equippedArmor.definition.category})`,
       })
     }
@@ -818,6 +821,87 @@ export class PlayerCharacter {
       })
     }
     return result
+  }
+
+  // TODO this needs some love/cleanup
+  public getAttack(): {
+    name: string
+    damage: WeaponDamageDefinition[]
+    attackBonus: ModifierValue[]
+    damageBonus: number
+  } {
+    const attackBonus: ModifierValue[] = []
+
+    const fist: CharacterWeapon = {
+      name: 'fist',
+      traits: ['agile', 'finesse', 'nonlethal', 'unarmed'],
+      definition: {
+        category: 'unarmed',
+        group: 'brawling',
+        type: 'melee',
+        damage: [
+          {
+            type: 'bludgeoning',
+            dice: '1d4',
+          },
+        ],
+      },
+    }
+
+    if (
+      fist.traits.includes('finesse') &&
+      this.attributes.Dexterity > this.attributes.Strength
+    ) {
+      attackBonus.push({
+        value: this.attributes.Dexterity,
+        source: 'Dexterity',
+      })
+    } else {
+      attackBonus.push({
+        value: this.attributes.Strength,
+        source: 'Strength',
+      })
+    }
+
+    const weaponProfs = this.getProficiencies().Weapon
+    let minimumRank: ProficiencyRank = 'untrained'
+    if (weaponProfs.has('all weapons')) {
+      if (this.greaterThan(weaponProfs.get('all weapons')!, minimumRank)) {
+        minimumRank = weaponProfs.get('all weapons')!
+      }
+    }
+
+    if (weaponProfs.has(fist.definition.category)) {
+      if (
+        this.greaterThan(
+          weaponProfs.get(fist.definition.category)!,
+          minimumRank
+        )
+      ) {
+        minimumRank = weaponProfs.get(fist.definition.category)!
+      }
+    }
+
+    if (weaponProfs.has(fist.name)) {
+      if (this.greaterThan(weaponProfs.get(fist.name)!, minimumRank)) {
+        minimumRank = weaponProfs.get(fist.name)!
+      }
+    }
+
+    if (minimumRank && minimumRank !== 'untrained') {
+      attackBonus.push({
+        value: RankModifierMap[minimumRank] + this.level,
+        // TODO use the actual set one, not always the category
+        source: `Proficiency (${fist.definition.category})`,
+      })
+    }
+
+    return {
+      name: fist.name,
+      attackBonus: attackBonus,
+      damage: fist.definition.damage,
+      damageBonus: this.attributes.Strength,
+    }
   }
 
   private calculateLanguages() {

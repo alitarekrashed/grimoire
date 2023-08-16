@@ -9,6 +9,7 @@ import { CharacterSheetBox } from './character-sheet-box'
 import { Defenses } from './defenses'
 import { FeaturesTabs } from './features-tabs'
 import { ProficiencyModifiersColumn } from './proficiency-modifiers-column'
+import { Attacks } from './attacks'
 
 export function CharacterSheet({ id }: { id: string }) {
   const [character, setCharacter] = useState<PlayerCharacter>()
@@ -73,15 +74,7 @@ export function CharacterSheet({ id }: { id: string }) {
                 <Defenses character={character}></Defenses>
               </div>
               <div className="row-span-3">
-                <CharacterSheetBox>
-                  <div>
-                    <div className="flex flex-col gap-1 h-fit">
-                      <div className="mb-1 text-base font-semibold">
-                        Attacks
-                      </div>
-                    </div>
-                  </div>
-                </CharacterSheetBox>
+                <Attacks character={character}></Attacks>
               </div>
             </div>
             <div className="col-span-6 row-span-full">
