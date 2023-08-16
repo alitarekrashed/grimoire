@@ -4,10 +4,12 @@ export function SkillDisplay({
   name,
   rank,
   modifier,
+  value,
   prefix,
 }: {
   name: string
   rank: ProficiencyRank
+  value?: number
   modifier?: number
   prefix?: string
 }) {
@@ -22,6 +24,7 @@ export function SkillDisplay({
       <div className="pr-2 mr-auto">{`${
         prefix ? prefix + ': ' : ''
       }${name}`}</div>
+      {value && <div>{value}</div>}
       {modifier && <div>{(modifier >= 0 ? ' +' : ' -') + modifier}</div>}
     </div>
   )
