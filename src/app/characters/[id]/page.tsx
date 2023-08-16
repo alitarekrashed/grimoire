@@ -106,25 +106,6 @@ function CharacterDisplay({
         <div className="mb-[700px]"></div>
         <div className="ml-2">
           <div className="grid grid-cols-9 gap-6">
-            <div className="col-span-3 justify-self-center">
-              <div className="border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-full">
-                <div className="inline-flex gap-5">
-                  {Object.keys(character.getAttributes()).map((attribute) => (
-                    <div
-                      className="grid grid-cols-1 justify-items-center"
-                      key={attribute}
-                    >
-                      <div className="font-medium">{attribute} </div>
-                      <div>
-                        {character.getAttributes()[attribute as Attribute] >
-                          0 && `+`}
-                        {character.getAttributes()[attribute as Attribute]}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
             <div className="col-span-1 justify-self-center">
               <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3 w-fit text-center">
                 <div>
