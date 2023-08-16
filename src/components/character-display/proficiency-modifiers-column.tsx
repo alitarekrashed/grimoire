@@ -9,7 +9,7 @@ export function ProficiencyModifiersColumn({
 }) {
   return (
     <>
-      <div className="mt-2 mb-2">
+      <div className="mb-2">
         <PerceptionAndClassDCDisplay
           character={character}
         ></PerceptionAndClassDCDisplay>

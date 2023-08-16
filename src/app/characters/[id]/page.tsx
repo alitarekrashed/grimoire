@@ -2,6 +2,7 @@
 
 import CalculatedDisplay from '@/components/calculated-display/calculated-display'
 import { CharacterHeader } from '@/components/character-display/character-header'
+import { CharacterSheetBox } from '@/components/character-display/character-sheet-box'
 import { FeaturesTabs } from '@/components/character-display/features-tabs'
 import { ProficiencyModifiersColumn } from '@/components/character-display/proficiency-modifiers-column'
 import { LabelsList } from '@/components/labels-list/labels-list'
@@ -71,10 +72,83 @@ export default function CharacterPage() {
             character={character}
             onBuilderClose={handleClose}
           ></CharacterHeader>
-          <div className="w-fit">
-            <ProficiencyModifiersColumn
-              character={character}
-            ></ProficiencyModifiersColumn>
+          <div className="flex p-2">
+            <div className="w-fit h-fit mr-2">
+              <ProficiencyModifiersColumn
+                character={character}
+              ></ProficiencyModifiersColumn>
+            </div>
+            <div className="w-1/3">
+              <CharacterSheetBox>
+                <div className="flex flex-col gap-1 text-left h-fit">
+                  <div className="mb-1 text-base font-semibold">Defenses</div>
+                  <div className="flex flex-row gap-5 h-full">
+                    <div className="ml-5 w-fit min-h-full text-center rounded-md border border-b-stone-300 bg-stone-700 p-2">
+                      <div>
+                        <span>
+                          {character
+                            .getMaxHitpoints()
+                            .reduce((sum, value) => sum + value.value, 0)}
+                        </span>
+                        <span className="mx-1">/</span>
+                        <CalculatedDisplay
+                          values={character.getMaxHitpoints()}
+                        ></CalculatedDisplay>
+                      </div>
+                      <div className="text-sm font-medium">Hitpoints</div>
+                    </div>
+                    <div className="grid grid-cols-1 items-center rounded-md border border-b-stone-300 bg-stone-700 p-2 min-h-full">
+                      <div className="flex">
+                        <div className="pr-2 mr-auto font-medium">
+                          Resistances
+                        </div>
+                        <div>
+                          {character
+                            .getResistances()
+                            .map((resistance, index) => {
+                              return (
+                                <LabelsList
+                                  key={`${resistance}-${index}`}
+                                  fieldDefinitions={[
+                                    {
+                                      label:
+                                        resistance.feature.value.damage_type,
+                                      value: resistance.feature.value.value,
+                                    },
+                                  ]}
+                                ></LabelsList>
+                              )
+                            })}
+                        </div>
+                      </div>
+                      <div className="flex">
+                        <div className="pr-2 mr-auto font-medium">
+                          Vulnerabilities
+                        </div>
+                        <div>
+                          {character
+                            .getResistances()
+                            .map((resistance, index) => {
+                              return (
+                                <LabelsList
+                                  key={`${resistance}-${index}`}
+                                  fieldDefinitions={[
+                                    {
+                                      label:
+                                        resistance.feature.value.damage_type,
+                                      value: resistance.feature.value.value,
+                                    },
+                                  ]}
+                                ></LabelsList>
+                              )
+                            })}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CharacterSheetBox>
+            </div>
           </div>
           <CharacterDisplay
             character={character}
@@ -106,38 +180,6 @@ function CharacterDisplay({
         <div className="mb-[700px]"></div>
         <div className="ml-2">
           <div className="grid grid-cols-9 gap-6">
-            <div className="col-span-1 justify-self-center">
-              <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3 w-fit text-center">
-                <div>
-                  <CalculatedDisplay
-                    values={character.getMaxHitpoints()}
-                  ></CalculatedDisplay>
-                </div>
-                <div className="text-[10px] font-semibold">Hitpoints</div>
-              </div>
-            </div>
-            <div className="col-span-3 justify-self-start">
-              <div className="border-2 border-stone-300 p-2 rounded-t-lg rounded-b-3xl h-full pr-3 pl-3">
-                <div className="grid grid-rows-2 grid-cols-3 gap-1">
-                  <span className="font-bold col-span-1">Resistances</span>
-                  <span className="col-span-3">
-                    {resistances.map((resistance, index) => {
-                      return (
-                        <LabelsList
-                          key={`${resistance}-${index}`}
-                          fieldDefinitions={[
-                            {
-                              label: resistance.feature.value.damage_type,
-                              value: resistance.feature.value.value,
-                            },
-                          ]}
-                        ></LabelsList>
-                      )
-                    })}
-                  </span>
-                </div>
-              </div>
-            </div>
             <div className="col-start-5 col-span-4">
               <div className="border-2 border-stone-300 rounded-t-lg rounded-b-3xl p-2 h-full">
                 <FeaturesTabs
