@@ -18,7 +18,7 @@ export function Defenses({ character }: { character: PlayerCharacter }) {
         <div className="flex gap-2 flex-row h-full">
           <div className="w-fit min-h-full text-sm text-center p-2">
             <div>
-              <span className="text-rose-500">
+              <span>
                 <FontAwesomeIcon
                   icon={faShield}
                   className="mr-1"
@@ -32,7 +32,7 @@ export function Defenses({ character }: { character: PlayerCharacter }) {
           </div>
           <div className="w-fit min-h-full text-center p-2">
             <div className="text-sm">
-              <span className="text-rose-500">
+              <span>
                 <FontAwesomeIcon
                   icon={faHeart}
                   className="mr-1"
@@ -55,7 +55,7 @@ export function Defenses({ character }: { character: PlayerCharacter }) {
             <div className="grid grid-cols-1 items-center p-2">
               {character.getResistances().length > 0 && (
                 <div className="flex">
-                  <span className="text-rose-500">
+                  <span>
                     <FontAwesomeIcon
                       icon={faShieldHalved}
                       className="mr-1"
@@ -81,7 +81,7 @@ export function Defenses({ character }: { character: PlayerCharacter }) {
               )}
               {character.getVulnerabilities().length > 0 && (
                 <div className="flex">
-                  <span className="text-rose-500">
+                  <span>
                     <FontAwesomeIcon
                       icon={faHeartBroken}
                       className="mr-1"
