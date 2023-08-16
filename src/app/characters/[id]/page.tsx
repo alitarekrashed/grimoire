@@ -95,54 +95,64 @@ export default function CharacterPage() {
                       </div>
                       <div className="text-sm font-medium">Hitpoints</div>
                     </div>
-                    <div className="grid grid-cols-1 items-center rounded-md border border-b-stone-300 bg-stone-700 p-2 min-h-full">
-                      <div className="flex">
-                        <div className="pr-2 mr-auto font-medium">
-                          Resistances
-                        </div>
-                        <div>
-                          {character
-                            .getResistances()
-                            .map((resistance, index) => {
-                              return (
-                                <LabelsList
-                                  key={`${resistance}-${index}`}
-                                  fieldDefinitions={[
-                                    {
-                                      label:
-                                        resistance.feature.value.damage_type,
-                                      value: resistance.feature.value.value,
-                                    },
-                                  ]}
-                                ></LabelsList>
-                              )
-                            })}
-                        </div>
+                    {(character.getVulnerabilities().length > 0 ||
+                      character.getResistances().length > 0) && (
+                      <div className="grid grid-cols-1 items-center rounded-md border border-b-stone-300 bg-stone-700 p-2 min-h-full">
+                        {character.getResistances().length > 0 && (
+                          <div className="flex">
+                            <div className="pr-2 mr-auto font-medium">
+                              Resistances
+                            </div>
+                            <div>
+                              {character
+                                .getResistances()
+                                .map((resistance, index) => {
+                                  return (
+                                    <LabelsList
+                                      key={`${resistance}-${index}`}
+                                      fieldDefinitions={[
+                                        {
+                                          label:
+                                            resistance.feature.value
+                                              .damage_type,
+                                          value: resistance.feature.value.value,
+                                        },
+                                      ]}
+                                    ></LabelsList>
+                                  )
+                                })}
+                            </div>
+                          </div>
+                        )}
+                        {character.getVulnerabilities().length > 0 && (
+                          <div className="flex">
+                            <div className="pr-2 mr-auto font-medium">
+                              Vulnerabilities
+                            </div>
+                            <div>
+                              {character
+                                .getVulnerabilities()
+                                .map((vulnerability, index) => {
+                                  return (
+                                    <LabelsList
+                                      key={`${vulnerability}-${index}`}
+                                      fieldDefinitions={[
+                                        {
+                                          label:
+                                            vulnerability.feature.value
+                                              .damage_type,
+                                          value:
+                                            vulnerability.feature.value.value,
+                                        },
+                                      ]}
+                                    ></LabelsList>
+                                  )
+                                })}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex">
-                        <div className="pr-2 mr-auto font-medium">
-                          Vulnerabilities
-                        </div>
-                        <div>
-                          {character
-                            .getResistances()
-                            .map((resistance, index) => {
-                              return (
-                                <LabelsList
-                                  key={`${resistance}-${index}`}
-                                  fieldDefinitions={[
-                                    {
-                                      label:
-                                        resistance.feature.value.damage_type,
-                                      value: resistance.feature.value.value,
-                                    },
-                                  ]}
-                                ></LabelsList>
-                              )
-                            })}
-                        </div>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               </CharacterSheetBox>

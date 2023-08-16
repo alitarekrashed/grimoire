@@ -566,6 +566,31 @@ export class PlayerCharacter {
       })
   }
 
+  public getVulnerabilities(): SourcedFeature[] {
+    return this.features
+      .filter((feature) => feature.feature.type === 'VULNERABILITY')
+      .map((feature) => {
+        let vulnerability = feature.feature.value as ResistanceFeatureValue
+        let formulaValue =
+          vulnerability.formula === 'half-level'
+            ? Math.floor(this.level / 2)
+            : 0
+        return {
+          source: feature.source,
+          feature: {
+            type: 'VULNERABILITY',
+            value: {
+              damage_type: vulnerability.damage_type,
+              value:
+                formulaValue > vulnerability.minimum
+                  ? formulaValue
+                  : vulnerability.minimum,
+            },
+          },
+        }
+      })
+  }
+
   public getActions(): SourcedFeature[] {
     return this.features
       .filter((feature) => feature.feature.type === 'ACTION')
