@@ -1,10 +1,10 @@
-import * as Tabs from '@radix-ui/react-tabs'
-import { ParsedDescription } from '../parsed-description/parsed-description'
-import { SourcedFeature } from '@/models/player-character'
-import { LabelsList } from '../labels-list/labels-list'
-import styles from './features-tabs.module.css'
-import { ActionInlineDisplay } from '../actions/action-inline-display'
 import { ProficiencyRank, ProficiencyType } from '@/models/db/background'
+import { SourcedFeature } from '@/models/player-character'
+import * as Tabs from '@radix-ui/react-tabs'
+import { ActionInlineDisplay } from '../actions/action-inline-display'
+import { ParsedDescription } from '../parsed-description/parsed-description'
+import styles from './features-tabs.module.css'
+import { SkillDisplay } from './skill-display'
 
 export function FeaturesTabs({
   features,
@@ -50,7 +50,7 @@ export function FeaturesTabs({
 
   return (
     <Tabs.Root defaultValue="actions">
-      <Tabs.List className="flex gap-2 mb-2 border-b border-b-stone-300">
+      <Tabs.List className="flex gap-2 mb-2 border-b border-b-stone-300 text-sm font-light">
         <Tabs.Trigger value="actions" className={styles.tabHeader}>
           Actions
         </Tabs.Trigger>
@@ -81,28 +81,22 @@ export function FeaturesTabs({
       </Tabs.Content>
       <Tabs.Content value="proficiencies">
         <span className="text-xs">
-          {Object.keys(proficiencies).map((type: string, index) => {
+          {['Weapon', 'Defense'].map((type: string, index) => {
             return (
               <div key={`${type}-${index}`}>
                 <span className="font-semibold">{type}</span>
                 {Array.from(proficiencies[type as ProficiencyType].keys()).map(
                   (proficiency: string, index) => {
                     return (
-                      <div key={`${proficiency}-${index}`}>
-                        <LabelsList
-                          fieldDefinitions={[
-                            {
-                              label:
-                                type === 'Lore'
-                                  ? `Lore ${proficiency}`
-                                  : proficiency,
-                              value:
-                                proficiencies[type as ProficiencyType].get(
-                                  proficiency
-                                ),
-                            },
-                          ]}
-                        ></LabelsList>
+                      <div className="mb-1" key={`${proficiency}-${index}`}>
+                        <SkillDisplay
+                          name={proficiency}
+                          rank={
+                            proficiencies[type as ProficiencyType].get(
+                              proficiency
+                            )!
+                          }
+                        ></SkillDisplay>
                       </div>
                     )
                   }

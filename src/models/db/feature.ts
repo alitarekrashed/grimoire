@@ -6,6 +6,7 @@ export type FeatureType =
   | 'SENSE'
   | 'MISC'
   | 'RESISTANCE'
+  | 'VULNERABILITY'
   | 'ACTION'
   | 'CONDITIONAL'
   | 'PROFICIENCY'
