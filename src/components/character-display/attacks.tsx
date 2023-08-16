@@ -10,10 +10,6 @@ import {
 
 export function Attacks({ character }: { character: PlayerCharacter }) {
   const fistAttack = character.getAttack()
-  const attackBonus = fistAttack.attackBonus.reduce(
-    (sum, value) => sum + value.value,
-    0
-  )
   return (
     <CharacterSheetBox>
       <div className="flex flex-col gap-1 h-fit">
@@ -26,11 +22,18 @@ export function Attacks({ character }: { character: PlayerCharacter }) {
             ></FontAwesomeIcon>
             <span>{fistAttack.name}</span>
             <span>
-              {attackBonus >= 0 ? ' +' : ' -'}
-              <CalculatedDisplay
-                values={fistAttack.attackBonus}
-              ></CalculatedDisplay>
+              {fistAttack.attackBonus.map((bonus, index) => (
+                <span key={index}>
+                  <CalculatedDisplay
+                    values={bonus}
+                    includeOperator={true}
+                  ></CalculatedDisplay>
+                  {index < fistAttack.attackBonus.length - 1 && '/'}
+                </span>
+              ))}
             </span>
+
+            <span></span>
             <span>
               {fistAttack.damage.map((value, index) => (
                 <span key={`${value.type}-${index}`}>

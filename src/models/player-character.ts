@@ -827,7 +827,7 @@ export class PlayerCharacter {
   public getAttack(): {
     name: string
     damage: WeaponDamageDefinition[]
-    attackBonus: ModifierValue[]
+    attackBonus: ModifierValue[][]
     damageBonus: number
   } {
     const attackBonus: ModifierValue[] = []
@@ -898,7 +898,11 @@ export class PlayerCharacter {
 
     return {
       name: fist.name,
-      attackBonus: attackBonus,
+      attackBonus: [
+        attackBonus,
+        [...attackBonus, { value: -4, source: 'MAP' }],
+        [...attackBonus, { value: -8, source: 'MAP' }],
+      ],
       damage: fist.definition.damage,
       damageBonus: this.attributes.Strength,
     }

@@ -13,15 +13,20 @@ export interface ModifierValue {
 // TODO ALI need to still adjust for type later here...
 export default function CalculatedDisplay({
   values,
+  includeOperator,
 }: {
   values: ModifierValue[]
+  includeOperator?: boolean
 }) {
+  const reduced = values.reduce((sum, value) => sum + value.value, 0)
+
   return (
     <>
       <HoverCard.Root openDelay={200} closeDelay={100}>
         <HoverCard.Trigger>
           <span className="underline decoration-dotted" tabIndex={0}>
-            {values.reduce((sum, value) => sum + value.value, 0)}
+            {includeOperator && reduced > 0 && '+'}
+            {reduced}
           </span>
         </HoverCard.Trigger>
         <HoverCard.Portal>
