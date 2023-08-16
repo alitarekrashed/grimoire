@@ -31,7 +31,7 @@ export function CharacterHeader({
               <CharacterBuilderModal
                 trigger={
                   <button
-                    className="text-[9px] px-2 border rounded-md hover:bg-stone-600"
+                    className="text-[9px] px-2 border rounded-md bg-stone-800 hover:bg-stone-600"
                     tabIndex={0}
                   >
                     MANAGE
