@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { GiBroadsword, GiMailedFist } from 'react-icons/gi'
+import { GiBroadsword, GiMailedFist, GiPistolGun } from 'react-icons/gi'
 import CalculatedDisplay from '../calculated-display/calculated-display'
 import { CharacterSheetBox } from './character-sheet-box'
 import { PlayerCharacterContext } from './player-character-context'
@@ -18,6 +18,9 @@ export function Attacks() {
               <div className="grid grid-cols-12">
                 {getIcon(attack.group)}
                 <span className="col-span-2">{attack.name}</span>
+                <span className="col-span-1">
+                  {attack.type === 'melee' ? '5 ft.' : `${attack.range} ft.`}
+                </span>
                 <span className="col-span-2">
                   {attack.attackBonus.map((bonus, index) => (
                     <span key={index}>
@@ -40,6 +43,9 @@ export function Attacks() {
                     </span>
                   ))}
                 </span>
+                <span className="col-span-2">
+                  {attack.type === 'ranged' && `Reload: ${attack.reload}`}
+                </span>
               </div>
             ))}
           </div>
@@ -55,5 +61,7 @@ function getIcon(group: WeaponGroup) {
       return <GiMailedFist size={'15px'} />
     case 'sword':
       return <GiBroadsword size={'15px'} />
+    case 'firearm':
+      return <GiPistolGun size={'15px'} />
   }
 }

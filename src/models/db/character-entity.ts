@@ -51,7 +51,7 @@ export interface ArmorDefinition {
 }
 
 export type WeaponCategory = 'unarmed' | 'martial'
-export type WeaponGroup = 'brawling' | 'sword'
+export type WeaponGroup = 'brawling' | 'sword' | 'firearm'
 export type WeaponType = 'melee' | 'ranged'
 export type DamageType = 'bludgeoning' | 'piercing'
 
@@ -60,6 +60,8 @@ export interface WeaponDefinition {
   group: WeaponGroup
   type: WeaponType
   damage: WeaponDamageDefinition[]
+  reload?: number
+  range?: number
 }
 
 export interface WeaponDamageDefinition {

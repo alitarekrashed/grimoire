@@ -1,5 +1,5 @@
 import { ModifierValue } from '@/components/calculated-display/calculated-display'
-import { cloneDeep, eq } from 'lodash'
+import { cloneDeep } from 'lodash'
 import { Ancestry, Attribute } from './db/ancestry'
 import {
   Background,
@@ -8,16 +8,15 @@ import {
   RankModifierMap,
 } from './db/background'
 import {
-  ArmorDefinition,
   CharacterArmor,
   CharacterEntity,
   CharacterWeapon,
-  WeaponCategory,
   WeaponDamageDefinition,
-  WeaponDefinition,
   WeaponGroup,
+  WeaponType,
 } from './db/character-entity'
 import { ClassEntity } from './db/class-entity'
+import { Weapon } from './db/equipment'
 import { Feat } from './db/feat'
 import {
   ConditionalFeatureValue,
@@ -37,14 +36,16 @@ import {
   SkillType,
   generateUntrainedSkillMap,
 } from './statistic'
-import { Weapon } from './db/equipment'
 
 export interface CharacterAttack {
   name: string
+  type: WeaponType
   group: WeaponGroup
   damage: WeaponDamageDefinition[]
   attackBonus: ModifierValue[][]
   damageBonus: number
+  range?: number
+  reload?: number
 }
 
 export interface Attributes {
@@ -876,18 +877,25 @@ export class PlayerCharacter {
   private buildAttack(weapon: CharacterWeapon): CharacterAttack {
     const attackBonus: ModifierValue[] = []
 
-    if (
-      weapon.traits.includes('finesse') &&
-      this.attributes.Dexterity > this.attributes.Strength
-    ) {
+    if (weapon.definition.type === 'melee') {
+      if (
+        weapon.traits.includes('finesse') &&
+        this.attributes.Dexterity > this.attributes.Strength
+      ) {
+        attackBonus.push({
+          value: this.attributes.Dexterity,
+          source: 'Dexterity',
+        })
+      } else {
+        attackBonus.push({
+          value: this.attributes.Strength,
+          source: 'Strength',
+        })
+      }
+    } else {
       attackBonus.push({
         value: this.attributes.Dexterity,
         source: 'Dexterity',
-      })
-    } else {
-      attackBonus.push({
-        value: this.attributes.Strength,
-        source: 'Strength',
       })
     }
 
@@ -926,14 +934,18 @@ export class PlayerCharacter {
 
     return {
       name: weapon.name,
+      type: weapon.definition.type,
       attackBonus: [
         attackBonus,
         [...attackBonus, { value: -4, source: 'MAP' }],
         [...attackBonus, { value: -8, source: 'MAP' }],
       ],
       damage: weapon.definition.damage,
-      damageBonus: this.attributes.Strength,
+      damageBonus:
+        weapon.definition.type === 'melee' ? this.attributes.Strength : 0,
       group: weapon.definition.group,
+      reload: weapon.definition.reload,
+      range: weapon.definition.range,
     }
   }
 
