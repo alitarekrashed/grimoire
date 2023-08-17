@@ -2,7 +2,7 @@ import { PlayerCharacter } from '@/models/player-character'
 import { useDebounce } from '@/utils/debounce'
 import { roboto_flex } from '@/utils/fonts'
 import { getPlayerCharacter } from '@/utils/services/player-character-service'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { LoadingSpinner } from '../loading-spinner/loading-spinner'
 import { CharacterHeader } from './character-header'
 import { CharacterSheetBox } from './character-sheet-box'
@@ -10,15 +10,19 @@ import { Defenses } from './defenses'
 import { FeaturesTabs } from './features-tabs'
 import { ProficiencyModifiersColumn } from './proficiency-modifiers-column'
 import { Attacks } from './attacks'
+import { PlayerCharacterContext } from './player-character-context'
 
 export function CharacterSheet({ id }: { id: string }) {
-  const [character, setCharacter] = useState<PlayerCharacter>()
   const [loading, setLoading] = useState<boolean>(false)
+
+  const { playerCharacter, updatePlayerCharacter } = useContext(
+    PlayerCharacterContext
+  )
 
   useEffect(() => {
     setLoading(true)
     getPlayerCharacter(id).then((character: PlayerCharacter) => {
-      setCharacter(character)
+      updatePlayerCharacter(character)
       setLoading(false)
     })
   }, [id])
@@ -31,7 +35,7 @@ export function CharacterSheet({ id }: { id: string }) {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(character!.getCharacter()),
+          body: JSON.stringify(playerCharacter!.getCharacter()),
         })
       } catch (error) {
         console.log(error)
@@ -44,7 +48,7 @@ export function CharacterSheet({ id }: { id: string }) {
   const handleClose = (char: CharacterEntity) => {
     setLoading(true)
     PlayerCharacter.build(char).then((val) => {
-      setCharacter(val)
+      updatePlayerCharacter(val)
       setLoading(false)
       debouncedRequest()
     })
@@ -57,33 +61,24 @@ export function CharacterSheet({ id }: { id: string }) {
           <LoadingSpinner loading={loading}></LoadingSpinner>
         </div>
       )}
-      {character && (
+      {playerCharacter && (
         <div className="bg-stone-900">
-          <CharacterHeader
-            character={character}
-            onBuilderClose={handleClose}
-          ></CharacterHeader>
+          <CharacterHeader onBuilderClose={handleClose}></CharacterHeader>
           <div className="grid grid-rows-4 grid-cols-10 p-2 gap-1">
             <div className="col-span-1 row-span-full">
-              <ProficiencyModifiersColumn
-                character={character}
-              ></ProficiencyModifiersColumn>
+              <ProficiencyModifiersColumn></ProficiencyModifiersColumn>
             </div>
             <div className="col-span-3 row-span-full grid grid-rows-4 gap-1">
               <div className="row-span-1">
-                <Defenses character={character}></Defenses>
+                <Defenses></Defenses>
               </div>
               <div className="row-span-3">
-                <Attacks character={character}></Attacks>
+                <Attacks></Attacks>
               </div>
             </div>
             <div className="col-span-6 row-span-full">
               <CharacterSheetBox>
-                <FeaturesTabs
-                  features={character.getAdditionalFeatures()}
-                  actions={character.getActions()}
-                  proficiencies={character.getProficiencies()}
-                ></FeaturesTabs>
+                <FeaturesTabs></FeaturesTabs>
               </CharacterSheetBox>
             </div>
           </div>

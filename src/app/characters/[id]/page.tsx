@@ -1,6 +1,8 @@
 'use client'
 
 import { CharacterSheet } from '@/components/character-display/character-sheet'
+import { PlayerCharacterProvider } from '@/components/character-display/player-character-context'
+import { PlayerCharacter } from '@/models/player-character'
 import { usePathname } from 'next/navigation'
 
 export default function CharacterPage() {
@@ -9,7 +11,9 @@ export default function CharacterPage() {
 
   return (
     <div className={`h-screen w-screen overflow-y-scroll`}>
-      <CharacterSheet id={id}></CharacterSheet>
+      <PlayerCharacterProvider>
+        <CharacterSheet id={id}></CharacterSheet>
+      </PlayerCharacterProvider>
     </div>
   )
 }

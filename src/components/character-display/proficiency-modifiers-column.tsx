@@ -1,28 +1,32 @@
 import { PlayerCharacter } from '@/models/player-character'
 import { CharacterSheetBox } from './character-sheet-box'
 import { SkillDisplay } from './skill-display'
+import { useContext } from 'react'
+import { PlayerCharacterContext } from './player-character-context'
 
-export function ProficiencyModifiersColumn({
-  character,
-}: {
-  character: PlayerCharacter
-}) {
+export function ProficiencyModifiersColumn() {
+  const { playerCharacter } = useContext(PlayerCharacterContext)
+
   return (
-    <div className="h-fit grid grid-rows-4 gap-1">
-      <div className="row-span-1">
-        <div className="h-fit mb-1">
-          <PerceptionAndClassDCDisplay
-            character={character}
-          ></PerceptionAndClassDCDisplay>
+    playerCharacter && (
+      <div className="h-fit grid grid-rows-4 gap-1">
+        <div className="row-span-1">
+          <div className="h-fit mb-1">
+            <PerceptionAndClassDCDisplay
+              character={playerCharacter}
+            ></PerceptionAndClassDCDisplay>
+          </div>
+          <div className="h-fit">
+            <SavingThrowsDisplay
+              character={playerCharacter}
+            ></SavingThrowsDisplay>
+          </div>
         </div>
-        <div className="h-fit">
-          <SavingThrowsDisplay character={character}></SavingThrowsDisplay>
+        <div className="row-span-3">
+          <SkillsDisplay character={playerCharacter}></SkillsDisplay>
         </div>
       </div>
-      <div className="row-span-3">
-        <SkillsDisplay character={character}></SkillsDisplay>
-      </div>
-    </div>
+    )
   )
 }
 
