@@ -12,7 +12,7 @@ import { SkillDisplay } from './skill-display'
 import { cloneDeep } from 'lodash'
 
 export function FeaturesTabs() {
-  const { playerCharacter, updatePlayerCharacter } = useContext(
+  const { playerCharacter, updateAndSavePlayerCharacter } = useContext(
     PlayerCharacterContext
   )
 
@@ -115,7 +115,7 @@ export function FeaturesTabs() {
                               item: Armor
                             }
                             PlayerCharacter.build(updated).then((val) =>
-                              updatePlayerCharacter(val)
+                              updateAndSavePlayerCharacter(val)
                             )
                           }}
                           className="ml-2 rounded border border-stone-300 p-0.5"
