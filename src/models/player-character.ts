@@ -771,19 +771,35 @@ export class PlayerCharacter {
       source: 'Base',
     })
 
-    const equippedArmor: CharacterArmor = {
-      name: 'unarmored',
-      traits: [],
-      definition: {
-        category: 'unarmored',
-        group: 'cloth',
-        ac_bonus: 0,
-      },
-    }
+    const armor: CharacterArmor = this.character.equipped_armor
+      ? {
+          name: this.character.equipped_armor.name,
+          traits: this.character.equipped_armor.item.traits!,
+          definition: {
+            category: this.character.equipped_armor.item.properties.category,
+            group: this.character.equipped_armor.item.properties.group,
+            ac_bonus: this.character.equipped_armor.item.properties.ac_bonus,
+            dex_cap: this.character.equipped_armor.item.properties.dex_cap,
+            speed_penalty:
+              this.character.equipped_armor.item.properties.speed_penalty,
+            strength: this.character.equipped_armor.item.properties.strength,
+            check_penalty:
+              this.character.equipped_armor.item.properties.check_penalty,
+          },
+        }
+      : {
+          name: 'unarmored',
+          traits: [],
+          definition: {
+            category: 'unarmored',
+            group: 'cloth',
+            ac_bonus: 0,
+          },
+        }
 
     if (
-      equippedArmor.definition.dex_cap === undefined ||
-      this.attributes.Dexterity <= equippedArmor.definition.dex_cap
+      armor.definition.dex_cap === undefined ||
+      this.attributes.Dexterity <= armor.definition.dex_cap
     ) {
       result.push({
         value: this.attributes.Dexterity,
@@ -791,8 +807,8 @@ export class PlayerCharacter {
       })
     } else {
       result.push({
-        value: equippedArmor.definition.dex_cap,
-        source: `Dexterity (capped from ${equippedArmor.name})`,
+        value: armor.definition.dex_cap,
+        source: `Dexterity (capped from ${armor.name})`,
       })
     }
 
@@ -805,20 +821,18 @@ export class PlayerCharacter {
     }
 
     const category =
-      equippedArmor.definition.category === 'unarmored'
+      armor.definition.category === 'unarmored'
         ? 'unarmored defense'
-        : equippedArmor.definition.category
+        : armor.definition.category
     if (defenseProfs.has(category)) {
       if (this.greaterThan(defenseProfs.get(category)!, minimumRank)) {
         minimumRank = defenseProfs.get(category)!
       }
     }
 
-    if (defenseProfs.has(equippedArmor.name)) {
-      if (
-        this.greaterThan(defenseProfs.get(equippedArmor.name)!, minimumRank)
-      ) {
-        minimumRank = defenseProfs.get(equippedArmor.name)!
+    if (defenseProfs.has(armor.name)) {
+      if (this.greaterThan(defenseProfs.get(armor.name)!, minimumRank)) {
+        minimumRank = defenseProfs.get(armor.name)!
       }
     }
 
@@ -826,14 +840,14 @@ export class PlayerCharacter {
       result.push({
         value: RankModifierMap[minimumRank] + this.level,
         // TODO use the actual set one, not always the category
-        source: `Proficiency (${equippedArmor.definition.category})`,
+        source: `Proficiency (${armor.definition.category})`,
       })
     }
 
-    if (equippedArmor.definition.ac_bonus) {
+    if (armor.definition.ac_bonus) {
       result.push({
-        value: equippedArmor.definition.ac_bonus,
-        source: `AC Bonus (${equippedArmor.name})`,
+        value: armor.definition.ac_bonus,
+        source: `AC Bonus (${armor.name})`,
       })
     }
     return result

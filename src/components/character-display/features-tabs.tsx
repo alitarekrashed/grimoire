@@ -1,5 +1,7 @@
 import { ProficiencyRank, ProficiencyType } from '@/models/db/background'
-import { SourcedFeature } from '@/models/player-character'
+import { CharacterEquipment } from '@/models/db/character-entity'
+import { EquipmentCategory } from '@/models/db/equipment'
+import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import * as Tabs from '@radix-ui/react-tabs'
 import { useContext } from 'react'
 import { ActionInlineDisplay } from '../actions/action-inline-display'
@@ -7,11 +9,12 @@ import { ParsedDescription } from '../parsed-description/parsed-description'
 import styles from './features-tabs.module.css'
 import { PlayerCharacterContext } from './player-character-context'
 import { SkillDisplay } from './skill-display'
-import { Equipment, EquipmentCategory } from '@/models/db/equipment'
-import { CharacterEquipment } from '@/models/db/character-entity'
+import { cloneDeep } from 'lodash'
 
 export function FeaturesTabs() {
-  const { playerCharacter } = useContext(PlayerCharacterContext)
+  const { playerCharacter, updatePlayerCharacter } = useContext(
+    PlayerCharacterContext
+  )
 
   const parseFeature = (feature: SourcedFeature, index: number) => {
     if (feature.feature.type === 'MISC') {
@@ -101,6 +104,25 @@ export function FeaturesTabs() {
                       key={`${item.item.name.toString()}-${index}`}
                     >
                       {item.name}
+                      {value[0] === 'Armor' && (
+                        <button
+                          onClick={() => {
+                            const updated = cloneDeep(
+                              playerCharacter.getCharacter()
+                            )
+                            updated.equipped_armor = item as {
+                              name: string
+                              item: Armor
+                            }
+                            PlayerCharacter.build(updated).then((val) =>
+                              updatePlayerCharacter(val)
+                            )
+                          }}
+                          className="ml-2 rounded border border-stone-300 p-0.5"
+                        >
+                          Equip
+                        </button>
+                      )}
                     </span>
                   ))}
                 </div>

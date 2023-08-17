@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb'
 import { SourcedFeature } from '../player-character'
 import { Attribute } from './ancestry'
-import { Equipment } from './equipment'
+import { Armor, Equipment } from './equipment'
 
 export interface CharacterEntity {
   _id: string | ObjectId
@@ -14,6 +14,7 @@ export interface CharacterEntity {
   class_id: string
   heritage_id: string
   features: { '1': SourcedFeature[] }
+  equipped_armor: { name: string; item: Armor }
   equipment: CharacterEquipment[]
 }
 
