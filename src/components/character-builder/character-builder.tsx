@@ -154,31 +154,22 @@ export default function CharacterBuilderModal({
                     </div>
                     <div className="mr-2">
                       <BackgroundChoiceModal
-                        backgroundId={playerCharacter.getBackgroundId()}
                         onBackgroundChange={handleBackgroundChange}
                       ></BackgroundChoiceModal>
                     </div>
                     <div className="mr-2">
                       <ClassChoiceModal
-                        classId={playerCharacter
-                          .getClassEntity()
-                          ._id.toString()}
                         onClassChange={handleClassChange}
                       ></ClassChoiceModal>
                     </div>
                     <div className="mr-2">
                       <AttributesModal
-                        characterEntity={playerCharacter.getCharacter()}
-                        ancestry={playerCharacter.getAncestry()}
-                        background={playerCharacter.getBackground()}
-                        classEntity={playerCharacter.getClassEntity()}
                         onAttributeUpdate={handleAttributeChange}
                       ></AttributesModal>
                     </div>
                     <div>
                       <LanguagesModal
                         onLanguagesUpdate={handleLanguageChange}
-                        character={playerCharacter.getCharacter()}
                         ancestry={playerCharacter.getAncestry()}
                       ></LanguagesModal>
                     </div>
