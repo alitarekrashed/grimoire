@@ -46,6 +46,9 @@ export function FeaturesTabs() {
           <Tabs.Trigger value="features" className={styles.tabHeader}>
             Features
           </Tabs.Trigger>
+          <Tabs.Trigger value="equipment" className={styles.tabHeader}>
+            Equipment
+          </Tabs.Trigger>
           <Tabs.Trigger value="proficiencies" className={styles.tabHeader}>
             Proficiencies
           </Tabs.Trigger>
@@ -69,6 +72,13 @@ export function FeaturesTabs() {
                 parseFeature(feature, index)
               )}
           </span>
+        </Tabs.Content>
+        <Tabs.Content value="equipment">
+          <div className="flex flex-col text-xs">
+            {playerCharacter.getCharacter().equipment.map((value) => (
+              <span key={value.name}>{value.name}</span>
+            ))}
+          </div>
         </Tabs.Content>
         <Tabs.Content value="proficiencies">
           <span className="text-xs">
