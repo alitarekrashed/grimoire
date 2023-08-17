@@ -860,11 +860,11 @@ export class PlayerCharacter {
 
     weapons.push(
       ...this.character.equipment
-        .filter((value) => value.category === 'Weapon')
-        .map((item) => {
-          const weapon = item as Weapon
+        .filter((value) => value.item.category === 'Weapon')
+        .map((value) => {
+          const weapon = value.item as Weapon
           return {
-            name: weapon.name,
+            name: value.name ?? weapon.name,
             traits: weapon.traits!,
             definition: weapon.properties,
           }

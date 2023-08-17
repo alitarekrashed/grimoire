@@ -14,7 +14,12 @@ export interface CharacterEntity {
   class_id: string
   heritage_id: string
   features: { '1': SourcedFeature[] }
-  equipment: Equipment[]
+  equipment: CharacterEquipment[]
+}
+
+export interface CharacterEquipment {
+  name: string
+  item: Equipment
 }
 
 export interface CharacterAttributes {

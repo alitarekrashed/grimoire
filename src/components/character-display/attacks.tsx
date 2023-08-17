@@ -15,7 +15,7 @@ export function Attacks() {
           <div className="mb-1 text-base font-semibold">Attacks</div>
           <div className="flex gap-2 flex-col h-full">
             {playerCharacter.getAttacks().map((attack) => (
-              <div className="grid grid-cols-12">
+              <div className="grid grid-cols-12 hover:text-rose-400">
                 {getIcon(attack.group)}
                 <span className="col-span-2">{attack.name}</span>
                 <span className="col-span-1">
