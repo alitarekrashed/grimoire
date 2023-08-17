@@ -42,7 +42,7 @@ function PerceptionAndClassDCDisplay({
         <SkillDisplay
           name="Class DC"
           rank={character.getClassDC().rank}
-          modifier={character.getClassDC().modifier}
+          value={10 + character.getClassDC().modifier}
         ></SkillDisplay>
       </div>
     </CharacterSheetBox>

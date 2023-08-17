@@ -1,5 +1,5 @@
 import { ModifierValue } from '@/components/calculated-display/calculated-display'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, eq } from 'lodash'
 import { Ancestry, Attribute } from './db/ancestry'
 import {
   Background,
@@ -7,7 +7,13 @@ import {
   ProficiencyRank,
   RankModifierMap,
 } from './db/background'
-import { CharacterEntity } from './db/character-entity'
+import {
+  ArmorDefinition,
+  CharacterArmor,
+  CharacterEntity,
+  CharacterWeapon,
+  WeaponDamageDefinition,
+} from './db/character-entity'
 import { ClassEntity } from './db/class-entity'
 import { Feat } from './db/feat'
 import {
@@ -738,6 +744,167 @@ export class PlayerCharacter {
         RankModifierMap[perception.get('Perception')!] +
         this.level +
         this.attributes.Wisdom,
+    }
+  }
+
+  // TODO this needs some love/cleanup
+  public getArmorClass(): ModifierValue[] {
+    const result: ModifierValue[] = []
+    result.push({
+      value: 10,
+      source: 'Base',
+    })
+
+    const equippedArmor: CharacterArmor = {
+      name: 'unarmored',
+      traits: [],
+      definition: {
+        category: 'unarmored',
+        group: 'cloth',
+        ac_bonus: 0,
+      },
+    }
+
+    if (
+      equippedArmor.definition.dex_cap === undefined ||
+      this.attributes.Dexterity <= equippedArmor.definition.dex_cap
+    ) {
+      result.push({
+        value: this.attributes.Dexterity,
+        source: 'Dexterity',
+      })
+    } else {
+      result.push({
+        value: equippedArmor.definition.dex_cap,
+        source: `Dexterity (capped from ${equippedArmor.name})`,
+      })
+    }
+
+    const defenseProfs = this.getProficiencies().Defense
+    let minimumRank: ProficiencyRank = 'untrained'
+    if (defenseProfs.has('all armor')) {
+      if (this.greaterThan(defenseProfs.get('all armor')!, minimumRank)) {
+        minimumRank = defenseProfs.get('all armor')!
+      }
+    }
+
+    const category =
+      equippedArmor.definition.category === 'unarmored'
+        ? 'unarmored defense'
+        : equippedArmor.definition.category
+    if (defenseProfs.has(category)) {
+      if (this.greaterThan(defenseProfs.get(category)!, minimumRank)) {
+        minimumRank = defenseProfs.get(category)!
+      }
+    }
+
+    if (defenseProfs.has(equippedArmor.name)) {
+      if (
+        this.greaterThan(defenseProfs.get(equippedArmor.name)!, minimumRank)
+      ) {
+        minimumRank = defenseProfs.get(equippedArmor.name)!
+      }
+    }
+
+    if (minimumRank && minimumRank !== 'untrained') {
+      result.push({
+        value: RankModifierMap[minimumRank] + this.level,
+        // TODO use the actual set one, not always the category
+        source: `Proficiency (${equippedArmor.definition.category})`,
+      })
+    }
+
+    if (equippedArmor.definition.ac_bonus) {
+      result.push({
+        value: equippedArmor.definition.ac_bonus,
+        source: `AC Bonus (${equippedArmor.name})`,
+      })
+    }
+    return result
+  }
+
+  // TODO this needs some love/cleanup
+  public getAttack(): {
+    name: string
+    damage: WeaponDamageDefinition[]
+    attackBonus: ModifierValue[][]
+    damageBonus: number
+  } {
+    const attackBonus: ModifierValue[] = []
+
+    const fist: CharacterWeapon = {
+      name: 'fist',
+      traits: ['agile', 'finesse', 'nonlethal', 'unarmed'],
+      definition: {
+        category: 'unarmed',
+        group: 'brawling',
+        type: 'melee',
+        damage: [
+          {
+            type: 'bludgeoning',
+            dice: '1d4',
+          },
+        ],
+      },
+    }
+
+    if (
+      fist.traits.includes('finesse') &&
+      this.attributes.Dexterity > this.attributes.Strength
+    ) {
+      attackBonus.push({
+        value: this.attributes.Dexterity,
+        source: 'Dexterity',
+      })
+    } else {
+      attackBonus.push({
+        value: this.attributes.Strength,
+        source: 'Strength',
+      })
+    }
+
+    const weaponProfs = this.getProficiencies().Weapon
+    let minimumRank: ProficiencyRank = 'untrained'
+    if (weaponProfs.has('all weapons')) {
+      if (this.greaterThan(weaponProfs.get('all weapons')!, minimumRank)) {
+        minimumRank = weaponProfs.get('all weapons')!
+      }
+    }
+
+    if (weaponProfs.has(fist.definition.category)) {
+      if (
+        this.greaterThan(
+          weaponProfs.get(fist.definition.category)!,
+          minimumRank
+        )
+      ) {
+        minimumRank = weaponProfs.get(fist.definition.category)!
+      }
+    }
+
+    if (weaponProfs.has(fist.name)) {
+      if (this.greaterThan(weaponProfs.get(fist.name)!, minimumRank)) {
+        minimumRank = weaponProfs.get(fist.name)!
+      }
+    }
+
+    if (minimumRank && minimumRank !== 'untrained') {
+      attackBonus.push({
+        value: RankModifierMap[minimumRank] + this.level,
+        // TODO use the actual set one, not always the category
+        source: `Proficiency (${fist.definition.category})`,
+      })
+    }
+
+    return {
+      name: fist.name,
+      attackBonus: [
+        attackBonus,
+        [...attackBonus, { value: -4, source: 'MAP' }],
+        [...attackBonus, { value: -8, source: 'MAP' }],
+      ],
+      damage: fist.definition.damage,
+      damageBonus: this.attributes.Strength,
     }
   }
 

@@ -1,4 +1,5 @@
 import { Activation, SavingThrow } from './activation'
+import { ArmorDefinition } from './character-entity'
 import { EntityModel } from './entity-model'
 
 export type EquipmentCategory =
@@ -41,6 +42,10 @@ export interface EquipmentWithVariants extends EntityModel {
   types: EquipmentVariantType[]
   saving_throw?: SavingThrow
   rarity?: Rarity
+}
+
+export interface Armor extends Equipment {
+  properties: ArmorDefinition
 }
 
 export interface Currency {

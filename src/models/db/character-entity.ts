@@ -22,3 +22,45 @@ export interface CharacterAttributes {
   class: Attribute[]
   level_1: Attribute[]
 }
+
+export interface CharacterArmor {
+  name: string
+  traits: string[]
+  definition: ArmorDefinition
+}
+
+export interface CharacterWeapon {
+  name: string
+  traits: string[]
+  definition: WeaponDefinition
+}
+
+export type ArmorCategory = 'unarmored' | 'light' | 'medium' | 'heavy'
+export type ArmorGroup = 'cloth' | 'chain'
+
+export interface ArmorDefinition {
+  category: ArmorCategory
+  group: ArmorGroup
+  ac_bonus: number
+  strength?: number
+  dex_cap?: number
+  check_penalty?: number
+  speed_penalty?: number
+}
+
+export type WeaponCategory = 'unarmed'
+export type WeaponGroup = 'brawling'
+export type WeaponType = 'melee' | 'ranged'
+export type DamageType = 'bludgeoning' | 'piercing'
+
+export interface WeaponDefinition {
+  category: WeaponCategory
+  group: WeaponGroup
+  type: WeaponType
+  damage: WeaponDamageDefinition[]
+}
+
+export interface WeaponDamageDefinition {
+  type: DamageType
+  dice: string
+}
