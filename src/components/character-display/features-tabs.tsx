@@ -7,6 +7,8 @@ import { ParsedDescription } from '../parsed-description/parsed-description'
 import styles from './features-tabs.module.css'
 import { PlayerCharacterContext } from './player-character-context'
 import { SkillDisplay } from './skill-display'
+import { Equipment, EquipmentCategory } from '@/models/db/equipment'
+import { CharacterEquipment } from '@/models/db/character-entity'
 
 export function FeaturesTabs() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
@@ -36,6 +38,17 @@ export function FeaturesTabs() {
     )
   }
 
+  const groupedEquipment: Map<EquipmentCategory, CharacterEquipment[]> =
+    playerCharacter
+      .getCharacter()
+      .equipment.reduce(
+        (entryMap, e) =>
+          entryMap.set(e.item.category, [
+            ...(entryMap.get(e.item.category) || []),
+            e,
+          ]),
+        new Map()
+      )
   return (
     playerCharacter && (
       <Tabs.Root defaultValue="actions">
@@ -74,10 +87,25 @@ export function FeaturesTabs() {
           </span>
         </Tabs.Content>
         <Tabs.Content value="equipment">
-          <div className="flex flex-col text-xs">
-            {playerCharacter.getCharacter().equipment.map((value) => (
-              <span key={value.name}>{value.name}</span>
-            ))}
+          <div className="flex flex-col">
+            {Array.from(groupedEquipment.entries()).map(
+              (value: [EquipmentCategory, CharacterEquipment[]]) => (
+                <div
+                  className="flex flex-col text-base font-extralight"
+                  key={value[0]}
+                >
+                  {value[0]}
+                  {value[1].map((item, index) => (
+                    <span
+                      className="text-xs font-light"
+                      key={`${item.item.name.toString()}-${index}`}
+                    >
+                      {item.name}
+                    </span>
+                  ))}
+                </div>
+              )
+            )}
           </div>
         </Tabs.Content>
         <Tabs.Content value="proficiencies">
