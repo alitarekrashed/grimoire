@@ -98,11 +98,8 @@ export function FeaturesTabs() {
                   key={value[0]}
                 >
                   {value[0]}
-                  {value[1].map((item, index) => (
-                    <span
-                      className="text-xs font-light"
-                      key={`${item.item.name.toString()}-${index}`}
-                    >
+                  {value[1].map((item) => (
+                    <span className="text-xs font-light" key={`${item.id}`}>
                       {item.name}
                       {value[0] === 'Armor' && (
                         <button
@@ -110,10 +107,7 @@ export function FeaturesTabs() {
                             const updated = cloneDeep(
                               playerCharacter.getCharacter()
                             )
-                            updated.equipped_armor = item as {
-                              name: string
-                              item: Armor
-                            }
+                            updated.equipped_armor = item.id
                             PlayerCharacter.build(updated).then((val) =>
                               updateAndSavePlayerCharacter(val)
                             )

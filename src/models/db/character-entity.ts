@@ -14,12 +14,13 @@ export interface CharacterEntity {
   class_id: string
   heritage_id: string
   features: { '1': SourcedFeature[] }
-  equipped_armor: { name: string; item: Armor }
+  equipped_armor: string
   equipment: CharacterEquipment[]
 }
 
 export interface CharacterEquipment {
   name: string
+  id: string
   item: Equipment
 }
 

@@ -1,5 +1,5 @@
 import { ModifierValue } from '@/components/calculated-display/calculated-display'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, eq } from 'lodash'
 import { Ancestry, Attribute } from './db/ancestry'
 import {
   Background,
@@ -10,13 +10,14 @@ import {
 import {
   CharacterArmor,
   CharacterEntity,
+  CharacterEquipment,
   CharacterWeapon,
   WeaponDamageDefinition,
   WeaponGroup,
   WeaponType,
 } from './db/character-entity'
 import { ClassEntity } from './db/class-entity'
-import { Weapon } from './db/equipment'
+import { Armor, Weapon } from './db/equipment'
 import { Feat } from './db/feat'
 import {
   ConditionalFeatureValue,
@@ -771,20 +772,25 @@ export class PlayerCharacter {
       source: 'Base',
     })
 
-    const armor: CharacterArmor = this.character.equipped_armor
+    const equipped: { name: string; id: string; item: Armor } | undefined =
+      this.character.equipment
+        .filter((val) => val.item.category === 'Armor')
+        .find((val) => val.id === this.character.equipped_armor) as
+        | { name: string; id: string; item: Armor }
+        | undefined
+
+    const armor: CharacterArmor = equipped
       ? {
-          name: this.character.equipped_armor.name,
-          traits: this.character.equipped_armor.item.traits!,
+          name: equipped.name,
+          traits: equipped.item.traits!,
           definition: {
-            category: this.character.equipped_armor.item.properties.category,
-            group: this.character.equipped_armor.item.properties.group,
-            ac_bonus: this.character.equipped_armor.item.properties.ac_bonus,
-            dex_cap: this.character.equipped_armor.item.properties.dex_cap,
-            speed_penalty:
-              this.character.equipped_armor.item.properties.speed_penalty,
-            strength: this.character.equipped_armor.item.properties.strength,
-            check_penalty:
-              this.character.equipped_armor.item.properties.check_penalty,
+            category: equipped.item.properties.category,
+            group: equipped.item.properties.group,
+            ac_bonus: equipped.item.properties.ac_bonus,
+            dex_cap: equipped.item.properties.dex_cap,
+            speed_penalty: equipped.item.properties.speed_penalty,
+            strength: equipped.item.properties.strength,
+            check_penalty: equipped.item.properties.check_penalty,
           },
         }
       : {
