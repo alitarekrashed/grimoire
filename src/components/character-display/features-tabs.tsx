@@ -52,6 +52,15 @@ export function FeaturesTabs() {
           ]),
         new Map()
       )
+
+  const updateEquippedArmor = (id: string) => {
+    const updated = cloneDeep(playerCharacter.getCharacter())
+    updated.equipped_armor = id
+    PlayerCharacter.build(updated).then((val) =>
+      updateAndSavePlayerCharacter(val)
+    )
+  }
+
   return (
     playerCharacter && (
       <Tabs.Root defaultValue="actions">
@@ -101,22 +110,30 @@ export function FeaturesTabs() {
                   {value[1].map((item) => (
                     <span className="text-xs font-light" key={`${item.id}`}>
                       {item.name}
-                      {value[0] === 'Armor' && (
-                        <button
-                          onClick={() => {
-                            const updated = cloneDeep(
-                              playerCharacter.getCharacter()
-                            )
-                            updated.equipped_armor = item.id
-                            PlayerCharacter.build(updated).then((val) =>
-                              updateAndSavePlayerCharacter(val)
-                            )
-                          }}
-                          className="ml-2 rounded border border-stone-300 p-0.5"
-                        >
-                          Equip
-                        </button>
-                      )}
+                      {value[0] === 'Armor' &&
+                        item.id !==
+                          playerCharacter.getCharacter().equipped_armor && (
+                          <button
+                            onClick={() => {
+                              updateEquippedArmor(item.id)
+                            }}
+                            className="ml-2 rounded border border-stone-300 p-0.5"
+                          >
+                            Equip
+                          </button>
+                        )}
+                      {value[0] === 'Armor' &&
+                        item.id ===
+                          playerCharacter.getCharacter().equipped_armor && (
+                          <button
+                            onClick={() => {
+                              updateEquippedArmor('')
+                            }}
+                            className="ml-2 rounded border border-stone-300 p-0.5"
+                          >
+                            Remove
+                          </button>
+                        )}
                     </span>
                   ))}
                 </div>
