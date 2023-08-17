@@ -18,6 +18,8 @@ export interface CharacterEntity {
   equipment: CharacterEquipment[]
 }
 
+export type WithNameAndId = { name: string; id: string }
+
 export interface CharacterEquipment {
   name: string
   id: string
@@ -30,18 +32,6 @@ export interface CharacterAttributes {
   background: Attribute[]
   class: Attribute[]
   level_1: Attribute[]
-}
-
-export interface CharacterArmor {
-  name: string
-  traits: string[]
-  definition: ArmorDefinition
-}
-
-export interface CharacterWeapon {
-  name: string
-  traits: string[]
-  definition: WeaponDefinition
 }
 
 export type ArmorCategory = 'unarmored' | 'light' | 'medium' | 'heavy'

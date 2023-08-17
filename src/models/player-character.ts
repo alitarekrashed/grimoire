@@ -8,13 +8,16 @@ import {
   RankModifierMap,
 } from './db/background'
 import {
+  ArmorDefinition,
   CharacterArmor,
   CharacterEntity,
   CharacterEquipment,
   CharacterWeapon,
   WeaponDamageDefinition,
+  WeaponDefinition,
   WeaponGroup,
   WeaponType,
+  WithNameAndId,
 } from './db/character-entity'
 import { ClassEntity } from './db/class-entity'
 import { Armor, Weapon } from './db/equipment'
@@ -47,6 +50,18 @@ export interface CharacterAttack {
   damageBonus: number
   range?: number
   reload?: number
+}
+
+export interface CharacterArmor {
+  name: string
+  traits: string[]
+  definition: ArmorDefinition
+}
+
+export interface CharacterWeapon {
+  name: string
+  traits: string[]
+  definition: WeaponDefinition
 }
 
 export interface Attributes {
@@ -772,26 +787,18 @@ export class PlayerCharacter {
       source: 'Base',
     })
 
-    const equipped: { name: string; id: string; item: Armor } | undefined =
+    const equipped: (WithNameAndId & { item: Armor }) | undefined =
       this.character.equipment
         .filter((val) => val.item.category === 'Armor')
         .find((val) => val.id === this.character.equipped_armor) as
-        | { name: string; id: string; item: Armor }
+        | (WithNameAndId & { item: Armor })
         | undefined
 
     const armor: CharacterArmor = equipped
       ? {
           name: equipped.name,
           traits: equipped.item.traits!,
-          definition: {
-            category: equipped.item.properties.category,
-            group: equipped.item.properties.group,
-            ac_bonus: equipped.item.properties.ac_bonus,
-            dex_cap: equipped.item.properties.dex_cap,
-            speed_penalty: equipped.item.properties.speed_penalty,
-            strength: equipped.item.properties.strength,
-            check_penalty: equipped.item.properties.check_penalty,
-          },
+          definition: equipped.item.properties,
         }
       : {
           name: 'unarmored',
