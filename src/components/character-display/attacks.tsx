@@ -36,15 +36,13 @@ export function Attacks() {
                   ))}
                 </span>
                 <span className="col-span-4">
-                  {attack.damage.map((value, index) => (
-                    <span key={`${value.type}-${index}`}>
-                      {value.dice}
-                      {index === 0 &&
-                        attack.damageBonus !== 0 &&
-                        ' + ' + attack.damageBonus}
-                      {` ${value.type}`}
-                    </span>
-                  ))}
+                  <span key={`${attack.damage.type}-${index}`}>
+                    {attack.damage.dice}
+                    {index === 0 &&
+                      attack.damageBonus !== 0 &&
+                      ' + ' + attack.damageBonus}
+                    {` ${attack.damage.type}`}
+                  </span>
                 </span>
                 <span className="col-span-2">
                   {attack.type === 'ranged' && `Reload: ${attack.reload}`}

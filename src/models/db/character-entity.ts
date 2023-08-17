@@ -56,7 +56,7 @@ export interface WeaponDefinition {
   category: WeaponCategory
   group: WeaponGroup
   type: WeaponType
-  damage: WeaponDamageDefinition[]
+  damage: WeaponDamageDefinition
   reload?: number
   range?: number
 }

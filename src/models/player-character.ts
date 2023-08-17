@@ -1,5 +1,5 @@
 import { ModifierValue } from '@/components/calculated-display/calculated-display'
-import { cloneDeep, eq } from 'lodash'
+import { cloneDeep, over } from 'lodash'
 import { Ancestry, Attribute } from './db/ancestry'
 import {
   Background,
@@ -11,7 +11,6 @@ import {
   ArmorDefinition,
   CharacterArmor,
   CharacterEntity,
-  CharacterEquipment,
   CharacterWeapon,
   WeaponDamageDefinition,
   WeaponDefinition,
@@ -27,6 +26,7 @@ import {
   Feature,
   FeatureType,
   ModifierFeatureValue,
+  OverrideFeatureValue,
   ResistanceFeatureValue,
   SkillSelectionFeatureValue,
   featureMatcher,
@@ -45,7 +45,7 @@ export interface CharacterAttack {
   name: string
   type: WeaponType
   group: WeaponGroup
-  damage: WeaponDamageDefinition[]
+  damage: WeaponDamageDefinition
   attackBonus: ModifierValue[][]
   damageBonus: number
   range?: number
@@ -875,12 +875,10 @@ export class PlayerCharacter {
           category: 'unarmed',
           group: 'brawling',
           type: 'melee',
-          damage: [
-            {
-              type: 'bludgeoning',
-              dice: '1d4',
-            },
-          ],
+          damage: {
+            type: 'bludgeoning',
+            dice: '1d4',
+          },
         },
       },
     ]
@@ -897,6 +895,28 @@ export class PlayerCharacter {
           }
         })
     )
+
+    const overrideAttacks = this.features
+      .filter(
+        (val) =>
+          val.feature.type === 'OVERRIDE' && val.feature.value.type === 'Attack'
+      )
+      .map((val) => val.feature.value as OverrideFeatureValue)
+
+    weapons
+      .filter(
+        (weapon) =>
+          overrideAttacks.findIndex(
+            (override) => override.name === weapon.name
+          ) > -1
+      )
+      .forEach((weapon) => {
+        const override = overrideAttacks.find(
+          (override) => override.name === weapon.name
+        )!
+        weapon.definition.damage.dice = override.dice
+      })
+
     return weapons.map((weapon) => this.buildAttack(weapon))
   }
 
@@ -1230,7 +1250,8 @@ export class PlayerCharacter {
       } else if (
         sourced.feature.type === 'PROFICIENCY' ||
         sourced.feature.type === 'ACTION' ||
-        sourced.feature.type === 'MISC'
+        sourced.feature.type === 'MISC' ||
+        sourced.feature.type === 'OVERRIDE'
       ) {
         allFeatures.push({
           source: classEntity.name,

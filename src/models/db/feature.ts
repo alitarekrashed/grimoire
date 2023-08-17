@@ -12,12 +12,13 @@ export type FeatureType =
   | 'PROFICIENCY'
   | 'LANGUAGE'
   | 'MODIFIER'
+  | 'OVERRIDE'
   | 'FEAT'
   | 'SKILL_SELECTION'
   | 'CLASS_FEAT_SELECTION'
 export type CalculationFormula = 'half-level'
 export type ConditionalOperator = 'has'
-export type ModifierType = 'Perception' | 'Speed'
+export type ModifierType = 'Perception' | 'Speed' | 'Attack'
 
 export interface Feature {
   type: FeatureType
@@ -27,6 +28,12 @@ export interface Feature {
 export interface MiscFeatureValue {
   name?: string
   value: string
+}
+
+export interface OverrideFeatureValue {
+  type: 'Attack'
+  name: string
+  dice: string
 }
 
 export interface ModifierFeatureValue {
