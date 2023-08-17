@@ -182,12 +182,11 @@ export default function CharacterBuilderModal({
                         .map((value, index) => {
                           return (
                             <AncestryFeatChoiceModal
-                              key={`${value.source}-${index}`}
+                              key={`${value.source}-${value.feature}-${index}`}
                               existingFeat={value}
                               existingFeatName={
                                 value.feature.value ? value.feature.value : ''
                               }
-                              traits={playerCharacter.getTraits()}
                               onChange={handleFeatureUpdate('ANCESTRY', 'FEAT')}
                             ></AncestryFeatChoiceModal>
                           )
@@ -225,11 +224,6 @@ export default function CharacterBuilderModal({
                             <ClassFeatChoiceModal
                               key={`${value.source}-${index}`}
                               existingFeat={value}
-                              traits={[
-                                playerCharacter
-                                  .getClassEntity()
-                                  .name.toLowerCase(),
-                              ]}
                               onChange={handleFeatureUpdate(
                                 'CLASS',
                                 'CLASS_FEAT_SELECTION'
