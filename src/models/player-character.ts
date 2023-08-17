@@ -780,7 +780,7 @@ export class PlayerCharacter {
   }
 
   // TODO this needs some love/cleanup
-  public getArmorClass(): ModifierValue[] {
+  public getArmorClass(): { name: string; value: ModifierValue[] } {
     const result: ModifierValue[] = []
     result.push({
       value: 10,
@@ -863,7 +863,10 @@ export class PlayerCharacter {
         source: `AC Bonus (${armor.name})`,
       })
     }
-    return result
+    return {
+      name: armor.name,
+      value: result,
+    }
   }
 
   public getAttacks(): CharacterAttack[] {
