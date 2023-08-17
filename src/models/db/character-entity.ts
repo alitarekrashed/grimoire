@@ -50,8 +50,8 @@ export interface ArmorDefinition {
   speed_penalty?: number
 }
 
-export type WeaponCategory = 'unarmed'
-export type WeaponGroup = 'brawling'
+export type WeaponCategory = 'unarmed' | 'martial'
+export type WeaponGroup = 'brawling' | 'sword'
 export type WeaponType = 'melee' | 'ranged'
 export type DamageType = 'bludgeoning' | 'piercing'
 

@@ -12,8 +12,10 @@ import {
   CharacterArmor,
   CharacterEntity,
   CharacterWeapon,
+  WeaponCategory,
   WeaponDamageDefinition,
   WeaponDefinition,
+  WeaponGroup,
 } from './db/character-entity'
 import { ClassEntity } from './db/class-entity'
 import { Feat } from './db/feat'
@@ -39,6 +41,7 @@ import { Weapon } from './db/equipment'
 
 export interface CharacterAttack {
   name: string
+  group: WeaponGroup
   damage: WeaponDamageDefinition[]
   attackBonus: ModifierValue[][]
   damageBonus: number
@@ -930,6 +933,7 @@ export class PlayerCharacter {
       ],
       damage: weapon.definition.damage,
       damageBonus: this.attributes.Strength,
+      group: weapon.definition.group,
     }
   }
 
