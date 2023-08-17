@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb'
 import { SourcedFeature } from '../player-character'
 import { Attribute } from './ancestry'
+import { Armor, Equipment } from './equipment'
 
 export interface CharacterEntity {
   _id: string | ObjectId
@@ -13,6 +14,16 @@ export interface CharacterEntity {
   class_id: string
   heritage_id: string
   features: { '1': SourcedFeature[] }
+  equipped_armor: string
+  equipment: CharacterEquipment[]
+}
+
+export type WithNameAndId = { name: string; id: string }
+
+export interface CharacterEquipment {
+  name: string
+  id: string
+  item: Equipment
 }
 
 export interface CharacterAttributes {
@@ -21,18 +32,6 @@ export interface CharacterAttributes {
   background: Attribute[]
   class: Attribute[]
   level_1: Attribute[]
-}
-
-export interface CharacterArmor {
-  name: string
-  traits: string[]
-  definition: ArmorDefinition
-}
-
-export interface CharacterWeapon {
-  name: string
-  traits: string[]
-  definition: WeaponDefinition
 }
 
 export type ArmorCategory = 'unarmored' | 'light' | 'medium' | 'heavy'
@@ -48,8 +47,8 @@ export interface ArmorDefinition {
   speed_penalty?: number
 }
 
-export type WeaponCategory = 'unarmed'
-export type WeaponGroup = 'brawling'
+export type WeaponCategory = 'unarmed' | 'martial'
+export type WeaponGroup = 'brawling' | 'sword' | 'firearm'
 export type WeaponType = 'melee' | 'ranged'
 export type DamageType = 'bludgeoning' | 'piercing'
 
@@ -57,7 +56,9 @@ export interface WeaponDefinition {
   category: WeaponCategory
   group: WeaponGroup
   type: WeaponType
-  damage: WeaponDamageDefinition[]
+  damage: WeaponDamageDefinition
+  reload?: number
+  range?: number
 }
 
 export interface WeaponDamageDefinition {

@@ -1,5 +1,5 @@
 import { ModifierValue } from '@/components/calculated-display/calculated-display'
-import { cloneDeep, eq } from 'lodash'
+import { cloneDeep, over } from 'lodash'
 import { Ancestry, Attribute } from './db/ancestry'
 import {
   Background,
@@ -13,14 +13,20 @@ import {
   CharacterEntity,
   CharacterWeapon,
   WeaponDamageDefinition,
+  WeaponDefinition,
+  WeaponGroup,
+  WeaponType,
+  WithNameAndId,
 } from './db/character-entity'
 import { ClassEntity } from './db/class-entity'
+import { Armor, Weapon } from './db/equipment'
 import { Feat } from './db/feat'
 import {
   ConditionalFeatureValue,
   Feature,
   FeatureType,
   ModifierFeatureValue,
+  OverrideFeatureValue,
   ResistanceFeatureValue,
   SkillSelectionFeatureValue,
   featureMatcher,
@@ -34,6 +40,29 @@ import {
   SkillType,
   generateUntrainedSkillMap,
 } from './statistic'
+
+export interface CharacterAttack {
+  name: string
+  type: WeaponType
+  group: WeaponGroup
+  damage: WeaponDamageDefinition
+  attackBonus: ModifierValue[][]
+  damageBonus: number
+  range?: number
+  reload?: number
+}
+
+export interface CharacterArmor {
+  name: string
+  traits: string[]
+  definition: ArmorDefinition
+}
+
+export interface CharacterWeapon {
+  name: string
+  traits: string[]
+  definition: WeaponDefinition
+}
 
 export interface Attributes {
   Strength: number
@@ -751,26 +780,39 @@ export class PlayerCharacter {
   }
 
   // TODO this needs some love/cleanup
-  public getArmorClass(): ModifierValue[] {
+  public getArmorClass(): { name: string; value: ModifierValue[] } {
     const result: ModifierValue[] = []
     result.push({
       value: 10,
       source: 'Base',
     })
 
-    const equippedArmor: CharacterArmor = {
-      name: 'unarmored',
-      traits: [],
-      definition: {
-        category: 'unarmored',
-        group: 'cloth',
-        ac_bonus: 0,
-      },
-    }
+    const equipped: (WithNameAndId & { item: Armor }) | undefined =
+      this.character.equipment
+        .filter((val) => val.item.category === 'Armor')
+        .find((val) => val.id === this.character.equipped_armor) as
+        | (WithNameAndId & { item: Armor })
+        | undefined
+
+    const armor: CharacterArmor = equipped
+      ? {
+          name: equipped.name,
+          traits: equipped.item.traits!,
+          definition: equipped.item.properties,
+        }
+      : {
+          name: 'unarmored',
+          traits: [],
+          definition: {
+            category: 'unarmored',
+            group: 'cloth',
+            ac_bonus: 0,
+          },
+        }
 
     if (
-      equippedArmor.definition.dex_cap === undefined ||
-      this.attributes.Dexterity <= equippedArmor.definition.dex_cap
+      armor.definition.dex_cap === undefined ||
+      this.attributes.Dexterity <= armor.definition.dex_cap
     ) {
       result.push({
         value: this.attributes.Dexterity,
@@ -778,8 +820,8 @@ export class PlayerCharacter {
       })
     } else {
       result.push({
-        value: equippedArmor.definition.dex_cap,
-        source: `Dexterity (capped from ${equippedArmor.name})`,
+        value: armor.definition.dex_cap,
+        source: `Dexterity (capped from ${armor.name})`,
       })
     }
 
@@ -792,20 +834,18 @@ export class PlayerCharacter {
     }
 
     const category =
-      equippedArmor.definition.category === 'unarmored'
+      armor.definition.category === 'unarmored'
         ? 'unarmored defense'
-        : equippedArmor.definition.category
+        : armor.definition.category
     if (defenseProfs.has(category)) {
       if (this.greaterThan(defenseProfs.get(category)!, minimumRank)) {
         minimumRank = defenseProfs.get(category)!
       }
     }
 
-    if (defenseProfs.has(equippedArmor.name)) {
-      if (
-        this.greaterThan(defenseProfs.get(equippedArmor.name)!, minimumRank)
-      ) {
-        minimumRank = defenseProfs.get(equippedArmor.name)!
+    if (defenseProfs.has(armor.name)) {
+      if (this.greaterThan(defenseProfs.get(armor.name)!, minimumRank)) {
+        minimumRank = defenseProfs.get(armor.name)!
       }
     }
 
@@ -813,56 +853,99 @@ export class PlayerCharacter {
       result.push({
         value: RankModifierMap[minimumRank] + this.level,
         // TODO use the actual set one, not always the category
-        source: `Proficiency (${equippedArmor.definition.category})`,
+        source: `Proficiency (${armor.definition.category})`,
       })
     }
 
-    if (equippedArmor.definition.ac_bonus) {
+    if (armor.definition.ac_bonus) {
       result.push({
-        value: equippedArmor.definition.ac_bonus,
-        source: `AC Bonus (${equippedArmor.name})`,
+        value: armor.definition.ac_bonus,
+        source: `AC Bonus (${armor.name})`,
       })
     }
-    return result
+    return {
+      name: armor.name,
+      value: result,
+    }
   }
 
-  // TODO this needs some love/cleanup
-  public getAttack(): {
-    name: string
-    damage: WeaponDamageDefinition[]
-    attackBonus: ModifierValue[][]
-    damageBonus: number
-  } {
-    const attackBonus: ModifierValue[] = []
-
-    const fist: CharacterWeapon = {
-      name: 'fist',
-      traits: ['agile', 'finesse', 'nonlethal', 'unarmed'],
-      definition: {
-        category: 'unarmed',
-        group: 'brawling',
-        type: 'melee',
-        damage: [
-          {
+  public getAttacks(): CharacterAttack[] {
+    const weapons: CharacterWeapon[] = [
+      {
+        name: 'fist',
+        traits: ['agile', 'finesse', 'nonlethal', 'unarmed'],
+        definition: {
+          category: 'unarmed',
+          group: 'brawling',
+          type: 'melee',
+          damage: {
             type: 'bludgeoning',
             dice: '1d4',
           },
-        ],
+        },
       },
-    }
+    ]
 
-    if (
-      fist.traits.includes('finesse') &&
-      this.attributes.Dexterity > this.attributes.Strength
-    ) {
+    weapons.push(
+      ...this.character.equipment
+        .filter((value) => value.item.category === 'Weapon')
+        .map((value) => {
+          const weapon = value.item as Weapon
+          return {
+            name: value.name ?? weapon.name,
+            traits: weapon.traits!,
+            definition: weapon.properties,
+          }
+        })
+    )
+
+    const overrideAttacks = this.features
+      .filter(
+        (val) =>
+          val.feature.type === 'OVERRIDE' && val.feature.value.type === 'Attack'
+      )
+      .map((val) => val.feature.value as OverrideFeatureValue)
+
+    weapons
+      .filter(
+        (weapon) =>
+          overrideAttacks.findIndex(
+            (override) => override.name === weapon.name
+          ) > -1
+      )
+      .forEach((weapon) => {
+        const override = overrideAttacks.find(
+          (override) => override.name === weapon.name
+        )!
+        weapon.definition.damage.dice = override.dice
+      })
+
+    return weapons.map((weapon) => this.buildAttack(weapon))
+  }
+
+  // TODO this could use some love
+  private buildAttack(weapon: CharacterWeapon): CharacterAttack {
+    const attackBonus: ModifierValue[] = []
+
+    if (weapon.definition.type === 'melee') {
+      if (
+        weapon.traits.includes('finesse') &&
+        this.attributes.Dexterity > this.attributes.Strength
+      ) {
+        attackBonus.push({
+          value: this.attributes.Dexterity,
+          source: 'Dexterity',
+        })
+      } else {
+        attackBonus.push({
+          value: this.attributes.Strength,
+          source: 'Strength',
+        })
+      }
+    } else {
       attackBonus.push({
         value: this.attributes.Dexterity,
         source: 'Dexterity',
-      })
-    } else {
-      attackBonus.push({
-        value: this.attributes.Strength,
-        source: 'Strength',
       })
     }
 
@@ -874,20 +957,20 @@ export class PlayerCharacter {
       }
     }
 
-    if (weaponProfs.has(fist.definition.category)) {
+    if (weaponProfs.has(weapon.definition.category)) {
       if (
         this.greaterThan(
-          weaponProfs.get(fist.definition.category)!,
+          weaponProfs.get(weapon.definition.category)!,
           minimumRank
         )
       ) {
-        minimumRank = weaponProfs.get(fist.definition.category)!
+        minimumRank = weaponProfs.get(weapon.definition.category)!
       }
     }
 
-    if (weaponProfs.has(fist.name)) {
-      if (this.greaterThan(weaponProfs.get(fist.name)!, minimumRank)) {
-        minimumRank = weaponProfs.get(fist.name)!
+    if (weaponProfs.has(weapon.name)) {
+      if (this.greaterThan(weaponProfs.get(weapon.name)!, minimumRank)) {
+        minimumRank = weaponProfs.get(weapon.name)!
       }
     }
 
@@ -895,19 +978,24 @@ export class PlayerCharacter {
       attackBonus.push({
         value: RankModifierMap[minimumRank] + this.level,
         // TODO use the actual set one, not always the category
-        source: `Proficiency (${fist.definition.category})`,
+        source: `Proficiency (${weapon.definition.category})`,
       })
     }
 
     return {
-      name: fist.name,
+      name: weapon.name,
+      type: weapon.definition.type,
       attackBonus: [
         attackBonus,
         [...attackBonus, { value: -4, source: 'MAP' }],
         [...attackBonus, { value: -8, source: 'MAP' }],
       ],
-      damage: fist.definition.damage,
-      damageBonus: this.attributes.Strength,
+      damage: weapon.definition.damage,
+      damageBonus:
+        weapon.definition.type === 'melee' ? this.attributes.Strength : 0,
+      group: weapon.definition.group,
+      reload: weapon.definition.reload,
+      range: weapon.definition.range,
     }
   }
 
@@ -1165,7 +1253,8 @@ export class PlayerCharacter {
       } else if (
         sourced.feature.type === 'PROFICIENCY' ||
         sourced.feature.type === 'ACTION' ||
-        sourced.feature.type === 'MISC'
+        sourced.feature.type === 'MISC' ||
+        sourced.feature.type === 'OVERRIDE'
       ) {
         allFeatures.push({
           source: classEntity.name,

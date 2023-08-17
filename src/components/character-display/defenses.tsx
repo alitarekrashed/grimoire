@@ -15,6 +15,7 @@ import { PlayerCharacterContext } from './player-character-context'
 export function Defenses() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
 
+  const armorClass = playerCharacter.getArmorClass()
   return (
     playerCharacter && (
       <CharacterSheetBox>
@@ -30,8 +31,11 @@ export function Defenses() {
                   ></FontAwesomeIcon>
                 </span>
                 <CalculatedDisplay
-                  values={playerCharacter.getArmorClass()}
+                  values={armorClass.value}
                 ></CalculatedDisplay>
+              </div>
+              <div className="text-[9px] font-thin">
+                <span>{armorClass.name}</span>
               </div>
               <div className="text-sm font-medium">Armor Class</div>
             </div>
