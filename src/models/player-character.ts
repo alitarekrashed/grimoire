@@ -13,6 +13,7 @@ import {
   CharacterEntity,
   CharacterWeapon,
   WeaponDamageDefinition,
+  WeaponDefinition,
 } from './db/character-entity'
 import { ClassEntity } from './db/class-entity'
 import { Feat } from './db/feat'
@@ -34,6 +35,14 @@ import {
   SkillType,
   generateUntrainedSkillMap,
 } from './statistic'
+import { Weapon } from './db/equipment'
+
+export interface CharacterAttack {
+  name: string
+  damage: WeaponDamageDefinition[]
+  attackBonus: ModifierValue[][]
+  damageBonus: number
+}
 
 export interface Attributes {
   Strength: number
@@ -826,33 +835,46 @@ export class PlayerCharacter {
     return result
   }
 
-  // TODO this needs some love/cleanup
-  public getAttack(): {
-    name: string
-    damage: WeaponDamageDefinition[]
-    attackBonus: ModifierValue[][]
-    damageBonus: number
-  } {
+  public getAttacks(): CharacterAttack[] {
+    const weapons: CharacterWeapon[] = [
+      {
+        name: 'fist',
+        traits: ['agile', 'finesse', 'nonlethal', 'unarmed'],
+        definition: {
+          category: 'unarmed',
+          group: 'brawling',
+          type: 'melee',
+          damage: [
+            {
+              type: 'bludgeoning',
+              dice: '1d4',
+            },
+          ],
+        },
+      },
+    ]
+
+    weapons.push(
+      ...this.character.equipment
+        .filter((value) => value.category === 'Weapon')
+        .map((item) => {
+          const weapon = item as Weapon
+          return {
+            name: weapon.name,
+            traits: weapon.traits!,
+            definition: weapon.properties,
+          }
+        })
+    )
+    return weapons.map((weapon) => this.buildAttack(weapon))
+  }
+
+  // TODO this could use some love
+  private buildAttack(weapon: CharacterWeapon): CharacterAttack {
     const attackBonus: ModifierValue[] = []
 
-    const fist: CharacterWeapon = {
-      name: 'fist',
-      traits: ['agile', 'finesse', 'nonlethal', 'unarmed'],
-      definition: {
-        category: 'unarmed',
-        group: 'brawling',
-        type: 'melee',
-        damage: [
-          {
-            type: 'bludgeoning',
-            dice: '1d4',
-          },
-        ],
-      },
-    }
-
     if (
-      fist.traits.includes('finesse') &&
+      weapon.traits.includes('finesse') &&
       this.attributes.Dexterity > this.attributes.Strength
     ) {
       attackBonus.push({
@@ -874,20 +896,20 @@ export class PlayerCharacter {
       }
     }
 
-    if (weaponProfs.has(fist.definition.category)) {
+    if (weaponProfs.has(weapon.definition.category)) {
       if (
         this.greaterThan(
-          weaponProfs.get(fist.definition.category)!,
+          weaponProfs.get(weapon.definition.category)!,
           minimumRank
         )
       ) {
-        minimumRank = weaponProfs.get(fist.definition.category)!
+        minimumRank = weaponProfs.get(weapon.definition.category)!
       }
     }
 
-    if (weaponProfs.has(fist.name)) {
-      if (this.greaterThan(weaponProfs.get(fist.name)!, minimumRank)) {
-        minimumRank = weaponProfs.get(fist.name)!
+    if (weaponProfs.has(weapon.name)) {
+      if (this.greaterThan(weaponProfs.get(weapon.name)!, minimumRank)) {
+        minimumRank = weaponProfs.get(weapon.name)!
       }
     }
 
@@ -895,18 +917,18 @@ export class PlayerCharacter {
       attackBonus.push({
         value: RankModifierMap[minimumRank] + this.level,
         // TODO use the actual set one, not always the category
-        source: `Proficiency (${fist.definition.category})`,
+        source: `Proficiency (${weapon.definition.category})`,
       })
     }
 
     return {
-      name: fist.name,
+      name: weapon.name,
       attackBonus: [
         attackBonus,
         [...attackBonus, { value: -4, source: 'MAP' }],
         [...attackBonus, { value: -8, source: 'MAP' }],
       ],
-      damage: fist.definition.damage,
+      damage: weapon.definition.damage,
       damageBonus: this.attributes.Strength,
     }
   }

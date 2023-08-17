@@ -8,49 +8,45 @@ import { PlayerCharacterContext } from './player-character-context'
 export function Attacks() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
 
-  const getAttacks = () => {
-    return {
-      fist: playerCharacter!.getAttack(),
-    }
-  }
-
   return (
     playerCharacter && (
       <CharacterSheetBox>
         <div className="flex flex-col gap-1 h-fit">
           <div className="mb-1 text-base font-semibold">Attacks</div>
-          <div className="flex gap-2 flex-row h-full">
-            <div className="flex gap-2">
-              <FontAwesomeIcon
-                icon={faHandBackFist}
-                rotation={90}
-              ></FontAwesomeIcon>
-              <span>{getAttacks().fist.name}</span>
-              <span>
-                {getAttacks().fist.attackBonus.map((bonus, index) => (
-                  <span key={index}>
-                    <CalculatedDisplay
-                      values={bonus}
-                      includeOperator={true}
-                    ></CalculatedDisplay>
-                    {index < getAttacks().fist.attackBonus.length - 1 && '/'}
-                  </span>
-                ))}
-              </span>
+          <div className="flex gap-2 flex-col h-full">
+            {playerCharacter.getAttacks().map((attack) => (
+              <div className="flex gap-2">
+                <FontAwesomeIcon
+                  icon={faHandBackFist}
+                  rotation={90}
+                ></FontAwesomeIcon>
+                <span>{attack.name}</span>
+                <span>
+                  {attack.attackBonus.map((bonus, index) => (
+                    <span key={index}>
+                      <CalculatedDisplay
+                        values={bonus}
+                        includeOperator={true}
+                      ></CalculatedDisplay>
+                      {index < attack.attackBonus.length - 1 && '/'}
+                    </span>
+                  ))}
+                </span>
 
-              <span></span>
-              <span>
-                {getAttacks().fist.damage.map((value, index) => (
-                  <span key={`${value.type}-${index}`}>
-                    {value.dice}
-                    {index === 0 &&
-                      getAttacks().fist.damageBonus !== 0 &&
-                      ' + ' + getAttacks().fist.damageBonus}
-                    {` ${value.type}`}
-                  </span>
-                ))}
-              </span>
-            </div>
+                <span></span>
+                <span>
+                  {attack.damage.map((value, index) => (
+                    <span key={`${value.type}-${index}`}>
+                      {value.dice}
+                      {index === 0 &&
+                        attack.damageBonus !== 0 &&
+                        ' + ' + attack.damageBonus}
+                      {` ${value.type}`}
+                    </span>
+                  ))}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </CharacterSheetBox>

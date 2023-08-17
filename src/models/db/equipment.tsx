@@ -1,5 +1,5 @@
 import { Activation, SavingThrow } from './activation'
-import { ArmorDefinition } from './character-entity'
+import { ArmorDefinition, WeaponDefinition } from './character-entity'
 import { EntityModel } from './entity-model'
 
 export type EquipmentCategory =
@@ -9,6 +9,8 @@ export type EquipmentCategory =
   | 'Fulu'
   | 'Alchemical Foods'
   | 'Held Item'
+  | 'Weapon'
+  | 'Armor'
 export type Bulk = 'L'
 export type EquipmentUsage =
   | 'held in 1 hand'
@@ -46,6 +48,10 @@ export interface EquipmentWithVariants extends EntityModel {
 
 export interface Armor extends Equipment {
   properties: ArmorDefinition
+}
+
+export interface Weapon extends Equipment {
+  properties: WeaponDefinition
 }
 
 export interface Currency {
