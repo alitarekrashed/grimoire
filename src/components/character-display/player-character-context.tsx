@@ -1,21 +1,22 @@
 import { PlayerCharacter } from '@/models/player-character'
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 
 const DEFAULT_VALUE: {
-  playerCharacter: PlayerCharacter | undefined
+  playerCharacter: PlayerCharacter
   updatePlayerCharacter: (val: PlayerCharacter) => void
 } = {
-  playerCharacter: undefined,
+  playerCharacter: undefined!,
   updatePlayerCharacter: () => null,
 }
 
 export const PlayerCharacterContext = React.createContext(DEFAULT_VALUE)
 
 export function PlayerCharacterProvider(props: any) {
-  const [playerCharacter, setPlayerCharacter] = useState<PlayerCharacter>()
+  const [playerCharacter, setPlayerCharacter] = useState<PlayerCharacter>(
+    undefined!
+  )
 
   const updatePlayerCharacter = (val: PlayerCharacter) => {
-    console.log(val)
     setPlayerCharacter(val)
   }
 

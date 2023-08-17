@@ -7,7 +7,10 @@ import { TraitsList } from '../card/traits-list'
 import CharacterBuilderModal from '../character-builder/character-builder'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 import { CharacterSheetBox } from './character-sheet-box'
-import { PlayerCharacterContext } from './player-character-context'
+import {
+  PlayerCharacterContext,
+  PlayerCharacterProvider,
+} from './player-character-context'
 
 export function CharacterHeader({
   onBuilderClose,
@@ -29,18 +32,20 @@ export function CharacterHeader({
             } Level ${playerCharacter.getCharacter().level}`}</div>
             <div>
               <span className="align-bottom">
-                <CharacterBuilderModal
-                  trigger={
-                    <button
-                      className="text-[9px] px-2 border rounded-md bg-stone-800 hover:bg-stone-600"
-                      tabIndex={0}
-                    >
-                      MANAGE
-                    </button>
-                  }
-                  playerCharacter={playerCharacter}
-                  onClose={onBuilderClose}
-                ></CharacterBuilderModal>
+                <PlayerCharacterProvider>
+                  <CharacterBuilderModal
+                    trigger={
+                      <button
+                        className="text-[9px] px-2 border rounded-md bg-stone-800 hover:bg-stone-600"
+                        tabIndex={0}
+                      >
+                        MANAGE
+                      </button>
+                    }
+                    initialValue={playerCharacter}
+                    onClose={onBuilderClose}
+                  ></CharacterBuilderModal>
+                </PlayerCharacterProvider>
               </span>
             </div>
           </div>
