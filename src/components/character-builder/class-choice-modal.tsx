@@ -1,14 +1,14 @@
 import { ClassEntity } from '@/models/db/class-entity'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { FeatureChoiceModal } from './feature-choice-modal'
+import { PlayerCharacterContext } from '../character-display/player-character-context'
 
 export function ClassChoiceModal({
-  classId,
   onClassChange,
 }: {
-  classId: string
   onClassChange: (classEntity: classEntity) => void
 }) {
+  const { playerCharacter } = useContext(PlayerCharacterContext)
   const [classes, setClasses] = useState<ClassEntity[]>([])
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export function ClassChoiceModal({
       <FeatureChoiceModal
         label="Class"
         entities={classes}
-        initialId={classId}
+        initialId={playerCharacter.getClassEntity()._id.toString()}
         onSave={updateClass}
       ></FeatureChoiceModal>
     </>

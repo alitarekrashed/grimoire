@@ -1,14 +1,14 @@
 import { Background } from '@/models/db/background'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { FeatureChoiceModal } from './feature-choice-modal'
+import { PlayerCharacterContext } from '../character-display/player-character-context'
 
 export function BackgroundChoiceModal({
-  backgroundId,
   onBackgroundChange,
 }: {
-  backgroundId: string
   onBackgroundChange: (backgroundId: string) => void
 }) {
+  const { playerCharacter } = useContext(PlayerCharacterContext)
   const [backgrounds, setBackgrounds] = useState<Background[]>([])
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export function BackgroundChoiceModal({
       <FeatureChoiceModal
         label="Background"
         entities={backgrounds}
-        initialId={backgroundId}
+        initialId={playerCharacter.getBackgroundId()}
         onSave={updateBackground}
       ></FeatureChoiceModal>
     </>

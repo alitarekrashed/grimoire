@@ -1,28 +1,30 @@
-import { Ancestry } from '@/models/db/ancestry'
-import { useEffect, useState } from 'react'
-import { FeatureChoiceModal } from './feature-choice-modal'
 import { Heritage } from '@/models/db/heritage'
+import { useContext, useEffect, useState } from 'react'
+import { PlayerCharacterContext } from '../character-display/player-character-context'
+import { FeatureChoiceModal } from './feature-choice-modal'
 
 export function HeritageChoiceModal({
-  heritageId,
-  ancestry,
   onHeritageChange,
 }: {
-  heritageId: string
-  ancestry: Ancestry
   onHeritageChange: (heritageId: string) => void
 }) {
+  const { playerCharacter } = useContext(PlayerCharacterContext)
   const [heritages, setHeritages] = useState<Heritage[]>([])
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/heritages?ancestry=${ancestry.name}`, {
-      cache: 'no-store',
-    })
+    fetch(
+      `http://localhost:3000/api/heritages?ancestry=${
+        playerCharacter.getAncestry().name
+      }`,
+      {
+        cache: 'no-store',
+      }
+    )
       .then((result) => result.json())
       .then((heritages) => {
         setHeritages(heritages)
       })
-  }, [ancestry._id])
+  }, [playerCharacter.getAncestry()._id])
 
   const updateHeritage = (heritage: Heritage) => {
     onHeritageChange(heritage._id.toString())
@@ -33,7 +35,7 @@ export function HeritageChoiceModal({
       <FeatureChoiceModal
         label="Heritage"
         entities={heritages}
-        initialId={heritageId}
+        initialId={playerCharacter.getHeritageId()}
         onSave={updateHeritage}
       ></FeatureChoiceModal>
     </>

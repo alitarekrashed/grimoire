@@ -7,7 +7,8 @@ import {
 import { ClassEntity } from '@/models/db/class-entity'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { PlayerCharacterContext } from '../character-display/player-character-context'
 import { Modal } from '../modal/modal'
 
 const ATTRIBUTES: Attribute[] = [
@@ -130,24 +131,27 @@ function getLevelAttributeChoices(character: CharacterEntity) {
 
 export function AttributesModal({
   onAttributeUpdate,
-  characterEntity,
-  ancestry,
-  background,
-  classEntity,
 }: {
   onAttributeUpdate: (character: CharacterEntity) => void
-  characterEntity: CharacterEntity
-  ancestry: Ancestry
-  background: Background
-  classEntity: ClassEntity
 }) {
-  const [modifiedCharacter, setModifiedCharacter] =
-    useState<CharacterEntity>(characterEntity)
+  const { playerCharacter } = useContext(PlayerCharacterContext)
+  const [modifiedCharacter, setModifiedCharacter] = useState<CharacterEntity>(
+    playerCharacter.getCharacter()
+  )
 
   const [choices, setChoices] = useState<AttributeOptions>({
-    ancestry: getAncestryAttributeChoices(modifiedCharacter, ancestry),
-    background: getBackgroundAttributeChoices(modifiedCharacter, background),
-    class: getClassAttributeChoices(modifiedCharacter, classEntity),
+    ancestry: getAncestryAttributeChoices(
+      modifiedCharacter,
+      playerCharacter.getAncestry()
+    ),
+    background: getBackgroundAttributeChoices(
+      modifiedCharacter,
+      playerCharacter.getBackground()
+    ),
+    class: getClassAttributeChoices(
+      modifiedCharacter,
+      playerCharacter.getClassEntity()
+    ),
     level_1: getLevelAttributeChoices(modifiedCharacter),
   })
 
@@ -155,7 +159,7 @@ export function AttributesModal({
   let setCount = 0
   ;['ancestry', 'background', 'class', 'level_1'].forEach((key) => {
     ;(
-      characterEntity.attributes[
+      playerCharacter.getCharacter().attributes[
         key as keyof CharacterAttributes
       ] as Attribute[]
     ).forEach((attribute) => {
@@ -175,9 +179,18 @@ export function AttributesModal({
 
   useEffect(() => {
     setChoices({
-      ancestry: getAncestryAttributeChoices(modifiedCharacter, ancestry),
-      background: getBackgroundAttributeChoices(modifiedCharacter, background),
-      class: getClassAttributeChoices(modifiedCharacter, classEntity),
+      ancestry: getAncestryAttributeChoices(
+        modifiedCharacter,
+        playerCharacter.getAncestry()
+      ),
+      background: getBackgroundAttributeChoices(
+        modifiedCharacter,
+        playerCharacter.getBackground()
+      ),
+      class: getClassAttributeChoices(
+        modifiedCharacter,
+        playerCharacter.getClassEntity()
+      ),
       level_1: getLevelAttributeChoices(modifiedCharacter),
     })
   }, [modifiedCharacter])
@@ -340,7 +353,7 @@ export function AttributesModal({
         {
           label: 'Cancel',
           onClick: () => {
-            setModifiedCharacter(characterEntity)
+            setModifiedCharacter(playerCharacter.getCharacter())
           },
         },
       ]}

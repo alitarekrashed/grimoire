@@ -2,8 +2,9 @@ import { Ancestry } from '@/models/db/ancestry'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Modal } from '../modal/modal'
+import { PlayerCharacterContext } from '../character-display/player-character-context'
 
 function getAncestryLanguageChoices(
   knownLanguages: string[],
@@ -18,14 +19,13 @@ function getAncestryLanguageChoices(
 }
 
 export function LanguagesModal({
-  character,
   ancestry,
   onLanguagesUpdate,
 }: {
-  character: CharacterEntity
   ancestry: Ancestry
   onLanguagesUpdate: (languages: string[]) => void
 }) {
+  const { playerCharacter } = useContext(PlayerCharacterContext)
   const [modifiedCharacter, setModifiedCharacter] = useState<CharacterEntity>()
   const [choices, setChoices] = useState<string[]>([])
 
@@ -34,12 +34,12 @@ export function LanguagesModal({
   }, [modifiedCharacter])
 
   useEffect(() => {
-    setModifiedCharacter(cloneDeep(character))
-  }, [character])
+    setModifiedCharacter(cloneDeep(playerCharacter.getCharacter()))
+  }, [playerCharacter.getCharacter()])
 
   let totalCount = 0
   let setCount = 0
-  character.languages.forEach((language) => {
+  playerCharacter.getCharacter().languages.forEach((language) => {
     totalCount += 1
     setCount += language ? 1 : 0
   })
@@ -99,7 +99,7 @@ export function LanguagesModal({
         {
           label: 'Cancel',
           onClick: () => {
-            onLanguagesUpdate(character.languages)
+            onLanguagesUpdate(playerCharacter.getCharacter().languages)
           },
         },
       ]}

@@ -1,14 +1,14 @@
 import { Ancestry } from '@/models/db/ancestry'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { FeatureChoiceModal } from './feature-choice-modal'
+import { PlayerCharacterContext } from '../character-display/player-character-context'
 
 export function AncestryChoiceModal({
-  ancestryId,
   onAncestryEdit,
 }: {
-  ancestryId: string
   onAncestryEdit: (ancestryId: string) => void
 }) {
+  const { playerCharacter } = useContext(PlayerCharacterContext)
   const [ancestries, setAncestries] = useState<Ancestry[]>([])
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export function AncestryChoiceModal({
       <FeatureChoiceModal
         label="Ancestry"
         entities={ancestries}
-        initialId={ancestryId}
+        initialId={playerCharacter.getAncestryId()}
         onSave={updateAncestry}
       ></FeatureChoiceModal>
     </>
