@@ -144,14 +144,11 @@ export default function CharacterBuilderModal({
                     </div>
                     <div className="mr-2">
                       <AncestryChoiceModal
-                        ancestryId={playerCharacter.getAncestryId()}
                         onAncestryEdit={handleAncestryChange}
                       ></AncestryChoiceModal>
                     </div>
                     <div className="mr-2">
                       <HeritageChoiceModal
-                        heritageId={playerCharacter.getHeritageId()}
-                        ancestry={playerCharacter.getAncestry()}
                         onHeritageChange={handleHeritageChange}
                       ></HeritageChoiceModal>
                     </div>
