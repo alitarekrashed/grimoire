@@ -37,7 +37,7 @@ export default function CalculatedDisplay({
               {values.map((value: ModifierValue, index: number) => (
                 <span key={`${value.source}-${value.type}`}>
                   {index > 0 && (value.value >= 0 ? ' + ' : ' - ')}
-                  {value.value}
+                  {Math.abs(value.value)}
                   &nbsp;[{value.source}]
                 </span>
               ))}
