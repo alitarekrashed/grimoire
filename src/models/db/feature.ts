@@ -18,7 +18,7 @@ export type FeatureType =
   | 'CLASS_FEAT_SELECTION'
 export type CalculationFormula = 'half-level'
 export type ConditionalOperator = 'has'
-export type ModifierType = 'Perception' | 'Speed' | 'Attack'
+export type ModifierType = 'Perception' | 'Speed' | 'AttackDamage'
 
 export interface Feature {
   type: FeatureType
@@ -39,6 +39,7 @@ export interface OverrideFeatureValue {
 export interface ModifierFeatureValue {
   type: ModifierType
   condition?: 'string'
+  context?: any
   modifier: {
     value: number
     type?: 'circumstance'

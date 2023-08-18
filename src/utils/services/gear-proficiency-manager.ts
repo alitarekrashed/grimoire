@@ -5,7 +5,7 @@ import {
   WeaponProficiencyValue,
 } from '@/models/db/background'
 import { CharacterEquipment, WithNameAndId } from '@/models/db/character-entity'
-import { Armor } from '@/models/db/equipment'
+import { Armor, Weapon } from '@/models/db/equipment'
 import { CharacterArmor, CharacterWeapon } from '@/models/player-character'
 
 export const FIST_WEAPON: CharacterWeapon = {
@@ -117,11 +117,18 @@ export class GearProficiencyManager {
     let minimumRank: ProficiencyRank = 'untrained'
 
     this.attacks
-      .filter(
-        (proficiency) =>
+      .filter((proficiency) => {
+        if (proficiency.value.category && proficiency.value.group) {
+          return (
+            proficiency.value.category === category &&
+            proficiency.value.group === group
+          )
+        }
+        return (
           proficiency.value.category === category ||
           proficiency.value.group === group
-      )
+        )
+      })
       .forEach(
         (proficiency) =>
           (minimumRank = getGreaterThan(minimumRank, proficiency.rank))
