@@ -925,6 +925,7 @@ export class PlayerCharacter {
       })
       .map((val) => val.modifier.value)
 
+    // TODO ALI -- this should be a list of modifiers so it's clear where bonuses and stuff come from
     const additionalBonus = damageModifiers.reduce((prev, sum) => prev + sum, 0)
 
     return {
