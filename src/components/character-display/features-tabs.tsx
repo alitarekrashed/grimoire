@@ -143,7 +143,7 @@ export function FeaturesTabs() {
         </Tabs.Content>
         <Tabs.Content value="proficiencies">
           <span className="text-xs">
-            {['Weapon', 'Defense'].map((type: string, index) => {
+            {['Defense'].map((type: string, index) => {
               return (
                 <div key={`${type}-${index}`}>
                   <span className="font-semibold">{type}</span>

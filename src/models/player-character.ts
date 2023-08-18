@@ -5,7 +5,12 @@ import {
   Background,
   ProficiencyFeatureValue,
   ProficiencyRank,
+  ProficiencyType,
   RankModifierMap,
+  WeaponGroupProficiencies,
+  WeaponProficiencies,
+  WeaponProficiencyValue,
+  getUntrainedWeaponProficiences,
 } from './db/background'
 import {
   ArmorDefinition,
@@ -38,6 +43,7 @@ import {
   SkillType,
   generateUntrainedSkillMap,
 } from './statistic'
+import { GearProficiencyManager } from '@/utils/services/gear-proficiency-manager'
 
 export interface CharacterAttack {
   attackBonus: ModifierValue[][]
@@ -267,6 +273,7 @@ export class PlayerCharacter {
   private traits: string[] = []
   private hitpoints!: ModifierValue[]
   private features: SourcedFeature[] = []
+  private gearProficienyManager!: GearProficiencyManager
 
   private constructor(
     private character: CharacterEntity,
@@ -309,6 +316,12 @@ export class PlayerCharacter {
     }
 
     this.allFeatures.forEach((feature) => this.addFeatureToCharacter(feature))
+    this.gearProficienyManager = new GearProficiencyManager(
+      this.features
+        .filter((feature) => feature.feature.type === 'PROFICIENCY')
+        .filter((feature) => feature.feature.value.type === 'Weapon')
+        .map((val) => val.feature.value)
+    )
   }
 
   private convertSkillSelectionsIntoProficiencyFeaturesAndAddToCharacter(
@@ -634,7 +647,6 @@ export class PlayerCharacter {
     Skill: Map<SkillType, ProficiencyRank>
     Lore: Map<string, ProficiencyRank>
     SavingThrow: Map<SavingThrowType, ProficiencyRank>
-    Weapon: Map<string, ProficiencyRank>
     Defense: Map<string, ProficiencyRank>
     DifficultyClass: Map<string, ProficiencyRank>
   } {
@@ -643,7 +655,6 @@ export class PlayerCharacter {
       Skill: Map<string, ProficiencyRank>
       Lore: Map<string, ProficiencyRank>
       SavingThrow: Map<string, ProficiencyRank>
-      Weapon: Map<string, ProficiencyRank>
       Defense: Map<string, ProficiencyRank>
       DifficultyClass: Map<string, ProficiencyRank>
     } = {
@@ -651,7 +662,6 @@ export class PlayerCharacter {
       Skill: generateUntrainedSkillMap(),
       Lore: new Map<string, ProficiencyRank>(),
       SavingThrow: new Map<SavingThrowType, ProficiencyRank>(),
-      Weapon: new Map<string, ProficiencyRank>(),
       Defense: new Map<string, ProficiencyRank>(),
       DifficultyClass: new Map<string, ProficiencyRank>(),
     }
@@ -666,22 +676,19 @@ export class PlayerCharacter {
           return feature.feature.type === 'PROFICIENCY'
         }
       })
+      .filter((feature) => feature.feature.value.type !== 'Weapon')
       .forEach((sourced: SourcedFeature) => {
         const proficency = sourced.feature.value as ProficiencyFeatureValue
+        const type = proficency.type as Exclude<ProficiencyType, 'Weapon'>
         if (
           proficency.value &&
-          proficiencyMap[proficency.type].has(proficency.value) == false
+          proficiencyMap[type].has(proficency.value) == false
         ) {
-          proficiencyMap[proficency.type].set(proficency.value, proficency.rank)
+          proficiencyMap[type].set(proficency.value, proficency.rank)
         } else {
-          const existingRank = proficiencyMap[proficency.type].get(
-            proficency.value
-          )
+          const existingRank = proficiencyMap[type].get(proficency.value)
           if (this.greaterThan(proficency.rank, existingRank!)) {
-            proficiencyMap[proficency.type].set(
-              proficency.value,
-              proficency.rank
-            )
+            proficiencyMap[type].set(proficency.value, proficency.rank)
           }
         }
       })
@@ -690,7 +697,6 @@ export class PlayerCharacter {
       Skill: Map<SkillType, ProficiencyRank>
       Lore: Map<string, ProficiencyRank>
       SavingThrow: Map<SavingThrowType, ProficiencyRank>
-      Weapon: Map<string, ProficiencyRank>
       Defense: Map<string, ProficiencyRank>
       DifficultyClass: Map<string, ProficiencyRank>
     }
@@ -945,34 +951,11 @@ export class PlayerCharacter {
       })
     }
 
-    const weaponProfs = this.getProficiencies().Weapon
-    let minimumRank: ProficiencyRank = 'untrained'
-    if (weaponProfs.has('all weapons')) {
-      if (this.greaterThan(weaponProfs.get('all weapons')!, minimumRank)) {
-        minimumRank = weaponProfs.get('all weapons')!
-      }
-    }
-
-    if (weaponProfs.has(weapon.definition.category)) {
-      if (
-        this.greaterThan(
-          weaponProfs.get(weapon.definition.category)!,
-          minimumRank
-        )
-      ) {
-        minimumRank = weaponProfs.get(weapon.definition.category)!
-      }
-    }
-
-    if (weaponProfs.has(weapon.name)) {
-      if (this.greaterThan(weaponProfs.get(weapon.name)!, minimumRank)) {
-        minimumRank = weaponProfs.get(weapon.name)!
-      }
-    }
-
-    if (minimumRank && minimumRank !== 'untrained') {
+    const rank: ProficiencyRank =
+      this.gearProficienyManager.getProficiency(weapon)
+    if (rank !== 'untrained') {
       attackBonus.push({
-        value: RankModifierMap[minimumRank] + this.level,
+        value: RankModifierMap[rank] + this.level,
         // TODO use the actual set one, not always the category
         source: `Proficiency (${weapon.definition.category})`,
       })
