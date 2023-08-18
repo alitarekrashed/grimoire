@@ -19,6 +19,7 @@ import { LoadingSpinner } from '../loading-spinner/loading-spinner'
 import { ClassChoiceModal } from './class-choice-modal'
 import { PlayerCharacterContext } from '../character-display/player-character-context'
 import { Subclass } from '@/models/db/subclass'
+import { SubclassChoiceModal } from './subclass-choice-modal'
 
 export default function CharacterBuilderModal({
   trigger,
@@ -98,6 +99,14 @@ export default function CharacterBuilderModal({
   const handleClassChange = (classEntity: classEntity) => {
     setLoading(true)
     playerCharacter.updateClass(classEntity).then((val) => {
+      updatePlayerCharacter(val)
+      setLoading(false)
+    })
+  }
+
+  const handleSubclassChange = (subclass: Subclass) => {
+    setLoading(true)
+    playerCharacter.updateSubclass(subclass).then((val) => {
       updatePlayerCharacter(val)
       setLoading(false)
     })
@@ -233,34 +242,13 @@ export default function CharacterBuilderModal({
                           )
                         })}
                     </div>
-                    <div>
-                      <button
-                        onClick={() => {
-                          fetch(
-                            `http://localhost:3000/api/subclasses?class_name=${playerCharacter
-                              .getClassEntity()
-                              .name.toLowerCase()}`,
-                            {
-                              cache: 'no-store',
-                            }
-                          )
-                            .then((result) => result.json())
-                            .then((subclasses) => {
-                              const subclass: Subclass = subclasses[0]
-
-                              setLoading(true)
-                              playerCharacter
-                                .updateSubclass(subclass)
-                                .then((val) => {
-                                  updatePlayerCharacter(val)
-                                  setLoading(false)
-                                })
-                            })
-                        }}
-                      >
-                        Apply subclass
-                      </button>
-                    </div>
+                    {playerCharacter.getSubclassIfAvaialable() && (
+                      <div>
+                        <SubclassChoiceModal
+                          onSubclassChange={handleSubclassChange}
+                        ></SubclassChoiceModal>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

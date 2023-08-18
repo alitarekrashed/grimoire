@@ -464,6 +464,12 @@ export class PlayerCharacter {
     return this.character
   }
 
+  public getSubclassIfAvaialable(): Feature | undefined {
+    return this.character.features['1']
+      .map((val) => val.feature)
+      .find((val) => val.type === 'SUBCLASS')
+  }
+
   public updateName(name: string): PlayerCharacter {
     let updated = cloneDeep(this.character)
     updated.name = name
@@ -519,7 +525,7 @@ export class PlayerCharacter {
       subclassChoice.feature.value = subclass._id
 
       updated.features['1'] = updated.features['1'].filter(
-        (value) => value.feature.type !== 'SUBCLASS'
+        (value) => value.feature.type !== 'SUBCLASS_FEATURE'
       )
 
       const newFeatures = this.classEntity!.features['1'].filter(
