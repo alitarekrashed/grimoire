@@ -873,7 +873,7 @@ export class PlayerCharacter {
   }
 
   public getAttacks(): CharacterAttack[] {
-    const weapons: CharacterWeapon[] = [FIST_WEAPON]
+    const weapons: CharacterWeapon[] = [cloneDeep(FIST_WEAPON)]
 
     weapons.push(
       ...this.character.equipment
