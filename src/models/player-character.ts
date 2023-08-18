@@ -361,7 +361,7 @@ export class PlayerCharacter {
       .filter(
         (sourced: SourcedFeature) =>
           sourced.feature.type === 'SUBCLASS_FEATURE' &&
-          sourced.feature.value?.feature.type === 'SKILL_SELECTION'
+          sourced.feature.value?.feature?.type === 'SKILL_SELECTION'
       )
       .filter(
         (sourced: SourcedFeature) => sourced.feature.value.feature.value.value

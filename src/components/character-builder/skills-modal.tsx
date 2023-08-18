@@ -1,11 +1,9 @@
-import { CharacterEntity } from '@/models/db/character-entity'
-import { SourcedFeature } from '@/models/player-character'
+import { Feature, SkillSelectionFeatureValue } from '@/models/db/feature'
+import { CalculatedProficiency, SkillType } from '@/models/statistic'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Modal } from '../modal/modal'
-import { SkillSelectionFeatureValue } from '@/models/db/feature'
-import { CalculatedProficiency, SkillType } from '@/models/statistic'
 
 function getSkillChoices(
   existingProficiencies: Map<SkillType, CalculatedProficiency>
@@ -26,11 +24,11 @@ export function SkillsModal({
   proficiencies,
   onSkillsUpdate,
 }: {
-  skillFeatures: SourcedFeature[]
+  skillFeatures: Feature[]
   proficiencies: Map<SkillType, CalculatedProficiency>
-  onSkillsUpdate: (features: SourcedFeature[]) => void
+  onSkillsUpdate: (features: Feature[]) => void
 }) {
-  const [updatedFeatures, setUpdatedFeatures] = useState<SourcedFeature[]>()
+  const [updatedFeatures, setUpdatedFeatures] = useState<Feature[]>()
   const [choices, setChoices] = useState<string[]>([])
 
   useEffect(() => {
@@ -43,11 +41,9 @@ export function SkillsModal({
 
   let totalCount = 0
   let setCount = 0
-  skillFeatures.forEach((sourced) => {
-    totalCount += sourced.feature.value.value.length
-    setCount += sourced.feature.value.value.filter(
-      (value: string) => value
-    ).length
+  skillFeatures.forEach((feature) => {
+    totalCount += feature.value.value.length
+    setCount += feature.value.value.filter((value: string) => value).length
   })
 
   const trigger = (
@@ -61,8 +57,8 @@ export function SkillsModal({
 
   const skillChoices =
     updatedFeatures &&
-    updatedFeatures.map((sourced: SourcedFeature, index) => {
-      const skillSelection = sourced.feature.value as SkillSelectionFeatureValue
+    updatedFeatures.map((feature: Feature, index) => {
+      const skillSelection = feature.value as SkillSelectionFeatureValue
 
       return skillSelection.value.map((skill: string, innerIndex) => {
         return (
@@ -72,7 +68,7 @@ export function SkillsModal({
               value={skill ?? ''}
               onChange={(e) => {
                 let updated = cloneDeep(updatedFeatures)!
-                updated[index].feature.value.value[innerIndex] = e.target.value
+                updated[index].value.value[innerIndex] = e.target.value
                 setUpdatedFeatures(updated)
               }}
             >
@@ -80,9 +76,7 @@ export function SkillsModal({
               {choices
                 .filter((choice: string) => {
                   const alreadyChosen = updatedFeatures
-                    .map(
-                      (feature: SourcedFeature) => feature.feature.value.value
-                    )
+                    .map((feature: Feature) => feature.value.value)
                     .some((skills: string[]) => skills.includes(choice))
                   if (alreadyChosen) {
                     return false

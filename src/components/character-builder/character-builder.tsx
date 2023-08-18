@@ -1,7 +1,7 @@
 'use client'
 
 import { CharacterEntity } from '@/models/db/character-entity'
-import { FeatureType, SubclassFeatureValue } from '@/models/db/feature'
+import { Feature, FeatureType, SubclassFeatureValue } from '@/models/db/feature'
 import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep, update } from 'lodash'
@@ -213,16 +213,23 @@ export default function CharacterBuilderModal({
                             (sourced) =>
                               sourced.source === 'CLASS' &&
                               sourced.feature.type === 'SKILL_SELECTION'
-                          )}
-                        // basically what we're trying to say here is "filter out Class Level 1 proficiencies when passing in existing profs"
-                        // the reasoning is that since all the values for Class Level 1 profs are encapsulated within this modal, it can just
-                        // check itself for its values
-                        proficiencies={playerCharacter.getSkills('1')}
-                        onSkillsUpdate={handleFeatureUpdate(
-                          (source: SourcedFeature) =>
-                            source.source === 'CLASS' &&
-                            source.feature.type === 'SKILL_SELECTION'
-                        )}
+                          )
+                          .map((sourced) => sourced.feature)}
+                        proficiencies={playerCharacter.getSkills()}
+                        onSkillsUpdate={(features: Feature[]) => {
+                          handleFeatureUpdate(
+                            (source: SourcedFeature) =>
+                              source.source === 'CLASS' &&
+                              source.feature.type === 'SKILL_SELECTION'
+                          )(
+                            features.map((feature) => {
+                              return {
+                                source: 'CLASS',
+                                feature: feature,
+                              }
+                            })
+                          )
+                        }}
                       ></SkillsModal>
                     </div>
                     <div>
@@ -271,17 +278,12 @@ export default function CharacterBuilderModal({
                                   sourced.feature.value.feature.type ===
                                     'SKILL_SELECTION'
                               )
-                              .map((sourced) => {
-                                return {
-                                  source: '',
-                                  feature: sourced.feature.value.feature,
-                                }
-                              })}
+                              .map((sourced) => sourced.feature.value.feature)}
                             // basically what we're trying to say here is "filter out Class Level 1 proficiencies when passing in existing profs"
                             // the reasoning is that since all the values for Class Level 1 profs are encapsulated within this modal, it can just
                             // check itself for its values
-                            proficiencies={playerCharacter.getSkills('1')}
-                            onSkillsUpdate={(features: SourcedFeature[]) => {
+                            proficiencies={playerCharacter.getSkills()}
+                            onSkillsUpdate={(features: Feature[]) => {
                               const newFeatures: SourcedFeature[] =
                                 features.map((value) => {
                                   return {
@@ -289,8 +291,8 @@ export default function CharacterBuilderModal({
                                     feature: {
                                       type: 'SUBCLASS_FEATURE',
                                       value: {
-                                        name: value.feature.name,
-                                        feature: value.feature,
+                                        name: value.name,
+                                        feature: value,
                                       },
                                     },
                                   }
