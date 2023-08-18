@@ -1,23 +1,25 @@
 'use client'
 
 import { CharacterEntity } from '@/models/db/character-entity'
-import { FeatureType } from '@/models/db/feature'
+import { Feature } from '@/models/db/feature'
+import { Subclass } from '@/models/db/subclass'
 import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
-import { cloneDeep, update } from 'lodash'
+import { cloneDeep } from 'lodash'
 import { ReactNode, useContext, useEffect, useState } from 'react'
+import { PlayerCharacterContext } from '../character-display/player-character-context'
+import { LoadingSpinner } from '../loading-spinner/loading-spinner'
 import { Modal } from '../modal/modal'
 import { AncestryChoiceModal } from './ancestry-choice-modal'
 import { AncestryFeatChoiceModal } from './ancestry-feat.modal'
 import { AttributesModal } from './attributes-modal'
 import { BackgroundChoiceModal } from './background-choice-modal'
+import { ClassChoiceModal } from './class-choice-modal'
+import { ClassFeatChoiceModal } from './class-feat.modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LanguagesModal } from './languages-modal'
 import { SkillsModal } from './skills-modal'
-import { ClassFeatChoiceModal } from './class-feat.modal'
-import { LoadingSpinner } from '../loading-spinner/loading-spinner'
-import { ClassChoiceModal } from './class-choice-modal'
-import { PlayerCharacterContext } from '../character-display/player-character-context'
+import { SubclassChoiceModal } from './subclass-choice-modal'
 
 export default function CharacterBuilderModal({
   trigger,
@@ -102,13 +104,20 @@ export default function CharacterBuilderModal({
     })
   }
 
+  const handleSubclassChange = (subclass: Subclass) => {
+    setLoading(true)
+    playerCharacter.updateSubclass(subclass).then((val) => {
+      updatePlayerCharacter(val)
+      setLoading(false)
+    })
+  }
+
   const handleFeatureUpdate =
-    (source: string, featureType: FeatureType) =>
+    (matchingFunction: (source: SourcedFeature) => boolean) =>
     (features: SourcedFeature[]) => {
       let updated = cloneDeep(playerCharacter.getCharacter())
-      const toReplace = updated.features['1'].filter(
-        (sourced) =>
-          sourced.source === source && sourced.feature.type === featureType
+      const toReplace = updated.features['1'].filter((sourced) =>
+        matchingFunction(sourced)
       )
       toReplace.forEach((item) => {
         const index = updated.features['1'].indexOf(item)
@@ -187,7 +196,11 @@ export default function CharacterBuilderModal({
                               existingFeatName={
                                 value.feature.value ? value.feature.value : ''
                               }
-                              onChange={handleFeatureUpdate('ANCESTRY', 'FEAT')}
+                              onChange={handleFeatureUpdate(
+                                (source: SourcedFeature) =>
+                                  source.source === 'ANCESTRY' &&
+                                  source.feature.type === 'FEAT'
+                              )}
                             ></AncestryFeatChoiceModal>
                           )
                         })}
@@ -200,15 +213,23 @@ export default function CharacterBuilderModal({
                             (sourced) =>
                               sourced.source === 'CLASS' &&
                               sourced.feature.type === 'SKILL_SELECTION'
-                          )}
-                        // basically what we're trying to say here is "filter out Class Level 1 proficiencies when passing in existing profs"
-                        // the reasoning is that since all the values for Class Level 1 profs are encapsulated within this modal, it can just
-                        // check itself for its values
-                        proficiencies={playerCharacter.getSkills('1')}
-                        onSkillsUpdate={handleFeatureUpdate(
-                          'CLASS',
-                          'SKILL_SELECTION'
-                        )}
+                          )
+                          .map((sourced) => sourced.feature)}
+                        proficiencies={playerCharacter.getSkills()}
+                        onSkillsUpdate={(features: Feature[]) => {
+                          handleFeatureUpdate(
+                            (source: SourcedFeature) =>
+                              source.source === 'CLASS' &&
+                              source.feature.type === 'SKILL_SELECTION'
+                          )(
+                            features.map((feature) => {
+                              return {
+                                source: 'CLASS',
+                                feature: feature,
+                              }
+                            })
+                          )
+                        }}
                       ></SkillsModal>
                     </div>
                     <div>
@@ -225,13 +246,50 @@ export default function CharacterBuilderModal({
                               key={`${value.source}-${index}`}
                               existingFeat={value}
                               onChange={handleFeatureUpdate(
-                                'CLASS',
-                                'CLASS_FEAT_SELECTION'
+                                (source: SourcedFeature) =>
+                                  source.source === 'CLASS' &&
+                                  source.feature.type === 'CLASS_FEAT_SELECTION'
                               )}
                             ></ClassFeatChoiceModal>
                           )
                         })}
                     </div>
+                    {playerCharacter.getSubclassIfAvaialable() && (
+                      <div>
+                        <SubclassChoiceModal
+                          onSubclassChange={handleSubclassChange}
+                        ></SubclassChoiceModal>
+                        {getSubclassSkillSelections(playerCharacter).length >
+                          0 && (
+                          <div className="mt-1">
+                            <SkillsModal
+                              name={
+                                getSubclassSkillSelections(playerCharacter)[0]
+                                  .feature.name
+                              }
+                              skillFeatures={getSubclassSkillSelections(
+                                playerCharacter
+                              ).map((sourced) => sourced.feature.value)}
+                              proficiencies={playerCharacter.getSkills()}
+                              onSkillsUpdate={(features: Feature[]) => {
+                                handleFeatureUpdate(
+                                  (sourced) =>
+                                    sourced.source === 'CLASS' &&
+                                    sourced.feature.type ===
+                                      'SUBCLASS_FEATURE' &&
+                                    sourced.feature.value.type ===
+                                      'SKILL_SELECTION'
+                                )(
+                                  features.map((value) =>
+                                    mapSubclassFeatureSkillSelection(value)
+                                  )
+                                )
+                              }}
+                            ></SkillsModal>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -255,4 +313,27 @@ export default function CharacterBuilderModal({
       </>
     )
   )
+}
+
+function mapSubclassFeatureSkillSelection(value: Feature): SourcedFeature {
+  return {
+    source: 'CLASS',
+    feature: {
+      type: 'SUBCLASS_FEATURE',
+      value: value,
+    },
+  }
+}
+
+function getSubclassSkillSelections(
+  playerCharacter: PlayerCharacter
+): SourcedFeature[] {
+  return playerCharacter
+    .getLevelFeatures()
+    .filter(
+      (sourced) =>
+        sourced.source === 'CLASS' &&
+        sourced.feature.type === 'SUBCLASS_FEATURE' &&
+        sourced.feature.value.type === 'SKILL_SELECTION'
+    )
 }

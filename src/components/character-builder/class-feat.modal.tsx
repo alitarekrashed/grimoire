@@ -22,7 +22,9 @@ export function ClassFeatChoiceModal({
 
   useEffect(() => {
     fetch(
-      `http://localhost:3000/api/feats?traits=${playerCharacter.getTraits()}`,
+      `http://localhost:3000/api/feats?traits=${playerCharacter
+        .getClassEntity()
+        .name.toLowerCase()}`,
       {
         cache: 'no-store',
       }

@@ -26,6 +26,8 @@ export function baseApiRouteFactory(type: ModelType) {
       return 'http://localhost:3000/api/feats'
     case 'CLASS':
       return 'http://localhost:3000/api/classes'
+    case 'SUBCLASS':
+      return 'http://localhost:3000/api/subclasses'
     default: // throw exception?
   }
 }
@@ -56,6 +58,8 @@ export function baseRecordPageRouteFactory(type: ModelType) {
       return 'http://localhost:3000/reference/feats'
     case 'CLASS':
       return 'http://localhost:3000/reference/classes'
+    case 'SUBCLASS':
+      return 'http://localhost:3000/reference/subclasses'
     default: // throw exception?
   }
 }

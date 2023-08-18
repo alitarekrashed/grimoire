@@ -1,4 +1,9 @@
 import { ModifierValue } from '@/components/calculated-display/calculated-display'
+import {
+  FIST_WEAPON,
+  GearProficiencyManager,
+  getGreaterThan,
+} from '@/utils/services/gear-proficiency-manager'
 import { cloneDeep } from 'lodash'
 import { Ancestry, Attribute } from './db/ancestry'
 import {
@@ -7,23 +12,16 @@ import {
   ProficiencyRank,
   ProficiencyType,
   RankModifierMap,
-  WeaponGroupProficiencies,
-  WeaponProficiencies,
-  WeaponProficiencyValue,
-  getUntrainedWeaponProficiences,
 } from './db/background'
 import {
   ArmorDefinition,
   CharacterEntity,
   CharacterEquipment,
-  WeaponDamageDefinition,
   WeaponDefinition,
-  WeaponGroup,
-  WeaponType,
   WithNameAndId,
 } from './db/character-entity'
 import { ClassEntity } from './db/class-entity'
-import { Armor, Weapon } from './db/equipment'
+import { Armor } from './db/equipment'
 import { Feat } from './db/feat'
 import {
   ConditionalFeatureValue,
@@ -44,12 +42,7 @@ import {
   SkillType,
   generateUntrainedSkillMap,
 } from './statistic'
-import {
-  FIST_WEAPON,
-  GearProficiencyManager,
-  UNARMORED_DEFENSE,
-  getGreaterThan,
-} from '@/utils/services/gear-proficiency-manager'
+import { Subclass } from './db/subclass'
 
 export interface CharacterAttack {
   attackBonus: ModifierValue[][]
@@ -361,6 +354,34 @@ export class PlayerCharacter {
         })
         this.allFeatures.push(...values)
       })
+
+    character.features['1']
+      .filter((sourced: SourcedFeature) => sourced.source === 'CLASS')
+      .filter(
+        (sourced: SourcedFeature) =>
+          sourced.feature.type === 'SUBCLASS_FEATURE' &&
+          sourced.feature.value?.type === 'SKILL_SELECTION'
+      )
+      .filter((sourced: SourcedFeature) => sourced.feature.value.value.value)
+      .forEach((sourced: SourcedFeature) => {
+        const values = sourced.feature.value.value.value.map(
+          (skill: string) => {
+            return {
+              source: sourced.source,
+              feature: {
+                type: 'PROFICIENCY',
+                value: {
+                  // TODO this shouldn't be 'max rank' ... we should be storing the actual rank in the selection entity on the character
+                  rank: sourced.feature.value.value.configuration.max_rank,
+                  type: 'Skill',
+                  value: skill,
+                },
+              },
+            }
+          }
+        )
+        this.allFeatures.push(...values)
+      })
   }
 
   private clearOutSkillsAlreadyPresentOnClass(character: CharacterEntity) {
@@ -470,6 +491,12 @@ export class PlayerCharacter {
     return this.character
   }
 
+  public getSubclassIfAvaialable(): Feature | undefined {
+    return this.character.features['1']
+      .map((val) => val.feature)
+      .find((val) => val.type === 'SUBCLASS')
+  }
+
   public updateName(name: string): PlayerCharacter {
     let updated = cloneDeep(this.character)
     updated.name = name
@@ -513,6 +540,41 @@ export class PlayerCharacter {
         return { source: 'CLASS', feature: feature }
       })
     )
+    return await PlayerCharacter.build(updated)
+  }
+
+  public async updateSubclass(subclass: Subclass): Promise<PlayerCharacter> {
+    let updated = cloneDeep(this.character)
+    const subclassChoice = updated.features['1'].find(
+      (value) => value.source === 'CLASS' && value.feature.type === 'SUBCLASS'
+    )
+    if (subclassChoice) {
+      subclassChoice.feature.value = subclass._id
+
+      updated.features['1'] = updated.features['1'].filter(
+        (value) => value.feature.type !== 'SUBCLASS_FEATURE'
+      )
+
+      const newFeatures = this.classEntity!.features['1'].filter(
+        (val) => val.type === 'SUBCLASS_FEATURE'
+      )
+
+      newFeatures.forEach((subclassFeature: Feature) => {
+        const matched = subclass.features.find(
+          (feature) => feature.name === subclassFeature.name
+        )
+        if (matched) {
+          subclassFeature.value = matched
+        }
+      })
+
+      updated.features['1'].push(
+        ...newFeatures.map((feature: Feature) => {
+          return { source: 'CLASS', feature: feature }
+        })
+      )
+    }
+
     return await PlayerCharacter.build(updated)
   }
 
@@ -842,7 +904,7 @@ export class PlayerCharacter {
   }
 
   public getAttacks(): CharacterAttack[] {
-    const weapons: CharacterWeapon[] = [FIST_WEAPON]
+    const weapons: CharacterWeapon[] = [cloneDeep(FIST_WEAPON)]
 
     weapons.push(
       ...this.character.equipment
@@ -912,6 +974,30 @@ export class PlayerCharacter {
       })
     }
 
+    const damageModifiers = this.features
+      .filter(
+        (val) =>
+          val.feature.type === 'MODIFIER' &&
+          val.feature.value.type === 'AttackDamage'
+      )
+      .map((val) => val.feature.value as ModifierFeatureValue)
+      .filter((val) => {
+        if (val.context.category && val.context.group) {
+          return (
+            val.context.category === weapon.definition.category &&
+            val.context.group === weapon.definition.group
+          )
+        }
+        return (
+          val.context.category === weapon.definition.category ||
+          val.context.group === weapon.definition.group
+        )
+      })
+      .map((val) => val.modifier.value)
+
+    // TODO ALI -- this should be a list of modifiers so it's clear where bonuses and stuff come from
+    const additionalBonus = damageModifiers.reduce((prev, sum) => prev + sum, 0)
+
     return {
       attackBonus: [
         attackBonus,
@@ -919,7 +1005,8 @@ export class PlayerCharacter {
         [...attackBonus, { value: -8, source: 'MAP' }],
       ],
       damageBonus:
-        weapon.definition.type === 'melee' ? this.attributes.Strength : 0,
+        (weapon.definition.type === 'melee' ? this.attributes.Strength : 0) +
+        additionalBonus,
       weapon: weapon,
     }
   }
@@ -1179,11 +1266,21 @@ export class PlayerCharacter {
         sourced.feature.type === 'PROFICIENCY' ||
         sourced.feature.type === 'ACTION' ||
         sourced.feature.type === 'MISC' ||
+        sourced.feature.type === 'MODIFIER' ||
         sourced.feature.type === 'OVERRIDE'
       ) {
         allFeatures.push({
           source: classEntity.name,
           feature: sourced.feature,
+        })
+      } else if (
+        sourced.feature.type === 'SUBCLASS_FEATURE' &&
+        sourced.feature.value
+      ) {
+        // TODO ALI make this the subclass name for source?
+        allFeatures.push({
+          source: classEntity.name,
+          feature: sourced.feature.value,
         })
       }
     })

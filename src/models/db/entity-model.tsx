@@ -26,3 +26,4 @@ export type ModelType =
   | 'BACKGROUND'
   | 'FEAT'
   | 'CLASS'
+  | 'SUBCLASS'
