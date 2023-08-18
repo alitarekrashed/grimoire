@@ -247,49 +247,14 @@ export default function CharacterBuilderModal({
                             .then((result) => result.json())
                             .then((subclasses) => {
                               const subclass: Subclass = subclasses[0]
-                              handleFeatureUpdate(
-                                'CLASS',
-                                'SUBCLASS'
-                              )([
-                                {
-                                  source: 'CLASS',
-                                  feature: {
-                                    type: 'SUBCLASS',
-                                    name: "Gunslinger's Way",
-                                    value: subclass._id.toString(),
-                                  },
-                                },
-                              ])
 
-                              const newFeatures = playerCharacter
-                                .getLevelFeatures()
-                                .filter(
-                                  (val) =>
-                                    val.source === 'CLASS' &&
-                                    val.feature.type === 'SUBCLASS_FEATURE'
-                                )
-
-                              newFeatures
-                                .map(
-                                  (feature) =>
-                                    feature.feature
-                                      .value as SubclassFeatureValue
-                                )
-                                .forEach((subclassFeature) => {
-                                  console.log(subclassFeature)
-                                  const matched = subclass.features.find(
-                                    (feature) =>
-                                      feature.name === subclassFeature.name
-                                  )
-                                  if (matched) {
-                                    subclassFeature.feature = matched
-                                  }
+                              setLoading(true)
+                              playerCharacter
+                                .updateSubclass(subclass)
+                                .then((val) => {
+                                  updatePlayerCharacter(val)
+                                  setLoading(false)
                                 })
-
-                              handleFeatureUpdate(
-                                'CLASS',
-                                'SUBCLASS_FEATURE'
-                              )(newFeatures)
                             })
                         }}
                       >

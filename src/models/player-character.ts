@@ -31,6 +31,7 @@ import {
   OverrideFeatureValue,
   ResistanceFeatureValue,
   SkillSelectionFeatureValue,
+  SubclassFeatureValue,
   featureMatcher,
 } from './db/feature'
 import { Heritage } from './db/heritage'
@@ -506,6 +507,43 @@ export class PlayerCharacter {
         return { source: 'CLASS', feature: feature }
       })
     )
+    return await PlayerCharacter.build(updated)
+  }
+
+  public async updateSubclass(subclass: Subclass): Promise<PlayerCharacter> {
+    let updated = cloneDeep(this.character)
+    const subclassChoice = updated.features['1'].find(
+      (value) => value.source === 'CLASS' && value.feature.type === 'SUBCLASS'
+    )
+    if (subclassChoice) {
+      subclassChoice.feature.value = subclass._id
+
+      updated.features['1'] = updated.features['1'].filter(
+        (value) => value.feature.type !== 'SUBCLASS'
+      )
+
+      const newFeatures = this.classEntity!.features['1'].filter(
+        (val) => val.type === 'SUBCLASS_FEATURE'
+      )
+
+      newFeatures
+        .map((feature) => feature.value as SubclassFeatureValue)
+        .forEach((subclassFeature) => {
+          const matched = subclass.features.find(
+            (feature) => feature.name === subclassFeature.name
+          )
+          if (matched) {
+            subclassFeature.feature = matched
+          }
+        })
+
+      updated.features['1'].push(
+        ...newFeatures.map((feature: Feature) => {
+          return { source: 'CLASS', feature: feature }
+        })
+      )
+    }
+
     return await PlayerCharacter.build(updated)
   }
 
@@ -1204,7 +1242,10 @@ export class PlayerCharacter {
           source: classEntity.name,
           feature: sourced.feature,
         })
-      } else if (sourced.feature.type === 'SUBCLASS_FEATURE') {
+      } else if (
+        sourced.feature.type === 'SUBCLASS_FEATURE' &&
+        sourced.feature.value.feature
+      ) {
         // TODO ALI make this the subclass name for source?
         allFeatures.push({
           source: classEntity.name,
