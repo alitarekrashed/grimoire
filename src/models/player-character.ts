@@ -42,6 +42,7 @@ import {
   SkillType,
   generateUntrainedSkillMap,
 } from './statistic'
+import { Subclass } from './db/subclass'
 
 export interface CharacterAttack {
   attackBonus: ModifierValue[][]
@@ -1202,6 +1203,12 @@ export class PlayerCharacter {
         allFeatures.push({
           source: classEntity.name,
           feature: sourced.feature,
+        })
+      } else if (sourced.feature.type === 'SUBCLASS_FEATURE') {
+        // TODO ALI make this the subclass name for source?
+        allFeatures.push({
+          source: classEntity.name,
+          feature: sourced.feature.value.feature,
         })
       }
     })

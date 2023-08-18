@@ -16,6 +16,8 @@ export type FeatureType =
   | 'FEAT'
   | 'SKILL_SELECTION'
   | 'CLASS_FEAT_SELECTION'
+  | 'SUBCLASS'
+  | 'SUBCLASS_FEATURE'
 export type CalculationFormula = 'half-level'
 export type ConditionalOperator = 'has'
 export type ModifierType = 'Perception' | 'Speed' | 'AttackDamage'
@@ -66,6 +68,11 @@ export interface Conditional {
 export interface SkillSelectionFeatureValue {
   configuration: SkillSelectionConfiguration
   value: string[]
+}
+
+export interface SubclassFeatureValue {
+  name: string
+  feature: Feature
 }
 
 export interface SkillSelectionConfiguration {

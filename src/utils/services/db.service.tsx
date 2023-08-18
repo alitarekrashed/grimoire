@@ -63,6 +63,34 @@ export async function getAllEntities<T extends EntityModel>(
   return collection.find(search).sort('name', 1).toArray()
 }
 
+export async function getSubclasses(
+  name?: string,
+  className?: string
+): Promise<WithId<T>[]> {
+  const collection = await getEntitiesCollection<T>()
+
+  let search: Filter<T> = {}
+  search = {
+    ...search,
+    entity_type: {
+      $in: ['SUBCLASS'],
+    },
+  }
+  if (name) {
+    search = {
+      ...search,
+      name: { $regex: name, $options: 'i' },
+    }
+  }
+  if (className) {
+    search = {
+      ...search,
+      class_name: { $regex: className, $options: 'i' },
+    }
+  }
+  return collection.find(search).sort('name', 1).toArray()
+}
+
 export async function searchAllEntities<T extends EntityModel>(
   entity_types: ModelType[],
   search?: any

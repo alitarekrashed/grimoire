@@ -1,7 +1,7 @@
 'use client'
 
 import { CharacterEntity } from '@/models/db/character-entity'
-import { FeatureType } from '@/models/db/feature'
+import { FeatureType, SubclassFeatureValue } from '@/models/db/feature'
 import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep, update } from 'lodash'
@@ -18,6 +18,7 @@ import { ClassFeatChoiceModal } from './class-feat.modal'
 import { LoadingSpinner } from '../loading-spinner/loading-spinner'
 import { ClassChoiceModal } from './class-choice-modal'
 import { PlayerCharacterContext } from '../character-display/player-character-context'
+import { Subclass } from '@/models/db/subclass'
 
 export default function CharacterBuilderModal({
   trigger,
@@ -231,6 +232,69 @@ export default function CharacterBuilderModal({
                             ></ClassFeatChoiceModal>
                           )
                         })}
+                    </div>
+                    <div>
+                      <button
+                        onClick={() => {
+                          fetch(
+                            `http://localhost:3000/api/subclasses?class_name=${playerCharacter
+                              .getClassEntity()
+                              .name.toLowerCase()}`,
+                            {
+                              cache: 'no-store',
+                            }
+                          )
+                            .then((result) => result.json())
+                            .then((subclasses) => {
+                              const subclass: Subclass = subclasses[0]
+                              handleFeatureUpdate(
+                                'CLASS',
+                                'SUBCLASS'
+                              )([
+                                {
+                                  source: 'CLASS',
+                                  feature: {
+                                    type: 'SUBCLASS',
+                                    name: "Gunslinger's Way",
+                                    value: subclass._id.toString(),
+                                  },
+                                },
+                              ])
+
+                              const newFeatures = playerCharacter
+                                .getLevelFeatures()
+                                .filter(
+                                  (val) =>
+                                    val.source === 'CLASS' &&
+                                    val.feature.type === 'SUBCLASS_FEATURE'
+                                )
+
+                              newFeatures
+                                .map(
+                                  (feature) =>
+                                    feature.feature
+                                      .value as SubclassFeatureValue
+                                )
+                                .forEach((subclassFeature) => {
+                                  console.log(subclassFeature)
+                                  const matched = subclass.features.find(
+                                    (feature) =>
+                                      feature.name === subclassFeature.name
+                                  )
+                                  if (matched) {
+                                    subclassFeature.feature = matched
+                                  }
+                                })
+
+                              handleFeatureUpdate(
+                                'CLASS',
+                                'SUBCLASS_FEATURE'
+                              )(newFeatures)
+                            })
+                        }}
+                      >
+                        Apply subclass
+                      </button>
                     </div>
                   </div>
                 </div>
