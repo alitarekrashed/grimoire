@@ -9,8 +9,10 @@ import { ParsedDescription } from '../parsed-description/parsed-description'
 // TODO eventually the display should be clickable and allow the user to go to a page for the condition?
 // TODO maybe this should open a modal instead of a link to a new page
 export default function EntityHoverableDescription({
+  name,
   value,
 }: {
+  name?: string
   value: EntityModel
 }) {
   return (
@@ -18,7 +20,7 @@ export default function EntityHoverableDescription({
       <HoverCard.Root openDelay={200} closeDelay={100}>
         <HoverCard.Trigger>
           <span className="underline decoration-dotted" tabIndex={0}>
-            {value.name}
+            {name ?? value.name}
           </span>
         </HoverCard.Trigger>
         <HoverCard.Portal>
