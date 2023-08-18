@@ -176,7 +176,7 @@ export class GearProficiencyManager {
   }
 }
 
-function getGreaterThan(
+export function getGreaterThan(
   thisRank: ProficiencyRank,
   other: ProficiencyRank
 ): ProficiencyRank {

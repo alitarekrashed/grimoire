@@ -48,6 +48,7 @@ import {
   FIST_WEAPON,
   GearProficiencyManager,
   UNARMORED_DEFENSE,
+  getGreaterThan,
 } from '@/utils/services/gear-proficiency-manager'
 
 export interface CharacterAttack {
@@ -657,7 +658,6 @@ export class PlayerCharacter {
     Skill: Map<SkillType, ProficiencyRank>
     Lore: Map<string, ProficiencyRank>
     SavingThrow: Map<SavingThrowType, ProficiencyRank>
-    Defense: Map<string, ProficiencyRank>
     DifficultyClass: Map<string, ProficiencyRank>
   } {
     const proficiencyMap: {
@@ -665,14 +665,12 @@ export class PlayerCharacter {
       Skill: Map<string, ProficiencyRank>
       Lore: Map<string, ProficiencyRank>
       SavingThrow: Map<string, ProficiencyRank>
-      Defense: Map<string, ProficiencyRank>
       DifficultyClass: Map<string, ProficiencyRank>
     } = {
       Perception: new Map<string, ProficiencyRank>(),
       Skill: generateUntrainedSkillMap(),
       Lore: new Map<string, ProficiencyRank>(),
       SavingThrow: new Map<SavingThrowType, ProficiencyRank>(),
-      Defense: new Map<string, ProficiencyRank>(),
       DifficultyClass: new Map<string, ProficiencyRank>(),
     }
 
@@ -686,20 +684,28 @@ export class PlayerCharacter {
           return feature.feature.type === 'PROFICIENCY'
         }
       })
-      .filter((feature) => feature.feature.value.type !== 'Weapon')
+      .filter(
+        (feature) =>
+          feature.feature.value.type !== 'Weapon' &&
+          feature.feature.value.type !== 'Defense'
+      )
       .forEach((sourced: SourcedFeature) => {
         const proficency = sourced.feature.value as ProficiencyFeatureValue
-        const type = proficency.type as Exclude<ProficiencyType, 'Weapon'>
+        const type = proficency.type as Exclude<
+          ProficiencyType,
+          'Weapon' | 'Defense'
+        >
         if (
           proficency.value &&
           proficiencyMap[type].has(proficency.value) == false
         ) {
           proficiencyMap[type].set(proficency.value, proficency.rank)
         } else {
-          const existingRank = proficiencyMap[type].get(proficency.value)
-          if (this.greaterThan(proficency.rank, existingRank!)) {
-            proficiencyMap[type].set(proficency.value, proficency.rank)
-          }
+          let existingRank = proficiencyMap[type].get(proficency.value)
+          proficiencyMap[type].set(
+            proficency.value,
+            getGreaterThan(proficency.rank, existingRank ?? 'untrained')
+          )
         }
       })
     return proficiencyMap as {
@@ -707,7 +713,6 @@ export class PlayerCharacter {
       Skill: Map<SkillType, ProficiencyRank>
       Lore: Map<string, ProficiencyRank>
       SavingThrow: Map<SavingThrowType, ProficiencyRank>
-      Defense: Map<string, ProficiencyRank>
       DifficultyClass: Map<string, ProficiencyRank>
     }
   }
