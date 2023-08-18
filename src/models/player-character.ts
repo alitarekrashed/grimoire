@@ -1,5 +1,5 @@
 import { ModifierValue } from '@/components/calculated-display/calculated-display'
-import { cloneDeep, over } from 'lodash'
+import { cloneDeep } from 'lodash'
 import { Ancestry, Attribute } from './db/ancestry'
 import {
   Background,
@@ -9,9 +9,7 @@ import {
 } from './db/background'
 import {
   ArmorDefinition,
-  CharacterArmor,
   CharacterEntity,
-  CharacterWeapon,
   WeaponDamageDefinition,
   WeaponDefinition,
   WeaponGroup,
@@ -42,15 +40,9 @@ import {
 } from './statistic'
 
 export interface CharacterAttack {
-  name: string
-  type: WeaponType
-  group: WeaponGroup
-  damage: WeaponDamageDefinition
   attackBonus: ModifierValue[][]
   damageBonus: number
-  traits: string[]
-  range?: number
-  reload?: number
+  weapon: CharacterWeapon
 }
 
 export interface CharacterArmor {
@@ -61,6 +53,7 @@ export interface CharacterArmor {
 
 export interface CharacterWeapon {
   name: string
+  item_name: string
   traits: string[]
   definition: WeaponDefinition
 }
@@ -874,6 +867,7 @@ export class PlayerCharacter {
     const weapons: CharacterWeapon[] = [
       {
         name: 'fist',
+        item_name: 'fist',
         traits: ['agile', 'finesse', 'nonlethal', 'unarmed'],
         definition: {
           category: 'unarmed',
@@ -893,7 +887,8 @@ export class PlayerCharacter {
         .map((value) => {
           const weapon = value.item as Weapon
           return {
-            name: value.name ?? weapon.name,
+            name: value.name,
+            item_name: weapon.name,
             traits: weapon.traits!,
             definition: weapon.properties,
           }
@@ -984,20 +979,14 @@ export class PlayerCharacter {
     }
 
     return {
-      name: weapon.name,
-      type: weapon.definition.type,
       attackBonus: [
         attackBonus,
         [...attackBonus, { value: -4, source: 'MAP' }],
         [...attackBonus, { value: -8, source: 'MAP' }],
       ],
-      damage: weapon.definition.damage,
       damageBonus:
         weapon.definition.type === 'melee' ? this.attributes.Strength : 0,
-      group: weapon.definition.group,
-      traits: weapon.traits,
-      reload: weapon.definition.reload,
-      range: weapon.definition.range,
+      weapon: weapon,
     }
   }
 
