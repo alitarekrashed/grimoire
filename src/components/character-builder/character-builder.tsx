@@ -259,53 +259,34 @@ export default function CharacterBuilderModal({
                         <SubclassChoiceModal
                           onSubclassChange={handleSubclassChange}
                         ></SubclassChoiceModal>
-                        {playerCharacter
-                          .getLevelFeatures()
-                          .filter(
-                            (sourced) =>
-                              sourced.source === 'CLASS' &&
-                              sourced.feature.type === 'SUBCLASS_FEATURE' &&
-                              sourced.feature.value.feature?.type ===
-                                'SKILL_SELECTION'
-                          ).length > 0 && (
-                          <SkillsModal
-                            skillFeatures={playerCharacter
-                              .getLevelFeatures()
-                              .filter(
-                                (sourced) =>
-                                  sourced.source === 'CLASS' &&
-                                  sourced.feature.type === 'SUBCLASS_FEATURE' &&
-                                  sourced.feature.value.feature.type ===
-                                    'SKILL_SELECTION'
-                              )
-                              .map((sourced) => sourced.feature.value.feature)}
-                            // basically what we're trying to say here is "filter out Class Level 1 proficiencies when passing in existing profs"
-                            // the reasoning is that since all the values for Class Level 1 profs are encapsulated within this modal, it can just
-                            // check itself for its values
-                            proficiencies={playerCharacter.getSkills()}
-                            onSkillsUpdate={(features: Feature[]) => {
-                              const newFeatures: SourcedFeature[] =
-                                features.map((value) => {
-                                  return {
-                                    source: 'CLASS',
-                                    feature: {
-                                      type: 'SUBCLASS_FEATURE',
-                                      value: {
-                                        name: value.name,
-                                        feature: value,
-                                      },
-                                    },
-                                  }
-                                })
-                              handleFeatureUpdate(
-                                (sourced) =>
-                                  sourced.source === 'CLASS' &&
-                                  sourced.feature.type === 'SUBCLASS_FEATURE' &&
-                                  sourced.feature.value.feature.type ===
-                                    'SKILL_SELECTION'
-                              )(newFeatures)
-                            }}
-                          ></SkillsModal>
+                        {getSubclassSkillSelections(playerCharacter).length >
+                          0 && (
+                          <div className="mt-1">
+                            <SkillsModal
+                              name={
+                                getSubclassSkillSelections(playerCharacter)[0]
+                                  .feature.value.name
+                              }
+                              skillFeatures={getSubclassSkillSelections(
+                                playerCharacter
+                              ).map((sourced) => sourced.feature.value.feature)}
+                              proficiencies={playerCharacter.getSkills()}
+                              onSkillsUpdate={(features: Feature[]) => {
+                                handleFeatureUpdate(
+                                  (sourced) =>
+                                    sourced.source === 'CLASS' &&
+                                    sourced.feature.type ===
+                                      'SUBCLASS_FEATURE' &&
+                                    sourced.feature.value.feature.type ===
+                                      'SKILL_SELECTION'
+                                )(
+                                  features.map((value) =>
+                                    mapSubclassFeatureSkillSelection(value)
+                                  )
+                                )
+                              }}
+                            ></SkillsModal>
+                          </div>
                         )}
                       </div>
                     )}
@@ -332,4 +313,30 @@ export default function CharacterBuilderModal({
       </>
     )
   )
+}
+
+function mapSubclassFeatureSkillSelection(value: Feature): SourcedFeature {
+  return {
+    source: 'CLASS',
+    feature: {
+      type: 'SUBCLASS_FEATURE',
+      value: {
+        name: value.name,
+        feature: value,
+      },
+    },
+  }
+}
+
+function getSubclassSkillSelections(
+  playerCharacter: PlayerCharacter
+): SourcedFeature[] {
+  return playerCharacter
+    .getLevelFeatures()
+    .filter(
+      (sourced) =>
+        sourced.source === 'CLASS' &&
+        sourced.feature.type === 'SUBCLASS_FEATURE' &&
+        sourced.feature.value.feature?.type === 'SKILL_SELECTION'
+    )
 }

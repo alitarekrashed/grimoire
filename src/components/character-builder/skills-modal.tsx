@@ -20,10 +20,12 @@ function getSkillChoices(
 }
 
 export function SkillsModal({
+  name,
   skillFeatures,
   proficiencies,
   onSkillsUpdate,
 }: {
+  name?: string
   skillFeatures: Feature[]
   proficiencies: Map<SkillType, CalculatedProficiency>
   onSkillsUpdate: (features: Feature[]) => void
@@ -51,7 +53,7 @@ export function SkillsModal({
       className="border border-stone-300 rounded-md relative flex w-44 h-9 p-1 justify-center items-center hover:bg-stone-600"
       tabIndex={0}
     >
-      Initial Skills {setCount}/{totalCount}
+      {name ? name : 'Initial Skills'} {setCount}/{totalCount}
     </button>
   )
 
