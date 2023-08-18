@@ -48,6 +48,7 @@ export interface CharacterAttack {
   damage: WeaponDamageDefinition
   attackBonus: ModifierValue[][]
   damageBonus: number
+  traits: string[]
   range?: number
   reload?: number
 }
@@ -994,6 +995,7 @@ export class PlayerCharacter {
       damageBonus:
         weapon.definition.type === 'melee' ? this.attributes.Strength : 0,
       group: weapon.definition.group,
+      traits: weapon.traits,
       reload: weapon.definition.reload,
       range: weapon.definition.range,
     }
