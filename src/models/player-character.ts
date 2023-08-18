@@ -789,6 +789,10 @@ export class PlayerCharacter {
     }
   }
 
+  public getGearProficiencyManager(): GearProficiencyManager {
+    return this.gearProficienyManager
+  }
+
   // TODO this needs some love/cleanup
   public getArmorClass(): { name: string; value: ModifierValue[] } {
     const result: ModifierValue[] = []

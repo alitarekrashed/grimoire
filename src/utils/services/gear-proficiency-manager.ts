@@ -48,6 +48,68 @@ export class GearProficiencyManager {
     }[]
   ) {}
 
+  public getArmorProficiencies(): {
+    value: ArmorProficiencyValue
+    rank: ProficiencyRank
+  }[] {
+    const grouped: Map<ArmorProficiencyValue, ProficiencyRank[]> =
+      this.defenses.reduce(
+        (entryMap, e) =>
+          entryMap.set(e.value, [...(entryMap.get(e.value) || []), e.rank]),
+        new Map()
+      )
+
+    const result: {
+      value: ArmorProficiencyValue
+      rank: ProficiencyRank
+    }[] = []
+    Array.from(grouped.entries()).forEach(
+      (value: [ArmorProficiencyValue, ProficiencyRank[]]) => {
+        let resultRank: ProficiencyRank = 'untrained'
+
+        value[1].forEach((rank) => {
+          resultRank = getGreaterThan(resultRank, rank)
+        })
+        result.push({
+          value: value[0],
+          rank: resultRank,
+        })
+      }
+    )
+    return result
+  }
+
+  public getWeaponProficiencies(): {
+    value: WeaponProficiencyValue
+    rank: ProficiencyRank
+  }[] {
+    const grouped: Map<WeaponProficiencyValue, ProficiencyRank[]> =
+      this.attacks.reduce(
+        (entryMap, e) =>
+          entryMap.set(e.value, [...(entryMap.get(e.value) || []), e.rank]),
+        new Map()
+      )
+
+    const result: {
+      value: WeaponProficiencyValue
+      rank: ProficiencyRank
+    }[] = []
+    Array.from(grouped.entries()).forEach(
+      (value: [WeaponProficiencyValue, ProficiencyRank[]]) => {
+        let resultRank: ProficiencyRank = 'untrained'
+
+        value[1].forEach((rank) => {
+          resultRank = getGreaterThan(resultRank, rank)
+        })
+        result.push({
+          value: value[0],
+          rank: resultRank,
+        })
+      }
+    )
+    return result
+  }
+
   public getProficiency(weapon: CharacterWeapon): ProficiencyRank {
     const category = weapon.definition.category
     const group = weapon.definition.group

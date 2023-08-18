@@ -1,4 +1,9 @@
-import { ProficiencyRank, ProficiencyType } from '@/models/db/background'
+import {
+  ArmorProficiencyValue,
+  ProficiencyRank,
+  ProficiencyType,
+  WeaponProficiencyValue,
+} from '@/models/db/background'
 import { CharacterEquipment } from '@/models/db/character-entity'
 import { EquipmentCategory } from '@/models/db/equipment'
 import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
@@ -143,33 +148,59 @@ export function FeaturesTabs() {
         </Tabs.Content>
         <Tabs.Content value="proficiencies">
           <span className="text-xs">
-            {['Defense'].map((type: string, index) => {
-              return (
-                <div key={`${type}-${index}`}>
-                  <span className="font-semibold">{type}</span>
-                  {Array.from(
-                    playerCharacter
-                      .getProficiencies()
-                      [type as ProficiencyType].keys()
-                  ).map((proficiency: string, index) => {
+            <div>
+              <span className="font-semibold">Defense</span>
+              {playerCharacter
+                .getGearProficiencyManager()
+                .getArmorProficiencies()
+                .map(
+                  (
+                    proficiency: {
+                      value: ArmorProficiencyValue
+                      rank: ProficiencyRank
+                    },
+                    index
+                  ) => {
                     return (
                       <div className="mb-1" key={`${proficiency}-${index}`}>
                         <SkillDisplay
-                          name={proficiency}
-                          rank={
-                            (
-                              playerCharacter.getProficiencies()[
-                                type as ProficiencyType
-                              ] as Map<any, ProficiencyRank>
-                            ).get(proficiency)!
-                          }
+                          name={`${proficiency.value.category ?? ''} ${
+                            proficiency.value.group ?? ''
+                          } armor`}
+                          rank={proficiency.rank}
                         ></SkillDisplay>
                       </div>
                     )
-                  })}
-                </div>
-              )
-            })}
+                  }
+                )}
+            </div>
+            <div>
+              <span className="font-semibold">Weapons</span>
+              {playerCharacter
+                .getGearProficiencyManager()
+                .getWeaponProficiencies()
+                .map(
+                  (
+                    proficiency: {
+                      value: WeaponProficiencyValue
+                      rank: ProficiencyRank
+                    },
+                    index
+                  ) => {
+                    console.log(proficiency)
+                    return (
+                      <div className="mb-1" key={`${proficiency}-${index}`}>
+                        <SkillDisplay
+                          name={`${proficiency.value.category ?? ''} ${
+                            proficiency.value.group ?? 'weapons'
+                          }`}
+                          rank={proficiency.rank}
+                        ></SkillDisplay>
+                      </div>
+                    )
+                  }
+                )}
+            </div>
           </span>
         </Tabs.Content>
       </Tabs.Root>
