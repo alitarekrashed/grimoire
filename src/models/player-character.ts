@@ -15,6 +15,7 @@ import {
 import {
   ArmorDefinition,
   CharacterEntity,
+  CharacterEquipment,
   WeaponDamageDefinition,
   WeaponDefinition,
   WeaponGroup,
@@ -43,7 +44,11 @@ import {
   SkillType,
   generateUntrainedSkillMap,
 } from './statistic'
-import { GearProficiencyManager } from '@/utils/services/gear-proficiency-manager'
+import {
+  FIST_WEAPON,
+  GearProficiencyManager,
+  UNARMORED_DEFENSE,
+} from '@/utils/services/gear-proficiency-manager'
 
 export interface CharacterAttack {
   attackBonus: ModifierValue[][]
@@ -53,6 +58,7 @@ export interface CharacterAttack {
 
 export interface CharacterArmor {
   name: string
+  item_name: string
   traits: string[]
   definition: ArmorDefinition
 }
@@ -320,6 +326,10 @@ export class PlayerCharacter {
       this.features
         .filter((feature) => feature.feature.type === 'PROFICIENCY')
         .filter((feature) => feature.feature.value.type === 'Weapon')
+        .map((val) => val.feature.value),
+      this.features
+        .filter((feature) => feature.feature.type === 'PROFICIENCY')
+        .filter((feature) => feature.feature.value.type === 'Defense')
         .map((val) => val.feature.value)
     )
   }
@@ -794,21 +804,8 @@ export class PlayerCharacter {
         | (WithNameAndId & { item: Armor })
         | undefined
 
-    const armor: CharacterArmor = equipped
-      ? {
-          name: equipped.name,
-          traits: equipped.item.traits!,
-          definition: equipped.item.properties,
-        }
-      : {
-          name: 'unarmored',
-          traits: [],
-          definition: {
-            category: 'unarmored',
-            group: 'cloth',
-            ac_bonus: 0,
-          },
-        }
+    const armor: CharacterArmor =
+      GearProficiencyManager.resolveEquippedArmor(equipped)
 
     if (
       armor.definition.dex_cap === undefined ||
@@ -825,33 +822,11 @@ export class PlayerCharacter {
       })
     }
 
-    const defenseProfs = this.getProficiencies().Defense
-    let minimumRank: ProficiencyRank = 'untrained'
-    if (defenseProfs.has('all armor')) {
-      if (this.greaterThan(defenseProfs.get('all armor')!, minimumRank)) {
-        minimumRank = defenseProfs.get('all armor')!
-      }
-    }
+    const rank = this.gearProficienyManager.getArmorProficiency(armor)
 
-    const category =
-      armor.definition.category === 'unarmored'
-        ? 'unarmored defense'
-        : armor.definition.category
-    if (defenseProfs.has(category)) {
-      if (this.greaterThan(defenseProfs.get(category)!, minimumRank)) {
-        minimumRank = defenseProfs.get(category)!
-      }
-    }
-
-    if (defenseProfs.has(armor.name)) {
-      if (this.greaterThan(defenseProfs.get(armor.name)!, minimumRank)) {
-        minimumRank = defenseProfs.get(armor.name)!
-      }
-    }
-
-    if (minimumRank && minimumRank !== 'untrained') {
+    if (rank && rank !== 'untrained') {
       result.push({
-        value: RankModifierMap[minimumRank] + this.level,
+        value: RankModifierMap[rank] + this.level,
         // TODO use the actual set one, not always the category
         source: `Proficiency (${armor.definition.category})`,
       })
@@ -870,34 +845,13 @@ export class PlayerCharacter {
   }
 
   public getAttacks(): CharacterAttack[] {
-    const weapons: CharacterWeapon[] = [
-      {
-        name: 'fist',
-        item_name: 'fist',
-        traits: ['agile', 'finesse', 'nonlethal', 'unarmed'],
-        definition: {
-          category: 'unarmed',
-          group: 'brawling',
-          type: 'melee',
-          damage: {
-            type: 'bludgeoning',
-            dice: '1d4',
-          },
-        },
-      },
-    ]
+    const weapons: CharacterWeapon[] = [FIST_WEAPON]
 
     weapons.push(
       ...this.character.equipment
         .filter((value) => value.item.category === 'Weapon')
-        .map((value) => {
-          const weapon = value.item as Weapon
-          return {
-            name: value.name,
-            item_name: weapon.name,
-            traits: weapon.traits!,
-            definition: weapon.properties,
-          }
+        .map((value: CharacterEquipment) => {
+          return GearProficiencyManager.createCharacterWeapon(value)
         })
     )
 

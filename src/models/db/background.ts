@@ -1,5 +1,10 @@
 import { AttributeModifier } from './ancestry'
-import { WeaponCategory, WeaponGroup } from './character-entity'
+import {
+  ArmorCategory,
+  ArmorGroup,
+  WeaponCategory,
+  WeaponGroup,
+} from './character-entity'
 import { EntityModel } from './entity-model'
 
 export interface Background extends EntityModel {
@@ -33,6 +38,11 @@ export interface ProficiencyFeatureValue {
 export interface WeaponProficiencyValue {
   category?: WeaponCategory
   group?: WeaponGroup
+}
+
+export interface ArmorProficiencyValue {
+  category?: ArmorCategory
+  group?: ArmorGroup
 }
 
 export interface WeaponProficiencies {
