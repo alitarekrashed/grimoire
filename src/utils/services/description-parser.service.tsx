@@ -102,9 +102,10 @@ export function createComponentsForType(
       if (entity) {
         notLastToken &&
           mapping.push(
-            React.createElement(displayComponentFactory(type, entity), {
+            React.createElement(displayComponentFactory(type), {
+              name: key,
               value: entity,
-              _id: entity._id,
+              id: entity._id,
             })
           )
       } else {
@@ -121,10 +122,7 @@ export function createComponentsForType(
   })()
 }
 
-function displayComponentFactory(
-  type: ModelType,
-  value: EntityModel
-): (value: any) => JSX.Element {
+function displayComponentFactory(type: ModelType): (value: any) => JSX.Element {
   switch (type) {
     case 'FEAT':
     case 'ACTION':
