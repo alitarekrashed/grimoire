@@ -31,7 +31,6 @@ import {
   OverrideFeatureValue,
   ResistanceFeatureValue,
   SkillSelectionFeatureValue,
-  SubclassFeatureValue,
   featureMatcher,
 } from './db/feature'
 import { Heritage } from './db/heritage'
@@ -361,13 +360,11 @@ export class PlayerCharacter {
       .filter(
         (sourced: SourcedFeature) =>
           sourced.feature.type === 'SUBCLASS_FEATURE' &&
-          sourced.feature.value?.feature?.type === 'SKILL_SELECTION'
+          sourced.feature.value?.type === 'SKILL_SELECTION'
       )
-      .filter(
-        (sourced: SourcedFeature) => sourced.feature.value.feature.value.value
-      )
+      .filter((sourced: SourcedFeature) => sourced.feature.value.value.value)
       .forEach((sourced: SourcedFeature) => {
-        const values = sourced.feature.value.feature.value.value.map(
+        const values = sourced.feature.value.value.value.map(
           (skill: string) => {
             return {
               source: sourced.source,
@@ -375,8 +372,7 @@ export class PlayerCharacter {
                 type: 'PROFICIENCY',
                 value: {
                   // TODO this shouldn't be 'max rank' ... we should be storing the actual rank in the selection entity on the character
-                  rank: sourced.feature.value.feature.value.configuration
-                    .max_rank,
+                  rank: sourced.feature.value.value.configuration.max_rank,
                   type: 'Skill',
                   value: skill,
                 },
@@ -563,16 +559,14 @@ export class PlayerCharacter {
         (val) => val.type === 'SUBCLASS_FEATURE'
       )
 
-      newFeatures
-        .map((feature) => feature.value as SubclassFeatureValue)
-        .forEach((subclassFeature) => {
-          const matched = subclass.features.find(
-            (feature) => feature.name === subclassFeature.name
-          )
-          if (matched) {
-            subclassFeature.feature = matched
-          }
-        })
+      newFeatures.forEach((subclassFeature: Feature) => {
+        const matched = subclass.features.find(
+          (feature) => feature.name === subclassFeature.name
+        )
+        if (matched) {
+          subclassFeature.value = matched
+        }
+      })
 
       updated.features['1'].push(
         ...newFeatures.map((feature: Feature) => {
@@ -1281,12 +1275,12 @@ export class PlayerCharacter {
         })
       } else if (
         sourced.feature.type === 'SUBCLASS_FEATURE' &&
-        sourced.feature.value.feature
+        sourced.feature.value
       ) {
         // TODO ALI make this the subclass name for source?
         allFeatures.push({
           source: classEntity.name,
-          feature: sourced.feature.value.feature,
+          feature: sourced.feature.value,
         })
       }
     })

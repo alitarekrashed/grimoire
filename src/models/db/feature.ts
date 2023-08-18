@@ -70,11 +70,6 @@ export interface SkillSelectionFeatureValue {
   value: string[]
 }
 
-export interface SubclassFeatureValue {
-  name: string
-  feature: Feature
-}
-
 export interface SkillSelectionConfiguration {
   options: string[] | 'Free'
   max_rank: ProficiencyRank

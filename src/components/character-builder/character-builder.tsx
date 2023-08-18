@@ -1,24 +1,24 @@
 'use client'
 
 import { CharacterEntity } from '@/models/db/character-entity'
-import { Feature, FeatureType, SubclassFeatureValue } from '@/models/db/feature'
+import { Feature } from '@/models/db/feature'
+import { Subclass } from '@/models/db/subclass'
 import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
-import { cloneDeep, update } from 'lodash'
+import { cloneDeep } from 'lodash'
 import { ReactNode, useContext, useEffect, useState } from 'react'
+import { PlayerCharacterContext } from '../character-display/player-character-context'
+import { LoadingSpinner } from '../loading-spinner/loading-spinner'
 import { Modal } from '../modal/modal'
 import { AncestryChoiceModal } from './ancestry-choice-modal'
 import { AncestryFeatChoiceModal } from './ancestry-feat.modal'
 import { AttributesModal } from './attributes-modal'
 import { BackgroundChoiceModal } from './background-choice-modal'
+import { ClassChoiceModal } from './class-choice-modal'
+import { ClassFeatChoiceModal } from './class-feat.modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LanguagesModal } from './languages-modal'
 import { SkillsModal } from './skills-modal'
-import { ClassFeatChoiceModal } from './class-feat.modal'
-import { LoadingSpinner } from '../loading-spinner/loading-spinner'
-import { ClassChoiceModal } from './class-choice-modal'
-import { PlayerCharacterContext } from '../character-display/player-character-context'
-import { Subclass } from '@/models/db/subclass'
 import { SubclassChoiceModal } from './subclass-choice-modal'
 
 export default function CharacterBuilderModal({
@@ -265,11 +265,11 @@ export default function CharacterBuilderModal({
                             <SkillsModal
                               name={
                                 getSubclassSkillSelections(playerCharacter)[0]
-                                  .feature.value.name
+                                  .feature.name
                               }
                               skillFeatures={getSubclassSkillSelections(
                                 playerCharacter
-                              ).map((sourced) => sourced.feature.value.feature)}
+                              ).map((sourced) => sourced.feature.value)}
                               proficiencies={playerCharacter.getSkills()}
                               onSkillsUpdate={(features: Feature[]) => {
                                 handleFeatureUpdate(
@@ -277,7 +277,7 @@ export default function CharacterBuilderModal({
                                     sourced.source === 'CLASS' &&
                                     sourced.feature.type ===
                                       'SUBCLASS_FEATURE' &&
-                                    sourced.feature.value.feature.type ===
+                                    sourced.feature.value.type ===
                                       'SKILL_SELECTION'
                                 )(
                                   features.map((value) =>
@@ -320,10 +320,7 @@ function mapSubclassFeatureSkillSelection(value: Feature): SourcedFeature {
     source: 'CLASS',
     feature: {
       type: 'SUBCLASS_FEATURE',
-      value: {
-        name: value.name,
-        feature: value,
-      },
+      value: value,
     },
   }
 }
@@ -337,6 +334,6 @@ function getSubclassSkillSelections(
       (sourced) =>
         sourced.source === 'CLASS' &&
         sourced.feature.type === 'SUBCLASS_FEATURE' &&
-        sourced.feature.value.feature?.type === 'SKILL_SELECTION'
+        sourced.feature.value.type === 'SKILL_SELECTION'
     )
 }
