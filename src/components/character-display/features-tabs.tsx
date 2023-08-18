@@ -23,8 +23,8 @@ export function FeaturesTabs() {
 
   const parseFeature = (feature: SourcedFeature, index: number) => {
     if (feature.feature.type === 'MISC') {
-      const title = feature.feature.value.name
-        ? `${feature.source} - ${feature.feature.value.name} `
+      const title = feature.feature.name
+        ? `${feature.source} - ${feature.feature.name} `
         : `${feature.source} `
 
       return (

@@ -22,12 +22,12 @@ export type ModifierType = 'Perception' | 'Speed' | 'AttackDamage'
 
 export interface Feature {
   type: FeatureType
+  name?: string
   value: any
 }
 
 export interface MiscFeatureValue {
-  name?: string
-  value: string
+  value: { description: string }
 }
 
 export interface OverrideFeatureValue {
