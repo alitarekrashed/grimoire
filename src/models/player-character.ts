@@ -355,6 +355,37 @@ export class PlayerCharacter {
         })
         this.allFeatures.push(...values)
       })
+
+    character.features['1']
+      .filter((sourced: SourcedFeature) => sourced.source === 'CLASS')
+      .filter(
+        (sourced: SourcedFeature) =>
+          sourced.feature.type === 'SUBCLASS_FEATURE' &&
+          sourced.feature.value?.feature.type === 'SKILL_SELECTION'
+      )
+      .filter(
+        (sourced: SourcedFeature) => sourced.feature.value.feature.value.value
+      )
+      .forEach((sourced: SourcedFeature) => {
+        const values = sourced.feature.value.feature.value.value.map(
+          (skill: string) => {
+            return {
+              source: sourced.source,
+              feature: {
+                type: 'PROFICIENCY',
+                value: {
+                  // TODO this shouldn't be 'max rank' ... we should be storing the actual rank in the selection entity on the character
+                  rank: sourced.feature.value.feature.value.configuration
+                    .max_rank,
+                  type: 'Skill',
+                  value: skill,
+                },
+              },
+            }
+          }
+        )
+        this.allFeatures.push(...values)
+      })
   }
 
   private clearOutSkillsAlreadyPresentOnClass(character: CharacterEntity) {
