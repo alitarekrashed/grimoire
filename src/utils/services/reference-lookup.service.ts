@@ -6,7 +6,6 @@ export function retrieveEntity(
   type: ModelType
 ): Promise<EntityModel> {
   const value = type === 'TRAIT' ? key.split(' ')[0] : key
-  console.log(value)
   return (async () => {
     const url: string = baseApiRouteFactory(type)!
     const entities = await (await fetch(`${url}?name=${value}`)).json()
