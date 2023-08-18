@@ -717,18 +717,6 @@ export class PlayerCharacter {
     }
   }
 
-  private greaterThan(
-    thisRank: ProficiencyRank,
-    other: ProficiencyRank
-  ): boolean {
-    if (other === 'untrained') {
-      return true
-    } else if (other === 'trained') {
-      return thisRank === 'trained' || thisRank === 'expert'
-    }
-    return false
-  }
-
   public getSavingThrows(): Map<SavingThrowType, CalculatedProficiency> {
     const savingThrows = this.getProficiencies().SavingThrow
     const result = new Map()
