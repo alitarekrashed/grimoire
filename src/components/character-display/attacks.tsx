@@ -40,13 +40,9 @@ export function Attacks() {
                     ))}
                   </span>
                   <span className="col-span-4">
-                    <span
-                      key={`${attack.weapon.definition.damage.type}-${index}`}
-                    >
+                    <span>
                       {attack.weapon.definition.damage.dice}
-                      {index === 0 &&
-                        attack.damageBonus !== 0 &&
-                        ' + ' + attack.damageBonus}
+                      {attack.damageBonus !== 0 && ' + ' + attack.damageBonus}
                       {` ${attack.weapon.definition.damage.type}`}
                     </span>
                   </span>

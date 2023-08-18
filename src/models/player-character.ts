@@ -1,4 +1,9 @@
 import { ModifierValue } from '@/components/calculated-display/calculated-display'
+import {
+  FIST_WEAPON,
+  GearProficiencyManager,
+  getGreaterThan,
+} from '@/utils/services/gear-proficiency-manager'
 import { cloneDeep } from 'lodash'
 import { Ancestry, Attribute } from './db/ancestry'
 import {
@@ -7,23 +12,16 @@ import {
   ProficiencyRank,
   ProficiencyType,
   RankModifierMap,
-  WeaponGroupProficiencies,
-  WeaponProficiencies,
-  WeaponProficiencyValue,
-  getUntrainedWeaponProficiences,
 } from './db/background'
 import {
   ArmorDefinition,
   CharacterEntity,
   CharacterEquipment,
-  WeaponDamageDefinition,
   WeaponDefinition,
-  WeaponGroup,
-  WeaponType,
   WithNameAndId,
 } from './db/character-entity'
 import { ClassEntity } from './db/class-entity'
-import { Armor, Weapon } from './db/equipment'
+import { Armor } from './db/equipment'
 import { Feat } from './db/feat'
 import {
   ConditionalFeatureValue,
@@ -44,12 +42,6 @@ import {
   SkillType,
   generateUntrainedSkillMap,
 } from './statistic'
-import {
-  FIST_WEAPON,
-  GearProficiencyManager,
-  UNARMORED_DEFENSE,
-  getGreaterThan,
-} from '@/utils/services/gear-proficiency-manager'
 
 export interface CharacterAttack {
   attackBonus: ModifierValue[][]
@@ -912,6 +904,29 @@ export class PlayerCharacter {
       })
     }
 
+    const damageModifiers = this.features
+      .filter(
+        (val) =>
+          val.feature.type === 'MODIFIER' &&
+          val.feature.value.type === 'AttackDamage'
+      )
+      .map((val) => val.feature.value as ModifierFeatureValue)
+      .filter((val) => {
+        if (val.context.category && val.context.group) {
+          return (
+            val.context.category === weapon.definition.category &&
+            val.context.group === weapon.definition.group
+          )
+        }
+        return (
+          val.context.category === weapon.definition.category ||
+          val.context.group === weapon.definition.group
+        )
+      })
+      .map((val) => val.modifier.value)
+
+    const additionalBonus = damageModifiers.reduce((prev, sum) => prev + sum, 0)
+
     return {
       attackBonus: [
         attackBonus,
@@ -919,7 +934,8 @@ export class PlayerCharacter {
         [...attackBonus, { value: -8, source: 'MAP' }],
       ],
       damageBonus:
-        weapon.definition.type === 'melee' ? this.attributes.Strength : 0,
+        (weapon.definition.type === 'melee' ? this.attributes.Strength : 0) +
+        additionalBonus,
       weapon: weapon,
     }
   }
@@ -1179,6 +1195,7 @@ export class PlayerCharacter {
         sourced.feature.type === 'PROFICIENCY' ||
         sourced.feature.type === 'ACTION' ||
         sourced.feature.type === 'MISC' ||
+        sourced.feature.type === 'MODIFIER' ||
         sourced.feature.type === 'OVERRIDE'
       ) {
         allFeatures.push({

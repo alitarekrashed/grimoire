@@ -187,7 +187,6 @@ export function FeaturesTabs() {
                     },
                     index
                   ) => {
-                    console.log(proficiency)
                     return (
                       <div className="mb-1" key={`${proficiency}-${index}`}>
                         <SkillDisplay
