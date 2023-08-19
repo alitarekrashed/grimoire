@@ -130,6 +130,7 @@ async function resolveFeats(feats: Feature[]): Promise<SourcedFeature[]> {
                     val
                   )
               })
+              modifiedFeature.context = featWithContext.context
             }
             return {
               source: featWithContext.feat.name,
