@@ -2,9 +2,10 @@ import { Feature, SkillSelectionFeatureValue } from '@/models/db/feature'
 import { CalculatedProficiency, SkillType } from '@/models/statistic'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Modal } from '../modal/modal'
 import { ChoiceSelect } from '../choice-select/choice-select'
+import { PlayerCharacterContext } from '../character-display/player-character-context'
 
 function getSkillChoices(
   existingProficiencies: Map<SkillType, CalculatedProficiency>
@@ -23,14 +24,16 @@ function getSkillChoices(
 export function LevelSkillChoicesModal({
   name,
   skillFeatures,
-  proficiencies,
   onSkillsUpdate,
 }: {
   name?: string
   skillFeatures: Feature[]
-  proficiencies: Map<SkillType, CalculatedProficiency>
   onSkillsUpdate: (features: Feature[]) => void
 }) {
+  const { playerCharacter } = useContext(PlayerCharacterContext)
+  const [proficiencies, setProficiencies] = useState<
+    Map<SkillType, CalculatedProficiency>
+  >(playerCharacter.getSkills(skillFeatures))
   const [updatedFeatures, setUpdatedFeatures] = useState<Feature[]>()
   const [choices, setChoices] = useState<string[]>([])
 
@@ -40,6 +43,7 @@ export function LevelSkillChoicesModal({
 
   useEffect(() => {
     setUpdatedFeatures(cloneDeep(skillFeatures))
+    setProficiencies(playerCharacter.getSkills(skillFeatures))
   }, [skillFeatures])
 
   let totalCount = 0

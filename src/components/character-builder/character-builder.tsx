@@ -215,17 +215,6 @@ export default function CharacterBuilderModal({
                               sourced.feature.type === 'SKILL_SELECTION'
                           )
                           .map((sourced) => sourced.feature)}
-                        // TODO ALI doing this here to basically pull proficiencies not including this level...
-                        proficiencies={playerCharacter.getSkills(
-                          playerCharacter
-                            .getLevelFeatures()
-                            .filter(
-                              (sourced) =>
-                                sourced.source === 'CLASS' &&
-                                sourced.feature.type === 'SKILL_SELECTION'
-                            )
-                            .map((sourced) => sourced.feature)
-                        )}
                         onSkillsUpdate={(features: Feature[]) => {
                           handleFeatureUpdate(
                             (source: SourcedFeature) =>
@@ -280,11 +269,6 @@ export default function CharacterBuilderModal({
                               skillFeatures={getSubclassSkillSelections(
                                 playerCharacter
                               ).map((sourced) => sourced.feature.value)}
-                              proficiencies={playerCharacter.getSkills(
-                                getSubclassSkillSelections(playerCharacter).map(
-                                  (sourced) => sourced.feature.value
-                                )
-                              )}
                               onSkillsUpdate={(features: Feature[]) => {
                                 handleFeatureUpdate(
                                   (sourced) =>
