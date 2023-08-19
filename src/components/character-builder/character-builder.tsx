@@ -18,7 +18,10 @@ import { ClassChoiceModal } from './class-choice-modal'
 import { ClassFeatChoiceModal } from './class-feat.modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LanguagesModal } from './languages-modal'
-import { SkillsModal } from './skills-modal'
+import {
+  LevelSkillChoicesModal,
+  SkillsModal,
+} from './level-skills-choices-modal'
 import { SubclassChoiceModal } from './subclass-choice-modal'
 
 export default function CharacterBuilderModal({
@@ -203,7 +206,7 @@ export default function CharacterBuilderModal({
                         })}
                     </div>
                     <div>
-                      <SkillsModal
+                      <LevelSkillChoicesModal
                         skillFeatures={playerCharacter
                           .getLevelFeatures()
                           .filter(
@@ -212,7 +215,7 @@ export default function CharacterBuilderModal({
                               sourced.feature.type === 'SKILL_SELECTION'
                           )
                           .map((sourced) => sourced.feature)}
-                        proficiencies={playerCharacter.getSkills()}
+                        proficiencies={playerCharacter.getSkills('1')}
                         onSkillsUpdate={(features: Feature[]) => {
                           handleFeatureUpdate(
                             (source: SourcedFeature) =>
@@ -227,7 +230,7 @@ export default function CharacterBuilderModal({
                             })
                           )
                         }}
-                      ></SkillsModal>
+                      ></LevelSkillChoicesModal>
                     </div>
                     <div>
                       {playerCharacter
