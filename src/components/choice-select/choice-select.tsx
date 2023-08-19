@@ -33,10 +33,7 @@ export function ChoiceSelect({
                 {option}
               </SelectItem>
             ))}
-            <Select.Separator />
           </Select.Viewport>
-          <Select.ScrollDownButton />
-          <Select.Arrow />
         </Select.Content>
       </Select.Portal>
     </Select.Root>
