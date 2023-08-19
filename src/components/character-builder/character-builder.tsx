@@ -260,10 +260,6 @@ export default function CharacterBuilderModal({
                           0 && (
                           <div className="mt-1">
                             <SkillSelect
-                              name={
-                                getSubclassSkillSelections(playerCharacter)[0]
-                                  .feature.name
-                              }
                               skillFeature={
                                 getSubclassSkillSelections(playerCharacter).map(
                                   (sourced) => sourced.feature.value

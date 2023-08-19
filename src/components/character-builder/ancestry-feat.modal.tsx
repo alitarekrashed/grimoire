@@ -64,6 +64,7 @@ export function AncestryFeatChoiceModal({
         onSave={(feat: Feat) => {
           const updated = cloneDeep(ancestryFeat)
           updated.feature.value = feat.name
+          updated.feature.context = []
           onChange([updated])
         }}
         onClear={() => {
