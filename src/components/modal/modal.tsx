@@ -8,7 +8,7 @@ export function Modal({
   body,
   closeButtons,
 }: {
-  size?: 'large' | 'medium' | 'small'
+  size?: 'large' | 'medium' | 'small' | 'xsmall'
   trigger: ReactNode
   body: ReactNode
   closeButtons: { label: string; onClick: () => void; disabled?: boolean }[]
@@ -19,6 +19,8 @@ export function Modal({
         return 'inset-5 h-[90%]'
       case 'small':
         return 'inset-56 h-2/5'
+      case 'xsmall':
+        return 'inset-x-96 inset-y-20 h-3/5'
       default:
         return 'inset-20 h-3/5'
     }

@@ -94,9 +94,7 @@ interface FeatWithContext {
 }
 
 async function getAndConvertFeat(feature: Feature): Promise<FeatWithContext> {
-  console.log(feature.value)
   const feats = (await PlayerCharacter.getFeat(feature.value)) as Feat[]
-  console.log(feats)
   const feat = feats.length > 0 ? feats[0] : undefined!
   return { context: feature.context, feat: feat }
 }
@@ -156,7 +154,6 @@ async function resolveFeats(feats: Feature[]): Promise<SourcedFeature[]> {
     resolvedFeatures.push(...(await resolveFeats(additionalFeats)))
   }
 
-  console.log(resolvedFeatures)
   return resolvedFeatures
 }
 
