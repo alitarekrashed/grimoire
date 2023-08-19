@@ -36,7 +36,7 @@ export function FeatSubChoiceModal({
         }}
       ></ChoiceSelect>
       {otherValue !== undefined && (
-        <div className="mt-1 relative w-44 h-9 mr-2">
+        <div className="mt-1 relative w-44 h-9">
           <span className="text-stone-300 absolute top-0 text-[9px] pl-1.5">
             Other: {feat.configuration!.title}
           </span>
