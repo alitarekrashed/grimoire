@@ -10,6 +10,7 @@ import { cloneDeep } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
 import { PlayerCharacterContext } from '../character-display/player-character-context'
 import { Modal } from '../modal/modal'
+import { ChoiceSelect } from '../choice-select/choice-select'
 
 const ATTRIBUTES: Attribute[] = [
   'Strength',
@@ -71,10 +72,7 @@ function getAncestryFreeAttributeChoices(character: CharacterEntity) {
   return options
 }
 
-function getBackgroundAttributeChoices(
-  character: CharacterEntity,
-  background: Background
-) {
+function getBackgroundAttributeChoices(background: Background) {
   let options: Attribute[][] = background.attributes.map(
     (choices: AttributeModifier[]) => {
       if (choices.length === 1 && choices[0] === 'Free') {
@@ -84,13 +82,6 @@ function getBackgroundAttributeChoices(
       }
     }
   )
-
-  for (let i = 0; i < options.length; i++) {
-    options[i] = options[i].filter(
-      (option: Attribute) =>
-        character.attributes.background.indexOf(option) === -1
-    )
-  }
 
   return options
 }
@@ -144,10 +135,7 @@ export function AttributesModal({
       modifiedCharacter,
       playerCharacter.getAncestry()
     ),
-    background: getBackgroundAttributeChoices(
-      modifiedCharacter,
-      playerCharacter.getBackground()
-    ),
+    background: getBackgroundAttributeChoices(playerCharacter.getBackground()),
     class: getClassAttributeChoices(
       modifiedCharacter,
       playerCharacter.getClassEntity()
@@ -184,7 +172,6 @@ export function AttributesModal({
         playerCharacter.getAncestry()
       ),
       background: getBackgroundAttributeChoices(
-        modifiedCharacter,
         playerCharacter.getBackground()
       ),
       class: getClassAttributeChoices(
@@ -260,25 +247,20 @@ export function AttributesModal({
           {modifiedCharacter.attributes.background.map(
             (choice: any, i: number) => {
               return (
-                <React.Fragment key={i}>
-                  <select
-                    className="bg-stone-700 mr-2 rounded-md"
-                    value={choice ?? ''}
-                    onChange={(e) => {
+                <span key={i} className="mr-2">
+                  <ChoiceSelect
+                    value={choice}
+                    title={`Attribute #${i + 1}`}
+                    options={choices.background[i]}
+                    onChange={(val: string) => {
+                      console.log(val)
+                      choices.background
                       let updated = cloneDeep(modifiedCharacter)
-                      updated.attributes.background[i] = e.target
-                        .value as Attribute
+                      updated.attributes.background[i] = val as Attribute
                       setModifiedCharacter(updated)
                     }}
-                  >
-                    <option value={choice}>{choice}</option>
-                    {choices.background[i]?.map((attribute) => (
-                      <option key={attribute} value={attribute}>
-                        {attribute}
-                      </option>
-                    ))}
-                  </select>
-                </React.Fragment>
+                  ></ChoiceSelect>
+                </span>
               )
             }
           )}

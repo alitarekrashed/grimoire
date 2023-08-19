@@ -61,7 +61,7 @@ export function LanguagesModal({
           <ChoiceSelect
             key={i}
             value={choice}
-            title={`Language #${i}`}
+            title={`Language #${i + 1}`}
             options={choices.filter((val) => {
               if (val === choice) {
                 return true
