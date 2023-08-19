@@ -747,7 +747,7 @@ export class PlayerCharacter {
       .map((feature) => feature)
   }
 
-  public getProficiencies(level?: string): {
+  public getProficiencies(exclude?: Feature[]): {
     Perception: Map<string, ProficiencyRank>
     Skill: Map<SkillType, ProficiencyRank>
     Lore: Map<string, ProficiencyRank>
@@ -768,15 +768,20 @@ export class PlayerCharacter {
       DifficultyClass: new Map<string, ProficiencyRank>(),
     }
 
+    const excluded: string[] = []
+    exclude?.map((feature) => {
+      excluded.push(...feature.value.value)
+    })
+
     this.features
       .filter((feature) => {
-        if (level) {
-          return (
-            feature.feature.type === 'PROFICIENCY' && feature.source !== 'CLASS'
-          )
-        } else {
-          return feature.feature.type === 'PROFICIENCY'
+        return feature.feature.type === 'PROFICIENCY'
+      })
+      .filter((feature) => {
+        if (excluded) {
+          return excluded.includes(feature.feature.value.value) == false
         }
+        return true
       })
       .filter(
         (feature) =>
@@ -826,8 +831,8 @@ export class PlayerCharacter {
     return result
   }
 
-  public getSkills(level?: string): Map<SkillType, CalculatedProficiency> {
-    const skills = this.getProficiencies(level).Skill
+  public getSkills(exclude?: Feature[]): Map<SkillType, CalculatedProficiency> {
+    const skills = this.getProficiencies(exclude).Skill
     const result = new Map()
     skills.forEach((rank, type) => {
       result.set(type, {

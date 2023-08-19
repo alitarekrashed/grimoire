@@ -16,6 +16,7 @@ export function ChoiceSelect({
   onChange: (value: string) => void
 }) {
   const [currentValue, setCurrentValue] = useState<string>(value)
+
   return (
     <Select.Root
       value={currentValue}

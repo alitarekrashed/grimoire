@@ -2,8 +2,10 @@ import { Feature, SkillSelectionFeatureValue } from '@/models/db/feature'
 import { CalculatedProficiency, SkillType } from '@/models/statistic'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
-import React, { useEffect, useState } from 'react'
-import { Modal } from '../modal/modal'
+import React, { useContext, useEffect, useState } from 'react'
+import { Modal } from '../../modal/modal'
+import { ChoiceSelect } from '../../choice-select/choice-select'
+import { PlayerCharacterContext } from '../../character-display/player-character-context'
 
 function getSkillChoices(
   existingProficiencies: Map<SkillType, CalculatedProficiency>
@@ -19,17 +21,19 @@ function getSkillChoices(
   return choices
 }
 
-export function SkillsModal({
+export function MultipleSkillSelect({
   name,
   skillFeatures,
-  proficiencies,
   onSkillsUpdate,
 }: {
   name?: string
   skillFeatures: Feature[]
-  proficiencies: Map<SkillType, CalculatedProficiency>
   onSkillsUpdate: (features: Feature[]) => void
 }) {
+  const { playerCharacter } = useContext(PlayerCharacterContext)
+  const [proficiencies, setProficiencies] = useState<
+    Map<SkillType, CalculatedProficiency>
+  >(playerCharacter.getSkills(skillFeatures))
   const [updatedFeatures, setUpdatedFeatures] = useState<Feature[]>()
   const [choices, setChoices] = useState<string[]>([])
 
@@ -39,6 +43,7 @@ export function SkillsModal({
 
   useEffect(() => {
     setUpdatedFeatures(cloneDeep(skillFeatures))
+    setProficiencies(playerCharacter.getSkills(skillFeatures))
   }, [skillFeatures])
 
   let totalCount = 0
@@ -57,26 +62,26 @@ export function SkillsModal({
     </button>
   )
 
+  let counter = 0
+
   const skillChoices =
     updatedFeatures &&
     updatedFeatures.map((feature: Feature, index) => {
       const skillSelection = feature.value as SkillSelectionFeatureValue
 
-      return skillSelection.value.map((skill: string, innerIndex) => {
-        return (
-          <React.Fragment key={`${skill}-${index}-${innerIndex}`}>
-            <select
-              className="bg-stone-700 mr-2 rounded-md"
-              value={skill ?? ''}
-              onChange={(e) => {
-                let updated = cloneDeep(updatedFeatures)!
-                updated[index].value.value[innerIndex] = e.target.value
-                setUpdatedFeatures(updated)
-              }}
-            >
-              <option value={skill}>{skill}</option>
-              {choices
-                .filter((choice: string) => {
+      return (
+        <div className="inline-flex gap-2">
+          {skillSelection.value.map((skill: string, innerIndex) => {
+            counter = counter + 1
+            return (
+              <ChoiceSelect
+                key={counter}
+                value={skill}
+                title={`Skill #${counter}`}
+                options={choices.filter((choice: string) => {
+                  if (choice === skill) {
+                    return true
+                  }
                   const alreadyChosen = updatedFeatures
                     .map((feature: Feature) => feature.value.value)
                     .some((skills: string[]) => skills.includes(choice))
@@ -88,16 +93,17 @@ export function SkillsModal({
                   } else {
                     return skillSelection.configuration.options.includes(choice)
                   }
-                })
-                .map((skill) => (
-                  <option key={skill} value={skill}>
-                    {skill}
-                  </option>
-                ))}
-            </select>
-          </React.Fragment>
-        )
-      })
+                })}
+                onChange={(val: string) => {
+                  let updated = cloneDeep(updatedFeatures)!
+                  updated[index].value.value[innerIndex] = val
+                  setUpdatedFeatures(updated)
+                }}
+              ></ChoiceSelect>
+            )
+          })}
+        </div>
+      )
     })
 
   const body = updatedFeatures && (
