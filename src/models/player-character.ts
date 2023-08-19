@@ -43,6 +43,7 @@ import {
   generateUntrainedSkillMap,
 } from './statistic'
 import { Subclass } from './db/subclass'
+import { inter } from '@/utils/fonts'
 
 export interface CharacterAttack {
   attackBonus: ModifierValue[][]
@@ -87,41 +88,72 @@ const ATTRIBUTES: Attribute[] = [
   'Charisma',
 ]
 
-async function resolveFeats(feats: string[]): Promise<SourcedFeature[]> {
+interface FeatWithContext {
+  context: string[] | undefined
+  feat: Feat
+}
+
+async function getAndConvertFeat(feature: Feature): Promise<FeatWithContext> {
+  const feats = (await PlayerCharacter.getFeat(feature.value)) as Feat[]
+  const feat = feats.length > 0 ? feats[0] : undefined!
+  return { context: feature.context, feat: feat }
+}
+
+async function resolveFeats(feats: Feature[]): Promise<SourcedFeature[]> {
   let resolvedFeatures: SourcedFeature[] = []
-  const resolvedFeats: Feat[][] = await Promise.all(
-    feats.map((feat) => PlayerCharacter.getFeat(feat))
+  const resolvedFeats: {
+    context: string[] | undefined
+    feat: Feat
+  }[] = await Promise.all(
+    feats.filter((feat) => feat?.value).map((feat) => getAndConvertFeat(feat))
   )
 
-  let additionalFeats: string[] = []
+  let additionalFeats: Feature[] = []
   resolvedFeats
     .filter((val) => val)
-    .map((feat: Feat[]) => feat[0])
-    .forEach((feat: Feat) => {
+    .forEach((featWithContext: FeatWithContext) => {
       resolvedFeatures.push(
-        ...feat.features
+        ...featWithContext.feat.features
           .filter((feature) => !feature.value.action)
           .filter((feature) => feature.type !== 'FEAT')
           .map((feature: Feature) => {
-            return { source: feat.name, feature: feature }
+            let modifiedFeature = cloneDeep(feature)
+            if (
+              feature.type === 'MISC' &&
+              featWithContext.context &&
+              feature.value.description
+            ) {
+              featWithContext.context.forEach((val, index) => {
+                modifiedFeature.value.description =
+                  modifiedFeature.value.description.replaceAll(
+                    `{${index}}`,
+                    val
+                  )
+              })
+            }
+            return {
+              source: featWithContext.feat.name,
+              feature: modifiedFeature,
+            }
           })
       )
-      if (feat.activation) {
+      if (featWithContext.feat.activation) {
         resolvedFeatures.push({
-          source: feat.name,
-          feature: { type: 'ACTION', value: feat },
+          source: featWithContext.feat.name,
+          feature: { type: 'ACTION', value: featWithContext.feat },
         })
       }
       additionalFeats.push(
-        ...feat.features
-          .filter((feature) => feature.type === 'FEAT')
-          .map((feature) => feature.value)
+        ...featWithContext.feat.features.filter(
+          (feature) => feature.type === 'FEAT'
+        )
       )
     })
 
   if (additionalFeats.length > 0) {
     resolvedFeatures.push(...(await resolveFeats(additionalFeats)))
   }
+
   return resolvedFeatures
 }
 
@@ -1205,7 +1237,7 @@ export class PlayerCharacter {
       PlayerCharacter.getClass(character.class_id),
     ])
 
-    let feats: string[] = []
+    let feats: Feature[] = []
     const allFeatures: SourcedFeature[] = []
 
     allFeatures.push(
@@ -1261,7 +1293,7 @@ export class PlayerCharacter {
         sourced.feature.type === 'FEAT' ||
         sourced.feature.type === 'CLASS_FEAT_SELECTION'
       ) {
-        feats.push(sourced.feature.value)
+        feats.push(sourced.feature)
       } else if (
         sourced.feature.type === 'PROFICIENCY' ||
         sourced.feature.type === 'ACTION' ||

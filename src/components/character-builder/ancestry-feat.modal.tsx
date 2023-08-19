@@ -4,19 +4,28 @@ import { useContext, useEffect, useState } from 'react'
 import { FeatureChoiceModal } from './feature-choice-modal'
 import { cloneDeep } from 'lodash'
 import { PlayerCharacterContext } from '../character-display/player-character-context'
+import { FeatSubChoiceModal } from './feat-subchoice-modal'
 
 export function AncestryFeatChoiceModal({
   existingFeat,
-  existingFeatName,
   onChange,
 }: {
   existingFeat: SourcedFeature
-  existingFeatName: string
   onChange: (sourcedFeature: SourcedFeature[]) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [ancestryFeat, setAncestryFeat] = useState<SourcedFeature>(existingFeat)
+  const [featWithSubChoice, setFeatWithSubChoice] = useState<Feat>()
   const [feats, setFeats] = useState<Feat[]>([])
+
+  const matchFeat = () => {
+    const matched = feats.find((val) => val.name === ancestryFeat.feature.value)
+    if (matched && matched.configuration) {
+      setFeatWithSubChoice(matched)
+    } else {
+      setFeatWithSubChoice(undefined)
+    }
+  }
 
   useEffect(() => {
     setAncestryFeat(existingFeat)
@@ -34,6 +43,16 @@ export function AncestryFeatChoiceModal({
         setFeats(feats)
       })
   }, [playerCharacter.getTraits()])
+
+  useEffect(() => {
+    matchFeat()
+  }, [ancestryFeat, feats])
+
+  const handleSubChoiceChange = (value: string) => {
+    const updated = cloneDeep(ancestryFeat)
+    updated.feature.context = [value]
+    onChange([updated])
+  }
 
   return (
     <>
@@ -53,6 +72,15 @@ export function AncestryFeatChoiceModal({
           onChange([updated])
         }}
       ></FeatureChoiceModal>
+      {featWithSubChoice && (
+        <div className="mt-1">
+          <FeatSubChoiceModal
+            feat={featWithSubChoice}
+            choice={ancestryFeat.feature.context![0]}
+            onChange={handleSubChoiceChange}
+          ></FeatSubChoiceModal>
+        </div>
+      )}
     </>
   )
 }

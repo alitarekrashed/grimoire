@@ -193,9 +193,6 @@ export default function CharacterBuilderModal({
                             <AncestryFeatChoiceModal
                               key={`${value.source}-${value.feature}-${index}`}
                               existingFeat={value}
-                              existingFeatName={
-                                value.feature.value ? value.feature.value : ''
-                              }
                               onChange={handleFeatureUpdate(
                                 (source: SourcedFeature) =>
                                   source.source === 'ANCESTRY' &&

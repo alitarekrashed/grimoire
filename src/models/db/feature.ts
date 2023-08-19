@@ -26,6 +26,7 @@ export interface Feature {
   type: FeatureType
   name?: string
   value: any
+  context?: string[]
 }
 
 export interface MiscFeatureValue {
