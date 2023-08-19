@@ -3,9 +3,10 @@ import { CharacterEntity } from '@/models/db/character-entity'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
-import { Modal } from '../modal/modal'
-import { PlayerCharacterContext } from '../character-display/player-character-context'
-import { ChoiceSelect } from '../choice-select/choice-select'
+import { Modal } from '../../modal/modal'
+import { PlayerCharacterContext } from '../../character-display/player-character-context'
+import { ChoiceSelect } from '../../choice-select/choice-select'
+import { LanguageSelect } from './language-select'
 
 function getAncestryLanguageChoices(
   knownLanguages: string[],
@@ -58,22 +59,17 @@ export function LanguagesModal({
     <div className={`inline-flex gap-2 ${roboto_condensed.className} p-2`}>
       {modifiedCharacter?.languages.map((choice: any, i: number) => {
         return (
-          <ChoiceSelect
-            key={i}
+          <LanguageSelect
             value={choice}
+            languages={choices}
+            alreadyChosenLanguages={modifiedCharacter?.languages}
             title={`Language #${i + 1}`}
-            options={choices.filter((val) => {
-              if (val === choice) {
-                return true
-              }
-              return modifiedCharacter?.languages.includes(val) === false
-            })}
             onChange={(val: string) => {
               let updated = cloneDeep(modifiedCharacter)!
               updated.languages[i] = val
               setModifiedCharacter(updated)
             }}
-          ></ChoiceSelect>
+          ></LanguageSelect>
         )
       })}
     </div>
