@@ -1,5 +1,5 @@
 import * as Select from '@radix-ui/react-select'
-import React, { Ref } from 'react'
+import React, { Ref, useState } from 'react'
 import { FaChevronDown, FaCheck } from 'react-icons/fa'
 import classnames from 'classnames'
 import { roboto_condensed } from '@/utils/fonts'
@@ -7,12 +7,23 @@ import { roboto_condensed } from '@/utils/fonts'
 export function ChoiceSelect({
   title,
   options,
+  value,
+  onChange,
 }: {
+  value: string
   title: string
   options: string[]
+  onChange: (value: string) => void
 }) {
+  const [currentValue, setCurrentValue] = useState<string>(value)
   return (
-    <Select.Root>
+    <Select.Root
+      value={currentValue}
+      onValueChange={(val) => {
+        setCurrentValue(val)
+        onChange(val)
+      }}
+    >
       <Select.Trigger className="inline-flex h-9 hover:bg-stone-600 rounded-md border border-stone-300 w-44 items-end pl-1 relative focus:shadow">
         <Select.Value />
         <Select.Icon asChild>

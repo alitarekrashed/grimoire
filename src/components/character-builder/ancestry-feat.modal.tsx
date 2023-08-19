@@ -48,6 +48,12 @@ export function AncestryFeatChoiceModal({
     matchFeat()
   }, [ancestryFeat, feats])
 
+  const handleSubChoiceChange = (value: string) => {
+    const updated = cloneDeep(ancestryFeat)
+    updated.feature.context = [value]
+    onChange([updated])
+  }
+
   return (
     <>
       <FeatureChoiceModal
@@ -68,7 +74,11 @@ export function AncestryFeatChoiceModal({
       ></FeatureChoiceModal>
       {featWithSubChoice && (
         <div className="mt-1">
-          <FeatSubChoiceModal feat={featWithSubChoice}></FeatSubChoiceModal>
+          <FeatSubChoiceModal
+            feat={featWithSubChoice}
+            choice={ancestryFeat.feature.context![0]}
+            onChange={handleSubChoiceChange}
+          ></FeatSubChoiceModal>
         </div>
       )}
     </>
