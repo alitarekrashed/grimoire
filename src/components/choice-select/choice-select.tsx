@@ -16,10 +16,13 @@ export function ChoiceSelect({
   onChange: (value: string) => void
 }) {
   const [currentValue, setCurrentValue] = useState<string>(value)
+
+  console.log(options)
   return (
     <Select.Root
       value={currentValue}
       onValueChange={(val) => {
+        console.log(val)
         setCurrentValue(val)
         onChange(val)
       }}

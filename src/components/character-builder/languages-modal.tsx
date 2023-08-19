@@ -1,10 +1,11 @@
-import { Ancestry } from '@/models/db/ancestry'
+import { Ancestry, Attribute } from '@/models/db/ancestry'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
 import { Modal } from '../modal/modal'
 import { PlayerCharacterContext } from '../character-display/player-character-context'
+import { ChoiceSelect } from '../choice-select/choice-select'
 
 function getAncestryLanguageChoices(
   knownLanguages: string[],
@@ -54,32 +55,25 @@ export function LanguagesModal({
   )
 
   const body = (
-    <div className={`${roboto_condensed.className} p-2`}>
+    <div className={`inline-flex gap-2 ${roboto_condensed.className} p-2`}>
       {modifiedCharacter?.languages.map((choice: any, i: number) => {
         return (
-          <React.Fragment key={i}>
-            <select
-              className="bg-stone-700 mr-2 rounded-md"
-              value={choice ?? ''}
-              onChange={(e) => {
-                let updated = cloneDeep(modifiedCharacter)!
-                updated.languages[i] = e.target.value as Attribute
-                setModifiedCharacter(updated)
-              }}
-            >
-              <option value={choice}>{choice}</option>
-              {choices
-                .filter(
-                  (choice) =>
-                    modifiedCharacter?.languages.includes(choice) === false
-                )
-                .map((language) => (
-                  <option key={language} value={language}>
-                    {language}
-                  </option>
-                ))}
-            </select>
-          </React.Fragment>
+          <ChoiceSelect
+            key={i}
+            value={choice}
+            title={`Language #${i}`}
+            options={choices.filter((val) => {
+              if (val === choice) {
+                return true
+              }
+              return modifiedCharacter?.languages.includes(val) === false
+            })}
+            onChange={(val: string) => {
+              let updated = cloneDeep(modifiedCharacter)!
+              updated.languages[i] = val
+              setModifiedCharacter(updated)
+            }}
+          ></ChoiceSelect>
         )
       })}
     </div>
