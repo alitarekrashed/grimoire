@@ -1,3 +1,4 @@
+import { inter } from '@/utils/fonts'
 import { Activation, SavingThrow } from './activation'
 import { ProficiencyRank } from './background'
 import { EntityModel } from './entity-model'
@@ -8,6 +9,7 @@ export interface Feat extends EntityModel {
   features: Feature[]
   level: number
   prerequisites: Prerequisite[]
+  configuration?: FeatConfiguration
   activation?: Activation
   saving_throw?: SavingThrow
 }
@@ -22,4 +24,9 @@ export interface Prerequisite {
 export interface PrerequisiteSkillValue {
   skill: string
   minimum_rank: ProficiencyRank
+}
+
+export interface FeatConfiguration {
+  title: string
+  options: string[]
 }
