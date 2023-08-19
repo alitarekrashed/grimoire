@@ -94,19 +94,13 @@ function getClassAttributeChoices(classEntity: ClassEntity) {
   return options
 }
 
-function getLevelAttributeChoices(character: CharacterEntity) {
+function getLevelAttributeChoices() {
   let options: Attribute[][] = [
     [...ATTRIBUTES],
     [...ATTRIBUTES],
     [...ATTRIBUTES],
     [...ATTRIBUTES],
   ]
-
-  for (let i = 0; i < options.length; i++) {
-    options[i] = options[i].filter(
-      (option: Attribute) => character.attributes.level_1.indexOf(option) === -1
-    )
-  }
 
   return options
 }
@@ -128,7 +122,7 @@ export function AttributesModal({
     ),
     background: getBackgroundAttributeChoices(playerCharacter.getBackground()),
     class: getClassAttributeChoices(playerCharacter.getClassEntity()),
-    level_1: getLevelAttributeChoices(modifiedCharacter),
+    level_1: getLevelAttributeChoices(),
   })
 
   let totalCount = 0
@@ -163,7 +157,7 @@ export function AttributesModal({
         playerCharacter.getBackground()
       ),
       class: getClassAttributeChoices(playerCharacter.getClassEntity()),
-      level_1: getLevelAttributeChoices(modifiedCharacter),
+      level_1: getLevelAttributeChoices(),
     })
   }, [modifiedCharacter])
 
@@ -236,7 +230,15 @@ export function AttributesModal({
                   <ChoiceSelect
                     value={choice}
                     title={`Attribute #${i + 1}`}
-                    options={choices.background[i]}
+                    options={choices.background[i].filter((val) => {
+                      if (val === choice) {
+                        return true
+                      }
+                      return (
+                        modifiedCharacter.attributes.background.indexOf(val) ===
+                        -1
+                      )
+                    })}
                     onChange={(val: string) => {
                       let updated = cloneDeep(modifiedCharacter)
                       updated.attributes.background[i] = val as Attribute
@@ -272,25 +274,25 @@ export function AttributesModal({
           {modifiedCharacter.attributes.level_1.map(
             (choice: any, i: number) => {
               return (
-                <React.Fragment key={i}>
-                  <select
-                    className="bg-stone-700 mr-2 rounded-md"
-                    value={choice ?? ''}
-                    onChange={(e) => {
+                <span key={i} className="mr-2">
+                  <ChoiceSelect
+                    value={choice}
+                    title={`Attribute #${i + 1}`}
+                    options={choices.level_1[i].filter((val) => {
+                      if (val === choice) {
+                        return true
+                      }
+                      return (
+                        modifiedCharacter.attributes.level_1.indexOf(val) === -1
+                      )
+                    })}
+                    onChange={(val: string) => {
                       let updated = cloneDeep(modifiedCharacter)
-                      updated.attributes.level_1[i] = e.target
-                        .value as Attribute
+                      updated.attributes.level_1[i] = val as Attribute
                       setModifiedCharacter(updated)
                     }}
-                  >
-                    <option value={choice}>{choice}</option>
-                    {choices.level_1[i]?.map((attribute) => (
-                      <option key={attribute} value={attribute}>
-                        {attribute}
-                      </option>
-                    ))}
-                  </select>
-                </React.Fragment>
+                  ></ChoiceSelect>
+                </span>
               )
             }
           )}
