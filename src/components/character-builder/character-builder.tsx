@@ -215,7 +215,17 @@ export default function CharacterBuilderModal({
                               sourced.feature.type === 'SKILL_SELECTION'
                           )
                           .map((sourced) => sourced.feature)}
-                        proficiencies={playerCharacter.getSkills('1')}
+                        // TODO ALI doing this here to basically pull proficiencies not including this level...
+                        proficiencies={playerCharacter.getSkills(
+                          playerCharacter
+                            .getLevelFeatures()
+                            .filter(
+                              (sourced) =>
+                                sourced.source === 'CLASS' &&
+                                sourced.feature.type === 'SKILL_SELECTION'
+                            )
+                            .map((sourced) => sourced.feature)
+                        )}
                         onSkillsUpdate={(features: Feature[]) => {
                           handleFeatureUpdate(
                             (source: SourcedFeature) =>
@@ -262,7 +272,7 @@ export default function CharacterBuilderModal({
                         {getSubclassSkillSelections(playerCharacter).length >
                           0 && (
                           <div className="mt-1">
-                            <SkillsModal
+                            <LevelSkillChoicesModal
                               name={
                                 getSubclassSkillSelections(playerCharacter)[0]
                                   .feature.name
@@ -270,7 +280,11 @@ export default function CharacterBuilderModal({
                               skillFeatures={getSubclassSkillSelections(
                                 playerCharacter
                               ).map((sourced) => sourced.feature.value)}
-                              proficiencies={playerCharacter.getSkills()}
+                              proficiencies={playerCharacter.getSkills(
+                                getSubclassSkillSelections(playerCharacter).map(
+                                  (sourced) => sourced.feature.value
+                                )
+                              )}
                               onSkillsUpdate={(features: Feature[]) => {
                                 handleFeatureUpdate(
                                   (sourced) =>
@@ -285,7 +299,7 @@ export default function CharacterBuilderModal({
                                   )
                                 )
                               }}
-                            ></SkillsModal>
+                            ></LevelSkillChoicesModal>
                           </div>
                         )}
                       </div>
