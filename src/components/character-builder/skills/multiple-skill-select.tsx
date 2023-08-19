@@ -3,9 +3,9 @@ import { CalculatedProficiency, SkillType } from '@/models/statistic'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
-import { Modal } from '../modal/modal'
-import { ChoiceSelect } from '../choice-select/choice-select'
-import { PlayerCharacterContext } from '../character-display/player-character-context'
+import { Modal } from '../../modal/modal'
+import { ChoiceSelect } from '../../choice-select/choice-select'
+import { PlayerCharacterContext } from '../../character-display/player-character-context'
 
 function getSkillChoices(
   existingProficiencies: Map<SkillType, CalculatedProficiency>
@@ -21,7 +21,7 @@ function getSkillChoices(
   return choices
 }
 
-export function LevelSkillChoicesModal({
+export function MultipleSkillSelect({
   name,
   skillFeatures,
   onSkillsUpdate,

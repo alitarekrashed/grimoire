@@ -18,11 +18,9 @@ import { ClassChoiceModal } from './class-choice-modal'
 import { ClassFeatChoiceModal } from './class-feat.modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LanguagesModal } from './languages-modal'
-import {
-  LevelSkillChoicesModal,
-  SkillsModal,
-} from './level-skills-choices-modal'
 import { SubclassChoiceModal } from './subclass-choice-modal'
+import { MultipleSkillSelect } from './skills/multiple-skill-select'
+import { SkillSelect } from './skills/skill-select'
 
 export default function CharacterBuilderModal({
   trigger,
@@ -206,7 +204,7 @@ export default function CharacterBuilderModal({
                         })}
                     </div>
                     <div>
-                      <LevelSkillChoicesModal
+                      <MultipleSkillSelect
                         skillFeatures={playerCharacter
                           .getLevelFeatures()
                           .filter(
@@ -229,7 +227,7 @@ export default function CharacterBuilderModal({
                             })
                           )
                         }}
-                      ></LevelSkillChoicesModal>
+                      ></MultipleSkillSelect>
                     </div>
                     <div>
                       {playerCharacter
@@ -261,14 +259,16 @@ export default function CharacterBuilderModal({
                         {getSubclassSkillSelections(playerCharacter).length >
                           0 && (
                           <div className="mt-1">
-                            <LevelSkillChoicesModal
+                            <SkillSelect
                               name={
                                 getSubclassSkillSelections(playerCharacter)[0]
                                   .feature.name
                               }
-                              skillFeatures={getSubclassSkillSelections(
-                                playerCharacter
-                              ).map((sourced) => sourced.feature.value)}
+                              skillFeature={
+                                getSubclassSkillSelections(playerCharacter).map(
+                                  (sourced) => sourced.feature.value
+                                )[0]
+                              }
                               onSkillsUpdate={(features: Feature[]) => {
                                 handleFeatureUpdate(
                                   (sourced) =>
@@ -283,7 +283,7 @@ export default function CharacterBuilderModal({
                                   )
                                 )
                               }}
-                            ></LevelSkillChoicesModal>
+                            ></SkillSelect>
                           </div>
                         )}
                       </div>
@@ -314,6 +314,7 @@ export default function CharacterBuilderModal({
 }
 
 function mapSubclassFeatureSkillSelection(value: Feature): SourcedFeature {
+  console.log(value)
   return {
     source: 'CLASS',
     feature: {
