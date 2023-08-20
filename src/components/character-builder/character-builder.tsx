@@ -226,50 +226,14 @@ export default function CharacterBuilderModal({
                     </div>
                     {playerCharacter
                       .getLevelFeatures()
-                      .filter((value) => value.feature.type === 'FEAT')
-                      .map((val) => (
-                        <span key={val.feature.value}>{val.feature.value}</span>
+                      .filter(
+                        (value) => value.feature.type === 'FEAT_SELECTION'
+                      )
+                      .map((val: SourcedFeature, index: number) => (
+                        <div key={`${val.source}-${index}`}>
+                          {buildFeatChoice(val, handleFeatureUpdate)}
+                        </div>
                       ))}
-                    <div>
-                      {playerCharacter
-                        .getLevelFeatures()
-                        .filter((sourced) => sourced.source === 'ANCESTRY')
-                        .map((value, index) => {
-                          return (
-                            <AncestryFeatChoiceModal
-                              key={`${value.source}-${value.feature}-${index}`}
-                              existingFeat={value}
-                              onChange={handleFeatureUpdate(
-                                (source: SourcedFeature) =>
-                                  source.source === 'ANCESTRY' &&
-                                  source.feature.type === 'FEAT_SELECTION'
-                              )}
-                            ></AncestryFeatChoiceModal>
-                          )
-                        })}
-                    </div>
-                    <div>
-                      {playerCharacter
-                        .getLevelFeatures()
-                        .filter(
-                          (sourced) =>
-                            sourced.source === 'CLASS' &&
-                            sourced.feature.type === 'FEAT_SELECTION'
-                        )
-                        .map((value, index) => {
-                          return (
-                            <ClassFeatChoiceModal
-                              key={`${value.source}-${index}`}
-                              existingFeat={value}
-                              onChange={handleFeatureUpdate(
-                                (source: SourcedFeature) =>
-                                  source.source === 'CLASS' &&
-                                  source.feature.type === 'FEAT_SELECTION'
-                              )}
-                            ></ClassFeatChoiceModal>
-                          )
-                        })}
-                    </div>
                   </div>
                 </div>
               </div>
@@ -293,4 +257,37 @@ export default function CharacterBuilderModal({
       </>
     )
   )
+}
+
+export function buildFeatChoice(
+  sourced: SourcedFeature,
+  onChange: (
+    matchingFunction: (source: SourcedFeature) => boolean
+  ) => (features: SourcedFeature[]) => void
+) {
+  switch (sourced.source) {
+    case 'CLASS': {
+      return (
+        <ClassFeatChoiceModal
+          existingFeat={sourced}
+          onChange={onChange(
+            (source: SourcedFeature) =>
+              source.source === 'CLASS' &&
+              source.feature.type === 'FEAT_SELECTION'
+          )}
+        ></ClassFeatChoiceModal>
+      )
+    }
+    case 'ANCESTRY':
+      return (
+        <AncestryFeatChoiceModal
+          existingFeat={sourced}
+          onChange={onChange(
+            (source: SourcedFeature) =>
+              source.source === 'ANCESTRY' &&
+              source.feature.type === 'FEAT_SELECTION'
+          )}
+        ></AncestryFeatChoiceModal>
+      )
+  }
 }
