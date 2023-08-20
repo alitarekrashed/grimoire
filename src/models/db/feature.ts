@@ -15,7 +15,7 @@ export type FeatureType =
   | 'OVERRIDE'
   | 'FEAT'
   | 'SKILL_SELECTION'
-  | 'CLASS_FEAT_SELECTION'
+  | 'FEAT_SELECTION'
   | 'SUBCLASS'
   | 'SUBCLASS_FEATURE'
 export type CalculationFormula = 'half-level'

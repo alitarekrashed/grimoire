@@ -524,7 +524,7 @@ export class PlayerCharacter {
     return this.character
   }
 
-  public getSubclassIfAvaialable(): Feature | undefined {
+  public getSubclassIfAvailable(): Feature | undefined {
     return this.character.features['1']
       .map((val) => val.feature)
       .find((val) => val.type === 'SUBCLASS')
@@ -544,7 +544,8 @@ export class PlayerCharacter {
     updated.languages = []
     updated.heritage_id = ''
     updated.features['1'].filter(
-      (val) => val.source === 'ANCESTRY' && val.feature.type === 'FEAT'
+      (val) =>
+        val.source === 'ANCESTRY' && val.feature.type === 'FEAT_SELECTION'
     )[0].feature.value = null
     return await PlayerCharacter.build(updated)
   }
@@ -1297,7 +1298,7 @@ export class PlayerCharacter {
     character.features['1'].forEach((sourced: SourcedFeature) => {
       if (
         sourced.feature.type === 'FEAT' ||
-        sourced.feature.type === 'CLASS_FEAT_SELECTION'
+        sourced.feature.type === 'FEAT_SELECTION'
       ) {
         feats.push(sourced.feature)
       } else if (

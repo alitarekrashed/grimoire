@@ -53,7 +53,7 @@ export function NewCharacterButton({ onSave }: { onSave: () => void }) {
         characterEntity.features['1'].push({
           source: 'ANCESTRY',
           feature: {
-            type: 'FEAT',
+            type: 'FEAT_SELECTION',
             value: null,
           },
         })
