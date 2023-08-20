@@ -1,13 +1,12 @@
 import { Action } from '@/models/db/action'
 import { EntityModel } from '@/models/db/entity-model'
+import { Feat } from '@/models/db/feat'
 import { retrieveEntity } from '@/utils/services/reference-lookup.service'
 import * as Collapsible from '@radix-ui/react-collapsible'
 import { useEffect, useState } from 'react'
-import styles from './action-inline-display.module.css'
 import { ActionRenderer } from '../activation-displays/action-renderer'
-import { Feat } from '@/models/db/feat'
-import { ParsedDescription } from '../parsed-description/parsed-description'
 import { SavingThrowDisplay } from '../activation-displays/activation-description'
+import { ParsedDescription } from '../parsed-description/parsed-description'
 
 export function ActionInlineDisplay({
   actionName,
@@ -46,7 +45,7 @@ export function ActionInlineDisplay({
               size={14}
             ></ActionRenderer>
           </Collapsible.Trigger>
-          <Collapsible.Content className={`${styles.actionDescription}`}>
+          <Collapsible.Content className="overflow-hidden">
             {action.activation.trigger && (
               <div className="ml-1 mb-1">
                 <span className="font-semibold">Trigger </span>

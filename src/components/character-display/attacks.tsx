@@ -1,10 +1,10 @@
 import { WeaponGroup } from '@/models/db/character-entity'
 import { useContext } from 'react'
 import { GiBroadsword, GiMailedFist, GiPistolGun } from 'react-icons/gi'
-import CalculatedDisplay from '../calculated-display/calculated-display'
 import { TraitsList } from '../card/traits-list'
 import { CharacterSheetBox } from './character-sheet-box'
 import { PlayerCharacterContext } from './player-character-context'
+import CalculatedDisplay from '../calculated-display/calculated-display'
 
 export function Attacks() {
   const { playerCharacter } = useContext(PlayerCharacterContext)

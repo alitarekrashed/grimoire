@@ -2,7 +2,7 @@ import { EntityModel } from '@/models/db/entity-model'
 import { roboto_condensed } from '@/utils/fonts'
 import { CardFactory } from '@/utils/services/card-factory'
 import { useEffect, useState } from 'react'
-import { Modal } from '../modal/modal'
+import { Modal } from '../base/modal'
 
 export function FeatureChoiceModal<T extends EntityModel>({
   label,

@@ -2,7 +2,6 @@ import { Attribute } from '@/models/db/ancestry'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { roboto_condensed } from '@/utils/fonts'
 import React, { useContext } from 'react'
-import CalculatedDisplay from '../calculated-display/calculated-display'
 import { TraitsList } from '../card/traits-list'
 import CharacterBuilderModal from '../character-builder/character-builder'
 import { ParsedDescription } from '../parsed-description/parsed-description'
@@ -11,6 +10,7 @@ import {
   PlayerCharacterContext,
   PlayerCharacterProvider,
 } from './player-character-context'
+import CalculatedDisplay from '../calculated-display/calculated-display'
 
 export function CharacterHeader({
   onBuilderClose,

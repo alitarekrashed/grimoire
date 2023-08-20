@@ -2,7 +2,7 @@
 
 import { EntityModel } from '@/models/db/entity-model'
 import { CardFactory } from '@/utils/services/card-factory'
-import { Modal } from '../modal/modal'
+import { Modal } from '../base/modal'
 
 export function EntityModal<T extends EntityModel>({ value }: { value: T }) {
   const trigger = (
