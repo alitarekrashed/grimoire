@@ -25,8 +25,9 @@ export type ModifierType = 'Perception' | 'Speed' | 'AttackDamage'
 export interface Feature {
   type: FeatureType
   name?: string
-  value: any
   context?: string[]
+  level?: number
+  value: any
 }
 
 export interface MiscFeatureValue {

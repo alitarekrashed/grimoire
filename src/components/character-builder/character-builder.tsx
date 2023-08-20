@@ -118,12 +118,12 @@ export default function CharacterBuilderModal({
     (matchingFunction: (source: SourcedFeature) => boolean) =>
     (features: SourcedFeature[]) => {
       let updated = cloneDeep(playerCharacter.getCharacter())
-      const toReplace = updated.features['1'].filter((sourced) =>
+      const toReplace = updated.features.filter((sourced) =>
         matchingFunction(sourced)
       )
       toReplace.forEach((item, idx) => {
-        const index = updated.features['1'].indexOf(item)
-        updated.features['1'].splice(index, 1, features[idx])
+        const index = updated.features.indexOf(item)
+        updated.features.splice(index, 1, features[idx])
       })
       loadCharacter(updated)
     }

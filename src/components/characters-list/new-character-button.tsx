@@ -41,16 +41,16 @@ export function NewCharacterButton({ onSave }: { onSave: () => void }) {
           // monk: 64d82344de539d6f569f9194
           class_id: '64d24e0ece00a34d75caa847',
           heritage_id: '',
-          features: {
-            '1': fighter.features['1'].map((feature: Feature) => {
-              if (feature.type === 'SKILL_SELECTION') {
-                feature.value.value = [null]
-              }
-              return { source: 'CLASS', feature: feature }
-            }),
-          },
+          equipment: [],
+          equipped_armor: '',
+          features: fighter.features.map((feature: Feature) => {
+            if (feature.type === 'SKILL_SELECTION') {
+              feature.value.value = [null]
+            }
+            return { source: 'CLASS', feature: feature }
+          }),
         }
-        characterEntity.features['1'].push({
+        characterEntity.features.push({
           source: 'ANCESTRY',
           feature: {
             type: 'FEAT_SELECTION',
