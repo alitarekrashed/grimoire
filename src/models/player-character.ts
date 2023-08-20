@@ -524,7 +524,7 @@ export class PlayerCharacter {
     return this.character
   }
 
-  public getSubclassIfAvaialable(): Feature | undefined {
+  public getSubclassIfAvailable(): Feature | undefined {
     return this.character.features['1']
       .map((val) => val.feature)
       .find((val) => val.type === 'SUBCLASS')

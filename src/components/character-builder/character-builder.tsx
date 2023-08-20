@@ -185,6 +185,19 @@ export default function CharacterBuilderModal({
                     </div>
                   </div>
                   <div className="inline-flex gap-2">
+                    {playerCharacter.getSubclassIfAvailable() && (
+                      <div>
+                        <SubclassChoiceModal
+                          onSubclassChange={handleSubclassChange}
+                          onFeatureUpdate={handleFeatureUpdate(
+                            (sourced) =>
+                              sourced.source === 'CLASS' &&
+                              sourced.feature.type === 'SUBCLASS_FEATURE' &&
+                              sourced.feature.value.type === 'SKILL_SELECTION'
+                          )}
+                        ></SubclassChoiceModal>
+                      </div>
+                    )}
                     <div>
                       {playerCharacter
                         .getLevelFeatures()
@@ -251,39 +264,6 @@ export default function CharacterBuilderModal({
                           )
                         })}
                     </div>
-                    {playerCharacter.getSubclassIfAvaialable() && (
-                      <div>
-                        <SubclassChoiceModal
-                          onSubclassChange={handleSubclassChange}
-                        ></SubclassChoiceModal>
-                        {getSubclassSkillSelections(playerCharacter).length >
-                          0 && (
-                          <div className="mt-1">
-                            <SkillSelect
-                              skillFeature={
-                                getSubclassSkillSelections(playerCharacter).map(
-                                  (sourced) => sourced.feature.value
-                                )[0]
-                              }
-                              onSkillsUpdate={(features: Feature[]) => {
-                                handleFeatureUpdate(
-                                  (sourced) =>
-                                    sourced.source === 'CLASS' &&
-                                    sourced.feature.type ===
-                                      'SUBCLASS_FEATURE' &&
-                                    sourced.feature.value.type ===
-                                      'SKILL_SELECTION'
-                                )(
-                                  features.map((value) =>
-                                    mapSubclassFeatureSkillSelection(value)
-                                  )
-                                )
-                              }}
-                            ></SkillSelect>
-                          </div>
-                        )}
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
@@ -307,28 +287,4 @@ export default function CharacterBuilderModal({
       </>
     )
   )
-}
-
-function mapSubclassFeatureSkillSelection(value: Feature): SourcedFeature {
-  console.log(value)
-  return {
-    source: 'CLASS',
-    feature: {
-      type: 'SUBCLASS_FEATURE',
-      value: value,
-    },
-  }
-}
-
-function getSubclassSkillSelections(
-  playerCharacter: PlayerCharacter
-): SourcedFeature[] {
-  return playerCharacter
-    .getLevelFeatures()
-    .filter(
-      (sourced) =>
-        sourced.source === 'CLASS' &&
-        sourced.feature.type === 'SUBCLASS_FEATURE' &&
-        sourced.feature.value.type === 'SKILL_SELECTION'
-    )
 }
