@@ -1298,7 +1298,7 @@ export class PlayerCharacter {
     character.features['1'].forEach((sourced: SourcedFeature) => {
       if (
         sourced.feature.type === 'FEAT' ||
-        sourced.feature.type === 'CLASS_FEAT_SELECTION'
+        sourced.feature.type === 'FEAT_SELECTION'
       ) {
         feats.push(sourced.feature)
       } else if (
