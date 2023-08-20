@@ -73,7 +73,7 @@ export function NewCharacterButton({ onSave }: { onSave: () => void }) {
             New
           </button>
         }
-        playerCharacter={playerCharacter}
+        initialValue={playerCharacter}
         onClose={handleSave}
       ></CharacterBuilderModal>
     )
