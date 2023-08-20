@@ -1,4 +1,4 @@
-import EntityHoverableDescription from '@/components/entity-hoverable-description/entity-description-hover'
+import EntityHoverableDescription from '@/components/entity-hoverable-description/entity-hoverable-description'
 import { EntityModal } from '@/components/entity-modal/entity-modal'
 import { EntityModel, ModelType } from '@/models/db/entity-model'
 import { isString } from 'lodash'
