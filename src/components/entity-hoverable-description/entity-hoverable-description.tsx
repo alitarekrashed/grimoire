@@ -1,7 +1,7 @@
 'use client'
 
 import { EntityModel } from '@/models/db/entity-model'
-import { HoverDisplay } from '../hover-display/hover-display'
+import { HoverDisplay } from '../base/hover-display'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 
 // TODO eventually the display should be clickable and allow the user to go to a page for the condition?

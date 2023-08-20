@@ -1,6 +1,6 @@
 'use client'
 
-import { HoverDisplay } from '../hover-display/hover-display'
+import { HoverDisplay } from '../base/hover-display'
 
 export interface ModifierValue {
   value: number
