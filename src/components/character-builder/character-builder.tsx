@@ -18,7 +18,7 @@ import { ClassChoiceModal } from './class-choice-modal'
 import { ClassFeatChoiceModal } from './class-feat.modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LanguagesModal } from './languages/languages-modal'
-import { SubclassChoiceModal } from './subclass-choice-modal'
+import { SubclassChoice } from './subclass-choice'
 import { MultipleSkillSelect } from './skills/multiple-skill-select'
 import { SkillSelect } from './skills/skill-select'
 
@@ -187,7 +187,7 @@ export default function CharacterBuilderModal({
                   <div className="inline-flex gap-2">
                     {playerCharacter.getSubclassIfAvailable() && (
                       <div>
-                        <SubclassChoiceModal
+                        <SubclassChoice
                           onSubclassChange={handleSubclassChange}
                           onFeatureUpdate={handleFeatureUpdate(
                             (sourced) =>
@@ -195,7 +195,7 @@ export default function CharacterBuilderModal({
                               sourced.feature.type === 'SUBCLASS_FEATURE' &&
                               sourced.feature.value.type === 'SKILL_SELECTION'
                           )}
-                        ></SubclassChoiceModal>
+                        ></SubclassChoice>
                       </div>
                     )}
                     <div>

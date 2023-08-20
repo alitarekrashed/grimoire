@@ -6,7 +6,7 @@ import { SourcedFeature } from '@/models/player-character'
 import { Feature } from '@/models/db/feature'
 import { SkillSelect } from './skills/skill-select'
 
-export function SubclassChoiceModal({
+export function SubclassChoice({
   onSubclassChange,
   onFeatureUpdate,
 }: {
