@@ -26,7 +26,7 @@ export function LanguageSelect({
   return (
     <span>
       <ChoiceSelect
-        value={otherValue ? 'regional' : value}
+        value={otherValue ? 'other' : value}
         title={title}
         options={languages.filter((val) => {
           if (val === value) {
@@ -35,7 +35,7 @@ export function LanguageSelect({
           return alreadyChosenLanguages.includes(val) === false
         })}
         onChange={(val: string) => {
-          if (val === 'regional') {
+          if (val === 'other') {
             setOtherValue('')
           } else {
             setOtherValue(undefined)
