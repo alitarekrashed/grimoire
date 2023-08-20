@@ -544,7 +544,8 @@ export class PlayerCharacter {
     updated.languages = []
     updated.heritage_id = ''
     updated.features['1'].filter(
-      (val) => val.source === 'ANCESTRY' && val.feature.type === 'FEAT'
+      (val) =>
+        val.source === 'ANCESTRY' && val.feature.type === 'FEAT_SELECTION'
     )[0].feature.value = null
     return await PlayerCharacter.build(updated)
   }
