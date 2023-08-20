@@ -120,11 +120,10 @@ export default function CharacterBuilderModal({
       const toReplace = updated.features['1'].filter((sourced) =>
         matchingFunction(sourced)
       )
-      toReplace.forEach((item) => {
+      toReplace.forEach((item, idx) => {
         const index = updated.features['1'].indexOf(item)
-        updated.features['1'].splice(index, 1)
+        updated.features['1'].splice(index, 1, features[idx])
       })
-      updated.features['1'].push(...features)
       loadCharacter(updated)
     }
 
