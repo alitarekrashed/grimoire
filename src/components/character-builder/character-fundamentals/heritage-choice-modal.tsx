@@ -1,7 +1,7 @@
 import { Heritage } from '@/models/db/heritage'
 import { useContext, useEffect, useState } from 'react'
-import { PlayerCharacterContext } from '../character-display/player-character-context'
-import { FeatureChoiceModal } from './feature-choice-modal'
+import { PlayerCharacterContext } from '../../character-display/player-character-context'
+import { FeatureChoiceModal } from '../feature-choice-modal'
 
 export function HeritageChoiceModal({
   onHeritageChange,

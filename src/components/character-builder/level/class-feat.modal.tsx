@@ -1,9 +1,9 @@
 import { Feat } from '@/models/db/feat'
 import { SourcedFeature } from '@/models/player-character'
 import { useContext, useEffect, useState } from 'react'
-import { FeatureChoiceModal } from './feature-choice-modal'
+import { FeatureChoiceModal } from '../feature-choice-modal'
 import { cloneDeep } from 'lodash'
-import { PlayerCharacterContext } from '../character-display/player-character-context'
+import { PlayerCharacterContext } from '../../character-display/player-character-context'
 
 export function ClassFeatChoiceModal({
   existingFeat,
