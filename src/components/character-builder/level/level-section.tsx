@@ -11,6 +11,7 @@ import { CharacterEntity } from '@/models/db/character-entity'
 import { Subclass } from '@/models/db/subclass'
 import { Feature } from '@/models/db/feature'
 import { CharacterLevelContext } from '../character-level-context'
+import { SkillFeatChoiceModal } from './skill-feat.modal'
 
 export function LevelSection({
   wrapCharacterUpdate,
@@ -160,7 +161,15 @@ function buildFeatChoice(
         ></AncestryFeatChoiceModal>
       )
     case 'SKILL_FEAT_SELECTION': {
-      return <></>
+      return (
+        <SkillFeatChoiceModal
+          existingFeat={sourced}
+          onChange={onChange(
+            (source: SourcedFeature) =>
+              source.feature.type === 'SKILL_FEAT_SELECTION'
+          )}
+        ></SkillFeatChoiceModal>
+      )
     }
   }
 }
