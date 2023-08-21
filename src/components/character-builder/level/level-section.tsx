@@ -40,7 +40,9 @@ export function LevelSection({
       )
 
       if (level) {
-        toReplace = toReplace.filter((sourced) => sourced.feature.level)
+        toReplace = toReplace.filter(
+          (sourced) => sourced.feature.level == level
+        )
       }
 
       toReplace.forEach((item, idx) => {
@@ -72,7 +74,8 @@ export function LevelSection({
       <div>
         <span className="flex text-stone-300 mb-1">Level {level}</span>
         <div className="inline-flex gap-2">
-          {playerCharacter.getSubclassIfAvailable() && (
+          {/* TODO: this needs to be improved, i dont like level specific filtering here.... */}
+          {level === 1 && playerCharacter.getSubclassIfAvailable() && (
             <div>
               <SubclassChoice
                 onSubclassChange={handleSubclassChange}
@@ -134,8 +137,8 @@ function buildFeatChoice(
     matchingFunction: (source: SourcedFeature) => boolean
   ) => (features: SourcedFeature[]) => void
 ) {
-  switch (sourced.source) {
-    case 'CLASS': {
+  switch (sourced.feature.type) {
+    case 'CLASS_FEAT_SELECTION': {
       return (
         <ClassFeatChoiceModal
           existingFeat={sourced}
@@ -146,7 +149,7 @@ function buildFeatChoice(
         ></ClassFeatChoiceModal>
       )
     }
-    case 'ANCESTRY':
+    case 'ANCESTRY_FEAT_SELECTION':
       return (
         <AncestryFeatChoiceModal
           existingFeat={sourced}
@@ -156,5 +159,8 @@ function buildFeatChoice(
           )}
         ></AncestryFeatChoiceModal>
       )
+    case 'SKILL_FEAT_SELECTION': {
+      return <></>
+    }
   }
 }

@@ -60,6 +60,7 @@ export function LanguagesModal({
       {modifiedCharacter?.languages.map((choice: any, i: number) => {
         return (
           <LanguageSelect
+            key={`language-${i}`}
             value={choice}
             languages={choices}
             alreadyChosenLanguages={modifiedCharacter?.languages}

@@ -64,7 +64,6 @@ export function SubclassChoice({
 }
 
 function mapSubclassFeatureSkillSelection(value: Feature): SourcedFeature {
-  console.log(value)
   return {
     source: 'CLASS',
     feature: {

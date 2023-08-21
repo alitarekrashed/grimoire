@@ -70,12 +70,12 @@ export function MultipleSkillSelect({
       const skillSelection = feature.value as SkillSelectionFeatureValue
 
       return (
-        <div className="inline-flex gap-2">
+        <div key={`skillgroup-${index}`} className="inline-flex gap-2">
           {skillSelection.value.map((skill: string, innerIndex) => {
             counter = counter + 1
             return (
               <ChoiceSelect
-                key={counter}
+                key={`skill-${index}-${innerIndex}`}
                 value={skill}
                 title={`Skill #${counter}`}
                 options={choices.filter((choice: string) => {
@@ -110,24 +110,26 @@ export function MultipleSkillSelect({
     <div className={`${roboto_condensed.className} p-2`}>{skillChoices}</div>
   )
   return (
-    <Modal
-      size="small"
-      trigger={trigger}
-      body={body}
-      closeButtons={[
-        {
-          label: 'Save',
-          onClick: () => {
-            onSkillsUpdate(updatedFeatures ?? [])
+    totalCount > 0 && (
+      <Modal
+        size="small"
+        trigger={trigger}
+        body={body}
+        closeButtons={[
+          {
+            label: 'Save',
+            onClick: () => {
+              onSkillsUpdate(updatedFeatures ?? [])
+            },
           },
-        },
-        {
-          label: 'Cancel',
-          onClick: () => {
-            onSkillsUpdate(skillFeatures)
+          {
+            label: 'Cancel',
+            onClick: () => {
+              onSkillsUpdate(skillFeatures)
+            },
           },
-        },
-      ]}
-    ></Modal>
+        ]}
+      ></Modal>
+    )
   )
 }
