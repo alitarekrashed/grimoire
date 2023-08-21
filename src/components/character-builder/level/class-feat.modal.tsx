@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from 'react'
 import { FeatureChoiceModal } from '../feature-choice-modal'
 import { cloneDeep } from 'lodash'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
+import { CharacterLevelContext } from '../character-level-context'
 
 export function ClassFeatChoiceModal({
   existingFeat,
@@ -13,6 +14,7 @@ export function ClassFeatChoiceModal({
   onChange: (sourcedFeature: SourcedFeature[]) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
+  const { level } = useContext(CharacterLevelContext)
   const [classFeat, setClassFeat] = useState<SourcedFeature>(existingFeat)
   const [feats, setFeats] = useState<Feat[]>([])
 
@@ -31,7 +33,8 @@ export function ClassFeatChoiceModal({
     )
       .then((result) => result.json())
       .then((feats) => {
-        setFeats(feats)
+        let filtered = feats.filter((feat: Feat) => feat.level <= level)
+        setFeats(filtered)
       })
   }, [playerCharacter.getTraits()])
 
