@@ -70,7 +70,7 @@ export function MultipleSkillSelect({
       const skillSelection = feature.value as SkillSelectionFeatureValue
 
       return (
-        <div key={`skillgroup-${index}`} className="inline-flex gap-2">
+        <div key={`skillgroup-${index}`} className="inline-flex gap-2 mb-2">
           {skillSelection.value.map((skill: string, innerIndex) => {
             counter = counter + 1
             return (

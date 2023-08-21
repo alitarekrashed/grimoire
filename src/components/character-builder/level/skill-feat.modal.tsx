@@ -9,6 +9,7 @@ import {
   getGreaterThan,
   isGreaterThanOrEqualTo,
 } from '@/utils/services/gear-proficiency-manager'
+import { CalculatedProficiency, SkillType } from '@/models/statistic'
 
 export function SkillFeatChoiceModal({
   existingFeat,
@@ -32,29 +33,7 @@ export function SkillFeatChoiceModal({
     })
       .then((result) => result.json())
       .then((feats) => {
-        let filtered = feats
-          .filter((feat: Feat) => feat.level <= level)
-          .filter((feat: Feat) => {
-            if (feat.prerequisites) {
-              return feat.prerequisites.every((prerequisite: Prerequisite) => {
-                if (prerequisite.type === 'SKILL') {
-                  console.log(prerequisite)
-                  console.log(
-                    playerCharacter.getSkills().get(prerequisite.value.skill)!
-                      .rank
-                  )
-                  return isGreaterThanOrEqualTo(
-                    playerCharacter.getSkills().get(prerequisite.value.skill)!
-                      .rank,
-                    prerequisite.value.minimum_rank
-                  )
-                }
-                return true
-              })
-            }
-            return true
-          })
-        setFeats(filtered)
+        setFeats(filterFeats(feats, level, playerCharacter.getSkills()))
       })
   }, [playerCharacter.getTraits()])
 
@@ -79,4 +58,37 @@ export function SkillFeatChoiceModal({
       ></FeatureChoiceModal>
     </>
   )
+}
+
+function filterFeats(
+  feats: Feat[],
+  level: number,
+  skillMap: Map<SkillType, CalculatedProficiency>
+): Feat[] {
+  let filtered = feats
+    .filter((feat: Feat) => feat.level <= level)
+    .filter((feat: Feat) => {
+      if (feat.prerequisites) {
+        return feat.prerequisites.every((prerequisite: Prerequisite) =>
+          evaluatePrerequisite(prerequisite, skillMap)
+        )
+      }
+      return true
+    })
+  return filtered
+}
+
+function evaluatePrerequisite(
+  prerequisite: Prerequisite,
+  skillMap: Map<SkillType, CalculatedProficiency>
+): boolean {
+  switch (prerequisite.type) {
+    case 'SKILL':
+      return isGreaterThanOrEqualTo(
+        skillMap.get(prerequisite.value.skill)!.rank,
+        prerequisite.value.minimum_rank
+      )
+    default:
+      return true
+  }
 }
