@@ -13,16 +13,21 @@ import { Feature } from '@/models/db/feature'
 
 export function LevelSection({
   level,
-  loadCharacter,
-  executeWithLoad,
+  wrapCharacterUpdate,
 }: {
   level: number
-  loadCharacter: (character: CharacterEntity) => void
-  executeWithLoad: (promise: Promise<void>) => void
+  wrapCharacterUpdate: (promise: Promise<void>) => void
 }) {
   const { playerCharacter, updatePlayerCharacter } = useContext(
     PlayerCharacterContext
   )
+
+  const loadCharacter = (updated: CharacterEntity) => {
+    const load: Promise<void> = (async () => {
+      updatePlayerCharacter(await PlayerCharacter.build(updated))
+    })()
+    wrapCharacterUpdate(load)
+  }
 
   const handleFeatureUpdateForLevel =
     (level?: number) =>
@@ -52,7 +57,7 @@ export function LevelSection({
       )
       updatePlayerCharacter(value)
     })()
-    executeWithLoad(load)
+    wrapCharacterUpdate(load)
   }
 
   const featuresForLevel = playerCharacter

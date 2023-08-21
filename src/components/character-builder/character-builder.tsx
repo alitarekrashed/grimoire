@@ -38,18 +38,9 @@ export default function CharacterBuilderModal({
     updatePlayerCharacter(initialValue)
   }, [initialValue])
 
-  const executeWithLoad = (promise: Promise<any>) => {
+  const loadBuilderWhileExecuting = (promise: Promise<any>) => {
     setLoading(true)
     promise.then(() => setLoading(false))
-  }
-
-  // TODO seems like we could get rid of this and just move the update logic into the children...
-  const loadCharacter = (updated: CharacterEntity) => {
-    const load: Promise<void> = (async () => {
-      const value: PlayerCharacter = await PlayerCharacter.build(updated)
-      updatePlayerCharacter(value)
-    })()
-    executeWithLoad(load)
   }
 
   return (
@@ -64,8 +55,7 @@ export default function CharacterBuilderModal({
               <div className="p-2">
                 <div className={`text-sm ${roboto_condensed.className}`}>
                   <CharacterFundamentalsSection
-                    loadCharacter={loadCharacter}
-                    executeWithLoad={executeWithLoad}
+                    wrapCharacterUpdate={loadBuilderWhileExecuting}
                   ></CharacterFundamentalsSection>
                   {[...Array(playerCharacter.getCharacter().level)].map(
                     (_, i) => {
@@ -75,8 +65,7 @@ export default function CharacterBuilderModal({
                         <LevelSection
                           key={`level-${level}`}
                           level={level}
-                          loadCharacter={loadCharacter}
-                          executeWithLoad={executeWithLoad}
+                          wrapCharacterUpdate={loadBuilderWhileExecuting}
                         ></LevelSection>
                       )
                     }

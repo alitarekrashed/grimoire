@@ -11,11 +11,9 @@ import { AttributesModal } from '../attributes-modal'
 import { LanguagesModal } from '../languages/languages-modal'
 
 export function CharacterFundamentalsSection({
-  loadCharacter,
-  executeWithLoad,
+  wrapCharacterUpdate,
 }: {
-  loadCharacter: (character: CharacterEntity) => void
-  executeWithLoad: (promise: Promise<void>) => void
+  wrapCharacterUpdate: (promise: Promise<void>) => void
 }) {
   const { playerCharacter, updatePlayerCharacter } = useContext(
     PlayerCharacterContext
@@ -30,6 +28,13 @@ export function CharacterFundamentalsSection({
     }
   }, [playerCharacter])
 
+  const loadCharacter = (updated: CharacterEntity) => {
+    const load: Promise<void> = (async () => {
+      updatePlayerCharacter(await PlayerCharacter.build(updated))
+    })()
+    wrapCharacterUpdate(load)
+  }
+
   const updateName = (value: string) => {
     setName(value)
     playerCharacter.getCharacter().name = value
@@ -42,7 +47,7 @@ export function CharacterFundamentalsSection({
       )
       updatePlayerCharacter(value)
     })()
-    executeWithLoad(load)
+    wrapCharacterUpdate(load)
   }
 
   const handleHeritageChange = (heritageId: string) => {
@@ -70,7 +75,7 @@ export function CharacterFundamentalsSection({
       )
       updatePlayerCharacter(value)
     })()
-    executeWithLoad(load)
+    wrapCharacterUpdate(load)
   }
 
   const handleClassChange = (classEntity: ClassEntity) => {
@@ -80,7 +85,7 @@ export function CharacterFundamentalsSection({
       )
       updatePlayerCharacter(value)
     })()
-    executeWithLoad(load)
+    wrapCharacterUpdate(load)
   }
 
   return (
