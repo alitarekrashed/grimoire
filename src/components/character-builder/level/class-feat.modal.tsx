@@ -32,8 +32,9 @@ export function ClassFeatChoiceModal({
       }
     )
       .then((result) => result.json())
-      .then((feats) => {
-        let filtered = feats.filter((feat: Feat) => feat.level <= level)
+      .then((feats: Feat[]) => {
+        let filtered: Feat[] = feats.filter((feat: Feat) => feat.level <= level)
+        filtered.sort((a, b) => b.level - a.level)
         setFeats(filtered)
       })
   }, [playerCharacter.getTraits()])
