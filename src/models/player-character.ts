@@ -870,8 +870,8 @@ export class PlayerCharacter {
     return result
   }
 
-  public getLores(level?: string): Map<string, CalculatedProficiency> {
-    const skills = this.getProficiencies(level).Lore
+  public getLores(): Map<string, CalculatedProficiency> {
+    const skills = this.getProficiencies().Lore
     const result = new Map()
     skills.forEach((rank, type) => {
       result.set(type, {
