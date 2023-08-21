@@ -65,7 +65,7 @@ export function FeatureChoiceModal<T extends EntityModel>({
           <div
             className={`${roboto_condensed.className} grid grid-rows-1 grid-cols-8 h-full min-h-full w-full`}
           >
-            <div className="col-span-2 grid grid-cols-1 auto-rows-min h-full border-r border-r-stone-300/25 overflow-y-scroll text-sm">
+            <div className="col-span-2 grid grid-cols-1 auto-rows-min h-full pb-[42px] border-r border-r-stone-300/25 overflow-y-scroll text-sm">
               {entities.map((entity) => (
                 <div
                   className={`h-full w-full pl-2 pr-0.5 border-b border-b-stone-300/25 data-[state=active]:text-rose-400 data-[state=active]:border-b-rose-300`}
@@ -76,7 +76,6 @@ export function FeatureChoiceModal<T extends EntityModel>({
                       (selected && selected[resolveIdField()]) && 'active'
                   }
                   onClick={(e) => {
-                    console.log(e)
                     setSelected(
                       entities.find(
                         (entity: T) =>

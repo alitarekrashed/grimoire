@@ -550,11 +550,34 @@ export class PlayerCharacter {
   }
 
   public async updateBackground(
-    backgroundId: string
+    background: Background
   ): Promise<PlayerCharacter> {
     let updated = cloneDeep(this.character)
-    updated.background_id = backgroundId
+    updated.background_id = background._id.toString()
     updated.attributes.background = []
+    updated.features = updated.features.filter(
+      (value) => value.source !== 'BACKGROUND'
+    )
+    updated.features.push({
+      source: 'BACKGROUND',
+      feature: {
+        type: 'FEAT',
+        value: background.feat,
+        context: [],
+      },
+    })
+    updated.features.push(
+      ...background.skills.map((value: ProficiencyFeatureValue) => {
+        return {
+          source: 'BACKGROUND',
+          feature: {
+            type: 'PROFICIENCY' as FeatureType,
+            value: value,
+          },
+        }
+      })
+    )
+
     return await PlayerCharacter.build(updated)
   }
 
@@ -847,8 +870,8 @@ export class PlayerCharacter {
     return result
   }
 
-  public getLores(level?: string): Map<string, CalculatedProficiency> {
-    const skills = this.getProficiencies(level).Lore
+  public getLores(): Map<string, CalculatedProficiency> {
+    const skills = this.getProficiencies().Lore
     const result = new Map()
     skills.forEach((rank, type) => {
       result.set(type, {
@@ -1281,19 +1304,6 @@ export class PlayerCharacter {
           }
         })
       )
-    }
-
-    if (background) {
-      allFeatures.push(
-        ...background.skills.map((skill: ProficiencyFeatureValue) => {
-          return {
-            source: background.name,
-            feature: { type: 'PROFICIENCY', value: skill },
-          }
-        })
-      )
-
-      feats.push(background.feat)
     }
 
     character.features.forEach((sourced: SourcedFeature) => {

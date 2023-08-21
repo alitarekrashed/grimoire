@@ -1,6 +1,6 @@
 import { PlayerCharacterContext } from '@/components/character-display/player-character-context'
 import { CharacterEntity } from '@/models/db/character-entity'
-import { PlayerCharacter } from '@/models/player-character'
+import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import { cloneDeep } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
 import { AncestryChoiceModal } from './ancestry-choice-modal'
@@ -68,14 +68,26 @@ export function CharacterFundamentalsSection({
     loadCharacter(updated)
   }
 
-  const handleBackgroundChange = (backgroundId: string) => {
+  const handleBackgroundChange = (background: Background) => {
     const load: Promise<void> = (async () => {
       const value: PlayerCharacter = await playerCharacter.updateBackground(
-        backgroundId
+        background
       )
       updatePlayerCharacter(value)
     })()
     wrapCharacterUpdate(load)
+  }
+  const handleFeatSubchoiceChange = (sourced: SourcedFeature) => {
+    let updated = cloneDeep(playerCharacter.getCharacter())
+
+    let indexToReplace = updated.features.findIndex(
+      (sourced) =>
+        sourced.source === 'BACKGROUND' && sourced.feature.type === 'FEAT'
+    )
+
+    updated.features.splice(indexToReplace, 1, sourced)
+
+    loadCharacter(updated)
   }
 
   const handleClassChange = (classEntity: ClassEntity) => {
@@ -115,6 +127,7 @@ export function CharacterFundamentalsSection({
       <div className="mr-2">
         <BackgroundChoiceModal
           onBackgroundChange={handleBackgroundChange}
+          onFeatSubchoiceChange={handleFeatSubchoiceChange}
         ></BackgroundChoiceModal>
       </div>
       <div className="mr-2">
