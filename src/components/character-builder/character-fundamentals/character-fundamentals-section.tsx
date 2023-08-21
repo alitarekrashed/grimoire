@@ -68,10 +68,10 @@ export function CharacterFundamentalsSection({
     loadCharacter(updated)
   }
 
-  const handleBackgroundChange = (backgroundId: string) => {
+  const handleBackgroundChange = (background: Background) => {
     const load: Promise<void> = (async () => {
       const value: PlayerCharacter = await playerCharacter.updateBackground(
-        backgroundId
+        background
       )
       updatePlayerCharacter(value)
     })()

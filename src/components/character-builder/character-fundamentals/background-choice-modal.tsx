@@ -6,7 +6,7 @@ import { PlayerCharacterContext } from '../../character-display/player-character
 export function BackgroundChoiceModal({
   onBackgroundChange,
 }: {
-  onBackgroundChange: (backgroundId: string) => void
+  onBackgroundChange: (background: Background) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [backgrounds, setBackgrounds] = useState<Background[]>([])
@@ -22,7 +22,7 @@ export function BackgroundChoiceModal({
   }, [])
 
   const updateBackground = (background: Background) => {
-    onBackgroundChange(background._id.toString())
+    onBackgroundChange(background)
   }
 
   return (
