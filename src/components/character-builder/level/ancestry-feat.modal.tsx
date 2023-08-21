@@ -1,10 +1,11 @@
 import { Feat } from '@/models/db/feat'
 import { SourcedFeature } from '@/models/player-character'
 import { useContext, useEffect, useState } from 'react'
-import { FeatureChoiceModal } from './feature-choice-modal'
+import { FeatureChoiceModal } from '../feature-choice-modal'
 import { cloneDeep } from 'lodash'
-import { PlayerCharacterContext } from '../character-display/player-character-context'
+import { PlayerCharacterContext } from '../../character-display/player-character-context'
 import { FeatSubChoiceModal } from './feat-subchoice-modal'
+import { CharacterLevelContext } from '../character-level-context'
 
 export function AncestryFeatChoiceModal({
   existingFeat,
@@ -14,6 +15,7 @@ export function AncestryFeatChoiceModal({
   onChange: (sourcedFeature: SourcedFeature[]) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
+  const { level } = useContext(CharacterLevelContext)
   const [ancestryFeat, setAncestryFeat] = useState<SourcedFeature>(existingFeat)
   const [featWithSubChoice, setFeatWithSubChoice] = useState<Feat>()
   const [feats, setFeats] = useState<Feat[]>([])
@@ -40,7 +42,8 @@ export function AncestryFeatChoiceModal({
     )
       .then((result) => result.json())
       .then((feats) => {
-        setFeats(feats)
+        let filtered = feats.filter((feat: Feat) => feat.level <= level)
+        setFeats(filtered)
       })
   }, [playerCharacter.getTraits()])
 

@@ -1,7 +1,7 @@
 import { ClassEntity } from '@/models/db/class-entity'
 import { useContext, useEffect, useState } from 'react'
-import { FeatureChoiceModal } from './feature-choice-modal'
-import { PlayerCharacterContext } from '../character-display/player-character-context'
+import { FeatureChoiceModal } from '../feature-choice-modal'
+import { PlayerCharacterContext } from '../../character-display/player-character-context'
 
 export function ClassChoiceModal({
   onClassChange,

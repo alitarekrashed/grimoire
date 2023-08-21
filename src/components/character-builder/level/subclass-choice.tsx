@@ -1,10 +1,10 @@
 import { Subclass } from '@/models/db/subclass'
 import { useContext, useEffect, useState } from 'react'
-import { PlayerCharacterContext } from '../character-display/player-character-context'
-import { FeatureChoiceModal } from './feature-choice-modal'
+import { PlayerCharacterContext } from '../../character-display/player-character-context'
+import { FeatureChoiceModal } from '../feature-choice-modal'
 import { SourcedFeature } from '@/models/player-character'
 import { Feature } from '@/models/db/feature'
-import { SkillSelect } from './skills/skill-select'
+import { SkillSelect } from '../skills/skill-select'
 
 export function SubclassChoice({
   onSubclassChange,
@@ -64,7 +64,6 @@ export function SubclassChoice({
 }
 
 function mapSubclassFeatureSkillSelection(value: Feature): SourcedFeature {
-  console.log(value)
   return {
     source: 'CLASS',
     feature: {

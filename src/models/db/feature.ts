@@ -15,7 +15,9 @@ export type FeatureType =
   | 'OVERRIDE'
   | 'FEAT'
   | 'SKILL_SELECTION'
-  | 'FEAT_SELECTION'
+  | 'CLASS_FEAT_SELECTION'
+  | 'SKILL_FEAT_SELECTION'
+  | 'ANCESTRY_FEAT_SELECTION'
   | 'SUBCLASS'
   | 'SUBCLASS_FEATURE'
 export type CalculationFormula = 'half-level'
@@ -25,8 +27,9 @@ export type ModifierType = 'Perception' | 'Speed' | 'AttackDamage'
 export interface Feature {
   type: FeatureType
   name?: string
-  value: any
   context?: string[]
+  level?: number
+  value: any
 }
 
 export interface MiscFeatureValue {

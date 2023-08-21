@@ -335,7 +335,7 @@ export class PlayerCharacter {
     this.initializeHitpoints(ancestry)
 
     if (classEntity) {
-      classEntity.features['1']
+      classEntity.features
         .filter((feature: Feature) => feature.type === 'SKILL_SELECTION')
         .forEach((feature: Feature) => {
           this.reconcileSkillOptionsWithClass(character, feature)
@@ -364,7 +364,7 @@ export class PlayerCharacter {
   private convertSkillSelectionsIntoProficiencyFeaturesAndAddToCharacter(
     character: CharacterEntity
   ) {
-    character.features['1']
+    character.features
       .filter((sourced: SourcedFeature) => sourced.source === 'CLASS')
       .filter(
         (sourced: SourcedFeature) => sourced.feature.type === 'SKILL_SELECTION'
@@ -388,7 +388,7 @@ export class PlayerCharacter {
         this.allFeatures.push(...values)
       })
 
-    character.features['1']
+    character.features
       .filter((sourced: SourcedFeature) => sourced.source === 'CLASS')
       .filter(
         (sourced: SourcedFeature) =>
@@ -418,7 +418,7 @@ export class PlayerCharacter {
   }
 
   private clearOutSkillsAlreadyPresentOnClass(character: CharacterEntity) {
-    character.features['1']
+    character.features
       .filter(
         (sourced) =>
           sourced.source === 'CLASS' &&
@@ -444,9 +444,7 @@ export class PlayerCharacter {
     character: CharacterEntity,
     feature: Feature
   ) {
-    const classSkillSelections: SourcedFeature[] = character.features[
-      '1'
-    ].filter(
+    const classSkillSelections: SourcedFeature[] = character.features.filter(
       (sourced: SourcedFeature) =>
         sourced.source === 'CLASS' && sourced.feature.type === 'SKILL_SELECTION'
     )
@@ -468,7 +466,7 @@ export class PlayerCharacter {
             },
           },
         }
-        character.features['1'].push(value)
+        character.features.push(value)
       }
     } else {
       const expectedNumber: number =
@@ -498,7 +496,7 @@ export class PlayerCharacter {
             },
           },
         }
-        character.features['1'].push(classSkillSelection)
+        character.features.push(classSkillSelection)
       }
 
       const currentNumber = classSkillSelection!.feature.value.value.length
@@ -525,7 +523,7 @@ export class PlayerCharacter {
   }
 
   public getSubclassIfAvailable(): Feature | undefined {
-    return this.character.features['1']
+    return this.character.features
       .map((val) => val.feature)
       .find((val) => val.type === 'SUBCLASS')
   }
@@ -543,9 +541,10 @@ export class PlayerCharacter {
     updated.attributes.ancestry = []
     updated.languages = []
     updated.heritage_id = ''
-    updated.features['1'].filter(
+    updated.features.filter(
       (val) =>
-        val.source === 'ANCESTRY' && val.feature.type === 'FEAT_SELECTION'
+        val.source === 'ANCESTRY' &&
+        val.feature.type === 'ANCESTRY_FEAT_SELECTION'
     )[0].feature.value = null
     return await PlayerCharacter.build(updated)
   }
@@ -563,11 +562,11 @@ export class PlayerCharacter {
     let updated = cloneDeep(this.character)
     updated.class_id = classEntity._id.toString()
     updated.attributes.class = []
-    updated.features['1'] = updated.features['1'].filter(
+    updated.features = updated.features.filter(
       (value) => value.source !== 'CLASS'
     )
-    updated.features['1'].push(
-      ...classEntity.features['1'].map((feature: Feature) => {
+    updated.features.push(
+      ...classEntity.features.map((feature: Feature) => {
         if (feature.type === 'SKILL_SELECTION') {
           feature.value.value = [null]
         }
@@ -579,17 +578,17 @@ export class PlayerCharacter {
 
   public async updateSubclass(subclass: Subclass): Promise<PlayerCharacter> {
     let updated = cloneDeep(this.character)
-    const subclassChoice = updated.features['1'].find(
+    const subclassChoice = updated.features.find(
       (value) => value.source === 'CLASS' && value.feature.type === 'SUBCLASS'
     )
     if (subclassChoice) {
       subclassChoice.feature.value = subclass._id
 
-      updated.features['1'] = updated.features['1'].filter(
+      updated.features = updated.features.filter(
         (value) => value.feature.type !== 'SUBCLASS_FEATURE'
       )
 
-      const newFeatures = this.classEntity!.features['1'].filter(
+      const newFeatures = this.classEntity!.features.filter(
         (val) => val.type === 'SUBCLASS_FEATURE'
       )
 
@@ -602,7 +601,7 @@ export class PlayerCharacter {
         }
       })
 
-      updated.features['1'].push(
+      updated.features.push(
         ...newFeatures.map((feature: Feature) => {
           return { source: 'CLASS', feature: feature }
         })
@@ -692,7 +691,7 @@ export class PlayerCharacter {
   }
 
   public getLevelFeatures(): SourcedFeature[] {
-    return this.character.features['1']
+    return this.character.features
   }
 
   public getResistances(): SourcedFeature[] {
@@ -1295,10 +1294,12 @@ export class PlayerCharacter {
       feats.push(background.feat)
     }
 
-    character.features['1'].forEach((sourced: SourcedFeature) => {
+    character.features.forEach((sourced: SourcedFeature) => {
       if (
         sourced.feature.type === 'FEAT' ||
-        sourced.feature.type === 'FEAT_SELECTION'
+        sourced.feature.type === 'ANCESTRY_FEAT_SELECTION' ||
+        sourced.feature.type === 'CLASS_FEAT_SELECTION' ||
+        sourced.feature.type === 'SKILL_FEAT_SELECTION'
       ) {
         feats.push(sourced.feature)
       } else if (

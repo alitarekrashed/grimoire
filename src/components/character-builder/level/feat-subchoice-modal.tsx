@@ -1,5 +1,5 @@
 import { Feat } from '@/models/db/feat'
-import { ChoiceSelect } from '../choice-select/choice-select'
+import { ChoiceSelect } from '../../choice-select/choice-select'
 import { useState } from 'react'
 import { useDebounce } from '@/utils/debounce'
 

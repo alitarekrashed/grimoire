@@ -6,6 +6,6 @@ import { Feature } from './feature'
 export interface ClassEntity extends EntityModel {
   key_ability: AttributeModifier[][]
   rarity?: Rarity
-  features: { '1': Feature[] }
+  features: Feature[]
   hitpoints: number
 }
