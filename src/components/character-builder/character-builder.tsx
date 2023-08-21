@@ -61,11 +61,9 @@ export default function CharacterBuilderModal({
                   {[...Array(playerCharacter.getCharacter().level)].map(
                     (_, i) => (
                       <CharacterLevelContext.Provider value={{ level: i + 1 }}>
-                        (
                         <LevelSection
                           wrapCharacterUpdate={loadBuilderWhileExecuting}
                         ></LevelSection>
-                        )
                       </CharacterLevelContext.Provider>
                     )
                   )}
