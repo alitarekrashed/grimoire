@@ -68,28 +68,28 @@ export function FeatureChoiceModal<T extends EntityModel>({
             <div className="col-span-1 grid grid-cols-1 auto-rows-min h-full border-r border-r-stone-300/25 overflow-y-scroll text-sm">
               {entities.map((entity) => (
                 <div
-                  className={`h-full`}
+                  className={`h-full w-full pl-2 pr-0.5 border-b border-b-stone-300/25 data-[state=active]:text-rose-400 data-[state=active]:border-b-rose-300`}
                   key={entity[resolveIdField()].toString()}
-                >
-                  <div
-                    className={`w-full pl-2 pr-4 border-b border-b-stone-300/25 data-[state=active]:text-rose-400 data-[state=active]:border-b-rose-300`}
-                    data-value={entity[resolveIdField()]}
-                    data-state={
-                      entity[resolveIdField()] ===
-                        (selected && selected[resolveIdField()]) && 'active'
-                    }
-                    onClick={(e) => {
-                      setSelected(
-                        entities.find(
-                          (entity: T) =>
-                            entity[resolveIdField()] ===
-                            (e.target as HTMLElement).dataset.value
-                        )
+                  data-value={entity[resolveIdField()]}
+                  data-state={
+                    entity[resolveIdField()] ===
+                      (selected && selected[resolveIdField()]) && 'active'
+                  }
+                  onClick={(e) => {
+                    console.log(e)
+                    setSelected(
+                      entities.find(
+                        (entity: T) =>
+                          entity[resolveIdField()] ===
+                          (e.currentTarget as HTMLElement).dataset.value
                       )
-                    }}
-                  >
-                    {entity.name}
-                  </div>
+                    )
+                  }}
+                >
+                  <span className="float-left">{entity.name}</span>
+                  <span className="float-right">
+                    {getLevelIfExists(entity)}
+                  </span>
                 </div>
               ))}
             </div>
@@ -124,4 +124,11 @@ export function FeatureChoiceModal<T extends EntityModel>({
       ></Modal>
     </>
   )
+}
+
+function getLevelIfExists<T extends EntityModel>(entity: T) {
+  if (entity.hasOwnProperty('level')) {
+    return (entity as unknown as { level: number }).level
+  }
+  return undefined
 }
