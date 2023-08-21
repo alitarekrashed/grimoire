@@ -1,4 +1,4 @@
-import { SourcedFeature } from '@/models/player-character'
+import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import { SubclassChoice } from './subclass-choice'
 import { MultipleSkillSelect } from './skills/multiple-skill-select'
 import * as Separator from '@radix-ui/react-separator'
@@ -14,13 +14,15 @@ import { Feature } from '@/models/db/feature'
 export function LevelSection({
   level,
   loadCharacter,
-  handleSubclassChange,
+  executeWithLoad,
 }: {
   level: number
   loadCharacter: (character: CharacterEntity) => void
-  handleSubclassChange: (subclass: Subclass) => void
+  executeWithLoad: (promise: Promise<void>) => void
 }) {
-  const { playerCharacter } = useContext(PlayerCharacterContext)
+  const { playerCharacter, updatePlayerCharacter } = useContext(
+    PlayerCharacterContext
+  )
 
   const handleFeatureUpdateForLevel =
     (level?: number) =>
@@ -43,6 +45,16 @@ export function LevelSection({
       loadCharacter(updated)
     }
 
+  const handleSubclassChange = (subclass: Subclass) => {
+    const load: Promise<void> = (async () => {
+      const value: PlayerCharacter = await playerCharacter.updateSubclass(
+        subclass
+      )
+      updatePlayerCharacter(value)
+    })()
+    executeWithLoad(load)
+  }
+
   const featuresForLevel = playerCharacter
     .getLevelFeatures()
     .filter((sourced: SourcedFeature) => sourced.feature.level === level)
@@ -55,12 +67,6 @@ export function LevelSection({
       <div>
         <span className="flex text-stone-300 mb-1">Level {level}</span>
         <div className="inline-flex gap-2">
-          {playerCharacter
-            .getLevelFeatures()
-            .filter((sourced) => sourced.feature.level === level)
-            .map((sourced) => (
-              <></>
-            ))}
           {playerCharacter.getSubclassIfAvailable() && (
             <div>
               <SubclassChoice

@@ -1,21 +1,18 @@
 'use client'
 
 import { CharacterEntity } from '@/models/db/character-entity'
-import { Feature } from '@/models/db/feature'
-import { Subclass } from '@/models/db/subclass'
-import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
+import { ClassEntity } from '@/models/db/class-entity'
+import { PlayerCharacter } from '@/models/player-character'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
 import { ReactNode, useContext, useEffect, useState } from 'react'
+import { Modal } from '../base/modal'
 import { PlayerCharacterContext } from '../character-display/player-character-context'
 import { LoadingSpinner } from '../loading-spinner/loading-spinner'
-import { Modal } from '../base/modal'
 import { AncestryChoiceModal } from './ancestry-choice-modal'
-import { AncestryFeatChoiceModal } from './ancestry-feat.modal'
 import { AttributesModal } from './attributes-modal'
 import { BackgroundChoiceModal } from './background-choice-modal'
 import { ClassChoiceModal } from './class-choice-modal'
-import { ClassFeatChoiceModal } from './class-feat.modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LanguagesModal } from './languages/languages-modal'
 import { LevelSection } from './level-section'
@@ -48,12 +45,17 @@ export default function CharacterBuilderModal({
     }
   }, [playerCharacter])
 
-  const loadCharacter = (updated: CharacterEntity) => {
+  const executeWithLoad = (promise: Promise<any>) => {
     setLoading(true)
-    PlayerCharacter.build(updated).then((val) => {
-      updatePlayerCharacter(val)
-      setLoading(false)
-    })
+    promise.then(() => setLoading(false))
+  }
+
+  const loadCharacter = (updated: CharacterEntity) => {
+    const load: Promise<void> = (async () => {
+      const value: PlayerCharacter = await PlayerCharacter.build(updated)
+      updatePlayerCharacter(value)
+    })()
+    executeWithLoad(load)
   }
 
   const updateName = (value: string) => {
@@ -62,11 +64,13 @@ export default function CharacterBuilderModal({
   }
 
   const handleAncestryChange = (ancestryId: string) => {
-    setLoading(true)
-    playerCharacter.updateAncestry(ancestryId).then((val) => {
-      updatePlayerCharacter(val)
-      setLoading(false)
-    })
+    const load: Promise<void> = (async () => {
+      const value: PlayerCharacter = await playerCharacter.updateAncestry(
+        ancestryId
+      )
+      updatePlayerCharacter(value)
+    })()
+    executeWithLoad(load)
   }
 
   const handleHeritageChange = (heritageId: string) => {
@@ -88,27 +92,23 @@ export default function CharacterBuilderModal({
   }
 
   const handleBackgroundChange = (backgroundId: string) => {
-    setLoading(true)
-    playerCharacter.updateBackground(backgroundId).then((val) => {
-      updatePlayerCharacter(val)
-      setLoading(false)
-    })
+    const load: Promise<void> = (async () => {
+      const value: PlayerCharacter = await playerCharacter.updateBackground(
+        backgroundId
+      )
+      updatePlayerCharacter(value)
+    })()
+    executeWithLoad(load)
   }
 
-  const handleClassChange = (classEntity: classEntity) => {
-    setLoading(true)
-    playerCharacter.updateClass(classEntity).then((val) => {
-      updatePlayerCharacter(val)
-      setLoading(false)
-    })
-  }
-
-  const handleSubclassChange = (subclass: Subclass) => {
-    setLoading(true)
-    playerCharacter.updateSubclass(subclass).then((val) => {
-      updatePlayerCharacter(val)
-      setLoading(false)
-    })
+  const handleClassChange = (classEntity: ClassEntity) => {
+    const load: Promise<void> = (async () => {
+      const value: PlayerCharacter = await playerCharacter.updateClass(
+        classEntity
+      )
+      updatePlayerCharacter(value)
+    })()
+    executeWithLoad(load)
   }
 
   return (
@@ -173,9 +173,10 @@ export default function CharacterBuilderModal({
                       const level = i + 1
                       return (
                         <LevelSection
+                          key={`level-${level}`}
                           level={level}
                           loadCharacter={loadCharacter}
-                          handleSubclassChange={handleSubclassChange}
+                          executeWithLoad={executeWithLoad}
                         ></LevelSection>
                       )
                     }
