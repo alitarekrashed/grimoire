@@ -187,10 +187,17 @@ export function getGreaterThan(
   thisRank: ProficiencyRank,
   other: ProficiencyRank
 ): ProficiencyRank {
+  return isGreaterThanOrEqualTo(thisRank, other) ? thisRank : other
+}
+
+export function isGreaterThanOrEqualTo(
+  thisRank: ProficiencyRank,
+  other: ProficiencyRank
+): boolean {
   if (other === 'untrained') {
-    return thisRank
+    return true
   } else if (other === 'trained') {
-    return thisRank === 'trained' || thisRank === 'expert' ? thisRank : other
+    return thisRank === 'trained' || thisRank === 'expert'
   }
-  return other
+  return false
 }

@@ -1124,10 +1124,12 @@ export class PlayerCharacter {
       },
     ]
     if (this.classEntity) {
-      this.hitpoints.push({
-        value: this.classEntity.hitpoints + this.attributes.Constitution,
-        source: `Class Level 1 (${this.classEntity.name})`,
-      })
+      for (let i = 1; i <= this.level; i++) {
+        this.hitpoints.push({
+          value: this.classEntity.hitpoints + this.attributes.Constitution,
+          source: `Class Level ${i} (${this.classEntity.name})`,
+        })
+      }
     }
   }
 
