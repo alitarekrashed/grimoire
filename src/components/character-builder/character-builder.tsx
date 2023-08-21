@@ -17,6 +17,7 @@ import { HeritageChoiceModal } from './character-fundamentals/heritage-choice-mo
 import { LanguagesModal } from './languages/languages-modal'
 import { LevelSection } from './level/level-section'
 import { CharacterFundamentalsSection } from './character-fundamentals/character-fundamentals-section'
+import { CharacterLevelContext } from './character-level-context'
 
 export default function CharacterBuilderModal({
   trigger,
@@ -58,17 +59,15 @@ export default function CharacterBuilderModal({
                     wrapCharacterUpdate={loadBuilderWhileExecuting}
                   ></CharacterFundamentalsSection>
                   {[...Array(playerCharacter.getCharacter().level)].map(
-                    (_, i) => {
-                      // TODO candidate for context/provider?
-                      const level = i + 1
-                      return (
+                    (_, i) => (
+                      <CharacterLevelContext.Provider value={{ level: i + 1 }}>
+                        (
                         <LevelSection
-                          key={`level-${level}`}
-                          level={level}
                           wrapCharacterUpdate={loadBuilderWhileExecuting}
                         ></LevelSection>
-                      )
-                    }
+                        )
+                      </CharacterLevelContext.Provider>
+                    )
                   )}
                 </div>
               </div>

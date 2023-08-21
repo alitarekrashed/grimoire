@@ -10,17 +10,17 @@ import { cloneDeep } from 'lodash'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { Subclass } from '@/models/db/subclass'
 import { Feature } from '@/models/db/feature'
+import { CharacterLevelContext } from '../character-level-context'
 
 export function LevelSection({
-  level,
   wrapCharacterUpdate,
 }: {
-  level: number
   wrapCharacterUpdate: (promise: Promise<void>) => void
 }) {
   const { playerCharacter, updatePlayerCharacter } = useContext(
     PlayerCharacterContext
   )
+  const { level } = useContext(CharacterLevelContext)
 
   const loadCharacter = (updated: CharacterEntity) => {
     const load: Promise<void> = (async () => {
