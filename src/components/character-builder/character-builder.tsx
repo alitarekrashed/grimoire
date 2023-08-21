@@ -114,13 +114,20 @@ export default function CharacterBuilderModal({
     })
   }
 
-  const handleFeatureUpdate =
+  const handleFeatureUpdateForLevel =
+    (level?: number) =>
     (matchingFunction: (source: SourcedFeature) => boolean) =>
     (features: SourcedFeature[]) => {
       let updated = cloneDeep(playerCharacter.getCharacter())
-      const toReplace = updated.features.filter((sourced) =>
+
+      let toReplace = updated.features.filter((sourced) =>
         matchingFunction(sourced)
       )
+
+      if (level) {
+        toReplace = toReplace.filter((sourced) => sourced.feature.level)
+      }
+
       toReplace.forEach((item, idx) => {
         const index = updated.features.indexOf(item)
         updated.features.splice(index, 1, features[idx])
@@ -186,7 +193,11 @@ export default function CharacterBuilderModal({
                   </div>
                   {[...Array(playerCharacter.getCharacter().level)].map(
                     (_, i) => {
+                      // TODO candidate for context/provider?
                       const level = i + 1
+                      const featuresForLevel = playerCharacter
+                        .getLevelFeatures()
+                        .filter((sourced) => sourced.feature.level === level)
                       return (
                         <div key={`level-${level}`}>
                           <Separator.Root
@@ -198,11 +209,21 @@ export default function CharacterBuilderModal({
                               Level {level}
                             </span>
                             <div className="inline-flex gap-2">
+                              {playerCharacter
+                                .getLevelFeatures()
+                                .filter(
+                                  (sourced) => sourced.feature.level === level
+                                )
+                                .map((sourced) => (
+                                  <></>
+                                ))}
                               {playerCharacter.getSubclassIfAvailable() && (
                                 <div>
                                   <SubclassChoice
                                     onSubclassChange={handleSubclassChange}
-                                    onFeatureUpdate={handleFeatureUpdate(
+                                    onFeatureUpdate={handleFeatureUpdateForLevel(
+                                      level
+                                    )(
                                       (sourced) =>
                                         sourced.source === 'CLASS' &&
                                         sourced.feature.type ===
@@ -215,8 +236,7 @@ export default function CharacterBuilderModal({
                               )}
                               <div>
                                 <MultipleSkillSelect
-                                  skillFeatures={playerCharacter
-                                    .getLevelFeatures()
+                                  skillFeatures={featuresForLevel
                                     .filter(
                                       (sourced) =>
                                         sourced.source === 'CLASS' &&
@@ -225,7 +245,7 @@ export default function CharacterBuilderModal({
                                     )
                                     .map((sourced) => sourced.feature)}
                                   onSkillsUpdate={(features: Feature[]) => {
-                                    handleFeatureUpdate(
+                                    handleFeatureUpdateForLevel(level)(
                                       (source: SourcedFeature) =>
                                         source.source === 'CLASS' &&
                                         source.feature.type ===
@@ -241,15 +261,17 @@ export default function CharacterBuilderModal({
                                   }}
                                 ></MultipleSkillSelect>
                               </div>
-                              {playerCharacter
-                                .getLevelFeatures()
+                              {featuresForLevel
                                 .filter(
                                   (value) =>
                                     value.feature.type === 'FEAT_SELECTION'
                                 )
                                 .map((val: SourcedFeature, index: number) => (
                                   <div key={`${val.source}-${index}`}>
-                                    {buildFeatChoice(val, handleFeatureUpdate)}
+                                    {buildFeatChoice(
+                                      val,
+                                      handleFeatureUpdateForLevel(level)
+                                    )}
                                   </div>
                                 ))}
                             </div>

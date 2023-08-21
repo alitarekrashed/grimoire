@@ -55,7 +55,6 @@ export function SkillSelect({
         if (choice === value) {
           return true
         }
-        console.log(updatedFeature.value.value)
         const alreadyChosen = updatedFeature.value.value.some(
           (skills: string[]) => {
             return skills && skills.includes(choice)
