@@ -19,7 +19,7 @@ export function CharacterFundamentalsSection({
     PlayerCharacterContext
   )
 
-  const [name, setName] = useState<string>()
+  const [name, setName] = useState<string>(playerCharacter.getCharacter().name)
 
   useEffect(() => {
     if (playerCharacter) {
