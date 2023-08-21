@@ -1,13 +1,12 @@
 import { Background } from '@/models/db/background'
-import { useContext, useEffect, useState } from 'react'
-import { FeatureChoiceModal } from '../feature-choice-modal'
-import { PlayerCharacterContext } from '../../character-display/player-character-context'
 import { Feat } from '@/models/db/feat'
-import { retrieveEntity } from '@/utils/services/reference-lookup.service'
-import { EntityModel } from '@/models/db/entity-model'
 import { SourcedFeature } from '@/models/player-character'
-import { FeatSubChoiceModal } from '../level/feat-subchoice-modal'
+import { retrieveEntity } from '@/utils/services/reference-lookup.service'
 import { cloneDeep } from 'lodash'
+import { useContext, useEffect, useState } from 'react'
+import { PlayerCharacterContext } from '../../character-display/player-character-context'
+import { FeatureChoiceModal } from '../feature-choice-modal'
+import { FeatSubChoiceModal } from '../level/feat-subchoice-modal'
 
 export function BackgroundChoiceModal({
   onBackgroundChange,
@@ -20,6 +19,25 @@ export function BackgroundChoiceModal({
   const [featWithSubChoice, setFeatWithSubChoice] = useState<Feat>()
   const [backgrounds, setBackgrounds] = useState<Background[]>([])
 
+  const getBackgroundFeatFromCharacter = () => {
+    return playerCharacter
+      .getLevelFeatures()
+      .find(
+        (sourced) =>
+          sourced.source === 'BACKGROUND' && sourced.feature.type === 'FEAT'
+      )!
+  }
+
+  const reloadFeat = (name: string) => {
+    retrieveEntity(name, 'FEAT').then((val) => {
+      if (val && (val as Feat).configuration) {
+        setFeatWithSubChoice(val as Feat)
+      } else {
+        setFeatWithSubChoice(undefined)
+      }
+    })
+  }
+
   useEffect(() => {
     fetch('http://localhost:3000/api/backgrounds', {
       cache: 'no-store',
@@ -29,43 +47,16 @@ export function BackgroundChoiceModal({
         setBackgrounds(backgrounds)
       })
 
-    retrieveEntity(
-      playerCharacter
-        .getLevelFeatures()
-        .find(
-          (sourced) =>
-            sourced.source === 'BACKGROUND' && sourced.feature.type === 'FEAT'
-        )!.feature.value,
-      'FEAT'
-    ).then((val) => {
-      if (val && (val as Feat).configuration) {
-        setFeatWithSubChoice(val as Feat)
-      } else {
-        setFeatWithSubChoice(undefined)
-      }
-    })
+    reloadFeat(getBackgroundFeatFromCharacter().feature.value)
   }, [])
 
   const updateBackground = (background: Background) => {
     onBackgroundChange(background)
-    retrieveEntity(background.feat, 'FEAT').then((val) => {
-      if (val && (val as Feat).configuration) {
-        setFeatWithSubChoice(val as Feat)
-      } else {
-        setFeatWithSubChoice(undefined)
-      }
-    })
+    reloadFeat(background.feat)
   }
 
   const handleSubChoiceChange = (value: string) => {
-    const updated = cloneDeep(
-      playerCharacter
-        .getLevelFeatures()
-        .find(
-          (sourced) =>
-            sourced.source === 'BACKGROUND' && sourced.feature.type === 'FEAT'
-        )
-    )!
+    const updated = cloneDeep(getBackgroundFeatFromCharacter())
     updated.feature.context = [value]
     onFeatSubchoiceChange(updated)
   }
@@ -82,15 +73,7 @@ export function BackgroundChoiceModal({
         <div className="mt-1">
           <FeatSubChoiceModal
             feat={featWithSubChoice}
-            choice={
-              playerCharacter
-                .getLevelFeatures()
-                .find(
-                  (sourced) =>
-                    sourced.source === 'BACKGROUND' &&
-                    sourced.feature.type === 'FEAT'
-                )!.feature.context![0]
-            }
+            choice={getBackgroundFeatFromCharacter().feature.context![0]}
             onChange={handleSubChoiceChange}
           ></FeatSubChoiceModal>
         </div>
