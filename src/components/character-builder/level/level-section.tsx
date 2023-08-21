@@ -111,7 +111,12 @@ export function LevelSection({
             ></MultipleSkillSelect>
           </div>
           {featuresForLevel
-            .filter((value) => value.feature.type === 'FEAT_SELECTION')
+            .filter(
+              (value) =>
+                value.feature.type === 'CLASS_FEAT_SELECTION' ||
+                value.feature.type === 'ANCESTRY_FEAT_SELECTION' ||
+                value.feature.type === 'SKILL_FEAT_SELECTION'
+            )
             .map((val: SourcedFeature, index: number) => (
               <div key={`${val.source}-${index}`}>
                 {buildFeatChoice(val, handleFeatureUpdateForLevel(level))}
@@ -136,8 +141,7 @@ function buildFeatChoice(
           existingFeat={sourced}
           onChange={onChange(
             (source: SourcedFeature) =>
-              source.source === 'CLASS' &&
-              source.feature.type === 'FEAT_SELECTION'
+              source.feature.type === 'CLASS_FEAT_SELECTION'
           )}
         ></ClassFeatChoiceModal>
       )
@@ -148,8 +152,7 @@ function buildFeatChoice(
           existingFeat={sourced}
           onChange={onChange(
             (source: SourcedFeature) =>
-              source.source === 'ANCESTRY' &&
-              source.feature.type === 'FEAT_SELECTION'
+              source.feature.type === 'ANCESTRY_FEAT_SELECTION'
           )}
         ></AncestryFeatChoiceModal>
       )

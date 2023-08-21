@@ -543,7 +543,8 @@ export class PlayerCharacter {
     updated.heritage_id = ''
     updated.features.filter(
       (val) =>
-        val.source === 'ANCESTRY' && val.feature.type === 'FEAT_SELECTION'
+        val.source === 'ANCESTRY' &&
+        val.feature.type === 'ANCESTRY_FEAT_SELECTION'
     )[0].feature.value = null
     return await PlayerCharacter.build(updated)
   }
@@ -1296,7 +1297,9 @@ export class PlayerCharacter {
     character.features.forEach((sourced: SourcedFeature) => {
       if (
         sourced.feature.type === 'FEAT' ||
-        sourced.feature.type === 'FEAT_SELECTION'
+        sourced.feature.type === 'ANCESTRY_FEAT_SELECTION' ||
+        sourced.feature.type === 'CLASS_FEAT_SELECTION' ||
+        sourced.feature.type === 'SKILL_FEAT_SELECTION'
       ) {
         feats.push(sourced.feature)
       } else if (
