@@ -18,10 +18,7 @@ import { ClassChoiceModal } from './class-choice-modal'
 import { ClassFeatChoiceModal } from './class-feat.modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LanguagesModal } from './languages/languages-modal'
-import { SubclassChoice } from './subclass-choice'
-import { MultipleSkillSelect } from './skills/multiple-skill-select'
-import { SkillSelect } from './skills/skill-select'
-import * as Separator from '@radix-ui/react-separator'
+import { LevelSection } from './level-section'
 
 export default function CharacterBuilderModal({
   trigger,
@@ -114,27 +111,6 @@ export default function CharacterBuilderModal({
     })
   }
 
-  const handleFeatureUpdateForLevel =
-    (level?: number) =>
-    (matchingFunction: (source: SourcedFeature) => boolean) =>
-    (features: SourcedFeature[]) => {
-      let updated = cloneDeep(playerCharacter.getCharacter())
-
-      let toReplace = updated.features.filter((sourced) =>
-        matchingFunction(sourced)
-      )
-
-      if (level) {
-        toReplace = toReplace.filter((sourced) => sourced.feature.level)
-      }
-
-      toReplace.forEach((item, idx) => {
-        const index = updated.features.indexOf(item)
-        updated.features.splice(index, 1, features[idx])
-      })
-      loadCharacter(updated)
-    }
-
   return (
     playerCharacter && (
       <>
@@ -195,88 +171,12 @@ export default function CharacterBuilderModal({
                     (_, i) => {
                       // TODO candidate for context/provider?
                       const level = i + 1
-                      const featuresForLevel = playerCharacter
-                        .getLevelFeatures()
-                        .filter((sourced) => sourced.feature.level === level)
                       return (
-                        <div key={`level-${level}`}>
-                          <Separator.Root
-                            className="w-full bg-stone-300/50 h-px"
-                            style={{ margin: '10px 0' }}
-                          />
-                          <div>
-                            <span className="flex text-stone-300 mb-1">
-                              Level {level}
-                            </span>
-                            <div className="inline-flex gap-2">
-                              {playerCharacter
-                                .getLevelFeatures()
-                                .filter(
-                                  (sourced) => sourced.feature.level === level
-                                )
-                                .map((sourced) => (
-                                  <></>
-                                ))}
-                              {playerCharacter.getSubclassIfAvailable() && (
-                                <div>
-                                  <SubclassChoice
-                                    onSubclassChange={handleSubclassChange}
-                                    onFeatureUpdate={handleFeatureUpdateForLevel(
-                                      level
-                                    )(
-                                      (sourced) =>
-                                        sourced.source === 'CLASS' &&
-                                        sourced.feature.type ===
-                                          'SUBCLASS_FEATURE' &&
-                                        sourced.feature.value.type ===
-                                          'SKILL_SELECTION'
-                                    )}
-                                  ></SubclassChoice>
-                                </div>
-                              )}
-                              <div>
-                                <MultipleSkillSelect
-                                  skillFeatures={featuresForLevel
-                                    .filter(
-                                      (sourced) =>
-                                        sourced.source === 'CLASS' &&
-                                        sourced.feature.type ===
-                                          'SKILL_SELECTION'
-                                    )
-                                    .map((sourced) => sourced.feature)}
-                                  onSkillsUpdate={(features: Feature[]) => {
-                                    handleFeatureUpdateForLevel(level)(
-                                      (source: SourcedFeature) =>
-                                        source.source === 'CLASS' &&
-                                        source.feature.type ===
-                                          'SKILL_SELECTION'
-                                    )(
-                                      features.map((feature) => {
-                                        return {
-                                          source: 'CLASS',
-                                          feature: feature,
-                                        }
-                                      })
-                                    )
-                                  }}
-                                ></MultipleSkillSelect>
-                              </div>
-                              {featuresForLevel
-                                .filter(
-                                  (value) =>
-                                    value.feature.type === 'FEAT_SELECTION'
-                                )
-                                .map((val: SourcedFeature, index: number) => (
-                                  <div key={`${val.source}-${index}`}>
-                                    {buildFeatChoice(
-                                      val,
-                                      handleFeatureUpdateForLevel(level)
-                                    )}
-                                  </div>
-                                ))}
-                            </div>
-                          </div>
-                        </div>
+                        <LevelSection
+                          level={level}
+                          loadCharacter={loadCharacter}
+                          handleSubclassChange={handleSubclassChange}
+                        ></LevelSection>
                       )
                     }
                   )}
@@ -302,37 +202,4 @@ export default function CharacterBuilderModal({
       </>
     )
   )
-}
-
-export function buildFeatChoice(
-  sourced: SourcedFeature,
-  onChange: (
-    matchingFunction: (source: SourcedFeature) => boolean
-  ) => (features: SourcedFeature[]) => void
-) {
-  switch (sourced.source) {
-    case 'CLASS': {
-      return (
-        <ClassFeatChoiceModal
-          existingFeat={sourced}
-          onChange={onChange(
-            (source: SourcedFeature) =>
-              source.source === 'CLASS' &&
-              source.feature.type === 'FEAT_SELECTION'
-          )}
-        ></ClassFeatChoiceModal>
-      )
-    }
-    case 'ANCESTRY':
-      return (
-        <AncestryFeatChoiceModal
-          existingFeat={sourced}
-          onChange={onChange(
-            (source: SourcedFeature) =>
-              source.source === 'ANCESTRY' &&
-              source.feature.type === 'FEAT_SELECTION'
-          )}
-        ></AncestryFeatChoiceModal>
-      )
-  }
 }
