@@ -341,8 +341,6 @@ export class PlayerCharacter {
           this.reconcileSkillOptionsWithClass(character, feature)
         })
 
-      this.clearOutSkillsAlreadyPresentOnClass(character)
-
       this.convertSkillSelectionsIntoProficiencyFeaturesAndAddToCharacter(
         character
       )
@@ -414,29 +412,6 @@ export class PlayerCharacter {
           }
         )
         this.allFeatures.push(...values)
-      })
-  }
-
-  private clearOutSkillsAlreadyPresentOnClass(character: CharacterEntity) {
-    character.features
-      .filter(
-        (sourced) =>
-          sourced.source === 'CLASS' &&
-          sourced.feature.type === 'SKILL_SELECTION'
-      )
-      .forEach((sourced) => {
-        sourced.feature.value.value.forEach((skill: string, index: number) => {
-          const value =
-            this.allFeatures.filter(
-              (val) =>
-                val.feature.type === 'PROFICIENCY' &&
-                val.feature.value.type === 'Skill' &&
-                val.feature.value.value === skill
-            ).length === 0
-              ? skill
-              : null
-          sourced.feature.value.value[index] = value
-        })
       })
   }
 
