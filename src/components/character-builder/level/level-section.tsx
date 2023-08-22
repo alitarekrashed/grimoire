@@ -119,7 +119,8 @@ export function LevelSection({
               (value) =>
                 value.feature.type === 'CLASS_FEAT_SELECTION' ||
                 value.feature.type === 'ANCESTRY_FEAT_SELECTION' ||
-                value.feature.type === 'SKILL_FEAT_SELECTION'
+                value.feature.type === 'SKILL_FEAT_SELECTION' ||
+                value.feature.type === 'GENERAL_FEAT_SELECTION'
             )
             .map((val: SourcedFeature, index: number) => (
               <div key={`${val.source}-${index}`}>
@@ -168,6 +169,16 @@ function buildFeatChoice(
           existingFeat={sourced}
           onChange={onChange}
           traits={['skill']}
+        ></FeatChoiceModal>
+      )
+    }
+    case 'GENERAL_FEAT_SELECTION': {
+      return (
+        <FeatChoiceModal
+          name="Skill"
+          existingFeat={sourced}
+          onChange={onChange}
+          traits={['general']}
         ></FeatChoiceModal>
       )
     }
