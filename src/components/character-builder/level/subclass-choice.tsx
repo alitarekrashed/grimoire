@@ -1,17 +1,19 @@
+import { Feature } from '@/models/db/feature'
 import { Subclass } from '@/models/db/subclass'
+import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import { useContext, useEffect, useState } from 'react'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
 import { FeatureChoiceModal } from '../feature-choice-modal'
-import { SourcedFeature } from '@/models/player-character'
-import { Feature } from '@/models/db/feature'
-import { SkillSelect } from '../skills/skill-select'
+import { SkillIncreaseModal } from '../skills/skill-increase-modal'
 
 export function SubclassChoice({
   onSubclassChange,
   onFeatureUpdate,
 }: {
   onSubclassChange: (subclass: Subclass) => void
-  onFeatureUpdate: (features: SourcedFeature[]) => void
+  onFeatureUpdate: (
+    feature: SourcedFeature
+  ) => (feature: SourcedFeature) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [subclasses, setSubclasses] = useState<Subclass[]>([])
@@ -43,20 +45,18 @@ export function SubclassChoice({
         initialId={playerCharacter.getSubclassIfAvailable()!.value ?? ''}
         onSave={updateSubclass}
       ></FeatureChoiceModal>
-      {getSubclassSkillSelections(playerCharacter).length > 0 && (
+      {getSubclassSkillSelections(playerCharacter) && (
         <div className="mt-1">
-          <SkillSelect
+          <SkillIncreaseModal
             skillFeature={
-              getSubclassSkillSelections(playerCharacter).map(
-                (sourced) => sourced.feature.value
-              )[0]
+              getSubclassSkillSelections(playerCharacter)!.feature.value
             }
-            onSkillsUpdate={(features: Feature[]) => {
-              onFeatureUpdate(
-                features.map((value) => mapSubclassFeatureSkillSelection(value))
+            onSkillsUpdate={(feature: Feature) => {
+              onFeatureUpdate(getSubclassSkillSelections(playerCharacter)!)(
+                mapSubclassFeatureSkillSelection(feature)
               )
             }}
-          ></SkillSelect>
+          ></SkillIncreaseModal>
         </div>
       )}{' '}
     </>
@@ -75,10 +75,10 @@ function mapSubclassFeatureSkillSelection(value: Feature): SourcedFeature {
 
 function getSubclassSkillSelections(
   playerCharacter: PlayerCharacter
-): SourcedFeature[] {
+): SourcedFeature | undefined {
   return playerCharacter
     .getLevelFeatures()
-    .filter(
+    .find(
       (sourced: SourcedFeature) =>
         sourced.source === 'CLASS' &&
         sourced.feature.type === 'SUBCLASS_FEATURE' &&

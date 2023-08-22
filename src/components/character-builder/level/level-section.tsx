@@ -3,14 +3,13 @@ import { Feature } from '@/models/db/feature'
 import { Subclass } from '@/models/db/subclass'
 import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import * as Separator from '@radix-ui/react-separator'
-import { cloneDeep, replace } from 'lodash'
+import { cloneDeep } from 'lodash'
 import { useContext } from 'react'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
 import { CharacterLevelContext } from '../character-level-context'
-import { MultipleSkillSelect } from '../skills/multiple-skill-select'
+import { SkillIncreaseModal } from '../skills/skill-increase-modal'
 import { FeatChoiceModal } from './feat-choice-modal'
 import { SubclassChoice } from './subclass-choice'
-import { SkillIncreaseModal } from '../skills/skill-increase-modal'
 
 export function LevelSection({
   wrapCharacterUpdate,
@@ -75,6 +74,7 @@ export function LevelSection({
   const featuresForLevel = playerCharacter
     .getLevelFeatures()
     .filter((sourced: SourcedFeature) => sourced.feature.level === level)
+
   return (
     <div key={`level-${level}`}>
       <Separator.Root
@@ -84,71 +84,36 @@ export function LevelSection({
       <div>
         <span className="flex text-stone-300 mb-1">Level {level}</span>
         <div className="inline-flex gap-2">
-          {/* TODO: this needs to be improved, i dont like level specific filtering here.... */}
-          {level === 1 && playerCharacter.getSubclassIfAvailable() && (
-            <div>
-              <SubclassChoice
-                onSubclassChange={handleSubclassChange}
-                onFeatureUpdate={handleFeatureUpdateForLevel(level)(
-                  (sourced) =>
-                    sourced.source === 'CLASS' &&
-                    sourced.feature.type === 'SUBCLASS_FEATURE' &&
-                    sourced.feature.value.type === 'SKILL_SELECTION'
-                )}
-              ></SubclassChoice>
-            </div>
-          )}
-          <div>
-            <MultipleSkillSelect
-              skillFeatures={featuresForLevel
-                .filter(
-                  (sourced) =>
-                    sourced.source === 'CLASS' &&
-                    sourced.feature.type === 'SKILL_SELECTION'
-                )
-                .map((sourced) => sourced.feature)}
-              onSkillsUpdate={(features: Feature[]) => {
-                handleFeatureUpdateForLevel(level)(
-                  (source: SourcedFeature) =>
-                    source.source === 'CLASS' &&
-                    source.feature.type === 'SKILL_SELECTION'
-                )(
-                  features.map((feature) => {
-                    return {
+          {featuresForLevel
+            .filter((sourced) => sourced.feature.type === 'SUBCLASS')
+            .map((val) => (
+              <div>
+                <SubclassChoice
+                  onSubclassChange={handleSubclassChange}
+                  onFeatureUpdate={alternateHandleFeatureUpdate}
+                ></SubclassChoice>
+              </div>
+            ))}
+          <div className="flex flex-col gap-1">
+            {featuresForLevel
+              .filter(
+                (sourced) =>
+                  sourced.source === 'CLASS' &&
+                  sourced.feature.type === 'SKILL_SELECTION'
+              )
+              .map((sourced, index) => (
+                <SkillIncreaseModal
+                  key={`skills-${index}`}
+                  skillFeature={sourced.feature}
+                  onSkillsUpdate={(feature: Feature) => {
+                    alternateHandleFeatureUpdate(sourced)({
                       source: 'CLASS',
                       feature: feature,
-                    }
-                  })
-                )
-              }}
-            ></MultipleSkillSelect>
+                    })
+                  }}
+                ></SkillIncreaseModal>
+              ))}
           </div>
-          <div>
-            <SkillIncreaseModal
-              skillFeatures={featuresForLevel
-                .filter(
-                  (sourced) =>
-                    sourced.source === 'CLASS' &&
-                    sourced.feature.type === 'SKILL_SELECTION'
-                )
-                .map((sourced) => sourced.feature)}
-              onSkillsUpdate={(features: Feature[]) => {
-                handleFeatureUpdateForLevel(level)(
-                  (source: SourcedFeature) =>
-                    source.source === 'CLASS' &&
-                    source.feature.type === 'SKILL_SELECTION'
-                )(
-                  features.map((feature) => {
-                    return {
-                      source: 'CLASS',
-                      feature: feature,
-                    }
-                  })
-                )
-              }}
-            ></SkillIncreaseModal>
-          </div>
-
           {featuresForLevel
             .filter(
               (value) =>

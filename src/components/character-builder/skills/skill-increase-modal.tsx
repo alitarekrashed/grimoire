@@ -1,5 +1,9 @@
 import { Feature, SkillSelectionFeatureValue } from '@/models/db/feature'
-import { CalculatedProficiency, SkillType } from '@/models/statistic'
+import {
+  CalculatedProficiency,
+  SkillAttributes,
+  SkillType,
+} from '@/models/statistic'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
@@ -24,18 +28,20 @@ function getSkillChoices(
 
 export function SkillIncreaseModal({
   name,
-  skillFeatures,
+  skillFeature,
   onSkillsUpdate,
 }: {
   name?: string
-  skillFeatures: Feature[]
-  onSkillsUpdate: (features: Feature[]) => void
+  skillFeature: Feature
+  onSkillsUpdate: (feature: Feature) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [proficiencies, setProficiencies] = useState<
     Map<SkillType, CalculatedProficiency>
-  >(playerCharacter.getSkills(skillFeatures))
-  const [updatedFeatures, setUpdatedFeatures] = useState<Feature[]>()
+  >(playerCharacter.getSkills([skillFeature]))
+  const [updatedFeature, setUpdatedFeature] = useState<Feature>(
+    cloneDeep(skillFeature)
+  )
   const [choices, setChoices] = useState<string[]>([])
 
   useEffect(() => {
@@ -43,16 +49,14 @@ export function SkillIncreaseModal({
   }, [proficiencies])
 
   useEffect(() => {
-    setUpdatedFeatures(cloneDeep(skillFeatures))
-    setProficiencies(playerCharacter.getSkills(skillFeatures))
-  }, [skillFeatures])
+    setUpdatedFeature(cloneDeep(skillFeature))
+    setProficiencies(playerCharacter.getSkills([skillFeature]))
+  }, [skillFeature])
 
-  let totalCount = 0
-  let setCount = 0
-  skillFeatures.forEach((feature) => {
-    totalCount += feature.value.value.length
-    setCount += feature.value.value.filter((value: string) => value).length
-  })
+  let totalCount = skillFeature.value.value.length
+  let setCount = skillFeature.value.value.filter(
+    (value: string) => value
+  ).length
 
   const trigger = (
     <button
@@ -63,33 +67,29 @@ export function SkillIncreaseModal({
     </button>
   )
 
-  let counter = 0
+  const skillSelection =
+    updatedFeature.value.configuration.options !== 'Free' ? (
+      <div className="inline-flex gap-2 mb-2 w-full">
+        <SkillIncrease
+          options={updatedFeature.value.configuration.options as SkillType[]}
+          feature={updatedFeature}
+          onChange={(feature: Feature) => setUpdatedFeature(feature)}
+        ></SkillIncrease>
+      </div>
+    ) : (
+      <div className="inline-flex gap-2 mb-2 w-full">
+        <SkillIncrease
+          options={Array.from(SkillAttributes.keys())}
+          feature={updatedFeature}
+          onChange={(feature: Feature) => setUpdatedFeature(feature)}
+        ></SkillIncrease>
+      </div>
+    )
 
-  const skillChoices =
-    updatedFeatures &&
-    updatedFeatures.map((feature: Feature, index) => {
-      const skillSelection = feature.value as SkillSelectionFeatureValue
-
-      console.log(skillSelection)
-      if (skillSelection.configuration.options !== 'Free') {
-        return (
-          <div
-            key={`skillgroup-${index}`}
-            className="inline-flex gap-2 mb-2 w-44"
-          >
-            <SkillIncrease
-              options={skillSelection.configuration.options as SkillType[]}
-              feature={feature}
-            ></SkillIncrease>
-          </div>
-        )
-      }
-      return <></>
-    })
-
-  const body = updatedFeatures && (
-    <div className={`${roboto_condensed.className} p-2`}>{skillChoices}</div>
+  const body = (
+    <div className={`${roboto_condensed.className} p-2`}>{skillSelection}</div>
   )
+
   return (
     totalCount > 0 && (
       <Modal
@@ -100,13 +100,13 @@ export function SkillIncreaseModal({
           {
             label: 'Save',
             onClick: () => {
-              onSkillsUpdate(updatedFeatures ?? [])
+              onSkillsUpdate(updatedFeature!)
             },
           },
           {
             label: 'Cancel',
             onClick: () => {
-              onSkillsUpdate(skillFeatures)
+              onSkillsUpdate(skillFeature)
             },
           },
         ]}
