@@ -1,4 +1,4 @@
-import { Feat } from '@/models/db/feat'
+import { Feat, Prerequisite } from '@/models/db/feat'
 import { SourcedFeature } from '@/models/player-character'
 import { useContext, useEffect, useState } from 'react'
 import { FeatureChoiceModal } from '../feature-choice-modal'
@@ -7,6 +7,7 @@ import { PlayerCharacterContext } from '../../character-display/player-character
 import { FeatSubChoiceModal } from './feat-subchoice-modal'
 import { CharacterLevelContext } from '../character-level-context'
 import { isGreaterThanOrEqualTo } from '@/utils/services/gear-proficiency-manager'
+import { CalculatedProficiency, SkillType } from '@/models/statistic'
 
 export function FeatChoiceModal({
   name,
@@ -17,7 +18,7 @@ export function FeatChoiceModal({
   name: string
   traits: string[]
   existingFeat: SourcedFeature
-  onChange: (sourcedFeature: SourcedFeature[]) => void
+  onChange: (sourcedFeature: SourcedFeature) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const { level } = useContext(CharacterLevelContext)
@@ -61,7 +62,7 @@ export function FeatChoiceModal({
   const handleSubChoiceChange = (value: string) => {
     const updated = cloneDeep(feat)
     updated.feature.context = [value]
-    onChange([updated])
+    onChange(updated)
   }
 
   return (
@@ -75,19 +76,19 @@ export function FeatChoiceModal({
           const updated = cloneDeep(feat)
           updated.feature.value = val.name
           updated.feature.context = []
-          onChange([updated])
+          onChange(updated)
         }}
         onClear={() => {
           const updated = cloneDeep(feat)
           updated.feature.value = null!
-          onChange([updated])
+          onChange(updated)
         }}
       ></FeatureChoiceModal>
       {featWithSubChoice && (
         <div className="mt-1">
           <FeatSubChoiceModal
             feat={featWithSubChoice}
-            choice={feat.feature.context![0]}
+            choice={feat.feature.context ? feat.feature.context[0] : ''}
             onChange={handleSubChoiceChange}
           ></FeatSubChoiceModal>
         </div>

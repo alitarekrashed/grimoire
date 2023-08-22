@@ -3,13 +3,14 @@ import { Feature } from '@/models/db/feature'
 import { Subclass } from '@/models/db/subclass'
 import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import * as Separator from '@radix-ui/react-separator'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, replace } from 'lodash'
 import { useContext } from 'react'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
 import { CharacterLevelContext } from '../character-level-context'
 import { MultipleSkillSelect } from '../skills/multiple-skill-select'
 import { FeatChoiceModal } from './feat-choice-modal'
 import { SubclassChoice } from './subclass-choice'
+import { SkillIncreaseModal } from '../skills/skill-increase-modal'
 
 export function LevelSection({
   wrapCharacterUpdate,
@@ -48,6 +49,16 @@ export function LevelSection({
         const index = updated.features.indexOf(item)
         updated.features.splice(index, 1, features[idx])
       })
+      loadCharacter(updated)
+    }
+
+  const alternateHandleFeatureUpdate =
+    (original: SourcedFeature) => (replacement: SourcedFeature) => {
+      let updated = cloneDeep(playerCharacter.getCharacter())
+
+      const index = playerCharacter.getCharacter().features.indexOf(original)
+      updated.features.splice(index, 1, replacement)
+
       loadCharacter(updated)
     }
 
@@ -112,6 +123,32 @@ export function LevelSection({
               }}
             ></MultipleSkillSelect>
           </div>
+          <div>
+            <SkillIncreaseModal
+              skillFeatures={featuresForLevel
+                .filter(
+                  (sourced) =>
+                    sourced.source === 'CLASS' &&
+                    sourced.feature.type === 'SKILL_SELECTION'
+                )
+                .map((sourced) => sourced.feature)}
+              onSkillsUpdate={(features: Feature[]) => {
+                handleFeatureUpdateForLevel(level)(
+                  (source: SourcedFeature) =>
+                    source.source === 'CLASS' &&
+                    source.feature.type === 'SKILL_SELECTION'
+                )(
+                  features.map((feature) => {
+                    return {
+                      source: 'CLASS',
+                      feature: feature,
+                    }
+                  })
+                )
+              }}
+            ></SkillIncreaseModal>
+          </div>
+
           {featuresForLevel
             .filter(
               (value) =>
@@ -124,7 +161,7 @@ export function LevelSection({
                 {buildFeatChoice(
                   playerCharacter,
                   val,
-                  handleFeatureUpdateForLevel(level)
+                  alternateHandleFeatureUpdate(val)
                 )}
               </div>
             ))}
@@ -137,9 +174,7 @@ export function LevelSection({
 function buildFeatChoice(
   playerCharacter: PlayerCharacter,
   sourced: SourcedFeature,
-  onChange: (
-    matchingFunction: (source: SourcedFeature) => boolean
-  ) => (features: SourcedFeature[]) => void
+  onChange: (replacement: SourcedFeature) => void
 ) {
   switch (sourced.feature.type) {
     case 'CLASS_FEAT_SELECTION': {
@@ -147,10 +182,7 @@ function buildFeatChoice(
         <FeatChoiceModal
           name="Class"
           existingFeat={sourced}
-          onChange={onChange(
-            (source: SourcedFeature) =>
-              source.feature.type === 'CLASS_FEAT_SELECTION'
-          )}
+          onChange={onChange}
           traits={[playerCharacter.getClassEntity().name.toLowerCase()]}
         ></FeatChoiceModal>
       )
@@ -160,10 +192,7 @@ function buildFeatChoice(
         <FeatChoiceModal
           name="Ancestry"
           existingFeat={sourced}
-          onChange={onChange(
-            (source: SourcedFeature) =>
-              source.feature.type === 'ANCESTRY_FEAT_SELECTION'
-          )}
+          onChange={onChange}
           traits={playerCharacter.getTraits()}
         ></FeatChoiceModal>
       )
@@ -172,10 +201,7 @@ function buildFeatChoice(
         <FeatChoiceModal
           name="Skill"
           existingFeat={sourced}
-          onChange={onChange(
-            (source: SourcedFeature) =>
-              source.feature.type === 'SKILL_FEAT_SELECTION'
-          )}
+          onChange={onChange}
           traits={['skill']}
         ></FeatChoiceModal>
       )
