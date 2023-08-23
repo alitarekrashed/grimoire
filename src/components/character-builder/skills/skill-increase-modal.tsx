@@ -4,7 +4,8 @@ import { roboto_condensed } from '@/utils/fonts'
 import { isGreaterThanOrEqualTo } from '@/utils/services/gear-proficiency-manager'
 import {
   SkillProficiencyManager,
-  createManagerForCharacter,
+  createManagerFromFeatures,
+  createManagerFromPlayerCharacter,
   getNextRank,
 } from '@/utils/services/skill-proficiency-manager'
 import { cloneDeep } from 'lodash'
@@ -27,12 +28,12 @@ export function SkillIncreaseModal({
     cloneDeep(skillFeature)
   )
   const [manager, setManager] = useState<SkillProficiencyManager>(
-    createManagerForCharacter(playerCharacter, skillFeature)
+    createManagerFromPlayerCharacter(playerCharacter, skillFeature)
   )
 
   useEffect(() => {
     setUpdatedFeature(cloneDeep(skillFeature))
-    setManager(createManagerForCharacter(playerCharacter, skillFeature))
+    setManager(createManagerFromPlayerCharacter(playerCharacter, skillFeature))
   }, [skillFeature])
 
   let totalCount = skillFeature.value.value.length

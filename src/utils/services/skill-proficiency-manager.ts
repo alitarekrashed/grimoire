@@ -15,7 +15,11 @@ import {
   isGreaterThanOrEqualTo,
 } from './gear-proficiency-manager'
 import { Attribute } from '@/models/db/ancestry'
-import { Attributes, PlayerCharacter } from '@/models/player-character'
+import {
+  Attributes,
+  PlayerCharacter,
+  SourcedFeature,
+} from '@/models/player-character'
 
 export class SkillProficiencyManager {
   private skillProficiencies: Map<SkillType, ProficiencyRank>
@@ -164,15 +168,28 @@ export function getNextRank(rank: ProficiencyRank) {
   }
 }
 
-export function createManagerForCharacter(
+export function createManagerFromPlayerCharacter(
   playerCharacter: PlayerCharacter,
   exclusion?: Feature
-) {
-  const builder = new SkillProficiencyManager.SkillProficiencyManagerBuilder(
+): SkillProficiencyManager {
+  return createManagerFromFeatures(
     playerCharacter.getCharacter().level,
     playerCharacter.getAttributes(),
-    playerCharacter
-      .getLevelFeatures()
+    playerCharacter.getLevelFeatures(),
+    exclusion
+  )
+}
+
+export function createManagerFromFeatures(
+  level: number,
+  attributes: Attributes,
+  sourced: SourcedFeature[],
+  exclusion?: Feature
+): SkillProficiencyManager {
+  const builder = new SkillProficiencyManager.SkillProficiencyManagerBuilder(
+    level,
+    attributes,
+    sourced
       .filter(
         (sourced) =>
           sourced.feature.type === 'PROFICIENCY' &&
@@ -183,8 +200,7 @@ export function createManagerForCharacter(
 
   // order of operations here matters, basically this makes the subclass selection the 'default' base, which means that
   // it 'wins' during reconciliation
-  playerCharacter
-    .getLevelFeatures()
+  sourced
     .filter((sourced) => sourced.feature.value !== exclusion)
     .filter(
       (sourced) =>
@@ -195,8 +211,7 @@ export function createManagerForCharacter(
       builder.validateAndApply(sourced.feature.value)
     })
 
-  playerCharacter
-    .getLevelFeatures()
+  sourced
     .filter((sourced) => sourced.feature.type === 'SKILL_SELECTION')
     .filter((sourced) => sourced.feature !== exclusion)
     .sort((a, b) => a.feature.level! - b.feature.level!)

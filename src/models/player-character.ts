@@ -44,7 +44,10 @@ import {
 } from './statistic'
 import { Subclass } from './db/subclass'
 import { inter } from '@/utils/fonts'
-import { SkillProficiencyManager } from '@/utils/services/skill-proficiency-manager'
+import {
+  SkillProficiencyManager,
+  createManagerFromFeatures,
+} from '@/utils/services/skill-proficiency-manager'
 
 export interface CharacterAttack {
   attackBonus: ModifierValue[][]
@@ -348,36 +351,11 @@ export class PlayerCharacter {
         .map((val) => val.feature.value)
     )
 
-    const builder = new SkillProficiencyManager.SkillProficiencyManagerBuilder(
+    this.skillProficiencyManager = createManagerFromFeatures(
       this.level,
       this.attributes,
       this.features
-        .filter(
-          (feature) =>
-            feature.feature.type === 'PROFICIENCY' &&
-            feature.feature.value.type === 'Skill'
-        )
-        .map((feature) => feature.feature)
     )
-
-    // order of operations here matters, basically this makes the subclass selection the 'default' base, which means that
-    // it 'wins' during reconciliation
-    this.character.features
-      .filter(
-        (sourced) =>
-          sourced.feature.type === 'SUBCLASS_FEATURE' &&
-          sourced.feature.value!.type === 'SKILL_SELECTION'
-      )
-      .forEach((sourced) => {
-        builder.validateAndApply(sourced.feature.value)
-      })
-
-    this.character.features
-      .filter((sourced) => sourced.feature.type === 'SKILL_SELECTION')
-      .sort((a, b) => a.feature.level! - b.feature.level!)
-      .forEach((sourced) => builder.validateAndApply(sourced.feature))
-
-    this.skillProficiencyManager = builder.build()
   }
 
   public getCharacter(): CharacterEntity {
