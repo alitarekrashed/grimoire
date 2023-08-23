@@ -341,8 +341,6 @@ export class PlayerCharacter {
           this.reconcileSkillOptionsWithClass(character, feature)
         })
 
-      this.clearOutSkillsAlreadyPresentOnClass(character)
-
       this.convertSkillSelectionsIntoProficiencyFeaturesAndAddToCharacter(
         character
       )
@@ -417,36 +415,15 @@ export class PlayerCharacter {
       })
   }
 
-  private clearOutSkillsAlreadyPresentOnClass(character: CharacterEntity) {
-    character.features
-      .filter(
-        (sourced) =>
-          sourced.source === 'CLASS' &&
-          sourced.feature.type === 'SKILL_SELECTION'
-      )
-      .forEach((sourced) => {
-        sourced.feature.value.value.forEach((skill: string, index: number) => {
-          const value =
-            this.allFeatures.filter(
-              (val) =>
-                val.feature.type === 'PROFICIENCY' &&
-                val.feature.value.type === 'Skill' &&
-                val.feature.value.value === skill
-            ).length === 0
-              ? skill
-              : null
-          sourced.feature.value.value[index] = value
-        })
-      })
-  }
-
   private reconcileSkillOptionsWithClass(
     character: CharacterEntity,
     feature: Feature
   ) {
     const classSkillSelections: SourcedFeature[] = character.features.filter(
       (sourced: SourcedFeature) =>
-        sourced.source === 'CLASS' && sourced.feature.type === 'SKILL_SELECTION'
+        sourced.source === 'CLASS' &&
+        sourced.feature.type === 'SKILL_SELECTION' &&
+        sourced.feature.level === feature.level
     )
 
     const skillSelection = feature.value as SkillSelectionFeatureValue
@@ -460,6 +437,7 @@ export class PlayerCharacter {
           source: 'CLASS',
           feature: {
             type: 'SKILL_SELECTION',
+            level: feature.level,
             value: {
               ...skillSelection,
               value: [null],
@@ -490,6 +468,7 @@ export class PlayerCharacter {
           source: 'CLASS',
           feature: {
             type: 'SKILL_SELECTION',
+            level: feature.level,
             value: {
               ...skillSelection,
               value: [values],
@@ -501,8 +480,6 @@ export class PlayerCharacter {
 
       const currentNumber = classSkillSelection!.feature.value.value.length
 
-      // TODO ALI instead of creating MULTIPLE skill_selection entities when we hit this point, maybe it's value should just be a list
-      // then we can just .push or .splice in order to increase or reduce the size of the list in the consolidation step...
       if (currentNumber < expectedNumber) {
         const toAdd = expectedNumber - currentNumber
         for (let i = 0; i < toAdd; i++) {
@@ -1311,7 +1288,8 @@ export class PlayerCharacter {
         sourced.feature.type === 'FEAT' ||
         sourced.feature.type === 'ANCESTRY_FEAT_SELECTION' ||
         sourced.feature.type === 'CLASS_FEAT_SELECTION' ||
-        sourced.feature.type === 'SKILL_FEAT_SELECTION'
+        sourced.feature.type === 'SKILL_FEAT_SELECTION' ||
+        sourced.feature.type === 'GENERAL_FEAT_SELECTION'
       ) {
         feats.push(sourced.feature)
       } else if (
