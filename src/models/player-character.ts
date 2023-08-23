@@ -337,15 +337,12 @@ export class PlayerCharacter {
     this.initializeHitpoints(ancestry)
 
     if (classEntity) {
+      // TODO can i reconcile the skill options within the proficiency manager???
       classEntity.features
         .filter((feature: Feature) => feature.type === 'SKILL_SELECTION')
         .forEach((feature: Feature) => {
           this.reconcileSkillOptionsWithClass(character, feature)
         })
-
-      //   this.convertSkillSelectionsIntoProficiencyFeaturesAndAddToCharacter(
-      //     character
-      //   )
     }
 
     this.allFeatures.forEach((feature) => this.addFeatureToCharacter(feature))
@@ -388,62 +385,6 @@ export class PlayerCharacter {
       })
 
     this.skillProficiencyManager = builder.build()
-  }
-
-  private convertSkillSelectionsIntoProficiencyFeaturesAndAddToCharacter(
-    character: CharacterEntity
-  ) {
-    character.features
-      .filter((sourced: SourcedFeature) => sourced.source === 'CLASS')
-      .filter(
-        (sourced: SourcedFeature) => sourced.feature.type === 'SKILL_SELECTION'
-      )
-      .filter((sourced: SourcedFeature) => sourced.feature.value.value)
-      .forEach((sourced: SourcedFeature) => {
-        const values = sourced.feature.value.value.map((skill: string) => {
-          return {
-            source: sourced.source,
-            feature: {
-              type: 'PROFICIENCY',
-              value: {
-                // TODO this shouldn't be 'max rank' ... we should be storing the actual rank in the selection entity on the character
-                rank: sourced.feature.value.configuration.max_rank,
-                type: 'Skill',
-                value: skill,
-              },
-            },
-          }
-        })
-        this.allFeatures.push(...values)
-      })
-
-    character.features
-      .filter((sourced: SourcedFeature) => sourced.source === 'CLASS')
-      .filter(
-        (sourced: SourcedFeature) =>
-          sourced.feature.type === 'SUBCLASS_FEATURE' &&
-          sourced.feature.value?.type === 'SKILL_SELECTION'
-      )
-      .filter((sourced: SourcedFeature) => sourced.feature.value.value.value)
-      .forEach((sourced: SourcedFeature) => {
-        const values = sourced.feature.value.value.value.map(
-          (skill: string) => {
-            return {
-              source: sourced.source,
-              feature: {
-                type: 'PROFICIENCY',
-                value: {
-                  // TODO this shouldn't be 'max rank' ... we should be storing the actual rank in the selection entity on the character
-                  rank: sourced.feature.value.value.configuration.max_rank,
-                  type: 'Skill',
-                  value: skill,
-                },
-              },
-            }
-          }
-        )
-        this.allFeatures.push(...values)
-      })
   }
 
   private reconcileSkillOptionsWithClass(
@@ -781,20 +722,17 @@ export class PlayerCharacter {
 
   public getProficiencies(exclude?: Feature[]): {
     Perception: Map<string, ProficiencyRank>
-    Skill: Map<SkillType, ProficiencyRank>
     Lore: Map<string, ProficiencyRank>
     SavingThrow: Map<SavingThrowType, ProficiencyRank>
     DifficultyClass: Map<string, ProficiencyRank>
   } {
     const proficiencyMap: {
       Perception: Map<string, ProficiencyRank>
-      Skill: Map<string, ProficiencyRank>
       Lore: Map<string, ProficiencyRank>
       SavingThrow: Map<string, ProficiencyRank>
       DifficultyClass: Map<string, ProficiencyRank>
     } = {
       Perception: new Map<string, ProficiencyRank>(),
-      Skill: generateUntrainedSkillMap(),
       Lore: new Map<string, ProficiencyRank>(),
       SavingThrow: new Map<SavingThrowType, ProficiencyRank>(),
       DifficultyClass: new Map<string, ProficiencyRank>(),
@@ -818,13 +756,14 @@ export class PlayerCharacter {
       .filter(
         (feature) =>
           feature.feature.value.type !== 'Weapon' &&
-          feature.feature.value.type !== 'Defense'
+          feature.feature.value.type !== 'Defense' &&
+          feature.feature.value.type !== 'Skill'
       )
       .forEach((sourced: SourcedFeature) => {
         const proficency = sourced.feature.value as ProficiencyFeatureValue
         const type = proficency.type as Exclude<
           ProficiencyType,
-          'Weapon' | 'Defense'
+          'Weapon' | 'Defense' | 'Skill'
         >
         if (
           proficency.value &&
@@ -841,7 +780,6 @@ export class PlayerCharacter {
       })
     return proficiencyMap as {
       Perception: Map<string, ProficiencyRank>
-      Skill: Map<SkillType, ProficiencyRank>
       Lore: Map<string, ProficiencyRank>
       SavingThrow: Map<SavingThrowType, ProficiencyRank>
       DifficultyClass: Map<string, ProficiencyRank>
@@ -858,21 +796,6 @@ export class PlayerCharacter {
           RankModifierMap[rank] +
           this.level +
           this.attributes[SavingThrowAttributes.get(type) as Attribute],
-      })
-    })
-    return result
-  }
-
-  public getSkills(exclude?: Feature[]): Map<SkillType, CalculatedProficiency> {
-    const skills = this.getProficiencies(exclude).Skill
-    const result = new Map()
-    skills.forEach((rank, type) => {
-      result.set(type, {
-        rank: rank,
-        modifier:
-          RankModifierMap[rank] +
-          this.level +
-          this.attributes[SkillAttributes.get(type) as Attribute],
       })
     })
     return result
