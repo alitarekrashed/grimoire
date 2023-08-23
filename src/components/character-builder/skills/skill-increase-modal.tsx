@@ -7,7 +7,7 @@ import {
   createManagerForCharacter,
   getNextRank,
 } from '@/utils/services/skill-proficiency-manager'
-import { clone, cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
 import { FaCheck } from 'react-icons/fa'
 import { Modal } from '../../base/modal'
@@ -59,6 +59,9 @@ export function SkillIncreaseModal({
       <div className="w-full">
         <div className="grid grid-cols-4 gap-2 grid-rows-4 w-full">
           {options.map((val: SkillType, index: number) => {
+            // TODO ALI if a item is selected AND disabled, it likely means that some other feature
+            // is increasing the proficiency later on not sure if we should handle this differently
+            // (i.e. remove the 'disabled' attribute, or if we should have some third state)
             const isSelected: boolean = updatedFeature.value.value.includes(val)
             const isDisabled: boolean = isGreaterThanOrEqualTo(
               manager.getSkills().get(val)!.rank,
@@ -78,7 +81,7 @@ export function SkillIncreaseModal({
                   data-selected={isSelected}
                   data-disabled={isDisabled}
                   onClick={(e) => {
-                    if (isDisabled === false) {
+                    if (isSelected || isDisabled === false) {
                       const updated: Feature = cloneDeep(updatedFeature)
                       if (!isSelected) {
                         const index: number = updated.value.value.findIndex(
@@ -140,6 +143,7 @@ export function SkillIncreaseModal({
           {
             label: 'Cancel',
             onClick: () => {
+              setUpdatedFeature(skillFeature)
               onSkillsUpdate(skillFeature)
             },
           },
