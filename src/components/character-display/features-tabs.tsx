@@ -1,20 +1,19 @@
 import {
   ArmorProficiencyValue,
   ProficiencyRank,
-  ProficiencyType,
   WeaponProficiencyValue,
 } from '@/models/db/background'
 import { CharacterEquipment } from '@/models/db/character-entity'
 import { EquipmentCategory } from '@/models/db/equipment'
 import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import * as Tabs from '@radix-ui/react-tabs'
+import { cloneDeep } from 'lodash'
 import { useContext } from 'react'
 import { ActionInlineDisplay } from '../actions/action-inline-display'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 import styles from './features-tabs.module.css'
 import { PlayerCharacterContext } from './player-character-context'
 import { SkillDisplay } from './skill-display'
-import { cloneDeep } from 'lodash'
 
 export function FeaturesTabs() {
   const { playerCharacter, updateAndSavePlayerCharacter } = useContext(

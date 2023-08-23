@@ -44,6 +44,7 @@ import {
 } from './statistic'
 import { Subclass } from './db/subclass'
 import { inter } from '@/utils/fonts'
+import { SkillProficiencyManager } from '@/utils/services/skill-proficiency-manager'
 
 export interface CharacterAttack {
   attackBonus: ModifierValue[][]
@@ -307,6 +308,7 @@ export class PlayerCharacter {
   private hitpoints!: ModifierValue[]
   private features: SourcedFeature[] = []
   private gearProficienyManager!: GearProficiencyManager
+  private skillProficiencyManager!: SkillProficiencyManager
 
   private constructor(
     private character: CharacterEntity,
@@ -341,9 +343,9 @@ export class PlayerCharacter {
           this.reconcileSkillOptionsWithClass(character, feature)
         })
 
-      this.convertSkillSelectionsIntoProficiencyFeaturesAndAddToCharacter(
-        character
-      )
+      //   this.convertSkillSelectionsIntoProficiencyFeaturesAndAddToCharacter(
+      //     character
+      //   )
     }
 
     this.allFeatures.forEach((feature) => this.addFeatureToCharacter(feature))
@@ -357,6 +359,25 @@ export class PlayerCharacter {
         .filter((feature) => feature.feature.value.type === 'Defense')
         .map((val) => val.feature.value)
     )
+
+    const builder = new SkillProficiencyManager.SkillProficiencyManagerBuilder(
+      this.level,
+      this.attributes,
+      this.features
+        .filter(
+          (feature) =>
+            feature.feature.type === 'PROFICIENCY' &&
+            feature.feature.value.type === 'Skill'
+        )
+        .map((feature) => feature.feature)
+    )
+
+    this.character.features
+      .filter((sourced) => sourced.feature.type === 'SKILL_SELECTION')
+      .sort((a, b) => a.feature.level! - b.feature.level!)
+      .forEach((sourced) => builder.validateAndApply(sourced.feature))
+
+    this.skillProficiencyManager = builder.build()
   }
 
   private convertSkillSelectionsIntoProficiencyFeaturesAndAddToCharacter(
@@ -884,6 +905,10 @@ export class PlayerCharacter {
 
   public getGearProficiencyManager(): GearProficiencyManager {
     return this.gearProficienyManager
+  }
+
+  public getSkillProfciencyManager(): SkillProficiencyManager {
+    return this.skillProficiencyManager
   }
 
   // TODO this needs some love/cleanup

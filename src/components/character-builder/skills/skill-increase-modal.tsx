@@ -11,6 +11,7 @@ import { useContext, useEffect, useState } from 'react'
 import { FaCheck } from 'react-icons/fa'
 import { Modal } from '../../base/modal'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
+import { getNextRank } from '@/utils/services/skill-proficiency-manager'
 
 export function SkillIncreaseModal({
   name,
@@ -146,13 +147,4 @@ export function SkillIncreaseModal({
       ></Modal>
     )
   )
-}
-
-function getNextRank(rank: ProficiencyRank) {
-  switch (rank) {
-    case 'untrained':
-      return 'trained'
-    case 'trained':
-      return 'expert'
-  }
 }
