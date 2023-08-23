@@ -1,4 +1,4 @@
-import { SkillSelectionFeatureValue } from '@/models/db/feature'
+import { Feature, SkillSelectionFeatureValue } from '@/models/db/feature'
 import {
   CalculatedProficiency,
   SkillAttributes,
@@ -15,7 +15,7 @@ import {
   isGreaterThanOrEqualTo,
 } from './gear-proficiency-manager'
 import { Attribute } from '@/models/db/ancestry'
-import { Attributes } from '@/models/player-character'
+import { Attributes, PlayerCharacter } from '@/models/player-character'
 
 export class SkillProficiencyManager {
   private skillProficiencies: Map<SkillType, ProficiencyRank>
@@ -120,4 +120,33 @@ export function getNextRank(rank: ProficiencyRank) {
     case 'trained':
       return 'expert'
   }
+}
+
+export function createManagerForCharacter(
+  playerCharacter: PlayerCharacter,
+  exclusion?: Feature
+) {
+  const builder = new SkillProficiencyManager.SkillProficiencyManagerBuilder(
+    playerCharacter.getCharacter().level,
+    playerCharacter.getAttributes(),
+    playerCharacter
+      .getLevelFeatures()
+      .filter(
+        (sourced) =>
+          sourced.feature.type === 'PROFICIENCY' &&
+          sourced.feature.value.type === 'Skill'
+      )
+      .map((sourced) => sourced.feature)
+  )
+
+  playerCharacter
+    .getLevelFeatures()
+    .filter((sourced) => sourced.feature.type === 'SKILL_SELECTION')
+    .filter((sourced) => sourced.feature !== exclusion)
+    .sort((a, b) => a.feature.level! - b.feature.level!)
+    .forEach((sourced) => builder.validateAndApply(sourced.feature))
+
+  const manager = builder.build()
+  console.log(manager.getSkills())
+  return manager
 }

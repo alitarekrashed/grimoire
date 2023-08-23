@@ -1,17 +1,17 @@
 import { Feature } from '@/models/db/feature'
-import {
-  CalculatedProficiency,
-  SkillAttributes,
-  SkillType,
-} from '@/models/statistic'
+import { SkillAttributes, SkillType } from '@/models/statistic'
 import { roboto_condensed } from '@/utils/fonts'
 import { isGreaterThanOrEqualTo } from '@/utils/services/gear-proficiency-manager'
-import { cloneDeep } from 'lodash'
+import {
+  SkillProficiencyManager,
+  createManagerForCharacter,
+  getNextRank,
+} from '@/utils/services/skill-proficiency-manager'
+import { clone, cloneDeep } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
 import { FaCheck } from 'react-icons/fa'
 import { Modal } from '../../base/modal'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
-import { getNextRank } from '@/utils/services/skill-proficiency-manager'
 
 export function SkillIncreaseModal({
   name,
@@ -23,20 +23,20 @@ export function SkillIncreaseModal({
   onSkillsUpdate: (feature: Feature) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
-  const [proficiencies, setProficiencies] = useState<
-    Map<SkillType, CalculatedProficiency>
-  >(playerCharacter.getSkills([skillFeature]))
   const [updatedFeature, setUpdatedFeature] = useState<Feature>(
     cloneDeep(skillFeature)
+  )
+  const [manager, setManager] = useState<SkillProficiencyManager>(
+    createManagerForCharacter(playerCharacter, skillFeature)
   )
 
   useEffect(() => {
     setUpdatedFeature(cloneDeep(skillFeature))
-    setProficiencies(playerCharacter.getSkills([skillFeature]))
+    setManager(createManagerForCharacter(playerCharacter, skillFeature))
   }, [skillFeature])
 
   let totalCount = skillFeature.value.value.length
-  let setCount = skillFeature.value.value.filter(
+  let setCount = updatedFeature.value.value.filter(
     (value: string) => value
   ).length
 
@@ -61,7 +61,7 @@ export function SkillIncreaseModal({
           {options.map((val: SkillType, index: number) => {
             const isSelected: boolean = updatedFeature.value.value.includes(val)
             const isDisabled: boolean = isGreaterThanOrEqualTo(
-              proficiencies.get(val)!.rank,
+              manager.getSkills().get(val)!.rank,
               updatedFeature.value.configuration.max_rank
             )
               ? true
@@ -106,8 +106,8 @@ export function SkillIncreaseModal({
                     <span>
                       <span className="text-xs">
                         {isSelected
-                          ? getNextRank(proficiencies.get(val)!.rank)
-                          : proficiencies.get(val)!.rank}
+                          ? getNextRank(manager.getSkills().get(val)!.rank)
+                          : manager.getSkills().get(val)!.rank}
                       </span>
                     </span>
                   </div>
