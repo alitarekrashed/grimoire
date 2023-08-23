@@ -181,6 +181,8 @@ export function createManagerForCharacter(
       .map((sourced) => sourced.feature)
   )
 
+  // order of operations here matters, basically this makes the subclass selection the 'default' base, which means that
+  // it 'wins' during reconciliation
   playerCharacter
     .getLevelFeatures()
     .filter((sourced) => sourced.feature.value !== exclusion)
