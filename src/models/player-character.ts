@@ -377,6 +377,16 @@ export class PlayerCharacter {
       .sort((a, b) => a.feature.level! - b.feature.level!)
       .forEach((sourced) => builder.validateAndApply(sourced.feature))
 
+    this.character.features
+      .filter(
+        (sourced) =>
+          sourced.feature.type === 'SUBCLASS_FEATURE' &&
+          sourced.feature.value!.type === 'SKILL_SELECTION'
+      )
+      .forEach((sourced) => {
+        builder.validateAndApply(sourced.feature.value)
+      })
+
     this.skillProficiencyManager = builder.build()
   }
 

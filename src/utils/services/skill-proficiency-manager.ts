@@ -146,6 +146,18 @@ export function createManagerForCharacter(
     .sort((a, b) => a.feature.level! - b.feature.level!)
     .forEach((sourced) => builder.validateAndApply(sourced.feature))
 
+  playerCharacter
+    .getLevelFeatures()
+    .filter((sourced) => sourced.feature.value !== exclusion)
+    .filter(
+      (sourced) =>
+        sourced.feature.type === 'SUBCLASS_FEATURE' &&
+        sourced.feature.value!.type === 'SKILL_SELECTION'
+    )
+    .forEach((sourced) => {
+      builder.validateAndApply(sourced.feature.value)
+    })
+
   const manager = builder.build()
   console.log(manager.getSkills())
   return manager
