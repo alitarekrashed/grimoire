@@ -365,6 +365,7 @@ export class PlayerCharacter {
       .sort((a, b) => a.feature.level! - b.feature.level!)
       .forEach((sourced) => builder.validateAndApply(sourced.feature))
 
+    // there is a bug here, since
     this.character.features
       .filter(
         (sourced) =>

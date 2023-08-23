@@ -85,6 +85,21 @@ export class SkillProficiencyManager {
         value: SkillSelectionFeatureValue
       }
     ): void {
+      this.reconcileNumberOfSkillChoices(skillSelection)
+      this.updateSkillProficienciesWithSelections(skillSelection)
+    }
+
+    public build(): SkillProficiencyManager {
+      return new SkillProficiencyManager(
+        this.skillProficiencies,
+        this.level,
+        this.attributes
+      )
+    }
+
+    private reconcileNumberOfSkillChoices(skillSelection: {
+      value: SkillSelectionFeatureValue
+    }) {
       if (
         !skillSelection.value.configuration.formula &&
         (!skillSelection.value.value || skillSelection.value.value.length !== 1)
@@ -115,7 +130,11 @@ export class SkillProficiencyManager {
           )
         }
       }
+    }
 
+    private updateSkillProficienciesWithSelections(skillSelection: {
+      value: SkillSelectionFeatureValue
+    }) {
       skillSelection.value.value.forEach((skill, index) => {
         let existingRank = this.skillProficiencies.get(skill as SkillType)
         if (
@@ -132,14 +151,6 @@ export class SkillProficiencyManager {
           skillSelection.value.value[index] = null!
         }
       })
-    }
-
-    public build(): SkillProficiencyManager {
-      return new SkillProficiencyManager(
-        this.skillProficiencies,
-        this.level,
-        this.attributes
-      )
     }
   }
 }
