@@ -360,12 +360,8 @@ export class PlayerCharacter {
         .map((feature) => feature.feature)
     )
 
-    this.character.features
-      .filter((sourced) => sourced.feature.type === 'SKILL_SELECTION')
-      .sort((a, b) => a.feature.level! - b.feature.level!)
-      .forEach((sourced) => builder.validateAndApply(sourced.feature))
-
-    // there is a bug here, since
+    // order of operations here matters, basically this makes the subclass selection the 'default' base, which means that
+    // it 'wins' during reconciliation
     this.character.features
       .filter(
         (sourced) =>
@@ -375,6 +371,11 @@ export class PlayerCharacter {
       .forEach((sourced) => {
         builder.validateAndApply(sourced.feature.value)
       })
+
+    this.character.features
+      .filter((sourced) => sourced.feature.type === 'SKILL_SELECTION')
+      .sort((a, b) => a.feature.level! - b.feature.level!)
+      .forEach((sourced) => builder.validateAndApply(sourced.feature))
 
     this.skillProficiencyManager = builder.build()
   }
