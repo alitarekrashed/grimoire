@@ -44,6 +44,7 @@ import {
 } from './statistic'
 import { Subclass } from './db/subclass'
 import { inter } from '@/utils/fonts'
+import { SkillProficiencyManager } from '@/utils/services/skill-proficiency-manager'
 
 export interface CharacterAttack {
   attackBonus: ModifierValue[][]
@@ -307,6 +308,7 @@ export class PlayerCharacter {
   private hitpoints!: ModifierValue[]
   private features: SourcedFeature[] = []
   private gearProficienyManager!: GearProficiencyManager
+  private skillProficiencyManager!: SkillProficiencyManager
 
   private constructor(
     private character: CharacterEntity,
@@ -334,18 +336,6 @@ export class PlayerCharacter {
     this.initializeTraits()
     this.initializeHitpoints(ancestry)
 
-    if (classEntity) {
-      classEntity.features
-        .filter((feature: Feature) => feature.type === 'SKILL_SELECTION')
-        .forEach((feature: Feature) => {
-          this.reconcileSkillOptionsWithClass(character, feature)
-        })
-
-      this.convertSkillSelectionsIntoProficiencyFeaturesAndAddToCharacter(
-        character
-      )
-    }
-
     this.allFeatures.forEach((feature) => this.addFeatureToCharacter(feature))
     this.gearProficienyManager = new GearProficiencyManager(
       this.features
@@ -357,142 +347,37 @@ export class PlayerCharacter {
         .filter((feature) => feature.feature.value.type === 'Defense')
         .map((val) => val.feature.value)
     )
-  }
 
-  private convertSkillSelectionsIntoProficiencyFeaturesAndAddToCharacter(
-    character: CharacterEntity
-  ) {
-    character.features
-      .filter((sourced: SourcedFeature) => sourced.source === 'CLASS')
-      .filter(
-        (sourced: SourcedFeature) => sourced.feature.type === 'SKILL_SELECTION'
-      )
-      .filter((sourced: SourcedFeature) => sourced.feature.value.value)
-      .forEach((sourced: SourcedFeature) => {
-        const values = sourced.feature.value.value.map((skill: string) => {
-          return {
-            source: sourced.source,
-            feature: {
-              type: 'PROFICIENCY',
-              value: {
-                // TODO this shouldn't be 'max rank' ... we should be storing the actual rank in the selection entity on the character
-                rank: sourced.feature.value.configuration.max_rank,
-                type: 'Skill',
-                value: skill,
-              },
-            },
-          }
-        })
-        this.allFeatures.push(...values)
-      })
-
-    character.features
-      .filter((sourced: SourcedFeature) => sourced.source === 'CLASS')
-      .filter(
-        (sourced: SourcedFeature) =>
-          sourced.feature.type === 'SUBCLASS_FEATURE' &&
-          sourced.feature.value?.type === 'SKILL_SELECTION'
-      )
-      .filter((sourced: SourcedFeature) => sourced.feature.value.value.value)
-      .forEach((sourced: SourcedFeature) => {
-        const values = sourced.feature.value.value.value.map(
-          (skill: string) => {
-            return {
-              source: sourced.source,
-              feature: {
-                type: 'PROFICIENCY',
-                value: {
-                  // TODO this shouldn't be 'max rank' ... we should be storing the actual rank in the selection entity on the character
-                  rank: sourced.feature.value.value.configuration.max_rank,
-                  type: 'Skill',
-                  value: skill,
-                },
-              },
-            }
-          }
+    const builder = new SkillProficiencyManager.SkillProficiencyManagerBuilder(
+      this.level,
+      this.attributes,
+      this.features
+        .filter(
+          (feature) =>
+            feature.feature.type === 'PROFICIENCY' &&
+            feature.feature.value.type === 'Skill'
         )
-        this.allFeatures.push(...values)
-      })
-  }
-
-  private reconcileSkillOptionsWithClass(
-    character: CharacterEntity,
-    feature: Feature
-  ) {
-    const classSkillSelections: SourcedFeature[] = character.features.filter(
-      (sourced: SourcedFeature) =>
-        sourced.source === 'CLASS' &&
-        sourced.feature.type === 'SKILL_SELECTION' &&
-        sourced.feature.level === feature.level
+        .map((feature) => feature.feature)
     )
 
-    const skillSelection = feature.value as SkillSelectionFeatureValue
-    if (!skillSelection.configuration.formula) {
-      if (
-        !classSkillSelections.find(
-          (sourced) => !sourced.feature.value.configuration.formula
-        )
-      ) {
-        const value: SourcedFeature = {
-          source: 'CLASS',
-          feature: {
-            type: 'SKILL_SELECTION',
-            level: feature.level,
-            value: {
-              ...skillSelection,
-              value: [null],
-            },
-          },
-        }
-        character.features.push(value)
-      }
-    } else {
-      const expectedNumber: number =
-        skillSelection.configuration.formula.reduce((prev, curr) => {
-          if (typeof curr === 'number') {
-            return (prev as number) + curr
-          } else {
-            return (prev as number) + this.attributes[curr]
-          }
-        }, 0) as number
-
-      let classSkillSelection = classSkillSelections.find(
-        (sourced) => sourced.feature.value.configuration.formula
+    // order of operations here matters, basically this makes the subclass selection the 'default' base, which means that
+    // it 'wins' during reconciliation
+    this.character.features
+      .filter(
+        (sourced) =>
+          sourced.feature.type === 'SUBCLASS_FEATURE' &&
+          sourced.feature.value!.type === 'SKILL_SELECTION'
       )
-      if (!classSkillSelection) {
-        const values = []
-        for (let i = 0; i < expectedNumber; i++) {
-          values.push(null)
-        }
-        let classSkillSelection: SourcedFeature = {
-          source: 'CLASS',
-          feature: {
-            type: 'SKILL_SELECTION',
-            level: feature.level,
-            value: {
-              ...skillSelection,
-              value: [values],
-            },
-          },
-        }
-        character.features.push(classSkillSelection)
-      }
+      .forEach((sourced) => {
+        builder.validateAndApply(sourced.feature.value)
+      })
 
-      const currentNumber = classSkillSelection!.feature.value.value.length
+    this.character.features
+      .filter((sourced) => sourced.feature.type === 'SKILL_SELECTION')
+      .sort((a, b) => a.feature.level! - b.feature.level!)
+      .forEach((sourced) => builder.validateAndApply(sourced.feature))
 
-      if (currentNumber < expectedNumber) {
-        const toAdd = expectedNumber - currentNumber
-        for (let i = 0; i < toAdd; i++) {
-          classSkillSelection?.feature.value.value.push(null)
-        }
-      } else if (currentNumber > expectedNumber) {
-        let removalCounter = currentNumber - expectedNumber
-        classSkillSelection!.feature.value.value.splice(
-          classSkillSelection!.feature.value.value.length - removalCounter,
-          removalCounter
-        )
-      }
-    }
+    this.skillProficiencyManager = builder.build()
   }
 
   public getCharacter(): CharacterEntity {
@@ -750,20 +635,17 @@ export class PlayerCharacter {
 
   public getProficiencies(exclude?: Feature[]): {
     Perception: Map<string, ProficiencyRank>
-    Skill: Map<SkillType, ProficiencyRank>
     Lore: Map<string, ProficiencyRank>
     SavingThrow: Map<SavingThrowType, ProficiencyRank>
     DifficultyClass: Map<string, ProficiencyRank>
   } {
     const proficiencyMap: {
       Perception: Map<string, ProficiencyRank>
-      Skill: Map<string, ProficiencyRank>
       Lore: Map<string, ProficiencyRank>
       SavingThrow: Map<string, ProficiencyRank>
       DifficultyClass: Map<string, ProficiencyRank>
     } = {
       Perception: new Map<string, ProficiencyRank>(),
-      Skill: generateUntrainedSkillMap(),
       Lore: new Map<string, ProficiencyRank>(),
       SavingThrow: new Map<SavingThrowType, ProficiencyRank>(),
       DifficultyClass: new Map<string, ProficiencyRank>(),
@@ -787,13 +669,14 @@ export class PlayerCharacter {
       .filter(
         (feature) =>
           feature.feature.value.type !== 'Weapon' &&
-          feature.feature.value.type !== 'Defense'
+          feature.feature.value.type !== 'Defense' &&
+          feature.feature.value.type !== 'Skill'
       )
       .forEach((sourced: SourcedFeature) => {
         const proficency = sourced.feature.value as ProficiencyFeatureValue
         const type = proficency.type as Exclude<
           ProficiencyType,
-          'Weapon' | 'Defense'
+          'Weapon' | 'Defense' | 'Skill'
         >
         if (
           proficency.value &&
@@ -810,7 +693,6 @@ export class PlayerCharacter {
       })
     return proficiencyMap as {
       Perception: Map<string, ProficiencyRank>
-      Skill: Map<SkillType, ProficiencyRank>
       Lore: Map<string, ProficiencyRank>
       SavingThrow: Map<SavingThrowType, ProficiencyRank>
       DifficultyClass: Map<string, ProficiencyRank>
@@ -827,21 +709,6 @@ export class PlayerCharacter {
           RankModifierMap[rank] +
           this.level +
           this.attributes[SavingThrowAttributes.get(type) as Attribute],
-      })
-    })
-    return result
-  }
-
-  public getSkills(exclude?: Feature[]): Map<SkillType, CalculatedProficiency> {
-    const skills = this.getProficiencies(exclude).Skill
-    const result = new Map()
-    skills.forEach((rank, type) => {
-      result.set(type, {
-        rank: rank,
-        modifier:
-          RankModifierMap[rank] +
-          this.level +
-          this.attributes[SkillAttributes.get(type) as Attribute],
       })
     })
     return result
@@ -884,6 +751,10 @@ export class PlayerCharacter {
 
   public getGearProficiencyManager(): GearProficiencyManager {
     return this.gearProficienyManager
+  }
+
+  public getSkillProfciencyManager(): SkillProficiencyManager {
+    return this.skillProficiencyManager
   }
 
   // TODO this needs some love/cleanup

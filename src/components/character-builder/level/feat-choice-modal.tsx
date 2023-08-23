@@ -48,7 +48,7 @@ export function FeatChoiceModal({
         let filtered: Feat[] = filterFeats(
           feats,
           level,
-          playerCharacter.getSkills()
+          playerCharacter.getSkillProfciencyManager().getSkills()
         )
         filtered.sort((a, b) => b.level - a.level)
         setFeats(filtered)

@@ -1,30 +1,17 @@
-import { Feature, SkillSelectionFeatureValue } from '@/models/db/feature'
-import {
-  CalculatedProficiency,
-  SkillAttributes,
-  SkillType,
-} from '@/models/statistic'
+import { Feature } from '@/models/db/feature'
+import { SkillAttributes, SkillType } from '@/models/statistic'
 import { roboto_condensed } from '@/utils/fonts'
+import { isGreaterThanOrEqualTo } from '@/utils/services/gear-proficiency-manager'
+import {
+  SkillProficiencyManager,
+  createManagerForCharacter,
+  getNextRank,
+} from '@/utils/services/skill-proficiency-manager'
 import { cloneDeep } from 'lodash'
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { FaCheck } from 'react-icons/fa'
 import { Modal } from '../../base/modal'
-import { ChoiceSelect } from '../../choice-select/choice-select'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
-import { SkillIncrease } from './skill-increase'
-
-function getSkillChoices(
-  existingProficiencies: Map<SkillType, CalculatedProficiency>
-): string[] {
-  let choices: string[] = []
-
-  Array.from(existingProficiencies.entries()).forEach((entry) => {
-    if (entry[1].rank === 'untrained') {
-      choices.push(entry[0])
-    }
-  })
-
-  return choices
-}
 
 export function SkillIncreaseModal({
   name,
@@ -36,25 +23,20 @@ export function SkillIncreaseModal({
   onSkillsUpdate: (feature: Feature) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
-  const [proficiencies, setProficiencies] = useState<
-    Map<SkillType, CalculatedProficiency>
-  >(playerCharacter.getSkills([skillFeature]))
   const [updatedFeature, setUpdatedFeature] = useState<Feature>(
     cloneDeep(skillFeature)
   )
-  const [choices, setChoices] = useState<string[]>([])
-
-  useEffect(() => {
-    setChoices(getSkillChoices(proficiencies))
-  }, [proficiencies])
+  const [manager, setManager] = useState<SkillProficiencyManager>(
+    createManagerForCharacter(playerCharacter, skillFeature)
+  )
 
   useEffect(() => {
     setUpdatedFeature(cloneDeep(skillFeature))
-    setProficiencies(playerCharacter.getSkills([skillFeature]))
+    setManager(createManagerForCharacter(playerCharacter, skillFeature))
   }, [skillFeature])
 
   let totalCount = skillFeature.value.value.length
-  let setCount = skillFeature.value.value.filter(
+  let setCount = updatedFeature.value.value.filter(
     (value: string) => value
   ).length
 
@@ -67,24 +49,79 @@ export function SkillIncreaseModal({
     </button>
   )
 
-  const skillSelection =
-    updatedFeature.value.configuration.options !== 'Free' ? (
-      <div className="inline-flex gap-2 mb-2 w-full">
-        <SkillIncrease
-          options={updatedFeature.value.configuration.options as SkillType[]}
-          feature={updatedFeature}
-          onChange={(feature: Feature) => setUpdatedFeature(feature)}
-        ></SkillIncrease>
+  const options =
+    updatedFeature.value.configuration.options !== 'Free'
+      ? (updatedFeature.value.configuration.options as SkillType[])
+      : Array.from(SkillAttributes.keys())
+
+  const skillSelection = (
+    <div className="inline-flex gap-2 mb-2 w-full">
+      <div className="w-full">
+        <div className="grid grid-cols-4 gap-2 grid-rows-4 w-full">
+          {options.map((val: SkillType, index: number) => {
+            // TODO ALI if a item is selected AND disabled, it likely means that some other feature
+            // is increasing the proficiency later on not sure if we should handle this differently
+            // (i.e. remove the 'disabled' attribute, or if we should have some third state)
+            const isSelected: boolean = updatedFeature.value.value.includes(val)
+            const isDisabled: boolean = isGreaterThanOrEqualTo(
+              manager.getSkills().get(val)!.rank,
+              updatedFeature.value.configuration.max_rank
+            )
+              ? true
+              : isSelected === false &&
+                setCount === updatedFeature.value.value.length
+            return (
+              <div
+                className="col-span-1 inline-flex items-center justify-between"
+                key={val}
+              >
+                <button
+                  className="rounded-md border border-stone-300 w-full hover:bg-violet-700/50 hover:border-violet-500/50 hover:data-[selected=true]:bg-violet-700/50 hover:data-[selected=true]:border-stone-300/50 hover:data-[selected=true]:text-stone-300/50 data-[selected=true]:bg-violet-700 data-[selected=true]:text-violet-200 data-[selected=true]:border-violet-900 data-[disabled=true]:bg-stone-800/20 data-[disabled=true]:text-stone-600/75 data-[disabled=true]:border-stone-600/50 "
+                  data-value={val}
+                  data-selected={isSelected}
+                  data-disabled={isDisabled}
+                  onClick={(e) => {
+                    if (isSelected || isDisabled === false) {
+                      const updated: Feature = cloneDeep(updatedFeature)
+                      if (!isSelected) {
+                        const index: number = updated.value.value.findIndex(
+                          (skill: string) => !skill
+                        )
+                        updated.value.value[index] = ((
+                          e.currentTarget as HTMLElement
+                        ).dataset.value as SkillType)!
+                      } else {
+                        const index: number = updated.value.value.indexOf(val)
+                        updated.value.value[index] = null
+                      }
+                      setUpdatedFeature(updated)
+                    }
+                  }}
+                >
+                  <div className="flex flex-col items-center">
+                    <div className="relative">
+                      {val}
+                      {isSelected && (
+                        <FaCheck className="absolute top-1 right-[-25px]" />
+                      )}
+                    </div>
+
+                    <span>
+                      <span className="text-xs">
+                        {isSelected
+                          ? getNextRank(manager.getSkills().get(val)!.rank)
+                          : manager.getSkills().get(val)!.rank}
+                      </span>
+                    </span>
+                  </div>
+                </button>
+              </div>
+            )
+          })}
+        </div>
       </div>
-    ) : (
-      <div className="inline-flex gap-2 mb-2 w-full">
-        <SkillIncrease
-          options={Array.from(SkillAttributes.keys())}
-          feature={updatedFeature}
-          onChange={(feature: Feature) => setUpdatedFeature(feature)}
-        ></SkillIncrease>
-      </div>
-    )
+    </div>
+  )
 
   const body = (
     <div className={`${roboto_condensed.className} p-2`}>{skillSelection}</div>
@@ -106,6 +143,7 @@ export function SkillIncreaseModal({
           {
             label: 'Cancel',
             onClick: () => {
+              setUpdatedFeature(skillFeature)
               onSkillsUpdate(skillFeature)
             },
           },
