@@ -336,15 +336,6 @@ export class PlayerCharacter {
     this.initializeTraits()
     this.initializeHitpoints(ancestry)
 
-    if (classEntity) {
-      // TODO can i reconcile the skill options within the proficiency manager???
-      classEntity.features
-        .filter((feature: Feature) => feature.type === 'SKILL_SELECTION')
-        .forEach((feature: Feature) => {
-          this.reconcileSkillOptionsWithClass(character, feature)
-        })
-    }
-
     this.allFeatures.forEach((feature) => this.addFeatureToCharacter(feature))
     this.gearProficienyManager = new GearProficiencyManager(
       this.features
@@ -385,86 +376,6 @@ export class PlayerCharacter {
       })
 
     this.skillProficiencyManager = builder.build()
-  }
-
-  private reconcileSkillOptionsWithClass(
-    character: CharacterEntity,
-    feature: Feature
-  ) {
-    const classSkillSelections: SourcedFeature[] = character.features.filter(
-      (sourced: SourcedFeature) =>
-        sourced.source === 'CLASS' &&
-        sourced.feature.type === 'SKILL_SELECTION' &&
-        sourced.feature.level === feature.level
-    )
-
-    const skillSelection = feature.value as SkillSelectionFeatureValue
-    if (!skillSelection.configuration.formula) {
-      if (
-        !classSkillSelections.find(
-          (sourced) => !sourced.feature.value.configuration.formula
-        )
-      ) {
-        const value: SourcedFeature = {
-          source: 'CLASS',
-          feature: {
-            type: 'SKILL_SELECTION',
-            level: feature.level,
-            value: {
-              ...skillSelection,
-              value: [null],
-            },
-          },
-        }
-        character.features.push(value)
-      }
-    } else {
-      const expectedNumber: number =
-        skillSelection.configuration.formula.reduce((prev, curr) => {
-          if (typeof curr === 'number') {
-            return (prev as number) + curr
-          } else {
-            return (prev as number) + this.attributes[curr]
-          }
-        }, 0) as number
-
-      let classSkillSelection = classSkillSelections.find(
-        (sourced) => sourced.feature.value.configuration.formula
-      )
-      if (!classSkillSelection) {
-        const values = []
-        for (let i = 0; i < expectedNumber; i++) {
-          values.push(null)
-        }
-        let classSkillSelection: SourcedFeature = {
-          source: 'CLASS',
-          feature: {
-            type: 'SKILL_SELECTION',
-            level: feature.level,
-            value: {
-              ...skillSelection,
-              value: [values],
-            },
-          },
-        }
-        character.features.push(classSkillSelection)
-      }
-
-      const currentNumber = classSkillSelection!.feature.value.value.length
-
-      if (currentNumber < expectedNumber) {
-        const toAdd = expectedNumber - currentNumber
-        for (let i = 0; i < toAdd; i++) {
-          classSkillSelection?.feature.value.value.push(null)
-        }
-      } else if (currentNumber > expectedNumber) {
-        let removalCounter = currentNumber - expectedNumber
-        classSkillSelection!.feature.value.value.splice(
-          classSkillSelection!.feature.value.value.length - removalCounter,
-          removalCounter
-        )
-      }
-    }
   }
 
   public getCharacter(): CharacterEntity {

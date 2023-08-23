@@ -85,6 +85,37 @@ export class SkillProficiencyManager {
         value: SkillSelectionFeatureValue
       }
     ): void {
+      if (
+        !skillSelection.value.configuration.formula &&
+        (!skillSelection.value.value || skillSelection.value.value.length !== 1)
+      ) {
+        skillSelection.value.value = [null!]
+      } else if (skillSelection.value.configuration.formula) {
+        const expectedNumber: number =
+          skillSelection.value.configuration.formula.reduce((prev, curr) => {
+            if (typeof curr === 'number') {
+              return (prev as number) + curr
+            } else {
+              return (prev as number) + this.attributes[curr]
+            }
+          }, 0) as number
+
+        const currentNumber = skillSelection.value.value.length
+
+        if (currentNumber < expectedNumber) {
+          const toAdd = expectedNumber - currentNumber
+          for (let i = 0; i < toAdd; i++) {
+            skillSelection.value.value.push(null!)
+          }
+        } else if (currentNumber > expectedNumber) {
+          let removalCounter = currentNumber - expectedNumber
+          skillSelection.value.value.splice(
+            skillSelection.value.value.length - removalCounter,
+            removalCounter
+          )
+        }
+      }
+
       skillSelection.value.value.forEach((skill, index) => {
         let existingRank = this.skillProficiencies.get(skill as SkillType)
         if (
