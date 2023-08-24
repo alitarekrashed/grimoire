@@ -3,13 +3,13 @@ import { CharacterEntity } from '@/models/db/character-entity'
 import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import { cloneDeep, toNumber } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
-import { AncestryChoiceModal } from './ancestry-choice-modal'
-import { HeritageChoiceModal } from './heritage-choice-modal'
-import { BackgroundChoiceModal } from './background-choice-modal'
-import { ClassChoiceModal } from './class-choice-modal'
 import { AttributesModal } from '../attributes-modal'
 import { LanguagesModal } from '../languages/languages-modal'
-import { ChoiceSelect } from '@/components/choice-select/choice-select'
+import { AncestryChoiceModal } from './ancestry-choice-modal'
+import { BackgroundChoiceModal } from './background-choice-modal'
+import { ClassChoiceModal } from './class-choice-modal'
+import { HeritageChoiceModal } from './heritage-choice-modal'
+import { LevelSelect } from './level-select'
 
 export function CharacterFundamentalsSection({
   wrapCharacterUpdate,
@@ -49,6 +49,13 @@ export function CharacterFundamentalsSection({
       updatePlayerCharacter(value)
     })()
     wrapCharacterUpdate(load)
+  }
+
+  // TODO I should probably clean up some these handlers by putting the update logic into the children and just passing in the load
+  const handleLevelChange = (level: string) => {
+    let updated: CharacterEntity = cloneDeep(playerCharacter!.getCharacter())
+    updated.level = toNumber(level)
+    loadCharacter(updated)
   }
 
   const handleHeritageChange = (heritageId: string) => {
@@ -146,18 +153,7 @@ export function CharacterFundamentalsSection({
         ></LanguagesModal>
       </div>
       <div>
-        <ChoiceSelect
-          value={playerCharacter.getCharacter().level.toString()}
-          title="Level"
-          options={['1', '2', '3']}
-          onChange={(val: string) => {
-            let updated: CharacterEntity = cloneDeep(
-              playerCharacter!.getCharacter()
-            )
-            updated.level = toNumber(val)
-            loadCharacter(updated)
-          }}
-        ></ChoiceSelect>
+        <LevelSelect onLevelChange={handleLevelChange}></LevelSelect>
       </div>
     </div>
   )
