@@ -16,12 +16,7 @@ import {
   ProficiencyRank,
   RankModifierMap,
 } from '../../models/db/background'
-import {
-  getGreaterThan,
-  isGreaterThan,
-  isLessThan,
-  isLessThanOrEqual,
-} from './gear-proficiency-manager'
+import { getGreaterThan, isLessThanOrEqual } from './gear-proficiency-manager'
 
 export class SkillProficiencyManager {
   private skillProficiencies: Map<string, ProficiencyRank>
@@ -145,16 +140,20 @@ export class SkillProficiencyManager {
       value: SkillSelectionFeatureValue
     }) {
       skillSelection.value.value.forEach((skill, index) => {
-        let existingRank = this.skillProficiencies.get(skill)
-        if (
-          isLessThanOrEqual(
-            existingRank!,
-            skillSelection.value.configuration.max_rank
-          )
-        ) {
-          this.skillProficiencies.set(skill, getNextRank(existingRank!)!)
-        } else {
+        if (this.skillProficiencies.has(skill) === false) {
           skillSelection.value.value[index] = null!
+        } else {
+          let existingRank = this.skillProficiencies.get(skill)
+          if (
+            isLessThanOrEqual(
+              existingRank!,
+              skillSelection.value.configuration.max_rank
+            )
+          ) {
+            this.skillProficiencies.set(skill, getNextRank(existingRank!)!)
+          } else {
+            skillSelection.value.value[index] = null!
+          }
         }
       })
     }
@@ -177,7 +176,7 @@ export function createManagerFromPlayerCharacter(
   return createManagerFromFeatures(
     playerCharacter.getCharacter().level,
     playerCharacter.getAttributes(),
-    playerCharacter.getLevelFeatures(),
+    playerCharacter.getResolvedFeatures(),
     exclusion
   )
 }

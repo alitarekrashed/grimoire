@@ -35,6 +35,10 @@ export function SkillIncreaseModal({
     setManager(createManagerFromPlayerCharacter(playerCharacter, skillFeature))
   }, [skillFeature])
 
+  useEffect(() => {
+    setManager(createManagerFromPlayerCharacter(playerCharacter, skillFeature))
+  }, [playerCharacter])
+
   let totalCount = skillFeature.value.value.length
   let setCount = updatedFeature.value.value.filter(
     (value: string) => value

@@ -454,6 +454,10 @@ export class PlayerCharacter {
       .map((feature) => feature)
   }
 
+  public getResolvedFeatures(): SourcedFeature[] {
+    return this.features
+  }
+
   public getLevelFeatures(): SourcedFeature[] {
     return this.character.features
   }
