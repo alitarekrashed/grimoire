@@ -4,7 +4,6 @@ import { roboto_condensed } from '@/utils/fonts'
 import { isGreaterThanOrEqualTo } from '@/utils/services/gear-proficiency-manager'
 import {
   SkillProficiencyManager,
-  createManagerFromFeatures,
   createManagerFromPlayerCharacter,
   getNextRank,
 } from '@/utils/services/skill-proficiency-manager'
@@ -43,7 +42,7 @@ export function SkillIncreaseModal({
 
   const trigger = (
     <button
-      className="border border-stone-300 rounded-md relative flex w-44 h-9 p-1 justify-center items-center hover:bg-stone-600"
+      className="border border-stone-300 rounded-md relative flex w-full h-9 p-1 justify-center items-center hover:bg-stone-600"
       tabIndex={0}
     >
       {name ? name : 'Skill Choices'} {setCount}/{totalCount}

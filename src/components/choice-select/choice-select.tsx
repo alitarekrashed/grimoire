@@ -25,7 +25,7 @@ export function ChoiceSelect({
         onChange(val)
       }}
     >
-      <Select.Trigger className="inline-flex h-9 hover:bg-stone-600 rounded-md border border-stone-300 w-44 items-end pl-1 relative focus:shadow">
+      <Select.Trigger className="inline-flex h-9 hover:bg-stone-600 rounded-md border border-stone-300 w-full items-end pl-1 relative focus:shadow">
         <Select.Value />
         <Select.Icon asChild>
           <FaChevronDown className="absolute right-2 top-3" />

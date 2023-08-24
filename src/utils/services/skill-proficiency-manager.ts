@@ -1,4 +1,10 @@
+import { Attribute } from '@/models/db/ancestry'
 import { Feature, SkillSelectionFeatureValue } from '@/models/db/feature'
+import {
+  Attributes,
+  PlayerCharacter,
+  SourcedFeature,
+} from '@/models/player-character'
 import {
   CalculatedProficiency,
   SkillAttributes,
@@ -12,14 +18,10 @@ import {
 } from '../../models/db/background'
 import {
   getGreaterThan,
-  isGreaterThanOrEqualTo,
+  isGreaterThan,
+  isLessThan,
+  isLessThanOrEqual,
 } from './gear-proficiency-manager'
-import { Attribute } from '@/models/db/ancestry'
-import {
-  Attributes,
-  PlayerCharacter,
-  SourcedFeature,
-} from '@/models/player-character'
 
 export class SkillProficiencyManager {
   private skillProficiencies: Map<string, ProficiencyRank>
@@ -145,10 +147,10 @@ export class SkillProficiencyManager {
       skillSelection.value.value.forEach((skill, index) => {
         let existingRank = this.skillProficiencies.get(skill)
         if (
-          isGreaterThanOrEqualTo(
+          isLessThanOrEqual(
             existingRank!,
             skillSelection.value.configuration.max_rank
-          ) === false
+          )
         ) {
           this.skillProficiencies.set(skill, getNextRank(existingRank!)!)
         } else {
@@ -216,7 +218,9 @@ export function createManagerFromFeatures(
     .filter((sourced) => sourced.feature.type === 'SKILL_SELECTION')
     .filter((sourced) => sourced.feature !== exclusion)
     .sort((a, b) => a.feature.level! - b.feature.level!)
-    .forEach((sourced) => builder.validateAndApply(sourced.feature))
+    .forEach((sourced) => {
+      builder.validateAndApply(sourced.feature)
+    })
 
   const manager = builder.build()
   return manager

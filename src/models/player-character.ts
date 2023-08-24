@@ -375,105 +375,6 @@ export class PlayerCharacter {
     return this
   }
 
-  public async updateAncestry(ancestryId: string): Promise<PlayerCharacter> {
-    let updated = cloneDeep(this.character)
-    updated.ancestry_id = ancestryId
-    updated.attributes.ancestry = []
-    updated.languages = []
-    updated.heritage_id = ''
-    updated.features.filter(
-      (val) =>
-        val.source === 'ANCESTRY' &&
-        val.feature.type === 'ANCESTRY_FEAT_SELECTION'
-    )[0].feature.value = null
-    return await PlayerCharacter.build(updated)
-  }
-
-  public async updateBackground(
-    background: Background
-  ): Promise<PlayerCharacter> {
-    let updated = cloneDeep(this.character)
-    updated.background_id = background._id.toString()
-    updated.attributes.background = []
-    updated.features = updated.features.filter(
-      (value) => value.source !== 'BACKGROUND'
-    )
-    updated.features.push({
-      source: 'BACKGROUND',
-      feature: {
-        type: 'FEAT',
-        value: background.feat,
-        context: [],
-      },
-    })
-    updated.features.push(
-      ...background.skills.map((value: ProficiencyFeatureValue) => {
-        return {
-          source: 'BACKGROUND',
-          feature: {
-            type: 'PROFICIENCY' as FeatureType,
-            value: value,
-          },
-        }
-      })
-    )
-
-    return await PlayerCharacter.build(updated)
-  }
-
-  public async updateClass(classEntity: ClassEntity): Promise<PlayerCharacter> {
-    let updated = cloneDeep(this.character)
-    updated.class_id = classEntity._id.toString()
-    updated.attributes.class = []
-    updated.features = updated.features.filter(
-      (value) => value.source !== 'CLASS'
-    )
-    updated.features.push(
-      ...classEntity.features.map((feature: Feature) => {
-        if (feature.type === 'SKILL_SELECTION') {
-          feature.value.value = [null]
-        }
-        return { source: 'CLASS', feature: feature }
-      })
-    )
-    return await PlayerCharacter.build(updated)
-  }
-
-  public async updateSubclass(subclass: Subclass): Promise<PlayerCharacter> {
-    let updated = cloneDeep(this.character)
-    const subclassChoice = updated.features.find(
-      (value) => value.source === 'CLASS' && value.feature.type === 'SUBCLASS'
-    )
-    if (subclassChoice) {
-      subclassChoice.feature.value = subclass._id
-
-      updated.features = updated.features.filter(
-        (value) => value.feature.type !== 'SUBCLASS_FEATURE'
-      )
-
-      const newFeatures = this.classEntity!.features.filter(
-        (val) => val.type === 'SUBCLASS_FEATURE'
-      )
-
-      newFeatures.forEach((subclassFeature: Feature) => {
-        const matched = subclass.features.find(
-          (feature) => feature.name === subclassFeature.name
-        )
-        if (matched) {
-          subclassFeature.value = matched
-        }
-      })
-
-      updated.features.push(
-        ...newFeatures.map((feature: Feature) => {
-          return { source: 'CLASS', feature: feature }
-        })
-      )
-    }
-
-    return await PlayerCharacter.build(updated)
-  }
-
   public getTraits(): string[] {
     return this.traits
   }
@@ -1132,38 +1033,45 @@ export class PlayerCharacter {
       )
     }
 
-    character.features.forEach((sourced: SourcedFeature) => {
-      if (
-        sourced.feature.type === 'FEAT' ||
-        sourced.feature.type === 'ANCESTRY_FEAT_SELECTION' ||
-        sourced.feature.type === 'CLASS_FEAT_SELECTION' ||
-        sourced.feature.type === 'SKILL_FEAT_SELECTION' ||
-        sourced.feature.type === 'GENERAL_FEAT_SELECTION'
-      ) {
-        feats.push(sourced.feature)
-      } else if (
-        sourced.feature.type === 'PROFICIENCY' ||
-        sourced.feature.type === 'ACTION' ||
-        sourced.feature.type === 'MISC' ||
-        sourced.feature.type === 'MODIFIER' ||
-        sourced.feature.type === 'OVERRIDE' ||
-        sourced.feature.type === 'SKILL_SELECTION'
-      ) {
-        allFeatures.push({
-          source: classEntity.name,
-          feature: sourced.feature,
-        })
-      } else if (
-        sourced.feature.type === 'SUBCLASS_FEATURE' &&
-        sourced.feature.value
-      ) {
-        // TODO ALI make this the subclass name for source?
-        allFeatures.push({
-          source: classEntity.name,
-          feature: sourced.feature.value,
-        })
-      }
-    })
+    character.features
+      .filter((value: SourcedFeature) => {
+        if (!value.feature.level) {
+          return true
+        }
+        return value.feature.level <= character.level
+      })
+      .forEach((sourced: SourcedFeature) => {
+        if (
+          sourced.feature.type === 'FEAT' ||
+          sourced.feature.type === 'ANCESTRY_FEAT_SELECTION' ||
+          sourced.feature.type === 'CLASS_FEAT_SELECTION' ||
+          sourced.feature.type === 'SKILL_FEAT_SELECTION' ||
+          sourced.feature.type === 'GENERAL_FEAT_SELECTION'
+        ) {
+          feats.push(sourced.feature)
+        } else if (
+          sourced.feature.type === 'PROFICIENCY' ||
+          sourced.feature.type === 'ACTION' ||
+          sourced.feature.type === 'MISC' ||
+          sourced.feature.type === 'MODIFIER' ||
+          sourced.feature.type === 'OVERRIDE' ||
+          sourced.feature.type === 'SKILL_SELECTION'
+        ) {
+          allFeatures.push({
+            source: classEntity.name,
+            feature: sourced.feature,
+          })
+        } else if (
+          sourced.feature.type === 'SUBCLASS_FEATURE' &&
+          sourced.feature.value
+        ) {
+          // TODO ALI make this the subclass name for source?
+          allFeatures.push({
+            source: classEntity.name,
+            feature: sourced.feature.value,
+          })
+        }
+      })
 
     allFeatures.push(...(await resolveFeats(feats)))
 

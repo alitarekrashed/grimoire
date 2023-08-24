@@ -43,5 +43,7 @@ function getRankDisplay(rank: ProficiencyRank): {
       return { symbol: 'T', color: 'bg-stone-400/50' }
     case 'expert':
       return { symbol: 'E', color: 'bg-green-400/50' }
+    default:
+      return { symbol: 'N/A', color: 'bg-red-400/50' }
   }
 }

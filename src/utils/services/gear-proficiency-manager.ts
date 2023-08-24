@@ -201,3 +201,17 @@ export function isGreaterThanOrEqualTo(
   }
   return false
 }
+
+export function isLessThanOrEqual(
+  thisRank: ProficiencyRank,
+  other: ProficiencyRank
+): boolean {
+  switch (thisRank) {
+    case 'untrained':
+      return true
+    case 'trained':
+      return other !== 'untrained'
+    case 'expert':
+      return other === 'expert'
+  }
+}

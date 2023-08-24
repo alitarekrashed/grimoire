@@ -1,11 +1,10 @@
-import { Ancestry, Attribute } from '@/models/db/ancestry'
+import { Ancestry } from '@/models/db/ancestry'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Modal } from '../../base/modal'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
-import { ChoiceSelect } from '../../choice-select/choice-select'
 import { LanguageSelect } from './language-select'
 
 function getAncestryLanguageChoices(
@@ -22,10 +21,10 @@ function getAncestryLanguageChoices(
 
 export function LanguagesModal({
   ancestry,
-  onLanguagesUpdate,
+  onUpdate,
 }: {
   ancestry: Ancestry
-  onLanguagesUpdate: (languages: string[]) => void
+  onUpdate: (updateFunction: (cloned: CharacterEntity) => void) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [modifiedCharacter, setModifiedCharacter] = useState<CharacterEntity>()
@@ -48,7 +47,7 @@ export function LanguagesModal({
 
   const trigger = (
     <button
-      className="border border-stone-300 rounded-md relative flex w-44 h-9 p-1 justify-center items-center hover:bg-stone-600"
+      className="border border-stone-300 rounded-md relative flex w-full h-9 p-1 justify-center items-center hover:bg-stone-600"
       tabIndex={0}
     >
       Languages {setCount}/{totalCount}
@@ -56,7 +55,7 @@ export function LanguagesModal({
   )
 
   const body = (
-    <div className={`inline-flex gap-2 ${roboto_condensed.className} p-2`}>
+    <div className={`grid grid-cols-4 gap-2 ${roboto_condensed.className} p-2`}>
       {modifiedCharacter?.languages.map((choice: any, i: number) => {
         return (
           <LanguageSelect
@@ -84,13 +83,16 @@ export function LanguagesModal({
         {
           label: 'Save',
           onClick: () => {
-            onLanguagesUpdate(modifiedCharacter?.languages ?? [])
+            onUpdate(
+              (character: CharacterEntity) =>
+                (character.languages = modifiedCharacter?.languages ?? [])
+            )
           },
         },
         {
           label: 'Cancel',
           onClick: () => {
-            onLanguagesUpdate(playerCharacter.getCharacter().languages)
+            setModifiedCharacter(playerCharacter.getCharacter())
           },
         },
       ]}

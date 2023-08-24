@@ -1,4 +1,5 @@
 import { Background } from '@/models/db/background'
+import { CharacterEntity } from '@/models/db/character-entity'
 import { Feat } from '@/models/db/feat'
 import { SourcedFeature } from '@/models/player-character'
 import { retrieveEntity } from '@/utils/services/reference-lookup.service'
@@ -9,11 +10,9 @@ import { FeatureChoiceModal } from '../feature-choice-modal'
 import { FeatSubChoiceModal } from '../level/feat-subchoice-modal'
 
 export function BackgroundChoiceModal({
-  onBackgroundChange,
-  onFeatSubchoiceChange,
+  onUpdate,
 }: {
-  onBackgroundChange: (background: Background) => void
-  onFeatSubchoiceChange: (sourced: SourcedFeature) => void
+  onUpdate: (updateFunction: (cloned: CharacterEntity) => void) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [featWithSubChoice, setFeatWithSubChoice] = useState<Feat>()
@@ -51,14 +50,48 @@ export function BackgroundChoiceModal({
   }, [])
 
   const updateBackground = (background: Background) => {
-    onBackgroundChange(background)
+    onUpdate((character: CharacterEntity) => {
+      character.background_id = background._id.toString()
+      character.attributes.background = []
+      character.features = character.features.filter(
+        (value) => value.source !== 'BACKGROUND'
+      )
+      character.features.push({
+        source: 'BACKGROUND',
+        feature: {
+          type: 'FEAT',
+          value: background.feat,
+          context: [],
+        },
+      })
+      character.features.push(
+        ...background.skills.map((value: ProficiencyFeatureValue) => {
+          return {
+            source: 'BACKGROUND',
+            feature: {
+              type: 'PROFICIENCY' as FeatureType,
+              value: value,
+            },
+          }
+        })
+      )
+    })
+
     reloadFeat(background.feat)
   }
 
   const handleSubChoiceChange = (value: string) => {
-    const updated = cloneDeep(getBackgroundFeatFromCharacter())
+    const updated: SourcedFeature = cloneDeep(getBackgroundFeatFromCharacter())
     updated.feature.context = [value]
-    onFeatSubchoiceChange(updated)
+
+    onUpdate((character: CharacterEntity) => {
+      let indexToReplace = character.features.findIndex(
+        (sourced: SourcedFeature) =>
+          sourced.source === 'BACKGROUND' && sourced.feature.type === 'FEAT'
+      )
+
+      character.features.splice(indexToReplace, 1, updated)
+    })
   }
 
   return (
@@ -77,7 +110,7 @@ export function BackgroundChoiceModal({
             onChange={handleSubChoiceChange}
           ></FeatSubChoiceModal>
         </div>
-      )}{' '}
+      )}
     </>
   )
 }

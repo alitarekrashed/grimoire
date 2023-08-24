@@ -1,14 +1,15 @@
 import { PlayerCharacterContext } from '@/components/character-display/player-character-context'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, toNumber } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
-import { AncestryChoiceModal } from './ancestry-choice-modal'
-import { HeritageChoiceModal } from './heritage-choice-modal'
-import { BackgroundChoiceModal } from './background-choice-modal'
-import { ClassChoiceModal } from './class-choice-modal'
 import { AttributesModal } from '../attributes-modal'
 import { LanguagesModal } from '../languages/languages-modal'
+import { AncestryChoiceModal } from './ancestry-choice-modal'
+import { BackgroundChoiceModal } from './background-choice-modal'
+import { ClassChoiceModal } from './class-choice-modal'
+import { HeritageChoiceModal } from './heritage-choice-modal'
+import { LevelSelect } from './level-select'
 
 export function CharacterFundamentalsSection({
   wrapCharacterUpdate,
@@ -40,69 +41,27 @@ export function CharacterFundamentalsSection({
     playerCharacter.getCharacter().name = value
   }
 
-  const handleAncestryChange = (ancestryId: string) => {
+  const handleUpdate = (updateFunction: (cloned: CharacterEntity) => void) => {
+    const updated = cloneDeep(playerCharacter.getCharacter())
+    updateFunction(updated)
+    loadCharacter(updated)
+  }
+
+  const handleAsyncUpdate = (
+    updateFunction: (
+      playerCharacter: PlayerCharacter
+    ) => Promise<PlayerCharacter>
+  ) => {
     const load: Promise<void> = (async () => {
-      const value: PlayerCharacter = await playerCharacter.updateAncestry(
-        ancestryId
-      )
-      updatePlayerCharacter(value)
-    })()
-    wrapCharacterUpdate(load)
-  }
-
-  const handleHeritageChange = (heritageId: string) => {
-    let updated: CharacterEntity = cloneDeep(playerCharacter!.getCharacter())
-    updated.heritage_id = heritageId
-    loadCharacter(updated)
-  }
-
-  const handleAttributeChange = (characterEntity: CharacterEntity) => {
-    let updated: CharacterEntity = cloneDeep(playerCharacter.getCharacter())
-    updated.attributes = characterEntity.attributes
-    loadCharacter(updated)
-  }
-
-  const handleLanguageChange = (chosenLanguages: string[]) => {
-    let updated: CharacterEntity = cloneDeep(playerCharacter.getCharacter())
-    updated.languages = chosenLanguages
-    loadCharacter(updated)
-  }
-
-  const handleBackgroundChange = (background: Background) => {
-    const load: Promise<void> = (async () => {
-      const value: PlayerCharacter = await playerCharacter.updateBackground(
-        background
-      )
-      updatePlayerCharacter(value)
-    })()
-    wrapCharacterUpdate(load)
-  }
-  const handleFeatSubchoiceChange = (sourced: SourcedFeature) => {
-    let updated = cloneDeep(playerCharacter.getCharacter())
-
-    let indexToReplace = updated.features.findIndex(
-      (sourced) =>
-        sourced.source === 'BACKGROUND' && sourced.feature.type === 'FEAT'
-    )
-
-    updated.features.splice(indexToReplace, 1, sourced)
-
-    loadCharacter(updated)
-  }
-
-  const handleClassChange = (classEntity: ClassEntity) => {
-    const load: Promise<void> = (async () => {
-      const value: PlayerCharacter = await playerCharacter.updateClass(
-        classEntity
-      )
-      updatePlayerCharacter(value)
+      const updated = await updateFunction(playerCharacter)
+      updatePlayerCharacter(updated)
     })()
     wrapCharacterUpdate(load)
   }
 
   return (
-    <div className="mb-2 inline-flex">
-      <div className="relative w-44 h-9 mr-2">
+    <div className="mb-2 grid grid-cols-7 gap-2">
+      <div className="relative h-9">
         <span className="text-stone-300 absolute top-0 text-[9px] pl-1.5">
           Name
         </span>
@@ -114,35 +73,29 @@ export function CharacterFundamentalsSection({
           }}
         ></input>
       </div>
-      <div className="mr-2">
-        <AncestryChoiceModal
-          onAncestryEdit={handleAncestryChange}
-        ></AncestryChoiceModal>
+      <div>
+        <AncestryChoiceModal onUpdate={handleUpdate}></AncestryChoiceModal>
       </div>
-      <div className="mr-2">
-        <HeritageChoiceModal
-          onHeritageChange={handleHeritageChange}
-        ></HeritageChoiceModal>
+      <div>
+        <HeritageChoiceModal onUpdate={handleUpdate}></HeritageChoiceModal>
       </div>
-      <div className="mr-2">
-        <BackgroundChoiceModal
-          onBackgroundChange={handleBackgroundChange}
-          onFeatSubchoiceChange={handleFeatSubchoiceChange}
-        ></BackgroundChoiceModal>
+      <div>
+        <BackgroundChoiceModal onUpdate={handleUpdate}></BackgroundChoiceModal>
       </div>
-      <div className="mr-2">
-        <ClassChoiceModal onClassChange={handleClassChange}></ClassChoiceModal>
+      <div>
+        <ClassChoiceModal onUpdate={handleUpdate}></ClassChoiceModal>
       </div>
-      <div className="mr-2">
-        <AttributesModal
-          onAttributeUpdate={handleAttributeChange}
-        ></AttributesModal>
+      <div>
+        <AttributesModal onUpdate={handleUpdate}></AttributesModal>
       </div>
       <div>
         <LanguagesModal
-          onLanguagesUpdate={handleLanguageChange}
+          onUpdate={handleUpdate}
           ancestry={playerCharacter.getAncestry()}
         ></LanguagesModal>
+      </div>
+      <div>
+        <LevelSelect onUpdate={handleUpdate}></LevelSelect>
       </div>
     </div>
   )

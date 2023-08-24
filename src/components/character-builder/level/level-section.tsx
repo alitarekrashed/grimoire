@@ -21,52 +21,53 @@ export function LevelSection({
   )
   const { level } = useContext(CharacterLevelContext)
 
-  const loadCharacter = (updated: CharacterEntity) => {
-    const load: Promise<void> = (async () => {
-      updatePlayerCharacter(await PlayerCharacter.build(updated))
-    })()
-    wrapCharacterUpdate(load)
-  }
-
-  const handleFeatureUpdateForLevel =
-    (level?: number) =>
-    (matchingFunction: (source: SourcedFeature) => boolean) =>
-    (features: SourcedFeature[]) => {
-      let updated = cloneDeep(playerCharacter.getCharacter())
-
-      let toReplace = updated.features.filter((sourced) =>
-        matchingFunction(sourced)
-      )
-
-      if (level) {
-        toReplace = toReplace.filter(
-          (sourced) => sourced.feature.level == level
-        )
-      }
-
-      toReplace.forEach((item, idx) => {
-        const index = updated.features.indexOf(item)
-        updated.features.splice(index, 1, features[idx])
-      })
-      loadCharacter(updated)
-    }
-
-  const alternateHandleFeatureUpdate =
+  const handleFeatureUpdate =
     (original: SourcedFeature) => (replacement: SourcedFeature) => {
       let updated = cloneDeep(playerCharacter.getCharacter())
 
       const index = playerCharacter.getCharacter().features.indexOf(original)
       updated.features.splice(index, 1, replacement)
 
-      loadCharacter(updated)
+      const load: Promise<void> = (async () => {
+        updatePlayerCharacter(await PlayerCharacter.build(updated))
+      })()
+      wrapCharacterUpdate(load)
     }
 
   const handleSubclassChange = (subclass: Subclass) => {
-    const load: Promise<void> = (async () => {
-      const value: PlayerCharacter = await playerCharacter.updateSubclass(
-        subclass
+    const updated = cloneDeep(playerCharacter.getCharacter())
+    const subclassChoice = updated.features.find(
+      (value) => value.source === 'CLASS' && value.feature.type === 'SUBCLASS'
+    )
+    if (subclassChoice) {
+      subclassChoice.feature.value = subclass._id
+
+      updated.features = updated.features.filter(
+        (value) => value.feature.type !== 'SUBCLASS_FEATURE'
       )
-      updatePlayerCharacter(value)
+
+      const newFeatures = playerCharacter
+        .getClassEntity()
+        .features.filter((val) => val.type === 'SUBCLASS_FEATURE')
+
+      newFeatures.forEach((subclassFeature: Feature) => {
+        const matched = subclass.features.find(
+          (feature) => feature.name === subclassFeature.name
+        )
+        if (matched) {
+          subclassFeature.value = matched
+        }
+      })
+
+      updated.features.push(
+        ...newFeatures.map((feature: Feature) => {
+          return { source: 'CLASS', feature: feature }
+        })
+      )
+    }
+
+    const load: Promise<void> = (async () => {
+      updatePlayerCharacter(await PlayerCharacter.build(updated))
     })()
     wrapCharacterUpdate(load)
   }
@@ -83,37 +84,37 @@ export function LevelSection({
       />
       <div>
         <span className="flex text-stone-300 mb-1">Level {level}</span>
-        <div className="inline-flex gap-2">
+        <div className="grid grid-cols-7 gap-2">
           {featuresForLevel
             .filter((sourced) => sourced.feature.type === 'SUBCLASS')
             .map((val) => (
               <div>
                 <SubclassChoice
                   onSubclassChange={handleSubclassChange}
-                  onFeatureUpdate={alternateHandleFeatureUpdate}
+                  onFeatureUpdate={handleFeatureUpdate}
                 ></SubclassChoice>
               </div>
             ))}
-          <div className="flex flex-col gap-1">
-            {featuresForLevel
-              .filter(
-                (sourced) =>
-                  sourced.source === 'CLASS' &&
-                  sourced.feature.type === 'SKILL_SELECTION'
-              )
-              .map((sourced, index) => (
+          {featuresForLevel
+            .filter(
+              (sourced) =>
+                sourced.source === 'CLASS' &&
+                sourced.feature.type === 'SKILL_SELECTION'
+            )
+            .map((sourced, index) => (
+              <div className="flex flex-col gap-1">
                 <SkillIncreaseModal
                   key={`skills-${index}`}
                   skillFeature={sourced.feature}
                   onSkillsUpdate={(feature: Feature) => {
-                    alternateHandleFeatureUpdate(sourced)({
+                    handleFeatureUpdate(sourced)({
                       source: 'CLASS',
                       feature: feature,
                     })
                   }}
                 ></SkillIncreaseModal>
-              ))}
-          </div>
+              </div>
+            ))}
           {featuresForLevel
             .filter(
               (value) =>
@@ -127,7 +128,7 @@ export function LevelSection({
                 {buildFeatChoice(
                   playerCharacter,
                   val,
-                  alternateHandleFeatureUpdate(val)
+                  handleFeatureUpdate(val)
                 )}
               </div>
             ))}

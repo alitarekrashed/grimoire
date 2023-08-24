@@ -1,12 +1,14 @@
 import { Ancestry } from '@/models/db/ancestry'
 import { useContext, useEffect, useState } from 'react'
-import { FeatureChoiceModal } from '../feature-choice-modal'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
+import { FeatureChoiceModal } from '../feature-choice-modal'
+import { SourcedFeature } from '@/models/player-character'
+import { CharacterEntity } from '@/models/db/character-entity'
 
 export function AncestryChoiceModal({
-  onAncestryEdit,
+  onUpdate,
 }: {
-  onAncestryEdit: (ancestryId: string) => void
+  onUpdate: (updateFunction: (cloned: CharacterEntity) => void) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [ancestries, setAncestries] = useState<Ancestry[]>([])
@@ -21,17 +23,25 @@ export function AncestryChoiceModal({
       })
   }, [])
 
-  const updateAncestry = (ancestry: Ancestry) => {
-    onAncestryEdit(ancestry._id.toString())
-  }
-
   return (
     <>
       <FeatureChoiceModal
         label="Ancestry"
         entities={ancestries}
         initialId={playerCharacter.getAncestryId()}
-        onSave={updateAncestry}
+        onSave={(ancestry) =>
+          onUpdate((character: CharacterEntity) => {
+            character.ancestry_id = ancestry._id.toString()
+            character.attributes.ancestry = []
+            character.languages = []
+            character.heritage_id = ''
+            character.features.filter(
+              (val: SourcedFeature) =>
+                val.source === 'ANCESTRY' &&
+                val.feature.type === 'ANCESTRY_FEAT_SELECTION'
+            )[0].feature.value = null
+          })
+        }
       ></FeatureChoiceModal>
     </>
   )
