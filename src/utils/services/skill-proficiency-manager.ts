@@ -22,12 +22,12 @@ import {
 } from '@/models/player-character'
 
 export class SkillProficiencyManager {
-  private skillProficiencies: Map<SkillType, ProficiencyRank>
+  private skillProficiencies: Map<string, ProficiencyRank>
   private level: number
   private attributes: Attributes
 
   private constructor(
-    skillProficiencies: Map<SkillType, ProficiencyRank>,
+    skillProficiencies: Map<string, ProficiencyRank>,
     level: number,
     attributes: Attributes
   ) {
@@ -36,7 +36,7 @@ export class SkillProficiencyManager {
     this.attributes = attributes
   }
 
-  public getSkills(): Map<SkillType, CalculatedProficiency> {
+  public getSkills(): Map<string, CalculatedProficiency> {
     const result = new Map()
     this.skillProficiencies.forEach((rank, type) => {
       if (type) {
@@ -45,7 +45,10 @@ export class SkillProficiencyManager {
           modifier:
             RankModifierMap[rank] +
             this.level +
-            this.attributes[SkillAttributes.get(type) as Attribute],
+            this.attributes[
+              (SkillAttributes.get(type as SkillType) as Attribute) ??
+                'Intelligence'
+            ],
         })
       }
     })
@@ -53,7 +56,7 @@ export class SkillProficiencyManager {
   }
 
   static SkillProficiencyManagerBuilder = class {
-    private skillProficiencies: Map<SkillType, ProficiencyRank> =
+    private skillProficiencies: Map<string, ProficiencyRank> =
       generateUntrainedSkillMap()
     private level: number
     private attributes: Attributes
@@ -73,12 +76,11 @@ export class SkillProficiencyManager {
         return a.level - b.level
       })
       proficiencies.forEach((value) => {
-        let existingRank = this.skillProficiencies.get(
-          value.value.value as SkillType
-        )
+        let existingRank =
+          this.skillProficiencies.get(value.value.value) ?? 'untrained'
         this.skillProficiencies.set(
-          value.value.value as SkillType,
-          getGreaterThan(value.value.rank, existingRank ?? 'untrained')
+          value.value.value,
+          getGreaterThan(value.value.rank, existingRank)
         )
       })
     }
@@ -140,17 +142,14 @@ export class SkillProficiencyManager {
       value: SkillSelectionFeatureValue
     }) {
       skillSelection.value.value.forEach((skill, index) => {
-        let existingRank = this.skillProficiencies.get(skill as SkillType)
+        let existingRank = this.skillProficiencies.get(skill)
         if (
           isGreaterThanOrEqualTo(
             existingRank!,
             skillSelection.value.configuration.max_rank
           ) === false
         ) {
-          this.skillProficiencies.set(
-            skill as SkillType,
-            getNextRank(existingRank!)!
-          )
+          this.skillProficiencies.set(skill, getNextRank(existingRank!)!)
         } else {
           skillSelection.value.value[index] = null!
         }
@@ -193,7 +192,8 @@ export function createManagerFromFeatures(
       .filter(
         (sourced) =>
           sourced.feature.type === 'PROFICIENCY' &&
-          sourced.feature.value.type === 'Skill'
+          (sourced.feature.value.type === 'Skill' ||
+            sourced.feature.value.type === 'Lore')
       )
       .map((sourced) => sourced.feature)
   )
@@ -218,6 +218,5 @@ export function createManagerFromFeatures(
     .forEach((sourced) => builder.validateAndApply(sourced.feature))
 
   const manager = builder.build()
-  console.log(manager.getSkills())
   return manager
 }

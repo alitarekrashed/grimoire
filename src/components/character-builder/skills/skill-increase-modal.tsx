@@ -53,13 +53,13 @@ export function SkillIncreaseModal({
   const options =
     updatedFeature.value.configuration.options !== 'Free'
       ? (updatedFeature.value.configuration.options as SkillType[])
-      : Array.from(SkillAttributes.keys())
+      : Array.from(manager.getSkills().keys())
 
   const skillSelection = (
     <div className="inline-flex gap-2 mb-2 w-full">
       <div className="w-full">
-        <div className="grid grid-cols-4 gap-2 grid-rows-4 w-full">
-          {options.map((val: SkillType, index: number) => {
+        <div className="grid grid-cols-4 gap-2 w-full">
+          {options.map((val: string, index: number) => {
             // TODO ALI if a item is selected AND disabled, it likely means that some other feature
             // is increasing the proficiency later on not sure if we should handle this differently
             // (i.e. remove the 'disabled' attribute, or if we should have some third state)
@@ -101,12 +101,13 @@ export function SkillIncreaseModal({
                 >
                   <div className="flex flex-col items-center">
                     <div className="relative">
+                      {SkillAttributes.has(val as SkillType) === false &&
+                        'Lore: '}
                       {val}
                       {isSelected && (
                         <FaCheck className="absolute top-1 right-[-25px]" />
                       )}
                     </div>
-
                     <span>
                       <span className="text-xs">
                         {isSelected
@@ -131,7 +132,7 @@ export function SkillIncreaseModal({
   return (
     totalCount > 0 && (
       <Modal
-        size="small"
+        size="medium"
         trigger={trigger}
         body={body}
         closeButtons={[
