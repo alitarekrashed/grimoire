@@ -1,12 +1,17 @@
 import { Ancestry } from '@/models/db/ancestry'
+import { PlayerCharacter } from '@/models/player-character'
 import { useContext, useEffect, useState } from 'react'
-import { FeatureChoiceModal } from '../feature-choice-modal'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
+import { FeatureChoiceModal } from '../feature-choice-modal'
 
 export function AncestryChoiceModal({
-  onAncestryEdit,
+  onUpdate,
 }: {
-  onAncestryEdit: (ancestryId: string) => void
+  onUpdate: (
+    updateFunction: (
+      playerCharacter: PlayerCharacter
+    ) => Promise<PlayerCharacter>
+  ) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [ancestries, setAncestries] = useState<Ancestry[]>([])
@@ -21,17 +26,17 @@ export function AncestryChoiceModal({
       })
   }, [])
 
-  const updateAncestry = (ancestry: Ancestry) => {
-    onAncestryEdit(ancestry._id.toString())
-  }
-
   return (
     <>
       <FeatureChoiceModal
         label="Ancestry"
         entities={ancestries}
         initialId={playerCharacter.getAncestryId()}
-        onSave={updateAncestry}
+        onSave={(ancestry) =>
+          onUpdate((playerCharacter) =>
+            playerCharacter.updateAncestry(ancestry._id.toString())
+          )
+        }
       ></FeatureChoiceModal>
     </>
   )

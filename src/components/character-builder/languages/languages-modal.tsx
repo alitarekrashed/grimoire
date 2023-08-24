@@ -92,10 +92,7 @@ export function LanguagesModal({
         {
           label: 'Cancel',
           onClick: () => {
-            onUpdate(
-              (character: CharacterEntity) =>
-                (character.languages = playerCharacter.getCharacter().languages)
-            )
+            setModifiedCharacter(playerCharacter.getCharacter())
           },
         },
       ]}

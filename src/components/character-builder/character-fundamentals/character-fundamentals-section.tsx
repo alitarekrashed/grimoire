@@ -57,22 +57,18 @@ export function CharacterFundamentalsSection({
     loadCharacter(updated)
   }
 
-  // TODO I should probably clean up some these handlers by putting the update logic into the children and just passing in the load
-  const handleAttributeChange = (characterEntity: CharacterEntity) => {
-    let updated: CharacterEntity = cloneDeep(playerCharacter.getCharacter())
-    updated.attributes = characterEntity.attributes
-    loadCharacter(updated)
-  }
-
-  const handleBackgroundChange = (background: Background) => {
+  const handleAsyncUpdate = (
+    updateFunction: (
+      playerCharacter: PlayerCharacter
+    ) => Promise<PlayerCharacter>
+  ) => {
     const load: Promise<void> = (async () => {
-      const value: PlayerCharacter = await playerCharacter.updateBackground(
-        background
-      )
-      updatePlayerCharacter(value)
+      const updated = await updateFunction(playerCharacter)
+      updatePlayerCharacter(updated)
     })()
     wrapCharacterUpdate(load)
   }
+
   const handleFeatSubchoiceChange = (sourced: SourcedFeature) => {
     let updated = cloneDeep(playerCharacter.getCharacter())
 
@@ -111,16 +107,14 @@ export function CharacterFundamentalsSection({
         ></input>
       </div>
       <div>
-        <AncestryChoiceModal
-          onAncestryEdit={handleAncestryChange}
-        ></AncestryChoiceModal>
+        <AncestryChoiceModal onUpdate={handleAsyncUpdate}></AncestryChoiceModal>
       </div>
       <div>
         <HeritageChoiceModal onUpdate={handleUpdate}></HeritageChoiceModal>
       </div>
       <div>
         <BackgroundChoiceModal
-          onBackgroundChange={handleBackgroundChange}
+          onUpdate={handleAsyncUpdate}
           onFeatSubchoiceChange={handleFeatSubchoiceChange}
         ></BackgroundChoiceModal>
       </div>
@@ -128,9 +122,7 @@ export function CharacterFundamentalsSection({
         <ClassChoiceModal onClassChange={handleClassChange}></ClassChoiceModal>
       </div>
       <div>
-        <AttributesModal
-          onAttributeUpdate={handleAttributeChange}
-        ></AttributesModal>
+        <AttributesModal onUpdate={handleUpdate}></AttributesModal>
       </div>
       <div>
         <LanguagesModal

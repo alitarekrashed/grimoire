@@ -1,6 +1,6 @@
 import { Background } from '@/models/db/background'
 import { Feat } from '@/models/db/feat'
-import { SourcedFeature } from '@/models/player-character'
+import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import { retrieveEntity } from '@/utils/services/reference-lookup.service'
 import { cloneDeep } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
@@ -9,10 +9,14 @@ import { FeatureChoiceModal } from '../feature-choice-modal'
 import { FeatSubChoiceModal } from '../level/feat-subchoice-modal'
 
 export function BackgroundChoiceModal({
-  onBackgroundChange,
+  onUpdate,
   onFeatSubchoiceChange,
 }: {
-  onBackgroundChange: (background: Background) => void
+  onUpdate: (
+    updateFunction: (
+      playerCharacter: PlayerCharacter
+    ) => Promise<PlayerCharacter>
+  ) => void
   onFeatSubchoiceChange: (sourced: SourcedFeature) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
@@ -51,7 +55,9 @@ export function BackgroundChoiceModal({
   }, [])
 
   const updateBackground = (background: Background) => {
-    onBackgroundChange(background)
+    onUpdate((playerCharacter: PlayerCharacter) =>
+      playerCharacter.updateBackground(background)
+    )
     reloadFeat(background.feat)
   }
 

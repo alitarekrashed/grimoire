@@ -99,9 +99,9 @@ function getLevelAttributeChoices() {
 }
 
 export function AttributesModal({
-  onAttributeUpdate,
+  onUpdate,
 }: {
-  onAttributeUpdate: (character: CharacterEntity) => void
+  onUpdate: (updateFunction: (cloned: CharacterEntity) => void) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [modifiedCharacter, setModifiedCharacter] = useState<CharacterEntity>(
@@ -324,7 +324,10 @@ export function AttributesModal({
         {
           label: 'Save',
           onClick: () => {
-            onAttributeUpdate(modifiedCharacter)
+            onUpdate(
+              (character: CharacterEntity) =>
+                (character.attributes = modifiedCharacter.attributes)
+            )
           },
         },
         {
