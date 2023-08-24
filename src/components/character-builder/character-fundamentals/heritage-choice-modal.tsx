@@ -1,12 +1,13 @@
+import { CharacterEntity } from '@/models/db/character-entity'
 import { Heritage } from '@/models/db/heritage'
 import { useContext, useEffect, useState } from 'react'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
 import { FeatureChoiceModal } from '../feature-choice-modal'
 
 export function HeritageChoiceModal({
-  onHeritageChange,
+  onUpdate,
 }: {
-  onHeritageChange: (heritageId: string) => void
+  onUpdate: (updateFunction: (cloned: CharacterEntity) => void) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [heritages, setHeritages] = useState<Heritage[]>([])
@@ -27,7 +28,10 @@ export function HeritageChoiceModal({
   }, [playerCharacter.getAncestry()._id])
 
   const updateHeritage = (heritage: Heritage) => {
-    onHeritageChange(heritage._id.toString())
+    onUpdate(
+      (character: CharacterEntity) =>
+        (character.heritage_id = heritage._id.toString())
+    )
   }
 
   return (

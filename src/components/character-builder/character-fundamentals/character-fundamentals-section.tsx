@@ -58,12 +58,6 @@ export function CharacterFundamentalsSection({
   }
 
   // TODO I should probably clean up some these handlers by putting the update logic into the children and just passing in the load
-  const handleHeritageChange = (heritageId: string) => {
-    let updated: CharacterEntity = cloneDeep(playerCharacter!.getCharacter())
-    updated.heritage_id = heritageId
-    loadCharacter(updated)
-  }
-
   const handleAttributeChange = (characterEntity: CharacterEntity) => {
     let updated: CharacterEntity = cloneDeep(playerCharacter.getCharacter())
     updated.attributes = characterEntity.attributes
@@ -122,9 +116,7 @@ export function CharacterFundamentalsSection({
         ></AncestryChoiceModal>
       </div>
       <div>
-        <HeritageChoiceModal
-          onHeritageChange={handleHeritageChange}
-        ></HeritageChoiceModal>
+        <HeritageChoiceModal onUpdate={handleUpdate}></HeritageChoiceModal>
       </div>
       <div>
         <BackgroundChoiceModal
