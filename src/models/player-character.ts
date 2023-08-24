@@ -1033,38 +1033,45 @@ export class PlayerCharacter {
       )
     }
 
-    character.features.forEach((sourced: SourcedFeature) => {
-      if (
-        sourced.feature.type === 'FEAT' ||
-        sourced.feature.type === 'ANCESTRY_FEAT_SELECTION' ||
-        sourced.feature.type === 'CLASS_FEAT_SELECTION' ||
-        sourced.feature.type === 'SKILL_FEAT_SELECTION' ||
-        sourced.feature.type === 'GENERAL_FEAT_SELECTION'
-      ) {
-        feats.push(sourced.feature)
-      } else if (
-        sourced.feature.type === 'PROFICIENCY' ||
-        sourced.feature.type === 'ACTION' ||
-        sourced.feature.type === 'MISC' ||
-        sourced.feature.type === 'MODIFIER' ||
-        sourced.feature.type === 'OVERRIDE' ||
-        sourced.feature.type === 'SKILL_SELECTION'
-      ) {
-        allFeatures.push({
-          source: classEntity.name,
-          feature: sourced.feature,
-        })
-      } else if (
-        sourced.feature.type === 'SUBCLASS_FEATURE' &&
-        sourced.feature.value
-      ) {
-        // TODO ALI make this the subclass name for source?
-        allFeatures.push({
-          source: classEntity.name,
-          feature: sourced.feature.value,
-        })
-      }
-    })
+    character.features
+      .filter((value: SourcedFeature) => {
+        if (!value.feature.level) {
+          return true
+        }
+        return value.feature.level <= character.level
+      })
+      .forEach((sourced: SourcedFeature) => {
+        if (
+          sourced.feature.type === 'FEAT' ||
+          sourced.feature.type === 'ANCESTRY_FEAT_SELECTION' ||
+          sourced.feature.type === 'CLASS_FEAT_SELECTION' ||
+          sourced.feature.type === 'SKILL_FEAT_SELECTION' ||
+          sourced.feature.type === 'GENERAL_FEAT_SELECTION'
+        ) {
+          feats.push(sourced.feature)
+        } else if (
+          sourced.feature.type === 'PROFICIENCY' ||
+          sourced.feature.type === 'ACTION' ||
+          sourced.feature.type === 'MISC' ||
+          sourced.feature.type === 'MODIFIER' ||
+          sourced.feature.type === 'OVERRIDE' ||
+          sourced.feature.type === 'SKILL_SELECTION'
+        ) {
+          allFeatures.push({
+            source: classEntity.name,
+            feature: sourced.feature,
+          })
+        } else if (
+          sourced.feature.type === 'SUBCLASS_FEATURE' &&
+          sourced.feature.value
+        ) {
+          // TODO ALI make this the subclass name for source?
+          allFeatures.push({
+            source: classEntity.name,
+            feature: sourced.feature.value,
+          })
+        }
+      })
 
     allFeatures.push(...(await resolveFeats(feats)))
 

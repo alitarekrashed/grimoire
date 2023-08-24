@@ -4,7 +4,6 @@ import { roboto_condensed } from '@/utils/fonts'
 import { isGreaterThanOrEqualTo } from '@/utils/services/gear-proficiency-manager'
 import {
   SkillProficiencyManager,
-  createManagerFromFeatures,
   createManagerFromPlayerCharacter,
   getNextRank,
 } from '@/utils/services/skill-proficiency-manager'
