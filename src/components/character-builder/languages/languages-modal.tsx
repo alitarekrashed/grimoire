@@ -1,11 +1,10 @@
-import { Ancestry, Attribute } from '@/models/db/ancestry'
+import { Ancestry } from '@/models/db/ancestry'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Modal } from '../../base/modal'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
-import { ChoiceSelect } from '../../choice-select/choice-select'
 import { LanguageSelect } from './language-select'
 
 function getAncestryLanguageChoices(

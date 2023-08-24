@@ -70,12 +70,6 @@ export function CharacterFundamentalsSection({
     loadCharacter(updated)
   }
 
-  const handleLanguageChange = (chosenLanguages: string[]) => {
-    let updated: CharacterEntity = cloneDeep(playerCharacter.getCharacter())
-    updated.languages = chosenLanguages
-    loadCharacter(updated)
-  }
-
   const handleBackgroundChange = (background: Background) => {
     const load: Promise<void> = (async () => {
       const value: PlayerCharacter = await playerCharacter.updateBackground(
@@ -148,7 +142,6 @@ export function CharacterFundamentalsSection({
       </div>
       <div>
         <LanguagesModal
-          onLanguagesUpdate={handleLanguageChange}
           onUpdate={handleUpdate}
           ancestry={playerCharacter.getAncestry()}
         ></LanguagesModal>
