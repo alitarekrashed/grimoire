@@ -145,16 +145,20 @@ export class SkillProficiencyManager {
       value: SkillSelectionFeatureValue
     }) {
       skillSelection.value.value.forEach((skill, index) => {
-        let existingRank = this.skillProficiencies.get(skill)
-        if (
-          isLessThanOrEqual(
-            existingRank!,
-            skillSelection.value.configuration.max_rank
-          )
-        ) {
-          this.skillProficiencies.set(skill, getNextRank(existingRank!)!)
-        } else {
+        if (this.skillProficiencies.has(skill) === false) {
           skillSelection.value.value[index] = null!
+        } else {
+          let existingRank = this.skillProficiencies.get(skill)
+          if (
+            isLessThanOrEqual(
+              existingRank!,
+              skillSelection.value.configuration.max_rank
+            )
+          ) {
+            this.skillProficiencies.set(skill, getNextRank(existingRank!)!)
+          } else {
+            skillSelection.value.value[index] = null!
+          }
         }
       })
     }
