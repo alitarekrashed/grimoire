@@ -38,7 +38,7 @@ export function EditCharacterButton({
           Manage
         </button>
       }
-      playerCharacter={playerCharacter}
+      initialValue={playerCharacter}
       onClose={handleSave}
       onCancel={onCancel}
     ></CharacterBuilderModal>

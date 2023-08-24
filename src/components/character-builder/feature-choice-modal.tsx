@@ -3,6 +3,7 @@ import { roboto_condensed } from '@/utils/fonts'
 import { CardFactory } from '@/utils/services/card-factory'
 import { useEffect, useState } from 'react'
 import { Modal } from '../base/modal'
+import { OptionInlineIndicator } from '../indicators/indicator'
 
 export function FeatureChoiceModal<T extends EntityModel>({
   label,
@@ -52,13 +53,14 @@ export function FeatureChoiceModal<T extends EntityModel>({
         size="medium"
         trigger={
           <button
-            className="border border-stone-300 rounded-md relative flex w-full h-9 p-1 hover:bg-stone-600"
+            className="border border-stone-300 rounded-md relative flex items-center w-full h-9 p-1 hover:bg-stone-600"
             tabIndex={0}
           >
             <span className="text-stone-300 absolute top-0 text-[9px]">
               {label}
             </span>
             <span className="absolute bottom-0">{saved && saved.name}</span>
+            {!saved && <OptionInlineIndicator />}
           </button>
         }
         body={

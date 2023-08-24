@@ -1,3 +1,4 @@
+import { OptionInlineIndicator } from '@/components/indicators/indicator'
 import { Feature } from '@/models/db/feature'
 import { SkillAttributes, SkillType } from '@/models/statistic'
 import { roboto_condensed } from '@/utils/fonts'
@@ -49,7 +50,12 @@ export function SkillIncreaseModal({
       className="border border-stone-300 rounded-md relative flex w-full h-9 p-1 justify-center items-center hover:bg-stone-600"
       tabIndex={0}
     >
-      {name ? name : 'Skill Choices'} {setCount}/{totalCount}
+      <div className="flex items-center">
+        <span>
+          {name ? name : 'Skill Choices'} {setCount}/{totalCount}
+        </span>
+        {setCount < totalCount && <OptionInlineIndicator />}
+      </div>
     </button>
   )
 
