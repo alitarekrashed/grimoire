@@ -22,10 +22,10 @@ function getAncestryLanguageChoices(
 
 export function LanguagesModal({
   ancestry,
-  onLanguagesUpdate,
+  onUpdate,
 }: {
   ancestry: Ancestry
-  onLanguagesUpdate: (languages: string[]) => void
+  onUpdate: (updateFunction: (cloned: CharacterEntity) => void) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [modifiedCharacter, setModifiedCharacter] = useState<CharacterEntity>()
@@ -56,7 +56,7 @@ export function LanguagesModal({
   )
 
   const body = (
-    <div className={`inline-flex gap-2 ${roboto_condensed.className} p-2`}>
+    <div className={`grid grid-cols-4 gap-2 ${roboto_condensed.className} p-2`}>
       {modifiedCharacter?.languages.map((choice: any, i: number) => {
         return (
           <LanguageSelect
@@ -84,13 +84,19 @@ export function LanguagesModal({
         {
           label: 'Save',
           onClick: () => {
-            onLanguagesUpdate(modifiedCharacter?.languages ?? [])
+            onUpdate(
+              (character: CharacterEntity) =>
+                (character.languages = modifiedCharacter?.languages ?? [])
+            )
           },
         },
         {
           label: 'Cancel',
           onClick: () => {
-            onLanguagesUpdate(playerCharacter.getCharacter().languages)
+            onUpdate(
+              (character: CharacterEntity) =>
+                (character.languages = playerCharacter.getCharacter().languages)
+            )
           },
         },
       ]}

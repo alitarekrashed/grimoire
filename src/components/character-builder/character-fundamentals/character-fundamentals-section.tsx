@@ -149,6 +149,7 @@ export function CharacterFundamentalsSection({
       <div>
         <LanguagesModal
           onLanguagesUpdate={handleLanguageChange}
+          onUpdate={handleUpdate}
           ancestry={playerCharacter.getAncestry()}
         ></LanguagesModal>
       </div>

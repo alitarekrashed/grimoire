@@ -168,7 +168,7 @@ export function AttributesModal({
         <div className={`${roboto_condensed.className} text-sm p-2 w-full`}>
           <div className="flex flex-col flex-wrap mb-4">
             <div className="">Ancestry</div>
-            <div className="inline-flex gap-2 items-center">
+            <div className="grid grid-cols-8 gap-2 items-center">
               {modifiedCharacter.attributes.ancestry.map(
                 (choice: any, i: number) => {
                   return (
@@ -194,7 +194,7 @@ export function AttributesModal({
                   )
                 }
               )}
-              <span className="w-fit inline-flex items-center h-fit">
+              <span className="col-span-2 inline-flex items-center h-fit">
                 <label>
                   <input
                     className="bg-stone-700 mt-0.5"
@@ -227,83 +227,90 @@ export function AttributesModal({
           </div>
           <div className="mb-4">
             <div>Background</div>
-            {modifiedCharacter.attributes.background.map(
-              (choice: any, i: number) => {
-                return (
-                  <span key={i} className="mr-2">
-                    <ChoiceSelect
-                      value={choice}
-                      title={`Attribute #${i + 1}`}
-                      options={choices.background[i].filter((val) => {
-                        if (val === choice) {
-                          return true
-                        }
-                        return (
-                          modifiedCharacter.attributes.background.indexOf(
-                            val
-                          ) === -1
-                        )
-                      })}
-                      onChange={(val: string) => {
-                        let updated = cloneDeep(modifiedCharacter)
-                        updated.attributes.background[i] = val as Attribute
-                        setModifiedCharacter(updated)
-                      }}
-                    ></ChoiceSelect>
-                  </span>
-                )
-              }
-            )}
+            <div className="grid grid-cols-8">
+              {modifiedCharacter.attributes.background.map(
+                (choice: any, i: number) => {
+                  return (
+                    <span key={i} className="mr-2">
+                      <ChoiceSelect
+                        value={choice}
+                        title={`Attribute #${i + 1}`}
+                        options={choices.background[i].filter((val) => {
+                          if (val === choice) {
+                            return true
+                          }
+                          return (
+                            modifiedCharacter.attributes.background.indexOf(
+                              val
+                            ) === -1
+                          )
+                        })}
+                        onChange={(val: string) => {
+                          let updated = cloneDeep(modifiedCharacter)
+                          updated.attributes.background[i] = val as Attribute
+                          setModifiedCharacter(updated)
+                        }}
+                      ></ChoiceSelect>
+                    </span>
+                  )
+                }
+              )}
+            </div>
           </div>
           <div className="mb-4">
             <div>Class Key Attribute</div>
-            {modifiedCharacter.attributes.class.map(
-              (choice: any, i: number) => {
-                return (
-                  <span key={i} className="mr-2">
-                    <ChoiceSelect
-                      value={choice}
-                      title={`Attribute #${i + 1}`}
-                      options={choices.class[i]}
-                      onChange={(val: string) => {
-                        let updated = cloneDeep(modifiedCharacter)
-                        updated.attributes.class[i] = val as Attribute
-                        setModifiedCharacter(updated)
-                      }}
-                    ></ChoiceSelect>
-                  </span>
-                )
-              }
-            )}
+            <div className="grid grid-cols-8">
+              {modifiedCharacter.attributes.class.map(
+                (choice: any, i: number) => {
+                  return (
+                    <span key={i} className="mr-2">
+                      <ChoiceSelect
+                        value={choice}
+                        title={`Attribute #${i + 1}`}
+                        options={choices.class[i]}
+                        onChange={(val: string) => {
+                          let updated = cloneDeep(modifiedCharacter)
+                          updated.attributes.class[i] = val as Attribute
+                          setModifiedCharacter(updated)
+                        }}
+                      ></ChoiceSelect>
+                    </span>
+                  )
+                }
+              )}
+            </div>
           </div>
           <div className="mb-4">
             <div>Level 1 Attributes</div>
-            {modifiedCharacter.attributes.level_1.map(
-              (choice: any, i: number) => {
-                return (
-                  <span key={i} className="mr-2">
-                    <ChoiceSelect
-                      value={choice}
-                      title={`Attribute #${i + 1}`}
-                      options={choices.level_1[i].filter((val) => {
-                        if (val === choice) {
-                          return true
-                        }
-                        return (
-                          modifiedCharacter.attributes.level_1.indexOf(val) ===
-                          -1
-                        )
-                      })}
-                      onChange={(val: string) => {
-                        let updated = cloneDeep(modifiedCharacter)
-                        updated.attributes.level_1[i] = val as Attribute
-                        setModifiedCharacter(updated)
-                      }}
-                    ></ChoiceSelect>
-                  </span>
-                )
-              }
-            )}
+            <div className="grid grid-cols-8">
+              {modifiedCharacter.attributes.level_1.map(
+                (choice: any, i: number) => {
+                  return (
+                    <span key={i} className="mr-2">
+                      <ChoiceSelect
+                        value={choice}
+                        title={`Attribute #${i + 1}`}
+                        options={choices.level_1[i].filter((val) => {
+                          if (val === choice) {
+                            return true
+                          }
+                          return (
+                            modifiedCharacter.attributes.level_1.indexOf(
+                              val
+                            ) === -1
+                          )
+                        })}
+                        onChange={(val: string) => {
+                          let updated = cloneDeep(modifiedCharacter)
+                          updated.attributes.level_1[i] = val as Attribute
+                          setModifiedCharacter(updated)
+                        }}
+                      ></ChoiceSelect>
+                    </span>
+                  )
+                }
+              )}
+            </div>
           </div>
         </div>
       )}

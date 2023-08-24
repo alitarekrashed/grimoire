@@ -44,7 +44,7 @@ export function LanguageSelect({
         }}
       ></ChoiceSelect>
       {otherValue !== undefined && (
-        <div className="mt-1 relative w-44 h-9">
+        <div className="mt-1 relative w-full h-9">
           <span className="text-stone-300 absolute top-0 text-[9px] pl-1.5">
             Other
           </span>
