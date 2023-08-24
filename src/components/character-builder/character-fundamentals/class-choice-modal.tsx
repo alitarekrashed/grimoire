@@ -2,11 +2,16 @@ import { ClassEntity } from '@/models/db/class-entity'
 import { useContext, useEffect, useState } from 'react'
 import { FeatureChoiceModal } from '../feature-choice-modal'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
+import { PlayerCharacter } from '@/models/player-character'
 
 export function ClassChoiceModal({
-  onClassChange,
+  onUpdate,
 }: {
-  onClassChange: (classEntity: classEntity) => void
+  onUpdate: (
+    updateFunction: (
+      playerCharacter: PlayerCharacter
+    ) => Promise<PlayerCharacter>
+  ) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [classes, setClasses] = useState<ClassEntity[]>([])
@@ -21,17 +26,17 @@ export function ClassChoiceModal({
       })
   }, [])
 
-  const updateClass = (classEntity: ClassEntity) => {
-    onClassChange(classEntity)
-  }
-
   return (
     <>
       <FeatureChoiceModal
         label="Class"
         entities={classes}
         initialId={playerCharacter.getClassEntity()._id.toString()}
-        onSave={updateClass}
+        onSave={(classEntity) =>
+          onUpdate((playerCharacter: PlayerCharacter) =>
+            playerCharacter.updateClass(classEntity)
+          )
+        }
       ></FeatureChoiceModal>
     </>
   )

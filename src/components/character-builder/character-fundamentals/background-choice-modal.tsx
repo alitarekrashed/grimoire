@@ -7,17 +7,18 @@ import { useContext, useEffect, useState } from 'react'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
 import { FeatureChoiceModal } from '../feature-choice-modal'
 import { FeatSubChoiceModal } from '../level/feat-subchoice-modal'
+import { CharacterEntity } from '@/models/db/character-entity'
 
 export function BackgroundChoiceModal({
+  onAsyncUpdate,
   onUpdate,
-  onFeatSubchoiceChange,
 }: {
-  onUpdate: (
+  onAsyncUpdate: (
     updateFunction: (
       playerCharacter: PlayerCharacter
     ) => Promise<PlayerCharacter>
   ) => void
-  onFeatSubchoiceChange: (sourced: SourcedFeature) => void
+  onUpdate: (updateFunction: (cloned: CharacterEntity) => void) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [featWithSubChoice, setFeatWithSubChoice] = useState<Feat>()
@@ -55,16 +56,24 @@ export function BackgroundChoiceModal({
   }, [])
 
   const updateBackground = (background: Background) => {
-    onUpdate((playerCharacter: PlayerCharacter) =>
+    onAsyncUpdate((playerCharacter: PlayerCharacter) =>
       playerCharacter.updateBackground(background)
     )
     reloadFeat(background.feat)
   }
 
   const handleSubChoiceChange = (value: string) => {
-    const updated = cloneDeep(getBackgroundFeatFromCharacter())
+    const updated: SourcedFeature = cloneDeep(getBackgroundFeatFromCharacter())
     updated.feature.context = [value]
-    onFeatSubchoiceChange(updated)
+
+    onUpdate((character: CharacterEntity) => {
+      let indexToReplace = character.features.findIndex(
+        (sourced: SourcedFeature) =>
+          sourced.source === 'BACKGROUND' && sourced.feature.type === 'FEAT'
+      )
+
+      character.features.splice(indexToReplace, 1, updated)
+    })
   }
 
   return (

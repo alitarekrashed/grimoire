@@ -41,16 +41,6 @@ export function CharacterFundamentalsSection({
     playerCharacter.getCharacter().name = value
   }
 
-  const handleAncestryChange = (ancestryId: string) => {
-    const load: Promise<void> = (async () => {
-      const value: PlayerCharacter = await playerCharacter.updateAncestry(
-        ancestryId
-      )
-      updatePlayerCharacter(value)
-    })()
-    wrapCharacterUpdate(load)
-  }
-
   const handleUpdate = (updateFunction: (cloned: CharacterEntity) => void) => {
     const updated = cloneDeep(playerCharacter.getCharacter())
     updateFunction(updated)
@@ -65,29 +55,6 @@ export function CharacterFundamentalsSection({
     const load: Promise<void> = (async () => {
       const updated = await updateFunction(playerCharacter)
       updatePlayerCharacter(updated)
-    })()
-    wrapCharacterUpdate(load)
-  }
-
-  const handleFeatSubchoiceChange = (sourced: SourcedFeature) => {
-    let updated = cloneDeep(playerCharacter.getCharacter())
-
-    let indexToReplace = updated.features.findIndex(
-      (sourced) =>
-        sourced.source === 'BACKGROUND' && sourced.feature.type === 'FEAT'
-    )
-
-    updated.features.splice(indexToReplace, 1, sourced)
-
-    loadCharacter(updated)
-  }
-
-  const handleClassChange = (classEntity: ClassEntity) => {
-    const load: Promise<void> = (async () => {
-      const value: PlayerCharacter = await playerCharacter.updateClass(
-        classEntity
-      )
-      updatePlayerCharacter(value)
     })()
     wrapCharacterUpdate(load)
   }
@@ -114,12 +81,12 @@ export function CharacterFundamentalsSection({
       </div>
       <div>
         <BackgroundChoiceModal
-          onUpdate={handleAsyncUpdate}
-          onFeatSubchoiceChange={handleFeatSubchoiceChange}
+          onAsyncUpdate={handleAsyncUpdate}
+          onUpdate={handleUpdate}
         ></BackgroundChoiceModal>
       </div>
       <div>
-        <ClassChoiceModal onClassChange={handleClassChange}></ClassChoiceModal>
+        <ClassChoiceModal onUpdate={handleAsyncUpdate}></ClassChoiceModal>
       </div>
       <div>
         <AttributesModal onUpdate={handleUpdate}></AttributesModal>
