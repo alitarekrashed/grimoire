@@ -1,12 +1,13 @@
 import { PlayerCharacterContext } from '@/components/character-display/player-character-context'
 import { ChoiceSelect } from '@/components/choice-select/choice-select'
-import { cloneDeep, toNumber } from 'lodash'
+import { CharacterEntity } from '@/models/db/character-entity'
+import { toNumber } from 'lodash'
 import { useContext } from 'react'
 
 export function LevelSelect({
-  onLevelChange,
+  onUpdate,
 }: {
-  onLevelChange: (level: string) => void
+  onUpdate: (updateFunction: (cloned: CharacterEntity) => void) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
 
@@ -20,7 +21,11 @@ export function LevelSelect({
       value={playerCharacter.getCharacter().level.toString()}
       title="Level"
       options={values}
-      onChange={onLevelChange}
+      onChange={(val: string) => {
+        onUpdate(
+          (character: CharacterEntity) => (character.level = toNumber(val))
+        )
+      }}
     ></ChoiceSelect>
   )
 }

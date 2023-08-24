@@ -51,13 +51,13 @@ export function CharacterFundamentalsSection({
     wrapCharacterUpdate(load)
   }
 
-  // TODO I should probably clean up some these handlers by putting the update logic into the children and just passing in the load
-  const handleLevelChange = (level: string) => {
-    let updated: CharacterEntity = cloneDeep(playerCharacter!.getCharacter())
-    updated.level = toNumber(level)
+  const handleUpdate = (updateFunction: (cloned: CharacterEntity) => void) => {
+    const updated = cloneDeep(playerCharacter.getCharacter())
+    updateFunction(updated)
     loadCharacter(updated)
   }
 
+  // TODO I should probably clean up some these handlers by putting the update logic into the children and just passing in the load
   const handleHeritageChange = (heritageId: string) => {
     let updated: CharacterEntity = cloneDeep(playerCharacter!.getCharacter())
     updated.heritage_id = heritageId
@@ -153,7 +153,7 @@ export function CharacterFundamentalsSection({
         ></LanguagesModal>
       </div>
       <div>
-        <LevelSelect onLevelChange={handleLevelChange}></LevelSelect>
+        <LevelSelect onUpdate={handleUpdate}></LevelSelect>
       </div>
     </div>
   )
