@@ -40,6 +40,7 @@ export class SkillProficiencyManager {
     const result = new Map()
     this.skillProficiencies.forEach((rank, type) => {
       if (type) {
+        // we fall back to Intelligence to handle Lore Skills properly
         result.set(type, {
           rank: rank,
           modifier:
