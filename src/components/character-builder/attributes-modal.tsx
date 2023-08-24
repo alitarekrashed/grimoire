@@ -7,11 +7,11 @@ import {
 import { ClassEntity } from '@/models/db/class-entity'
 import { roboto_condensed } from '@/utils/fonts'
 import { cloneDeep } from 'lodash'
-import React, { useContext, useEffect, useState } from 'react'
-import { PlayerCharacterContext } from '../character-display/player-character-context'
+import { useContext, useEffect, useState } from 'react'
 import { Modal } from '../base/modal'
+import { PlayerCharacterContext } from '../character-display/player-character-context'
 import { ChoiceSelect } from '../choice-select/choice-select'
-import { PlayerCharacter } from '@/models/player-character'
+import { OptionInlineIndicator } from '../indicators/indicator'
 import { LoadingSpinner } from '../loading-spinner/loading-spinner'
 
 const ATTRIBUTES: Attribute[] = [
@@ -142,7 +142,12 @@ export function AttributesModal({
       className="border border-stone-300 rounded-md relative flex w-full h-9 p-1 justify-center items-center hover:bg-stone-600"
       tabIndex={0}
     >
-      Attributes {setCount}/{totalCount}
+      <div className="flex items-center">
+        <span>
+          Attributes {setCount}/{totalCount}
+        </span>
+        {setCount < totalCount && <OptionInlineIndicator />}
+      </div>
     </button>
   )
 

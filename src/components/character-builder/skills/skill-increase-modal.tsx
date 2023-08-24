@@ -1,3 +1,4 @@
+import { OptionInlineIndicator } from '@/components/indicators/indicator'
 import { Feature } from '@/models/db/feature'
 import { SkillAttributes, SkillType } from '@/models/statistic'
 import { roboto_condensed } from '@/utils/fonts'
@@ -9,10 +10,9 @@ import {
 } from '@/utils/services/skill-proficiency-manager'
 import { cloneDeep } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
-import { FaCheck, FaExclamationTriangle } from 'react-icons/fa'
+import { FaCheck } from 'react-icons/fa'
 import { Modal } from '../../base/modal'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
-import { Indicator } from '@/components/indicators/indicator'
 
 export function SkillIncreaseModal({
   name,
@@ -50,11 +50,11 @@ export function SkillIncreaseModal({
       className="border border-stone-300 rounded-md relative flex w-full h-9 p-1 justify-center items-center hover:bg-stone-600"
       tabIndex={0}
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center">
         <span>
           {name ? name : 'Skill Choices'} {setCount}/{totalCount}
         </span>
-        {setCount < totalCount && <Indicator />}
+        {setCount < totalCount && <OptionInlineIndicator />}
       </div>
     </button>
   )
