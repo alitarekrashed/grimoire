@@ -6,6 +6,7 @@ import { useContext, useEffect, useState } from 'react'
 import { Modal } from '../../base/modal'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
 import { LanguageSelect } from './language-select'
+import { OptionInlineIndicator } from '@/components/indicators/indicator'
 
 function getAncestryLanguageChoices(
   knownLanguages: string[],
@@ -50,7 +51,12 @@ export function LanguagesModal({
       className="border border-stone-300 rounded-md relative flex w-full h-9 p-1 justify-center items-center hover:bg-stone-600"
       tabIndex={0}
     >
-      Languages {setCount}/{totalCount}
+      <div className="flex items-center">
+        <span>
+          Languages {setCount}/{totalCount}
+        </span>
+        {setCount < totalCount && <OptionInlineIndicator />}
+      </div>
     </button>
   )
 
