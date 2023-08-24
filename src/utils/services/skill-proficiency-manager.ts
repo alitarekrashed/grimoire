@@ -16,12 +16,7 @@ import {
   ProficiencyRank,
   RankModifierMap,
 } from '../../models/db/background'
-import {
-  getGreaterThan,
-  isGreaterThan,
-  isLessThan,
-  isLessThanOrEqual,
-} from './gear-proficiency-manager'
+import { getGreaterThan, isLessThanOrEqual } from './gear-proficiency-manager'
 
 export class SkillProficiencyManager {
   private skillProficiencies: Map<string, ProficiencyRank>
@@ -181,7 +176,7 @@ export function createManagerFromPlayerCharacter(
   return createManagerFromFeatures(
     playerCharacter.getCharacter().level,
     playerCharacter.getAttributes(),
-    playerCharacter.getLevelFeatures(),
+    playerCharacter.getResolvedFeatures(),
     exclusion
   )
 }
