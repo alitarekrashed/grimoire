@@ -11,3 +11,14 @@ export function OptionInlineIndicator() {
     </span>
   )
 }
+
+export function BlockIndicator({ message }: { message: string }) {
+  return (
+    <div className="inline-flex items-center gap-2 w-full rounded-md border border-amber-700">
+      <span className="border-r p-2 border-r-amber-700">
+        <Indicator />
+      </span>
+      <span className="text-xs">{message}</span>
+    </div>
+  )
+}
