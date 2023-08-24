@@ -3,6 +3,7 @@ import { CharacterSheetBox } from './character-sheet-box'
 import { SkillDisplay } from './skill-display'
 import { useContext } from 'react'
 import { PlayerCharacterContext } from './player-character-context'
+import { SkillAttributes, SkillType } from '@/models/statistic'
 
 export function ProficiencyModifiersColumn() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
@@ -83,18 +84,14 @@ function SkillsDisplay({ character }: { character: PlayerCharacter }) {
               name={entry[0]}
               rank={entry[1].rank}
               modifier={entry[1].modifier}
+              prefix={
+                SkillAttributes.has(entry[0] as SkillType) === false
+                  ? 'Lore'
+                  : undefined
+              }
             ></SkillDisplay>
           )
         )}
-        {[...character.getLores().entries()].map((entry) => (
-          <SkillDisplay
-            key={entry[0]}
-            name={entry[0]}
-            rank={entry[1].rank}
-            modifier={entry[1].modifier}
-            prefix="Lore"
-          ></SkillDisplay>
-        ))}
       </div>
     </CharacterSheetBox>
   )

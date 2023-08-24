@@ -15,15 +15,19 @@ import {
   isGreaterThanOrEqualTo,
 } from './gear-proficiency-manager'
 import { Attribute } from '@/models/db/ancestry'
-import { Attributes, PlayerCharacter } from '@/models/player-character'
+import {
+  Attributes,
+  PlayerCharacter,
+  SourcedFeature,
+} from '@/models/player-character'
 
 export class SkillProficiencyManager {
-  private skillProficiencies: Map<SkillType, ProficiencyRank>
+  private skillProficiencies: Map<string, ProficiencyRank>
   private level: number
   private attributes: Attributes
 
   private constructor(
-    skillProficiencies: Map<SkillType, ProficiencyRank>,
+    skillProficiencies: Map<string, ProficiencyRank>,
     level: number,
     attributes: Attributes
   ) {
@@ -32,16 +36,20 @@ export class SkillProficiencyManager {
     this.attributes = attributes
   }
 
-  public getSkills(): Map<SkillType, CalculatedProficiency> {
+  public getSkills(): Map<string, CalculatedProficiency> {
     const result = new Map()
     this.skillProficiencies.forEach((rank, type) => {
       if (type) {
+        // we fall back to Intelligence to handle Lore Skills properly
         result.set(type, {
           rank: rank,
           modifier:
             RankModifierMap[rank] +
             this.level +
-            this.attributes[SkillAttributes.get(type) as Attribute],
+            this.attributes[
+              (SkillAttributes.get(type as SkillType) as Attribute) ??
+                'Intelligence'
+            ],
         })
       }
     })
@@ -49,7 +57,7 @@ export class SkillProficiencyManager {
   }
 
   static SkillProficiencyManagerBuilder = class {
-    private skillProficiencies: Map<SkillType, ProficiencyRank> =
+    private skillProficiencies: Map<string, ProficiencyRank> =
       generateUntrainedSkillMap()
     private level: number
     private attributes: Attributes
@@ -69,12 +77,11 @@ export class SkillProficiencyManager {
         return a.level - b.level
       })
       proficiencies.forEach((value) => {
-        let existingRank = this.skillProficiencies.get(
-          value.value.value as SkillType
-        )
+        let existingRank =
+          this.skillProficiencies.get(value.value.value) ?? 'untrained'
         this.skillProficiencies.set(
-          value.value.value as SkillType,
-          getGreaterThan(value.value.rank, existingRank ?? 'untrained')
+          value.value.value,
+          getGreaterThan(value.value.rank, existingRank)
         )
       })
     }
@@ -136,17 +143,14 @@ export class SkillProficiencyManager {
       value: SkillSelectionFeatureValue
     }) {
       skillSelection.value.value.forEach((skill, index) => {
-        let existingRank = this.skillProficiencies.get(skill as SkillType)
+        let existingRank = this.skillProficiencies.get(skill)
         if (
           isGreaterThanOrEqualTo(
             existingRank!,
             skillSelection.value.configuration.max_rank
           ) === false
         ) {
-          this.skillProficiencies.set(
-            skill as SkillType,
-            getNextRank(existingRank!)!
-          )
+          this.skillProficiencies.set(skill, getNextRank(existingRank!)!)
         } else {
           skillSelection.value.value[index] = null!
         }
@@ -164,27 +168,40 @@ export function getNextRank(rank: ProficiencyRank) {
   }
 }
 
-export function createManagerForCharacter(
+export function createManagerFromPlayerCharacter(
   playerCharacter: PlayerCharacter,
   exclusion?: Feature
-) {
-  const builder = new SkillProficiencyManager.SkillProficiencyManagerBuilder(
+): SkillProficiencyManager {
+  return createManagerFromFeatures(
     playerCharacter.getCharacter().level,
     playerCharacter.getAttributes(),
-    playerCharacter
-      .getLevelFeatures()
+    playerCharacter.getLevelFeatures(),
+    exclusion
+  )
+}
+
+export function createManagerFromFeatures(
+  level: number,
+  attributes: Attributes,
+  sourced: SourcedFeature[],
+  exclusion?: Feature
+): SkillProficiencyManager {
+  const builder = new SkillProficiencyManager.SkillProficiencyManagerBuilder(
+    level,
+    attributes,
+    sourced
       .filter(
         (sourced) =>
           sourced.feature.type === 'PROFICIENCY' &&
-          sourced.feature.value.type === 'Skill'
+          (sourced.feature.value.type === 'Skill' ||
+            sourced.feature.value.type === 'Lore')
       )
       .map((sourced) => sourced.feature)
   )
 
   // order of operations here matters, basically this makes the subclass selection the 'default' base, which means that
   // it 'wins' during reconciliation
-  playerCharacter
-    .getLevelFeatures()
+  sourced
     .filter((sourced) => sourced.feature.value !== exclusion)
     .filter(
       (sourced) =>
@@ -195,14 +212,12 @@ export function createManagerForCharacter(
       builder.validateAndApply(sourced.feature.value)
     })
 
-  playerCharacter
-    .getLevelFeatures()
+  sourced
     .filter((sourced) => sourced.feature.type === 'SKILL_SELECTION')
     .filter((sourced) => sourced.feature !== exclusion)
     .sort((a, b) => a.feature.level! - b.feature.level!)
     .forEach((sourced) => builder.validateAndApply(sourced.feature))
 
   const manager = builder.build()
-  console.log(manager.getSkills())
   return manager
 }
