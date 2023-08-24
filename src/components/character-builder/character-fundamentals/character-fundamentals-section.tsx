@@ -1,7 +1,7 @@
 import { PlayerCharacterContext } from '@/components/character-display/player-character-context'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, toNumber } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
 import { AncestryChoiceModal } from './ancestry-choice-modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
@@ -9,6 +9,7 @@ import { BackgroundChoiceModal } from './background-choice-modal'
 import { ClassChoiceModal } from './class-choice-modal'
 import { AttributesModal } from '../attributes-modal'
 import { LanguagesModal } from '../languages/languages-modal'
+import { ChoiceSelect } from '@/components/choice-select/choice-select'
 
 export function CharacterFundamentalsSection({
   wrapCharacterUpdate,
@@ -101,8 +102,8 @@ export function CharacterFundamentalsSection({
   }
 
   return (
-    <div className="mb-2 inline-flex">
-      <div className="relative w-44 h-9 mr-2">
+    <div className="mb-2 grid grid-cols-7 gap-2">
+      <div className="relative h-9">
         <span className="text-stone-300 absolute top-0 text-[9px] pl-1.5">
           Name
         </span>
@@ -114,26 +115,26 @@ export function CharacterFundamentalsSection({
           }}
         ></input>
       </div>
-      <div className="mr-2">
+      <div>
         <AncestryChoiceModal
           onAncestryEdit={handleAncestryChange}
         ></AncestryChoiceModal>
       </div>
-      <div className="mr-2">
+      <div>
         <HeritageChoiceModal
           onHeritageChange={handleHeritageChange}
         ></HeritageChoiceModal>
       </div>
-      <div className="mr-2">
+      <div>
         <BackgroundChoiceModal
           onBackgroundChange={handleBackgroundChange}
           onFeatSubchoiceChange={handleFeatSubchoiceChange}
         ></BackgroundChoiceModal>
       </div>
-      <div className="mr-2">
+      <div>
         <ClassChoiceModal onClassChange={handleClassChange}></ClassChoiceModal>
       </div>
-      <div className="mr-2">
+      <div>
         <AttributesModal
           onAttributeUpdate={handleAttributeChange}
         ></AttributesModal>
@@ -143,6 +144,20 @@ export function CharacterFundamentalsSection({
           onLanguagesUpdate={handleLanguageChange}
           ancestry={playerCharacter.getAncestry()}
         ></LanguagesModal>
+      </div>
+      <div>
+        <ChoiceSelect
+          value={playerCharacter.getCharacter().level.toString()}
+          title="Level"
+          options={['1', '2', '3']}
+          onChange={(val: string) => {
+            let updated: CharacterEntity = cloneDeep(
+              playerCharacter!.getCharacter()
+            )
+            updated.level = toNumber(val)
+            loadCharacter(updated)
+          }}
+        ></ChoiceSelect>
       </div>
     </div>
   )

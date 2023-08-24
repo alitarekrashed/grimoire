@@ -52,7 +52,7 @@ export function FeatureChoiceModal<T extends EntityModel>({
         size="medium"
         trigger={
           <button
-            className="border border-stone-300 rounded-md relative flex w-44 h-9 p-1 hover:bg-stone-600"
+            className="border border-stone-300 rounded-md relative flex w-full h-9 p-1 hover:bg-stone-600"
             tabIndex={0}
           >
             <span className="text-stone-300 absolute top-0 text-[9px]">

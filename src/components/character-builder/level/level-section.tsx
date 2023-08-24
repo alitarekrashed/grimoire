@@ -83,7 +83,7 @@ export function LevelSection({
       />
       <div>
         <span className="flex text-stone-300 mb-1">Level {level}</span>
-        <div className="inline-flex gap-2">
+        <div className="grid grid-cols-7 gap-2">
           {featuresForLevel
             .filter((sourced) => sourced.feature.type === 'SUBCLASS')
             .map((val) => (
@@ -94,14 +94,14 @@ export function LevelSection({
                 ></SubclassChoice>
               </div>
             ))}
-          <div className="flex flex-col gap-1">
-            {featuresForLevel
-              .filter(
-                (sourced) =>
-                  sourced.source === 'CLASS' &&
-                  sourced.feature.type === 'SKILL_SELECTION'
-              )
-              .map((sourced, index) => (
+          {featuresForLevel
+            .filter(
+              (sourced) =>
+                sourced.source === 'CLASS' &&
+                sourced.feature.type === 'SKILL_SELECTION'
+            )
+            .map((sourced, index) => (
+              <div className="flex flex-col gap-1">
                 <SkillIncreaseModal
                   key={`skills-${index}`}
                   skillFeature={sourced.feature}
@@ -112,8 +112,8 @@ export function LevelSection({
                     })
                   }}
                 ></SkillIncreaseModal>
-              ))}
-          </div>
+              </div>
+            ))}
           {featuresForLevel
             .filter(
               (value) =>
