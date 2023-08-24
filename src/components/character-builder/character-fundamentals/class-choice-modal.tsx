@@ -2,16 +2,13 @@ import { ClassEntity } from '@/models/db/class-entity'
 import { useContext, useEffect, useState } from 'react'
 import { FeatureChoiceModal } from '../feature-choice-modal'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
-import { PlayerCharacter } from '@/models/player-character'
+import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
+import { CharacterEntity } from '@/models/db/character-entity'
 
 export function ClassChoiceModal({
   onUpdate,
 }: {
-  onUpdate: (
-    updateFunction: (
-      playerCharacter: PlayerCharacter
-    ) => Promise<PlayerCharacter>
-  ) => void
+  onUpdate: (updateFunction: (cloned: CharacterEntity) => void) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [classes, setClasses] = useState<ClassEntity[]>([])
@@ -33,9 +30,21 @@ export function ClassChoiceModal({
         entities={classes}
         initialId={playerCharacter.getClassEntity()._id.toString()}
         onSave={(classEntity) =>
-          onUpdate((playerCharacter: PlayerCharacter) =>
-            playerCharacter.updateClass(classEntity)
-          )
+          onUpdate((character: CharacterEntity) => {
+            character.class_id = classEntity._id.toString()
+            character.attributes.class = []
+            character.features = character.features.filter(
+              (value: SourcedFeature) => value.source !== 'CLASS'
+            )
+            character.features.push(
+              ...classEntity.features.map((feature: Feature) => {
+                if (feature.type === 'SKILL_SELECTION') {
+                  feature.value.value = [null]
+                }
+                return { source: 'CLASS', feature: feature }
+              })
+            )
+          })
         }
       ></FeatureChoiceModal>
     </>

@@ -74,19 +74,16 @@ export function CharacterFundamentalsSection({
         ></input>
       </div>
       <div>
-        <AncestryChoiceModal onUpdate={handleAsyncUpdate}></AncestryChoiceModal>
+        <AncestryChoiceModal onUpdate={handleUpdate}></AncestryChoiceModal>
       </div>
       <div>
         <HeritageChoiceModal onUpdate={handleUpdate}></HeritageChoiceModal>
       </div>
       <div>
-        <BackgroundChoiceModal
-          onAsyncUpdate={handleAsyncUpdate}
-          onUpdate={handleUpdate}
-        ></BackgroundChoiceModal>
+        <BackgroundChoiceModal onUpdate={handleUpdate}></BackgroundChoiceModal>
       </div>
       <div>
-        <ClassChoiceModal onUpdate={handleAsyncUpdate}></ClassChoiceModal>
+        <ClassChoiceModal onUpdate={handleUpdate}></ClassChoiceModal>
       </div>
       <div>
         <AttributesModal onUpdate={handleUpdate}></AttributesModal>
