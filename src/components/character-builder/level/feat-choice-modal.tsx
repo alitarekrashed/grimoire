@@ -35,17 +35,16 @@ export function FeatChoiceModal({
     }
   }
 
-  const filterFeats = (
-    feats: Feat[],
-    level: number,
-    skillMap: Map<string, CalculatedProficiency>
-  ): Feat[] => {
+  const filterFeats = (feats: Feat[]): Feat[] => {
     let filtered = feats
       .filter((feat: Feat) => feat.level <= level)
       .filter((feat: Feat) => {
         if (feat.prerequisites) {
           return feat.prerequisites.every((prerequisite: Prerequisite) =>
-            evaluatePrerequisite(prerequisite, skillMap)
+            evaluatePrerequisite(
+              prerequisite,
+              playerCharacter.getSkillProfciencyManager().getSkills()
+            )
           )
         }
         return true
@@ -63,11 +62,7 @@ export function FeatChoiceModal({
     })
       .then((result) => result.json())
       .then((feats) => {
-        let filtered: Feat[] = filterFeats(
-          feats,
-          level,
-          playerCharacter.getSkillProfciencyManager().getSkills()
-        )
+        let filtered: Feat[] = filterFeats(feats)
         filtered.sort((a, b) => b.level - a.level)
         setFeats(filtered)
       })
