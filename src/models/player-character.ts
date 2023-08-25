@@ -1,9 +1,14 @@
 import { ModifierValue } from '@/components/calculated-display/calculated-display'
+import { FeatManager } from '@/utils/services/feat-manager'
 import {
   FIST_WEAPON,
   GearProficiencyManager,
   getGreaterThan,
 } from '@/utils/services/gear-proficiency-manager'
+import {
+  SkillProficiencyManager,
+  createManagerFromFeatures,
+} from '@/utils/services/skill-proficiency-manager'
 import { cloneDeep } from 'lodash'
 import { Ancestry, Attribute } from './db/ancestry'
 import {
@@ -22,7 +27,6 @@ import {
 } from './db/character-entity'
 import { ClassEntity } from './db/class-entity'
 import { Armor } from './db/equipment'
-import { Feat } from './db/feat'
 import {
   ConditionalFeatureValue,
   Feature,
@@ -30,7 +34,6 @@ import {
   ModifierFeatureValue,
   OverrideFeatureValue,
   ResistanceFeatureValue,
-  SkillSelectionFeatureValue,
   featureMatcher,
 } from './db/feature'
 import { Heritage } from './db/heritage'
@@ -38,17 +41,7 @@ import {
   CalculatedProficiency,
   SavingThrowAttributes,
   SavingThrowType,
-  SkillAttributes,
-  SkillType,
-  generateUntrainedSkillMap,
 } from './statistic'
-import { Subclass } from './db/subclass'
-import { inter } from '@/utils/fonts'
-import {
-  SkillProficiencyManager,
-  createManagerFromFeatures,
-} from '@/utils/services/skill-proficiency-manager'
-import { FeatManager } from '@/utils/services/feat-manager'
 
 export interface CharacterAttack {
   attackBonus: ModifierValue[][]
