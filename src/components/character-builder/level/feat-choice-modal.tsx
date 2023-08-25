@@ -36,7 +36,6 @@ export function FeatChoiceModal({
   }
 
   const filterFeats = (feats: Feat[]): Feat[] => {
-    console.log(playerCharacter.getFeatNames())
     let filtered = feats
       .filter((feat: Feat) => feat.level <= level)
       .filter((feat: Feat) => {
@@ -49,6 +48,12 @@ export function FeatChoiceModal({
           )
         }
         return true
+      })
+      .filter((feat: Feat) => {
+        if (feat.name === existingFeat.feature.value) {
+          return true
+        }
+        return playerCharacter.getFeatNames().includes(feat.name) === false
       })
     return filtered
   }

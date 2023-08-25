@@ -996,7 +996,6 @@ export class PlayerCharacter {
         }
       })
 
-    console.log(feats)
     const featManager: FeatManager = await FeatManager.build(feats)
 
     allFeatures.push(...featManager.getResolvedFeats())
