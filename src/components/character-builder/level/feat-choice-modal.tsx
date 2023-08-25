@@ -36,6 +36,7 @@ export function FeatChoiceModal({
   }
 
   const filterFeats = (feats: Feat[]): Feat[] => {
+    console.log(playerCharacter.getFeatNames())
     let filtered = feats
       .filter((feat: Feat) => feat.level <= level)
       .filter((feat: Feat) => {

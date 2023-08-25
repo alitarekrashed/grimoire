@@ -48,6 +48,7 @@ import {
   SkillProficiencyManager,
   createManagerFromFeatures,
 } from '@/utils/services/skill-proficiency-manager'
+import { FeatManager } from '@/utils/services/feat-manager'
 
 export interface CharacterAttack {
   attackBonus: ModifierValue[][]
@@ -91,76 +92,6 @@ const ATTRIBUTES: Attribute[] = [
   'Wisdom',
   'Charisma',
 ]
-
-interface FeatWithContext {
-  context: string[] | undefined
-  feat: Feat
-}
-
-async function getAndConvertFeat(feature: Feature): Promise<FeatWithContext> {
-  const feats = (await PlayerCharacter.getFeat(feature.value)) as Feat[]
-  const feat = feats.length > 0 ? feats[0] : undefined!
-  return { context: feature.context, feat: feat }
-}
-
-async function resolveFeats(feats: Feature[]): Promise<SourcedFeature[]> {
-  let resolvedFeatures: SourcedFeature[] = []
-  const resolvedFeats: {
-    context: string[] | undefined
-    feat: Feat
-  }[] = await Promise.all(
-    feats.filter((feat) => feat?.value).map((feat) => getAndConvertFeat(feat))
-  )
-
-  let additionalFeats: Feature[] = []
-  resolvedFeats
-    .filter((val) => val)
-    .forEach((featWithContext: FeatWithContext) => {
-      resolvedFeatures.push(
-        ...featWithContext.feat.features
-          .filter((feature) => !feature.value.action)
-          .filter((feature) => feature.type !== 'FEAT')
-          .map((feature: Feature) => {
-            let modifiedFeature = cloneDeep(feature)
-            if (
-              feature.type === 'MISC' &&
-              featWithContext.context &&
-              feature.value.description
-            ) {
-              featWithContext.context.forEach((val, index) => {
-                modifiedFeature.value.description =
-                  modifiedFeature.value.description.replaceAll(
-                    `{${index}}`,
-                    val
-                  )
-              })
-              modifiedFeature.context = featWithContext.context
-            }
-            return {
-              source: featWithContext.feat.name,
-              feature: modifiedFeature,
-            }
-          })
-      )
-      if (featWithContext.feat.activation) {
-        resolvedFeatures.push({
-          source: featWithContext.feat.name,
-          feature: { type: 'ACTION', value: featWithContext.feat },
-        })
-      }
-      additionalFeats.push(
-        ...featWithContext.feat.features.filter(
-          (feature) => feature.type === 'FEAT'
-        )
-      )
-    })
-
-  if (additionalFeats.length > 0) {
-    resolvedFeatures.push(...(await resolveFeats(additionalFeats)))
-  }
-
-  return resolvedFeatures
-}
 
 function buildChoiceSelectionArray(
   count: number,
@@ -319,7 +250,8 @@ export class PlayerCharacter {
     private allFeatures: SourcedFeature[],
     private heritage?: Heritage,
     private background?: Background,
-    private classEntity?: ClassEntity
+    private classEntity?: ClassEntity,
+    private featManager: FeatManager
   ) {
     this.level = character.level
 
@@ -373,6 +305,10 @@ export class PlayerCharacter {
     updated.name = name
     this.character = updated
     return this
+  }
+
+  public getFeatNames(): string[] {
+    return this.featManager.getFeatNames()
   }
 
   public getTraits(): string[] {
@@ -981,16 +917,6 @@ export class PlayerCharacter {
       : undefined
   }
 
-  static async getFeat(name: string) {
-    return name
-      ? await (
-          await fetch(`http://localhost:3000/api/feats?name=${name}`, {
-            cache: 'no-store',
-          })
-        ).json()
-      : undefined
-  }
-
   static async build(character: CharacterEntity): Promise<PlayerCharacter> {
     const [ancestry, heritage, background, classEntity] = await Promise.all([
       PlayerCharacter.getAncestry(character.ancestry_id),
@@ -1077,7 +1003,10 @@ export class PlayerCharacter {
         }
       })
 
-    allFeatures.push(...(await resolveFeats(feats)))
+    console.log(feats)
+    const featManager: FeatManager = await FeatManager.build(feats)
+
+    allFeatures.push(...featManager.getResolvedFeats())
 
     const pc = new PlayerCharacter(
       character,
@@ -1085,7 +1014,8 @@ export class PlayerCharacter {
       allFeatures,
       heritage,
       background,
-      classEntity
+      classEntity,
+      featManager
     )
     return pc
   }
