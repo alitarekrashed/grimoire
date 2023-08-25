@@ -100,7 +100,7 @@ export function FeatChoiceModal({
 function filterFeats(
   feats: Feat[],
   level: number,
-  skillMap: Map<SkillType, CalculatedProficiency>
+  skillMap: Map<string, CalculatedProficiency>
 ): Feat[] {
   let filtered = feats
     .filter((feat: Feat) => feat.level <= level)
@@ -117,7 +117,7 @@ function filterFeats(
 
 function evaluatePrerequisite(
   prerequisite: Prerequisite,
-  skillMap: Map<SkillType, CalculatedProficiency>
+  skillMap: Map<string, CalculatedProficiency>
 ): boolean {
   switch (prerequisite.type) {
     case 'SKILL':
