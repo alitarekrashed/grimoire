@@ -35,6 +35,24 @@ export function FeatChoiceModal({
     }
   }
 
+  const filterFeats = (
+    feats: Feat[],
+    level: number,
+    skillMap: Map<string, CalculatedProficiency>
+  ): Feat[] => {
+    let filtered = feats
+      .filter((feat: Feat) => feat.level <= level)
+      .filter((feat: Feat) => {
+        if (feat.prerequisites) {
+          return feat.prerequisites.every((prerequisite: Prerequisite) =>
+            evaluatePrerequisite(prerequisite, skillMap)
+          )
+        }
+        return true
+      })
+    return filtered
+  }
+
   useEffect(() => {
     setFeat(existingFeat)
   }, [existingFeat])
@@ -95,24 +113,6 @@ export function FeatChoiceModal({
       )}
     </>
   )
-}
-
-function filterFeats(
-  feats: Feat[],
-  level: number,
-  skillMap: Map<string, CalculatedProficiency>
-): Feat[] {
-  let filtered = feats
-    .filter((feat: Feat) => feat.level <= level)
-    .filter((feat: Feat) => {
-      if (feat.prerequisites) {
-        return feat.prerequisites.every((prerequisite: Prerequisite) =>
-          evaluatePrerequisite(prerequisite, skillMap)
-        )
-      }
-      return true
-    })
-  return filtered
 }
 
 function evaluatePrerequisite(
