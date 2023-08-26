@@ -701,7 +701,7 @@ export class PlayerCharacter {
 
     const allowUnarmedLethality =
       this.features.findIndex(
-        (sourced) => sourced.feature.value.name === 'Powerful Fist'
+        (sourced) => sourced.feature.value?.name === 'Powerful Fist'
       ) > -1 && weapon.traits.includes('unarmed')
 
     if (weapon.traits.includes('nonlethal')) {
