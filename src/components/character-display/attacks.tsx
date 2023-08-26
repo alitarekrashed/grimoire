@@ -5,6 +5,7 @@ import { TraitsList } from '../card/traits-list'
 import { CharacterSheetBox } from './character-sheet-box'
 import { PlayerCharacterContext } from './player-character-context'
 import CalculatedDisplay from '../calculated-display/calculated-display'
+import { Switch } from '../base/switch'
 
 export function Attacks() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
@@ -13,7 +14,16 @@ export function Attacks() {
     playerCharacter && (
       <CharacterSheetBox>
         <div className="flex flex-col gap-1 h-fit">
-          <div className="mb-1 text-base font-semibold">Attacks</div>
+          <div className="mb-1 text-base font-semibold flex flex-row justify-between">
+            <span>Attacks</span>
+            <span className="text-xs font-light">
+              <Switch
+                label="non-lethal"
+                id="lethality-mode"
+                defaultChecked={false}
+              ></Switch>
+            </span>
+          </div>
           <div className="flex gap-2 flex-col h-full">
             {playerCharacter.getAttacks().map((attack, index) => (
               <div
