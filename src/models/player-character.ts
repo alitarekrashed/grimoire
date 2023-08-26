@@ -699,8 +699,13 @@ export class PlayerCharacter {
       })
     }
 
+    const allowUnarmedLethality =
+      this.features.findIndex(
+        (sourced) => sourced.feature.value.name === 'Powerful Fist'
+      ) > -1 && weapon.traits.includes('unarmed')
+
     if (weapon.traits.includes('nonlethal')) {
-      if (!nonLethal) {
+      if (!nonLethal && !allowUnarmedLethality) {
         attackBonus.push({
           value: -2,
           type: 'circumstance',
