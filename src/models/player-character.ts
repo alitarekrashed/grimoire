@@ -42,6 +42,7 @@ import {
   SavingThrowAttributes,
   SavingThrowType,
 } from './statistic'
+import { Feat } from './db/feat'
 
 export interface CharacterAttack {
   attackBonus: ModifierValue[][]
@@ -302,6 +303,10 @@ export class PlayerCharacter {
 
   public getFeatNames(): string[] {
     return this.featManager.getFeatNames()
+  }
+
+  public getResolvedFeats(): SourcedFeature[] {
+    return this.featManager.getResolvedFeats()
   }
 
   public getTraits(): string[] {
