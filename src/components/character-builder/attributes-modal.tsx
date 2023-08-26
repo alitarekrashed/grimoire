@@ -13,6 +13,7 @@ import { PlayerCharacterContext } from '../character-display/player-character-co
 import { ChoiceSelect } from '../choice-select/choice-select'
 import { OptionInlineIndicator } from '../indicators/indicator'
 import { LoadingSpinner } from '../loading-spinner/loading-spinner'
+import { Switch } from '../base/switch'
 
 const ATTRIBUTES: Attribute[] = [
   'Strength',
@@ -177,56 +178,50 @@ export function AttributesModal({
               {modifiedCharacter.attributes.ancestry.map(
                 (choice: any, i: number) => {
                   return (
-                    <ChoiceSelect
-                      key={i}
-                      value={choice}
-                      title={`Attribute #${i + 1}`}
-                      options={choices.ancestry[i].filter((val) => {
-                        if (val === choice) {
-                          return true
-                        }
-                        return (
-                          modifiedCharacter.attributes.ancestry.indexOf(val) ===
-                          -1
-                        )
-                      })}
-                      onChange={(val: string) => {
-                        let updated = cloneDeep(modifiedCharacter)
-                        updated.attributes.ancestry[i] = val as Attribute
-                        setModifiedCharacter(updated)
-                      }}
-                    ></ChoiceSelect>
+                    <span key={i}>
+                      <ChoiceSelect
+                        value={choice}
+                        title={`Attribute #${i + 1}`}
+                        options={choices.ancestry[i].filter((val) => {
+                          if (val === choice) {
+                            return true
+                          }
+                          return (
+                            modifiedCharacter.attributes.ancestry.indexOf(
+                              val
+                            ) === -1
+                          )
+                        })}
+                        onChange={(val: string) => {
+                          let updated = cloneDeep(modifiedCharacter)
+                          updated.attributes.ancestry[i] = val as Attribute
+                          setModifiedCharacter(updated)
+                        }}
+                      ></ChoiceSelect>
+                    </span>
                   )
                 }
               )}
-              <span className="col-span-2 inline-flex items-center h-fit">
-                <label>
-                  <input
-                    className="bg-stone-700 mt-0.5"
-                    type="checkbox"
-                    checked={
-                      modifiedCharacter.attributes
-                        .free_ancestry_attribute_selection
+              <span className="col-span-2 inline-flex items-center h-fit text-xs font-thin">
+                <Switch
+                  label="freely assign"
+                  id="freely-asssign-attributes"
+                  checked={
+                    modifiedCharacter.attributes
+                      .free_ancestry_attribute_selection
+                  }
+                  onChecked={(checked: boolean) => {
+                    let updated = cloneDeep(modifiedCharacter)
+                    updated.attributes.free_ancestry_attribute_selection =
+                      checked
+                    if (updated.attributes.free_ancestry_attribute_selection) {
+                      updated.attributes.ancestry = [undefined!, undefined!]
+                    } else {
+                      updated.attributes.ancestry = [undefined!]
                     }
-                    onChange={(e) => {
-                      let updated = cloneDeep(modifiedCharacter)
-                      updated.attributes.free_ancestry_attribute_selection =
-                        !modifiedCharacter.attributes
-                          .free_ancestry_attribute_selection
-                      if (
-                        updated.attributes.free_ancestry_attribute_selection
-                      ) {
-                        updated.attributes.ancestry = [undefined!, undefined!]
-                      } else {
-                        updated.attributes.ancestry = [undefined!]
-                      }
-                      setModifiedCharacter(loadWhileSetting(updated))
-                    }}
-                  />
-                  <span className="mr-2 float-left">
-                    Freely assign ancestry attributes
-                  </span>
-                </label>
+                    setModifiedCharacter(loadWhileSetting(updated))
+                  }}
+                ></Switch>
               </span>
             </div>
           </div>
