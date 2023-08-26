@@ -9,7 +9,7 @@ import {
   SkillProficiencyManager,
   createManagerFromFeatures,
 } from '@/utils/services/skill-proficiency-manager'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, over } from 'lodash'
 import { Ancestry, Attribute } from './db/ancestry'
 import {
   Background,
@@ -59,7 +59,7 @@ export interface CharacterArmor {
 
 export interface CharacterWeapon {
   name: string
-  item_name: string
+  item_name?: string
   traits: string[]
   definition: WeaponDefinition
 }
@@ -242,10 +242,10 @@ export class PlayerCharacter {
     private character: CharacterEntity,
     private ancestry: Ancestry,
     private allFeatures: SourcedFeature[],
+    private featManager: FeatManager,
     private heritage?: Heritage,
     private background?: Background,
-    private classEntity?: ClassEntity,
-    private featManager: FeatManager
+    private classEntity?: ClassEntity
   ) {
     this.level = character.level
 
@@ -640,6 +640,12 @@ export class PlayerCharacter {
         })
     )
 
+    weapons.push(
+      ...this.features
+        .filter((value) => value.feature.type === 'ATTACK')
+        .map((value) => value.feature.value)
+    )
+
     const overrideAttacks = this.features
       .filter(
         (val) =>
@@ -647,6 +653,7 @@ export class PlayerCharacter {
       )
       .map((val) => val.feature.value as OverrideFeatureValue)
 
+    console.log(overrideAttacks)
     weapons
       .filter(
         (weapon) =>
@@ -658,7 +665,7 @@ export class PlayerCharacter {
         const override = overrideAttacks.find(
           (override) => override.name === weapon.name
         )!
-        weapon.definition.damage.dice = override.dice
+        weapon.definition.damage.dice = override.die_value
       })
 
     return weapons.map((weapon) => this.buildAttack(weapon))
@@ -1009,10 +1016,10 @@ export class PlayerCharacter {
       character,
       ancestry,
       allFeatures,
+      featManager,
       heritage,
       background,
-      classEntity,
-      featManager
+      classEntity
     )
     return pc
   }

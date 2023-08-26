@@ -52,7 +52,9 @@ export function Attacks() {
                   </span>
                 </div>
                 <div className="flex gap-2 items-center">
-                  <span className="italic">{attack.weapon.item_name}</span>
+                  {attack.weapon.item_name && (
+                    <span className="italic">{attack.weapon.item_name}</span>
+                  )}
                   <TraitsList traits={attack.weapon.traits}></TraitsList>
                 </div>
               </div>

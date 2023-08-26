@@ -21,6 +21,7 @@ export type FeatureType =
   | 'ANCESTRY_FEAT_SELECTION'
   | 'SUBCLASS'
   | 'SUBCLASS_FEATURE'
+  | 'ATTACK'
 export type CalculationFormula = 'half-level'
 export type ConditionalOperator = 'has'
 export type ModifierType = 'Perception' | 'Speed' | 'AttackDamage'
@@ -40,7 +41,7 @@ export interface MiscFeatureValue {
 export interface OverrideFeatureValue {
   type: 'Attack'
   name: string
-  dice: string
+  die_value: string
 }
 
 export interface ModifierFeatureValue {
