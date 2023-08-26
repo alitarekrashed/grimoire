@@ -178,31 +178,33 @@ export function AttributesModal({
               {modifiedCharacter.attributes.ancestry.map(
                 (choice: any, i: number) => {
                   return (
-                    <ChoiceSelect
-                      key={i}
-                      value={choice}
-                      title={`Attribute #${i + 1}`}
-                      options={choices.ancestry[i].filter((val) => {
-                        if (val === choice) {
-                          return true
-                        }
-                        return (
-                          modifiedCharacter.attributes.ancestry.indexOf(val) ===
-                          -1
-                        )
-                      })}
-                      onChange={(val: string) => {
-                        let updated = cloneDeep(modifiedCharacter)
-                        updated.attributes.ancestry[i] = val as Attribute
-                        setModifiedCharacter(updated)
-                      }}
-                    ></ChoiceSelect>
+                    <span key={i}>
+                      <ChoiceSelect
+                        value={choice}
+                        title={`Attribute #${i + 1}`}
+                        options={choices.ancestry[i].filter((val) => {
+                          if (val === choice) {
+                            return true
+                          }
+                          return (
+                            modifiedCharacter.attributes.ancestry.indexOf(
+                              val
+                            ) === -1
+                          )
+                        })}
+                        onChange={(val: string) => {
+                          let updated = cloneDeep(modifiedCharacter)
+                          updated.attributes.ancestry[i] = val as Attribute
+                          setModifiedCharacter(updated)
+                        }}
+                      ></ChoiceSelect>
+                    </span>
                   )
                 }
               )}
-              <span className="col-span-2 inline-flex items-center h-fit text-xs">
+              <span className="col-span-2 inline-flex items-center h-fit text-xs font-thin">
                 <Switch
-                  label="Freely assign"
+                  label="freely assign"
                   id="freely-asssign-attributes"
                   checked={
                     modifiedCharacter.attributes
