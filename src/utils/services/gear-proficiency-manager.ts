@@ -10,7 +10,6 @@ import { CharacterArmor, CharacterWeapon } from '@/models/player-character'
 
 export const FIST_WEAPON: CharacterWeapon = {
   name: 'fist',
-  item_name: 'fist',
   traits: ['agile', 'finesse', 'nonlethal', 'unarmed'],
   definition: {
     category: 'unarmed',
