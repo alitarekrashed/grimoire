@@ -6,6 +6,7 @@ import { CharacterSheetBox } from './character-sheet-box'
 import { PlayerCharacterContext } from './player-character-context'
 import CalculatedDisplay from '../calculated-display/calculated-display'
 import { Switch } from '../base/switch'
+import * as Separator from '@radix-ui/react-separator'
 
 export function Attacks() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
@@ -61,12 +62,16 @@ export function Attacks() {
                       `Reload: ${attack.weapon.definition.reload}`}
                   </span>
                 </div>
-                <div className="flex gap-2 items-center">
+                <div className="flex flex-col gap-1">
                   {attack.weapon.item_name && (
                     <span className="italic">{attack.weapon.item_name}</span>
                   )}
                   <TraitsList traits={attack.weapon.traits}></TraitsList>
                 </div>
+                <Separator.Root
+                  className="w-full bg-stone-400 h-px"
+                  style={{ margin: '5px 0' }}
+                />{' '}
               </div>
             ))}
           </div>
