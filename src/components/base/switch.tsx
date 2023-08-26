@@ -13,10 +13,7 @@ export function Switch({
 }) {
   return (
     <form>
-      <div className="flex items-center">
-        <label className="pr-2" htmlFor={id}>
-          {label}
-        </label>
+      <div className="flex flex-col items-center">
         <RadixSwitch.Root
           checked={checked}
           onCheckedChange={onChecked}
@@ -25,6 +22,9 @@ export function Switch({
         >
           <RadixSwitch.Thumb className="block w-5 h-5 bg-white rounded-full transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-5" />
         </RadixSwitch.Root>
+        <label className="pt-1" htmlFor={id}>
+          {label}
+        </label>
       </div>
     </form>
   )

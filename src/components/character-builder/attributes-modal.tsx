@@ -200,7 +200,7 @@ export function AttributesModal({
                   )
                 }
               )}
-              <span className="col-span-2 inline-flex items-center h-fit">
+              <span className="col-span-2 inline-flex items-center h-fit text-xs">
                 <Switch
                   label="Freely assign"
                   id="freely-asssign-attributes"
