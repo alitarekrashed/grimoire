@@ -87,8 +87,8 @@ export function LevelSection({
         <div className="grid grid-cols-7 gap-2">
           {featuresForLevel
             .filter((sourced) => sourced.feature.type === 'SUBCLASS')
-            .map((val) => (
-              <div>
+            .map((val, index) => (
+              <div key={`${val.feature.name}-${index}`}>
                 <SubclassChoice
                   onSubclassChange={handleSubclassChange}
                   onFeatureUpdate={handleFeatureUpdate}
@@ -102,7 +102,10 @@ export function LevelSection({
                 sourced.feature.type === 'SKILL_SELECTION'
             )
             .map((sourced, index) => (
-              <div className="flex flex-col gap-1">
+              <div
+                key={`${sourced.feature.name}-${index}`}
+                className="flex flex-col gap-1"
+              >
                 <SkillIncreaseModal
                   key={`skills-${index}`}
                   skillFeature={sourced.feature}
@@ -176,7 +179,7 @@ function buildFeatChoice(
     case 'GENERAL_FEAT_SELECTION': {
       return (
         <FeatChoiceModal
-          name="Skill"
+          name="General"
           existingFeat={sourced}
           onChange={onChange}
           traits={['general']}
