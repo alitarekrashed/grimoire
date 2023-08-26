@@ -49,11 +49,15 @@ export function FeatChoiceModal({
         }
         return true
       })
+      // TODO instead of filtering them out, should these be disabled??
       .filter((feat: Feat) => {
         if (feat.name === existingFeat.feature.value) {
           return true
         }
-        return playerCharacter.getFeatNames().includes(feat.name) === false
+        return (
+          playerCharacter.getFeatNames().includes(feat.name) === false ||
+          feat.repeatable
+        )
       })
     return filtered
   }
