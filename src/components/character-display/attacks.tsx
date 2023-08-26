@@ -1,5 +1,5 @@
 import { WeaponGroup } from '@/models/db/character-entity'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { GiBroadsword, GiMailedFist, GiPistolGun } from 'react-icons/gi'
 import { TraitsList } from '../card/traits-list'
 import { CharacterSheetBox } from './character-sheet-box'
@@ -10,6 +10,10 @@ import * as Separator from '@radix-ui/react-separator'
 
 export function Attacks() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
+  const [nonLethalEnabled, setNonLethalEnabled] = useState<boolean>(false)
+
+  const handleLethalityToggle = (checked: boolean) =>
+    setNonLethalEnabled(checked)
 
   return (
     playerCharacter && (
@@ -21,59 +25,62 @@ export function Attacks() {
               <Switch
                 label="non-lethal"
                 id="lethality-mode"
-                defaultChecked={false}
+                checked={nonLethalEnabled}
+                onChecked={handleLethalityToggle}
               ></Switch>
             </span>
           </div>
           <div className="flex gap-2 flex-col h-full">
-            {playerCharacter.getAttacks().map((attack, index) => (
-              <div
-                key={attack.weapon.name + index}
-                className="flex flex-col gap-1 "
-              >
-                <div className="grid grid-cols-12 hover:text-rose-400">
-                  {getIcon(attack.weapon.definition.group)}
-                  <span className="col-span-2">{attack.weapon.name}</span>
-                  <span className="col-span-1">
-                    {attack.weapon.definition.type === 'melee'
-                      ? '5 ft.'
-                      : `${attack.weapon.definition.range} ft.`}
-                  </span>
-                  <span className="col-span-2">
-                    {attack.attackBonus.map((bonus, index) => (
-                      <span key={index}>
-                        <CalculatedDisplay
-                          values={bonus}
-                          includeOperator={true}
-                        ></CalculatedDisplay>
-                        {index < attack.attackBonus.length - 1 && '/'}
-                      </span>
-                    ))}
-                  </span>
-                  <span className="col-span-4">
-                    <span>
-                      {attack.weapon.definition.damage.dice}
-                      {attack.damageBonus !== 0 && ' + ' + attack.damageBonus}
-                      {` ${attack.weapon.definition.damage.type}`}
+            {playerCharacter
+              .getAttacks(nonLethalEnabled)
+              .map((attack, index) => (
+                <div
+                  key={attack.weapon.name + index}
+                  className="flex flex-col gap-1 "
+                >
+                  <div className="grid grid-cols-12 hover:text-rose-400">
+                    {getIcon(attack.weapon.definition.group)}
+                    <span className="col-span-2">{attack.weapon.name}</span>
+                    <span className="col-span-1">
+                      {attack.weapon.definition.type === 'melee'
+                        ? '5 ft.'
+                        : `${attack.weapon.definition.range} ft.`}
                     </span>
-                  </span>
-                  <span className="col-span-2">
-                    {attack.weapon.definition.type === 'ranged' &&
-                      `Reload: ${attack.weapon.definition.reload}`}
-                  </span>
+                    <span className="col-span-2">
+                      {attack.attackBonus.map((bonus, index) => (
+                        <span key={index}>
+                          <CalculatedDisplay
+                            values={bonus}
+                            includeOperator={true}
+                          ></CalculatedDisplay>
+                          {index < attack.attackBonus.length - 1 && '/'}
+                        </span>
+                      ))}
+                    </span>
+                    <span className="col-span-4">
+                      <span>
+                        {attack.weapon.definition.damage.dice}
+                        {attack.damageBonus !== 0 && ' + ' + attack.damageBonus}
+                        {` ${attack.weapon.definition.damage.type}`}
+                      </span>
+                    </span>
+                    <span className="col-span-2">
+                      {attack.weapon.definition.type === 'ranged' &&
+                        `Reload: ${attack.weapon.definition.reload}`}
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    {attack.weapon.item_name && (
+                      <span className="italic">{attack.weapon.item_name}</span>
+                    )}
+                    <TraitsList traits={attack.weapon.traits}></TraitsList>
+                  </div>
+                  <Separator.Root
+                    className="w-full bg-stone-400 h-px"
+                    style={{ margin: '5px 0' }}
+                  />
                 </div>
-                <div className="flex flex-col gap-1">
-                  {attack.weapon.item_name && (
-                    <span className="italic">{attack.weapon.item_name}</span>
-                  )}
-                  <TraitsList traits={attack.weapon.traits}></TraitsList>
-                </div>
-                <Separator.Root
-                  className="w-full bg-stone-400 h-px"
-                  style={{ margin: '5px 0' }}
-                />{' '}
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </CharacterSheetBox>

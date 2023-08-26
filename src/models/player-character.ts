@@ -629,7 +629,7 @@ export class PlayerCharacter {
     }
   }
 
-  public getAttacks(): CharacterAttack[] {
+  public getAttacks(nonLethal: boolean): CharacterAttack[] {
     const weapons: CharacterWeapon[] = [cloneDeep(FIST_WEAPON)]
 
     weapons.push(
@@ -653,7 +653,6 @@ export class PlayerCharacter {
       )
       .map((val) => val.feature.value as OverrideFeatureValue)
 
-    console.log(overrideAttacks)
     weapons
       .filter(
         (weapon) =>
@@ -668,11 +667,14 @@ export class PlayerCharacter {
         weapon.definition.damage.dice = override.die_value
       })
 
-    return weapons.map((weapon) => this.buildAttack(weapon))
+    return weapons.map((weapon) => this.buildAttack(weapon, nonLethal))
   }
 
   // TODO this could use some love
-  private buildAttack(weapon: CharacterWeapon): CharacterAttack {
+  private buildAttack(
+    weapon: CharacterWeapon,
+    nonLethal: boolean
+  ): CharacterAttack {
     const attackBonus: ModifierValue[] = []
 
     if (weapon.definition.type === 'melee') {
@@ -695,6 +697,24 @@ export class PlayerCharacter {
         value: this.attributes.Dexterity,
         source: 'Dexterity',
       })
+    }
+
+    if (weapon.traits.includes('nonlethal')) {
+      if (!nonLethal) {
+        attackBonus.push({
+          value: -2,
+          type: 'circumstance',
+          source: 'lethally attacking with a non-lethal weapon',
+        })
+      }
+    } else {
+      if (nonLethal) {
+        attackBonus.push({
+          value: -2,
+          type: 'circumstance',
+          source: 'non-lethally attacking with a lethal weapon',
+        })
+      }
     }
 
     const rank: ProficiencyRank =

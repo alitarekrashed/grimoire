@@ -3,11 +3,13 @@ import * as RadixSwitch from '@radix-ui/react-switch'
 export function Switch({
   label,
   id,
-  defaultChecked,
+  checked,
+  onChecked,
 }: {
   label: string
   id: string
-  defaultChecked?: boolean
+  checked?: boolean
+  onChecked: (checked: boolean) => void
 }) {
   return (
     <form>
@@ -16,7 +18,8 @@ export function Switch({
           {label}
         </label>
         <RadixSwitch.Root
-          defaultChecked={defaultChecked}
+          checked={checked}
+          onCheckedChange={onChecked}
           className="w-11 h-6 rounded-full border bg-stone-600 data-[state=checked]:bg-stone-950 hover:bg-stone-700 hover:data-[state=checked]:bg-stone-700"
           id={id}
         >
