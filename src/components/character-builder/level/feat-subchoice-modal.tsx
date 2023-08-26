@@ -1,10 +1,9 @@
-import { Feat } from '@/models/db/feat'
-import { ChoiceSelect } from '../../choice-select/choice-select'
-import { useState } from 'react'
-import { useDebounce } from '@/utils/debounce'
-import { BlockIndicator } from '@/components/indicators/indicator'
-import { title } from 'process'
+import { PlayerCharacterContext } from '@/components/character-display/player-character-context'
 import { OtherInput } from '@/components/choice-select/other-input'
+import { Feat } from '@/models/db/feat'
+import { useDebounce } from '@/utils/debounce'
+import { useContext, useState } from 'react'
+import { ChoiceSelect } from '../../choice-select/choice-select'
 
 export function FeatSubChoiceModal({
   feat,
@@ -15,6 +14,7 @@ export function FeatSubChoiceModal({
   choice: string
   onChange: (value: string) => void
 }) {
+  const { playerCharacter } = useContext(PlayerCharacterContext)
   const [otherValue, setOtherValue] = useState<string | undefined>(
     feat.configuration!.options.includes(choice) ? undefined : choice
   )
@@ -23,11 +23,28 @@ export function FeatSubChoiceModal({
     onChange(otherValue!)
   })
 
+  const options = feat.configuration!.options.filter((option: string) => {
+    if (option === choice || option.toLowerCase() === 'other') {
+      return true
+    }
+
+    return (
+      playerCharacter
+        .getResolvedFeats()
+        .filter(
+          (sourced) =>
+            sourced.feature.context && sourced.feature.context.length === 1
+        )
+        .map((sourced) => sourced.feature.context![0])
+        .includes(option) === false
+    )
+  })
+
   return (
     <>
       <ChoiceSelect
         title={feat.configuration!.title}
-        options={feat.configuration?.options!}
+        options={options}
         value={otherValue ? 'other' : choice}
         onChange={(val: string) => {
           if (val === 'other') {

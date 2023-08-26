@@ -35,6 +35,33 @@ export function FeatChoiceModal({
     }
   }
 
+  const filterFeats = (feats: Feat[]): Feat[] => {
+    let filtered = feats
+      .filter((feat: Feat) => feat.level <= level)
+      .filter((feat: Feat) => {
+        if (feat.prerequisites) {
+          return feat.prerequisites.every((prerequisite: Prerequisite) =>
+            evaluatePrerequisite(
+              prerequisite,
+              playerCharacter.getSkillProfciencyManager().getSkills()
+            )
+          )
+        }
+        return true
+      })
+      // TODO instead of filtering them out, should these be disabled??
+      .filter((feat: Feat) => {
+        if (feat.name === existingFeat.feature.value) {
+          return true
+        }
+        return (
+          playerCharacter.getFeatNames().includes(feat.name) === false ||
+          feat.repeatable
+        )
+      })
+    return filtered
+  }
+
   useEffect(() => {
     setFeat(existingFeat)
   }, [existingFeat])
@@ -45,11 +72,7 @@ export function FeatChoiceModal({
     })
       .then((result) => result.json())
       .then((feats) => {
-        let filtered: Feat[] = filterFeats(
-          feats,
-          level,
-          playerCharacter.getSkillProfciencyManager().getSkills()
-        )
+        let filtered: Feat[] = filterFeats(feats)
         filtered.sort((a, b) => b.level - a.level)
         setFeats(filtered)
       })
@@ -97,27 +120,9 @@ export function FeatChoiceModal({
   )
 }
 
-function filterFeats(
-  feats: Feat[],
-  level: number,
-  skillMap: Map<SkillType, CalculatedProficiency>
-): Feat[] {
-  let filtered = feats
-    .filter((feat: Feat) => feat.level <= level)
-    .filter((feat: Feat) => {
-      if (feat.prerequisites) {
-        return feat.prerequisites.every((prerequisite: Prerequisite) =>
-          evaluatePrerequisite(prerequisite, skillMap)
-        )
-      }
-      return true
-    })
-  return filtered
-}
-
 function evaluatePrerequisite(
   prerequisite: Prerequisite,
-  skillMap: Map<SkillType, CalculatedProficiency>
+  skillMap: Map<string, CalculatedProficiency>
 ): boolean {
   switch (prerequisite.type) {
     case 'SKILL':

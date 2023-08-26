@@ -10,6 +10,7 @@ export interface Feat extends EntityModel {
   level: number
   prerequisites: Prerequisite[]
   configuration?: FeatConfiguration
+  repeatable?: boolean
   activation?: Activation
   saving_throw?: SavingThrow
 }
