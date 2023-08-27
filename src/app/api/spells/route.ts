@@ -6,7 +6,6 @@ export async function GET(request: Request) {
   const names: string[] | undefined = searchParams.getAll('names') ?? undefined
 
   let resolvedNames = names.length > 0 ? names[0].split(',') : []
-  console.log(resolvedNames)
 
   return NextResponse.json(await getEntitiesByNames(['SPELL'], resolvedNames))
 }
