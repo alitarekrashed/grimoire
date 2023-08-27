@@ -5,35 +5,18 @@ import { PlayerCharacterContext } from '../player-character-context'
 import { SpellSlot } from './spell-slot'
 import { cloneDeep } from 'lodash'
 import { PlayerCharacter } from '@/models/player-character'
+import { CharacterEntity } from '@/models/db/character-entity'
 
 export function FocusSpells({ spells }: { spells: Spell[] }) {
-  const {
-    playerCharacter,
-    updatePlayerCharacter,
-    updateAndSavePlayerCharacter,
-  } = useContext(PlayerCharacterContext)
+  const { playerCharacter, updateAndSavePlayerCharacter } = useContext(
+    PlayerCharacterContext
+  )
 
-  const focusPool: number = Math.min(spells.length, 3)
-
-  const currentNumber =
-    playerCharacter.getCharacter().player_state.focus_points.length
-
-  const updated = cloneDeep(playerCharacter.getCharacter())
-
-  if (currentNumber < focusPool) {
-    const toAdd = focusPool - currentNumber
-    for (let i = 0; i < toAdd; i++) {
-      updated.player_state.focus_points.push(false)
-    }
-    PlayerCharacter.build(updated).then((val) => updatePlayerCharacter(val))
-  } else if (currentNumber > focusPool) {
-    let removalCounter = currentNumber - focusPool
-    updated.player_state.focus_points.splice(
-      updated.player_state.focus_points.length - removalCounter,
-      removalCounter
-    )
-    PlayerCharacter.build(updated).then((val) => updatePlayerCharacter(val))
-  }
+  reconcileFocusPoints(
+    spells,
+    playerCharacter.getCharacter(),
+    updateAndSavePlayerCharacter
+  )
 
   return (
     <div>
@@ -72,4 +55,35 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
       </span>
     </div>
   )
+}
+
+function reconcileFocusPoints(
+  focusSpells: Spell[],
+  characterEntity: CharacterEntity,
+  updateAndSavePlayerCharacter: (val: PlayerCharacter) => void
+) {
+  const focusPool: number = Math.min(focusSpells.length, 3)
+
+  const currentNumber = characterEntity.player_state.focus_points.length
+
+  const updated = cloneDeep(characterEntity)
+
+  if (currentNumber < focusPool) {
+    const toAdd = focusPool - currentNumber
+    for (let i = 0; i < toAdd; i++) {
+      updated.player_state.focus_points.push(false)
+    }
+    PlayerCharacter.build(updated).then((val) =>
+      updateAndSavePlayerCharacter(val)
+    )
+  } else if (currentNumber > focusPool) {
+    let removalCounter = currentNumber - focusPool
+    updated.player_state.focus_points.splice(
+      updated.player_state.focus_points.length - removalCounter,
+      removalCounter
+    )
+    PlayerCharacter.build(updated).then((val) =>
+      updateAndSavePlayerCharacter(val)
+    )
+  }
 }
