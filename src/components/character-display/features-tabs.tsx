@@ -102,15 +102,21 @@ export function FeaturesTabs() {
           </span>
         </Tabs.Content>
         <Tabs.Content value="spells">
-          <span className="text-xs">
-            {playerCharacter.getSpells().map((spell, index) => (
-              <div key={`${spell}-${index}`} className="mb-1">
-                <SpellInlineDisplay
-                  spellName={spell.feature.value.name}
-                ></SpellInlineDisplay>
-              </div>
-            ))}
-          </span>
+          <div>
+            <div className="text-lg font-light">Focus</div>
+            <span className="text-xs">
+              {playerCharacter
+                .getSpells()
+                .filter((spell) => spell)
+                .map((spell, index) => (
+                  <div key={`${spell}-${index}`} className="mb-1">
+                    <SpellInlineDisplay
+                      spellName={spell.feature.value.name}
+                    ></SpellInlineDisplay>
+                  </div>
+                ))}
+            </span>
+          </div>
         </Tabs.Content>
         <Tabs.Content value="features">
           <span className="text-xs">
