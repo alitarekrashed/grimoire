@@ -1,10 +1,10 @@
 import { Spell } from '@/models/db/spell'
-import { SpellInlineDisplay } from '../spells/spell-inline-display'
-import { SiCodemagic } from 'react-icons/si'
+import { SpellInlineDisplay } from '../../spells/spell-inline-display'
+import { SpellSlot } from './spell-slot'
 
 export function FocusSpells({ spells }: { spells: Spell[] }) {
   const focusPool: number = Math.min(spells.length, 3)
-  const options = []
+  const options: { checked: boolean }[] = []
 
   for (let i = 0; i < focusPool; i++) {
     options.push({ checked: false })
@@ -16,9 +16,13 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
         Focus
         <div className="flex flex-row gap-1">
           {options.map((value, index) => (
-            <button key={index} className="hover:text-rose-600">
-              <SiCodemagic />
-            </button>
+            <SpellSlot
+              key={index}
+              initial={options[index].checked}
+              onClick={(checked: boolean) => {
+                options[index].checked = checked
+              }}
+            ></SpellSlot>
           ))}
         </div>
       </div>

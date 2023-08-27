@@ -15,7 +15,7 @@ import styles from './features-tabs.module.css'
 import { PlayerCharacterContext } from './player-character-context'
 import { SkillDisplay } from './skill-display'
 import { SpellInlineDisplay } from '../spells/spell-inline-display'
-import { Spells } from './spells'
+import { Spells } from './spells-display/spells'
 
 export function FeaturesTabs() {
   const { playerCharacter, updateAndSavePlayerCharacter } = useContext(
