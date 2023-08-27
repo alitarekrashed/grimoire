@@ -70,6 +70,12 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
             <div key={`${spell}-${index}`} className="mb-3">
               <SpellInlineDisplay
                 spell={spell}
+                castDisabled={
+                  playerCharacter
+                    .getCharacter()
+                    .player_state.focus_points.filter((value) => !value)
+                    .length === 0
+                }
                 onCast={handleCast}
               ></SpellInlineDisplay>
             </div>

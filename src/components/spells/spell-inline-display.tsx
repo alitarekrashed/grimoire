@@ -1,27 +1,32 @@
-import { Action } from '@/models/db/action'
-import { EntityModel } from '@/models/db/entity-model'
-import { retrieveEntity } from '@/utils/services/reference-lookup.service'
+import { Spell } from '@/models/db/spell'
 import * as Collapsible from '@radix-ui/react-collapsible'
 import { useEffect, useState } from 'react'
 import { ActionRenderer } from '../activation-displays/action-renderer'
 import { SavingThrowDisplay } from '../activation-displays/activation-description'
-import { ParsedDescription } from '../parsed-description/parsed-description'
 import { TraitsList } from '../card/traits-list'
-import { Spell } from '@/models/db/spell'
+import { ParsedDescription } from '../parsed-description/parsed-description'
 
 export function SpellInlineDisplay({
   spell,
+  castDisabled,
   onCast,
 }: {
   spell: Spell
+  castDisabled?: boolean
   onCast: () => void
 }) {
+  const [disabled, setDisabled] = useState<boolean>(false)
+
+  useEffect(() => {
+    setDisabled(castDisabled!)
+  }, [castDisabled])
   return (
     <>
       {spell && (
         <div className="flex flex-row gap-2 items-center relative">
           <button
-            className="absolute top-0 flex-grow-0 rounded-md border border-stone-300 py-0.5 px-1 text-[9px] hover:bg-stone-300/40"
+            className="absolute top-0 flex-grow-0 rounded-md border border-stone-300 py-0.5 px-1 text-[9px] hover:bg-stone-300/40 disabled:border-stone-500 disabled:text-stone-500 disabled:hover:bg-transparent"
+            disabled={disabled}
             onClick={onCast}
           >
             CAST
