@@ -7,6 +7,8 @@ import { PlayerCharacterContext } from './player-character-context'
 import CalculatedDisplay from '../calculated-display/calculated-display'
 import { Switch } from '../base/switch'
 import * as Separator from '@radix-ui/react-separator'
+import { IoSparklesSharp } from 'react-icons/io5'
+import { HoverDisplay } from '../base/hover-display'
 
 export function Attacks() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
@@ -38,9 +40,26 @@ export function Attacks() {
                   key={attack.weapon.name + index}
                   className="flex flex-col gap-1 "
                 >
-                  <div className="grid grid-cols-12 hover:text-rose-400">
+                  <div className="grid grid-cols-12">
                     {getIcon(attack.weapon.definition.group)}
-                    <span className="col-span-2">{attack.weapon.name}</span>
+                    <span className="col-span-3">
+                      <span className="flex flex-row gap-1 items-center">
+                        {attack.weapon.name}
+                        {attack.weapon.definition.additional &&
+                          attack.weapon.definition.additional.map(
+                            (value, index) => (
+                              <span key={index}>
+                                <HoverDisplay
+                                  title={
+                                    <IoSparklesSharp className="text-emerald-300" />
+                                  }
+                                  content={value.value}
+                                ></HoverDisplay>
+                              </span>
+                            )
+                          )}
+                      </span>
+                    </span>
                     <span className="col-span-1">
                       {attack.weapon.definition.type === 'melee'
                         ? '5 ft.'
@@ -58,21 +77,33 @@ export function Attacks() {
                       ))}
                     </span>
                     <span className="col-span-4">
-                      <span>
-                        {attack.weapon.definition.damage.dice}
-                        {attack.damageBonus !== 0 && ' + ' + attack.damageBonus}
-                        {` ${attack.weapon.definition.damage.type}`}
+                      <span className="flex flex-row items-center gap-1">
+                        {attack.weapon.definition.damage.map(
+                          (damage, index) => (
+                            <span key={index}>
+                              {damage.dice}
+                              {attack.damageBonus !== 0 &&
+                                ' + ' + attack.damageBonus}
+                              {` ${damage.type}`}
+                            </span>
+                          )
+                        )}
                       </span>
-                    </span>
-                    <span className="col-span-2">
-                      {attack.weapon.definition.type === 'ranged' &&
-                        `Reload: ${attack.weapon.definition.reload}`}
                     </span>
                   </div>
                   <div className="flex flex-col gap-1">
-                    {attack.weapon.item_name && (
-                      <span className="italic">{attack.weapon.item_name}</span>
-                    )}
+                    <div className="flex flex-row gap-2">
+                      {attack.weapon.item_name && (
+                        <span className="italic">
+                          {attack.weapon.item_name}
+                        </span>
+                      )}
+                      <span className="col-span-2">
+                        {attack.weapon.definition.type === 'ranged' &&
+                          `Reload: ${attack.weapon.definition.reload}`}
+                      </span>
+                    </div>
+
                     <TraitsList traits={attack.weapon.traits}></TraitsList>
                   </div>
                   <Separator.Root

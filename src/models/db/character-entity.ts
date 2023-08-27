@@ -50,13 +50,14 @@ export interface ArmorDefinition {
 export type WeaponCategory = 'unarmed' | 'martial'
 export type WeaponGroup = 'brawling' | 'sword' | 'firearm'
 export type WeaponType = 'melee' | 'ranged'
-export type DamageType = 'bludgeoning' | 'piercing'
+export type DamageType = 'bludgeoning' | 'piercing' | 'persistent bleed'
 
 export interface WeaponDefinition {
   category: WeaponCategory
   group: WeaponGroup
   type: WeaponType
-  damage: WeaponDamageDefinition
+  additional: { value: string }[]
+  damage: WeaponDamageDefinition[]
   reload?: number
   range?: number
 }

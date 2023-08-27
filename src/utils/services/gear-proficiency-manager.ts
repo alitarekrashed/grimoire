@@ -15,10 +15,12 @@ export const FIST_WEAPON: CharacterWeapon = {
     category: 'unarmed',
     group: 'brawling',
     type: 'melee',
-    damage: {
-      type: 'bludgeoning',
-      dice: '1d4',
-    },
+    damage: [
+      {
+        type: 'bludgeoning',
+        dice: '1d4',
+      },
+    ],
   },
 }
 

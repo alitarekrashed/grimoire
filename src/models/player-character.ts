@@ -666,7 +666,8 @@ export class PlayerCharacter {
         const override = overrideAttacks.find(
           (override) => override.name === weapon.name
         )!
-        weapon.definition.damage.dice = override.die_value
+        // probably need a better solution
+        weapon.definition.damage[0].dice = override.die_value
       })
 
     return weapons.map((weapon) => this.buildAttack(weapon, nonLethal))
