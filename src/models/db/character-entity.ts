@@ -50,13 +50,13 @@ export interface ArmorDefinition {
 export type WeaponCategory = 'unarmed' | 'martial'
 export type WeaponGroup = 'brawling' | 'sword' | 'firearm'
 export type WeaponType = 'melee' | 'ranged'
-export type DamageType = 'bludgeoning' | 'piercing'
+export type DamageType = 'bludgeoning' | 'piercing' | 'persistent bleed'
 
 export interface WeaponDefinition {
   category: WeaponCategory
   group: WeaponGroup
   type: WeaponType
-  damage: WeaponDamageDefinition
+  damage: WeaponDamageDefinition[]
   reload?: number
   range?: number
 }
@@ -64,4 +64,5 @@ export interface WeaponDefinition {
 export interface WeaponDamageDefinition {
   type: DamageType
   dice: string
+  condition?: 'CRITICAL_SUCCESS' | string
 }

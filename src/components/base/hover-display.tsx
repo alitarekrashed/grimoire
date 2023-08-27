@@ -15,7 +15,7 @@ export function HoverDisplay({
         <HoverCard.Trigger>{title}</HoverCard.Trigger>
         <HoverCard.Portal>
           <HoverCard.Content
-            className={`data-[side=bottom]:animate-slideUpAndFade data-[side=right]:animate-slideLeftAndFade data-[side=left]:animate-slideRightAndFade data-[side=top]:animate-slideDownAndFadev rounded-md border border-stone-300 p-4 w-128 text-xs bg-stone-800 shadow-stone-400 shadow ${roboto_serif.className}`}
+            className={`data-[side=bottom]:animate-slideUpAndFade data-[side=right]:animate-slideLeftAndFade data-[side=left]:animate-slideRightAndFade data-[side=top]:animate-slideDownAndFade rounded-md border border-stone-300 p-4 w-128 text-xs bg-stone-800 shadow-stone-400 shadow ${roboto_serif.className}`}
           >
             {content}
             <HoverCard.Arrow className="fill-stone-600" />

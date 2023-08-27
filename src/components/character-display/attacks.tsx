@@ -7,6 +7,8 @@ import { PlayerCharacterContext } from './player-character-context'
 import CalculatedDisplay from '../calculated-display/calculated-display'
 import { Switch } from '../base/switch'
 import * as Separator from '@radix-ui/react-separator'
+import { IoSparklesSharp } from 'react-icons/io5'
+import { HoverDisplay } from '../base/hover-display'
 
 export function Attacks() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
@@ -38,7 +40,7 @@ export function Attacks() {
                   key={attack.weapon.name + index}
                   className="flex flex-col gap-1 "
                 >
-                  <div className="grid grid-cols-12 hover:text-rose-400">
+                  <div className="grid grid-cols-12">
                     {getIcon(attack.weapon.definition.group)}
                     <span className="col-span-2">{attack.weapon.name}</span>
                     <span className="col-span-1">
@@ -58,10 +60,31 @@ export function Attacks() {
                       ))}
                     </span>
                     <span className="col-span-4">
-                      <span>
-                        {attack.weapon.definition.damage.dice}
-                        {attack.damageBonus !== 0 && ' + ' + attack.damageBonus}
-                        {` ${attack.weapon.definition.damage.type}`}
+                      <span className="flex flex-row items-center gap-1">
+                        {attack.weapon.definition.damage
+                          .filter((value) => !value.condition)
+                          .map((damage, index) => (
+                            <span key={index}>
+                              {damage.dice}
+                              {attack.damageBonus !== 0 &&
+                                ' + ' + attack.damageBonus}
+                              {` ${damage.type}`}
+                            </span>
+                          ))}
+                        {attack.weapon.definition.damage
+                          .filter(
+                            (value) => value.condition === 'CRITICAL_SUCCESS'
+                          )
+                          .map((value, index) => (
+                            <span key={index}>
+                              <HoverDisplay
+                                title={
+                                  <IoSparklesSharp className="text-emerald-300" />
+                                }
+                                content={`On critical success, deal an additional ${value.dice} ${value.type}`}
+                              ></HoverDisplay>
+                            </span>
+                          ))}
                       </span>
                     </span>
                     <span className="col-span-2">
