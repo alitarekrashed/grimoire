@@ -9,15 +9,7 @@ import { ParsedDescription } from '../parsed-description/parsed-description'
 import { TraitsList } from '../card/traits-list'
 import { Spell } from '@/models/db/spell'
 
-export function SpellInlineDisplay({ spellName }: { spellName: string }) {
-  const [spell, setSpell] = useState<Spell>()
-
-  useEffect(() => {
-    retrieveEntity(spellName, 'SPELL').then((value: EntityModel) => {
-      setSpell(value as Spell)
-    })
-  }, [spellName])
-
+export function SpellInlineDisplay({ spell }: { spell: Spell }) {
   return (
     <>
       {spell && (

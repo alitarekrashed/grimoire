@@ -1,9 +1,12 @@
-import { getAllEntities } from '@/utils/services/db.service'
+import { getEntitiesByNames } from '@/utils/services/db.service'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
-  const name = searchParams.get('name') ?? undefined
+  const names: string[] | undefined = searchParams.getAll('names') ?? undefined
 
-  return NextResponse.json(await getAllEntities(['SPELL'], name))
+  let resolvedNames = names.length > 0 ? names[0].split(',') : []
+  console.log(resolvedNames)
+
+  return NextResponse.json(await getEntitiesByNames(['SPELL'], resolvedNames))
 }

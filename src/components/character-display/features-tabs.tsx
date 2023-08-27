@@ -15,6 +15,7 @@ import styles from './features-tabs.module.css'
 import { PlayerCharacterContext } from './player-character-context'
 import { SkillDisplay } from './skill-display'
 import { SpellInlineDisplay } from '../spells/spell-inline-display'
+import { Spells } from './spells'
 
 export function FeaturesTabs() {
   const { playerCharacter, updateAndSavePlayerCharacter } = useContext(
@@ -102,21 +103,11 @@ export function FeaturesTabs() {
           </span>
         </Tabs.Content>
         <Tabs.Content value="spells">
-          <div>
-            <div className="text-lg font-light">Focus</div>
-            <span className="text-xs">
-              {playerCharacter
-                .getSpells()
-                .filter((spell) => spell)
-                .map((spell, index) => (
-                  <div key={`${spell}-${index}`} className="mb-1">
-                    <SpellInlineDisplay
-                      spellName={spell.feature.value.name}
-                    ></SpellInlineDisplay>
-                  </div>
-                ))}
-            </span>
-          </div>
+          <Spells
+            spellNames={playerCharacter
+              .getSpells()
+              .map((sourced) => sourced.feature.value.name)}
+          ></Spells>
         </Tabs.Content>
         <Tabs.Content value="features">
           <span className="text-xs">
