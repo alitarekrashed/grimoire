@@ -43,7 +43,9 @@ export function FeatChoiceModal({
           return feat.prerequisites.every((prerequisite: Prerequisite) =>
             evaluatePrerequisite(
               prerequisite,
-              playerCharacter.getSkillProfciencyManager().getSkills()
+              playerCharacter.getSkillProfciencyManager().getSkills(),
+              playerCharacter.getFeatNames(),
+              playerCharacter.getActions()
             )
           )
         }
@@ -122,7 +124,9 @@ export function FeatChoiceModal({
 
 function evaluatePrerequisite(
   prerequisite: Prerequisite,
-  skillMap: Map<string, CalculatedProficiency>
+  skillMap: Map<string, CalculatedProficiency>,
+  featNames: string[],
+  actions: SourcedFeature[]
 ): boolean {
   switch (prerequisite.type) {
     case 'SKILL':
@@ -130,6 +134,13 @@ function evaluatePrerequisite(
         skillMap.get(prerequisite.value.skill)!.rank,
         prerequisite.value.minimum_rank
       )
+    case 'FEAT':
+      return featNames.includes(prerequisite.value)
+    case 'ACTION':
+      console.log(actions.map((sourced) => sourced.feature.value))
+      return actions
+        .map((sourced) => sourced.feature.value)
+        .includes(prerequisite.value)
     default:
       return true
   }

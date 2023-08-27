@@ -43,7 +43,7 @@ export function Attacks() {
                   <div className="grid grid-cols-12">
                     {getIcon(attack.weapon.definition.group)}
                     <span className="col-span-3">
-                      <span className="flex flex-row gap-1">
+                      <span className="flex flex-row gap-1 items-center">
                         {attack.weapon.name}
                         {attack.weapon.definition.additional &&
                           attack.weapon.definition.additional.map(
