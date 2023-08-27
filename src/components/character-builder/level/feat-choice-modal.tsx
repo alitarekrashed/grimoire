@@ -137,7 +137,6 @@ function evaluatePrerequisite(
     case 'FEAT':
       return featNames.includes(prerequisite.value)
     case 'ACTION':
-      console.log(actions.map((sourced) => sourced.feature.value))
       return actions
         .map((sourced) => sourced.feature.value)
         .includes(prerequisite.value)
