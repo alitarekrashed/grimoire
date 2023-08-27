@@ -1,11 +1,11 @@
+import { CharacterEntity } from '@/models/db/character-entity'
 import { Spell } from '@/models/db/spell'
+import { PlayerCharacter } from '@/models/player-character'
+import { cloneDeep } from 'lodash'
 import { useContext } from 'react'
 import { SpellInlineDisplay } from '../../spells/spell-inline-display'
 import { PlayerCharacterContext } from '../player-character-context'
 import { SpellSlot } from './spell-slot'
-import { cloneDeep } from 'lodash'
-import { PlayerCharacter } from '@/models/player-character'
-import { CharacterEntity } from '@/models/db/character-entity'
 
 export function FocusSpells({ spells }: { spells: Spell[] }) {
   const { playerCharacter, updateAndSavePlayerCharacter } = useContext(
@@ -17,6 +17,25 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
     playerCharacter.getCharacter(),
     updateAndSavePlayerCharacter
   )
+
+  const handleCast = () => {
+    for (
+      let i = 0;
+      i < playerCharacter.getCharacter().player_state.focus_points.length;
+      i++
+    ) {
+      if (
+        playerCharacter.getCharacter().player_state.focus_points[i] === false
+      ) {
+        const updated = cloneDeep(playerCharacter.getCharacter())
+        updated.player_state.focus_points[i] = true
+        PlayerCharacter.build(updated).then((val) =>
+          updateAndSavePlayerCharacter(val)
+        )
+        break
+      }
+    }
+  }
 
   return (
     <div>
@@ -49,7 +68,10 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
           spells.length > 0 &&
           spells.map((spell, index) => (
             <div key={`${spell}-${index}`} className="mb-3">
-              <SpellInlineDisplay spell={spell}></SpellInlineDisplay>
+              <SpellInlineDisplay
+                spell={spell}
+                onCast={handleCast}
+              ></SpellInlineDisplay>
             </div>
           ))}
       </span>

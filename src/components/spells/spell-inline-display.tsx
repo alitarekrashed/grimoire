@@ -9,12 +9,21 @@ import { ParsedDescription } from '../parsed-description/parsed-description'
 import { TraitsList } from '../card/traits-list'
 import { Spell } from '@/models/db/spell'
 
-export function SpellInlineDisplay({ spell }: { spell: Spell }) {
+export function SpellInlineDisplay({
+  spell,
+  onCast,
+}: {
+  spell: Spell
+  onCast: () => void
+}) {
   return (
     <>
       {spell && (
         <div className="flex flex-row gap-2 items-center relative">
-          <button className="absolute top-0 flex-grow-0 rounded-md border border-stone-300 py-0.5 px-1 text-[9px]">
+          <button
+            className="absolute top-0 flex-grow-0 rounded-md border border-stone-300 py-0.5 px-1 text-[9px] hover:bg-stone-300/40"
+            onClick={onCast}
+          >
             CAST
           </button>
           <div className="flex-1 ml-10">
