@@ -24,7 +24,7 @@ export default function SpellCard({
   collapsible?: boolean
   onRemoved?: (item: Spell) => void
 }) {
-  const type = value.rank === 0 ? 'Cantrip' : 'Spell'
+  const type = getType(value)
   let activation = { ...value.activation }
   activation.override_label = 'Cast'
 
@@ -107,4 +107,11 @@ function withOrdinalSuffix(i: number): string {
     return i + 'rd'
   }
   return i + 'th'
+}
+
+function getType(value: Spell) {
+  if (value.focus) {
+    return 'Focus'
+  }
+  return value.rank === 0 ? 'Cantrip' : 'Spell'
 }

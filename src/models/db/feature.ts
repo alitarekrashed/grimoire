@@ -22,6 +22,7 @@ export type FeatureType =
   | 'SUBCLASS'
   | 'SUBCLASS_FEATURE'
   | 'ATTACK'
+  | 'SPELL'
 export type CalculationFormula = 'half-level'
 export type ConditionalOperator = 'has'
 export type ModifierType = 'Perception' | 'Speed' | 'AttackDamage'
@@ -52,6 +53,10 @@ export interface ModifierFeatureValue {
     value: number
     type?: 'circumstance'
   }
+}
+
+export interface SpellFeatureValue {
+  name: string
 }
 
 export interface ResistanceFeatureValue {
