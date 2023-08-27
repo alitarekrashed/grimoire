@@ -48,7 +48,7 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
         {spells &&
           spells.length > 0 &&
           spells.map((spell, index) => (
-            <div key={`${spell}-${index}`} className="mb-1">
+            <div key={`${spell}-${index}`} className="mb-3">
               <SpellInlineDisplay spell={spell}></SpellInlineDisplay>
             </div>
           ))}
