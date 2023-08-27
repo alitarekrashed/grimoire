@@ -34,6 +34,9 @@ export function NewCharacterButton({ onSave }: { onSave: () => void }) {
             class: [],
             level_1: [null!, null!, null!, null!],
           },
+          player_state: {
+            focus_points: [],
+          },
           languages: [],
           ancestry_id: '64c86dc6ce00a34d75caa80f',
           background_id: '64c87a12ce00a34d75caa812',
