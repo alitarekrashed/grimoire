@@ -14,6 +14,7 @@ import { ParsedDescription } from '../parsed-description/parsed-description'
 import styles from './features-tabs.module.css'
 import { PlayerCharacterContext } from './player-character-context'
 import { SkillDisplay } from './skill-display'
+import { SpellInlineDisplay } from '../spells/spell-inline-display'
 
 export function FeaturesTabs() {
   const { playerCharacter, updateAndSavePlayerCharacter } = useContext(
@@ -104,7 +105,9 @@ export function FeaturesTabs() {
           <span className="text-xs">
             {playerCharacter.getSpells().map((spell, index) => (
               <div key={`${spell}-${index}`} className="mb-1">
-                {spell.feature.value.name}
+                <SpellInlineDisplay
+                  spellName={spell.feature.value.name}
+                ></SpellInlineDisplay>
               </div>
             ))}
           </span>
