@@ -7,6 +7,7 @@ export type HeightenedType = 'formula' | 'explicit'
 export interface Spell extends EntityModel {
   rank: number
   rarity?: string
+  focus: boolean
   traits: string[]
   traditions: Tradition[]
   activation: Activation
