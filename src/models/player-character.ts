@@ -445,9 +445,11 @@ export class PlayerCharacter {
   }
 
   public getActions(): SourcedFeature[] {
-    return this.features
-      .filter((feature) => feature.feature.type === 'ACTION')
-      .map((feature) => feature)
+    return this.features.filter((feature) => feature.feature.type === 'ACTION')
+  }
+
+  public getSpells(): SourcedFeature[] {
+    return this.features.filter((feature) => feature.feature.type === 'SPELL')
   }
 
   public getProficiencies(exclude?: Feature[]): {

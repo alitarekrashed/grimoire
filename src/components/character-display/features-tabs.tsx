@@ -76,6 +76,9 @@ export function FeaturesTabs() {
           <Tabs.Trigger value="actions" className={styles.tabHeader}>
             Actions
           </Tabs.Trigger>
+          <Tabs.Trigger value="spells" className={styles.tabHeader}>
+            Spells
+          </Tabs.Trigger>
           <Tabs.Trigger value="features" className={styles.tabHeader}>
             Features
           </Tabs.Trigger>
@@ -93,6 +96,15 @@ export function FeaturesTabs() {
                 <ActionInlineDisplay
                   actionName={action.feature.value}
                 ></ActionInlineDisplay>
+              </div>
+            ))}
+          </span>
+        </Tabs.Content>
+        <Tabs.Content value="spells">
+          <span className="text-xs">
+            {playerCharacter.getSpells().map((spell, index) => (
+              <div key={`${spell}-${index}`} className="mb-1">
+                {spell.feature.value.name}
               </div>
             ))}
           </span>
