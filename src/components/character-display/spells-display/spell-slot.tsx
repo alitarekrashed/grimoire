@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { SiCodemagic } from 'react-icons/si'
+import { GiTriorb } from 'react-icons/gi'
 
 export function SpellSlot({
   initial,
@@ -19,7 +19,7 @@ export function SpellSlot({
         setChecked(!checked)
       }}
     >
-      <SiCodemagic />
+      <GiTriorb />
     </button>
   )
 }
