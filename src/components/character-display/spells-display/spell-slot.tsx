@@ -12,7 +12,7 @@ export function SpellSlot({
 
   return (
     <button
-      className="data-[checked=true]:text-stone-300/50 data-[checked=true]:hover:text-stone-200/75 transition-transform duration-100 hover:scale-125"
+      className="text-emerald-300 data-[checked=true]:text-stone-300/50 data-[checked=true]:hover:text-stone-200/75 transition-transform duration-100 hover:scale-125"
       data-checked={checked}
       onClick={() => {
         onClick(!checked)
