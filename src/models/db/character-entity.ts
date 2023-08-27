@@ -56,6 +56,7 @@ export interface WeaponDefinition {
   category: WeaponCategory
   group: WeaponGroup
   type: WeaponType
+  additional: { value: string }[]
   damage: WeaponDamageDefinition[]
   reload?: number
   range?: number
@@ -64,5 +65,4 @@ export interface WeaponDefinition {
 export interface WeaponDamageDefinition {
   type: DamageType
   dice: string
-  condition?: 'CRITICAL_SUCCESS' | string
 }

@@ -42,7 +42,24 @@ export function Attacks() {
                 >
                   <div className="grid grid-cols-12">
                     {getIcon(attack.weapon.definition.group)}
-                    <span className="col-span-2">{attack.weapon.name}</span>
+                    <span className="col-span-3">
+                      <span className="flex flex-row gap-1">
+                        {attack.weapon.name}
+                        {attack.weapon.definition.additional &&
+                          attack.weapon.definition.additional.map(
+                            (value, index) => (
+                              <span key={index}>
+                                <HoverDisplay
+                                  title={
+                                    <IoSparklesSharp className="text-emerald-300" />
+                                  }
+                                  content={value.value}
+                                ></HoverDisplay>
+                              </span>
+                            )
+                          )}
+                      </span>
+                    </span>
                     <span className="col-span-1">
                       {attack.weapon.definition.type === 'melee'
                         ? '5 ft.'
@@ -61,41 +78,32 @@ export function Attacks() {
                     </span>
                     <span className="col-span-4">
                       <span className="flex flex-row items-center gap-1">
-                        {attack.weapon.definition.damage
-                          .filter((value) => !value.condition)
-                          .map((damage, index) => (
+                        {attack.weapon.definition.damage.map(
+                          (damage, index) => (
                             <span key={index}>
                               {damage.dice}
                               {attack.damageBonus !== 0 &&
                                 ' + ' + attack.damageBonus}
                               {` ${damage.type}`}
                             </span>
-                          ))}
-                        {attack.weapon.definition.damage
-                          .filter(
-                            (value) => value.condition === 'CRITICAL_SUCCESS'
                           )
-                          .map((value, index) => (
-                            <span key={index}>
-                              <HoverDisplay
-                                title={
-                                  <IoSparklesSharp className="text-emerald-300" />
-                                }
-                                content={`On critical success, deal an additional ${value.dice} ${value.type}`}
-                              ></HoverDisplay>
-                            </span>
-                          ))}
+                        )}
                       </span>
-                    </span>
-                    <span className="col-span-2">
-                      {attack.weapon.definition.type === 'ranged' &&
-                        `Reload: ${attack.weapon.definition.reload}`}
                     </span>
                   </div>
                   <div className="flex flex-col gap-1">
-                    {attack.weapon.item_name && (
-                      <span className="italic">{attack.weapon.item_name}</span>
-                    )}
+                    <div className="flex flex-row gap-2">
+                      {attack.weapon.item_name && (
+                        <span className="italic">
+                          {attack.weapon.item_name}
+                        </span>
+                      )}
+                      <span className="col-span-2">
+                        {attack.weapon.definition.type === 'ranged' &&
+                          `Reload: ${attack.weapon.definition.reload}`}
+                      </span>
+                    </div>
+
                     <TraitsList traits={attack.weapon.traits}></TraitsList>
                   </div>
                   <Separator.Root
