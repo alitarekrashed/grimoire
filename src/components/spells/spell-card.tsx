@@ -8,10 +8,9 @@ import {
   Spell,
 } from '@/models/db/spell'
 import { FieldDefinition, LabelsList } from '../labels-list/labels-list'
-import * as Separator from '@radix-ui/react-separator'
-import build from 'next/dist/build'
 import { SavingThrowDisplay } from '../activation-displays/activation-description'
 import { RefObject } from 'react'
+import { Separator } from '../base/separator'
 
 export default function SpellCard({
   reference,
@@ -38,10 +37,7 @@ export default function SpellCard({
           <SavingThrowDisplay value={value.saving_throw}></SavingThrowDisplay>
         </div>
       )}
-      <Separator.Root
-        className="w-full bg-stone-400	h-px"
-        style={{ margin: '10px 0' }}
-      />
+      <Separator className="my-2"></Separator>
       <div className="mb-1">
         {heightenedLevels.map((level, index) => (
           <div key={level.label}>

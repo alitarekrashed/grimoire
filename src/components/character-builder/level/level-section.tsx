@@ -1,8 +1,6 @@
-import { CharacterEntity } from '@/models/db/character-entity'
 import { Feature } from '@/models/db/feature'
 import { Subclass } from '@/models/db/subclass'
 import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
-import * as Separator from '@radix-ui/react-separator'
 import { cloneDeep } from 'lodash'
 import { useContext } from 'react'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
@@ -10,6 +8,7 @@ import { CharacterLevelContext } from '../character-level-context'
 import { SkillIncreaseModal } from '../skills/skill-increase-modal'
 import { FeatChoiceModal } from './feat-choice-modal'
 import { SubclassChoice } from './subclass-choice'
+import { Separator } from '@/components/base/separator'
 
 export function LevelSection({
   wrapCharacterUpdate,
@@ -78,10 +77,7 @@ export function LevelSection({
 
   return (
     <div key={`level-${level}`}>
-      <Separator.Root
-        className="w-full bg-stone-300/50 h-px"
-        style={{ margin: '10px 0' }}
-      />
+      <Separator className="my-2"></Separator>
       <div>
         <span className="flex text-stone-300 mb-1">Level {level}</span>
         <div className="grid grid-cols-7 gap-2">

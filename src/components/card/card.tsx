@@ -4,7 +4,6 @@ import { Activation, isActionLongerThanTurn } from '@/models/db/activation'
 import { EntityModel } from '@/models/db/entity-model'
 import { roboto_serif } from '@/utils/fonts'
 import * as Collapsible from '@radix-ui/react-collapsible'
-import * as Separator from '@radix-ui/react-separator'
 import { RefObject, useEffect, useState } from 'react'
 import {
   ActivationDescription,
@@ -14,6 +13,7 @@ import { ParsedDescription } from '../parsed-description/parsed-description'
 import styles from './card.module.css'
 import SourceDisplay from './source-display'
 import { TraitsList } from './traits-list'
+import { Separator } from '../base/separator'
 
 export default function Card<T extends EntityModel>({
   reference,
@@ -110,10 +110,8 @@ export default function Card<T extends EntityModel>({
               ></ActivationDescription>
             </span>
           )}
-          <Separator.Root
-            className="w-full bg-stone-400	h-px"
-            style={{ margin: '10px 0' }}
-          />
+          <Separator className="my-2"></Separator>
+
           <div
             className={`${
               contentTextSizeClassName
