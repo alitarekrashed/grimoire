@@ -1,12 +1,12 @@
 import { CharacterEntity } from '@/models/db/character-entity'
 import { Spell } from '@/models/db/spell'
-import * as Separator from '@radix-ui/react-separator'
 import { cloneDeep } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
 import { SpellInlineDisplay } from '../../spells/spell-inline-display'
 import { PlayerCharacterContext } from '../player-character-context'
 import { RefocusButton } from './refocus-button'
 import { SpellSlot } from './spell-slot'
+import { Separator } from '@/components/base/separator'
 
 export function FocusSpells({ spells }: { spells: Spell[] }) {
   const { playerCharacter, updateAndSaveCharacterEntity } = useContext(
@@ -64,11 +64,7 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
           onClick={handleRefocus}
         ></RefocusButton>
       </div>
-      <Separator.Root
-        className="w-full bg-stone-400 h-px mb-1"
-        style={{ margin: '5px 0' }}
-      />
-
+      <Separator className="my-2"></Separator>
       <span className="text-xs">
         {spells &&
           spells.length > 0 &&

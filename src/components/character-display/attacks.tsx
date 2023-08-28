@@ -6,9 +6,9 @@ import { CharacterSheetBox } from './character-sheet-box'
 import { PlayerCharacterContext } from './player-character-context'
 import CalculatedDisplay from '../calculated-display/calculated-display'
 import { Switch } from '../base/switch'
-import * as Separator from '@radix-ui/react-separator'
 import { IoSparklesSharp } from 'react-icons/io5'
 import { HoverDisplay } from '../base/hover-display'
+import { Separator } from '../base/separator'
 
 export function Attacks() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
@@ -106,10 +106,7 @@ export function Attacks() {
 
                     <TraitsList traits={attack.weapon.traits}></TraitsList>
                   </div>
-                  <Separator.Root
-                    className="w-full bg-stone-400 h-px"
-                    style={{ margin: '5px 0' }}
-                  />
+                  <Separator className="my-2"></Separator>
                 </div>
               ))}
           </div>

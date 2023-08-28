@@ -4,7 +4,7 @@ import { Ancestry } from '@/models/db/ancestry'
 import { RefObject } from 'react'
 import Card from '../card/card'
 import { LabelsList } from '../labels-list/labels-list'
-import * as Separator from '@radix-ui/react-separator'
+import { Separator } from '../base/separator'
 
 export default function AncestryCard({
   reference,
@@ -20,10 +20,7 @@ export default function AncestryCard({
   // TODO need to render langauges, attribute bonuses and flaws, as well as any additional features granted
   const additionalContent = (
     <div>
-      <Separator.Root
-        className="w-full bg-stone-400	h-px"
-        style={{ margin: '10px 0' }}
-      />
+      <Separator className="my-2"></Separator>
       <LabelsList
         labelClassName="font-bold"
         fieldDefinitions={[

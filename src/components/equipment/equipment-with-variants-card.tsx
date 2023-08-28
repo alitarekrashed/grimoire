@@ -5,12 +5,12 @@ import {
   EquipmentWithVariants,
 } from '@/models/db/equipment'
 import { getPriceValue } from '@/utils/services/currency-utils'
-import * as Separator from '@radix-ui/react-separator'
 import Card from '../card/card'
 import { LabelsList } from '../labels-list/labels-list'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 import { EquipmentOptionalFields } from './equipment-optional-fields'
 import { SavingThrowDisplay } from '../activation-displays/activation-description'
+import { Separator } from '../base/separator'
 
 export default function EquipmentWithVariantsCard({
   value,
@@ -82,10 +82,7 @@ function EquipmentTypesList({
     ]
     return (
       <div key={value.name}>
-        <Separator.Root
-          className="w-full bg-stone-400 h-px"
-          style={{ margin: '10px 0' }}
-        />
+        <Separator className="my-2"></Separator>
         <div className="mb-1">
           <LabelsList fieldDefinitions={fields}></LabelsList>
         </div>
