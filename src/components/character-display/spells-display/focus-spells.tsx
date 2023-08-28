@@ -28,7 +28,6 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
       if (character.player_state.focus_points[i] === false) {
         const updated = cloneDeep(character)
         updated.player_state.focus_points[i] = true
-        setCharacter(updated)
         updateAndSaveCharacterEntity(updated)
         break
       }
