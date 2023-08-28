@@ -6,6 +6,8 @@ import { useContext } from 'react'
 import { SpellInlineDisplay } from '../../spells/spell-inline-display'
 import { PlayerCharacterContext } from '../player-character-context'
 import { SpellSlot } from './spell-slot'
+import * as Separator from '@radix-ui/react-separator'
+import { RefocusButton } from './refocus-button'
 
 export function FocusSpells({ spells }: { spells: Spell[] }) {
   const { playerCharacter, updateAndSavePlayerCharacter } = useContext(
@@ -37,11 +39,25 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
     }
   }
 
+  const handleRefocus = () => {
+    const updated = cloneDeep(playerCharacter.getCharacter())
+    for (
+      let i = 0;
+      i < playerCharacter.getCharacter().player_state.focus_points.length;
+      i++
+    ) {
+      updated.player_state.focus_points[i] = false
+    }
+    PlayerCharacter.build(updated).then((val) =>
+      updateAndSavePlayerCharacter(val)
+    )
+  }
+
   return (
     <div>
-      <div className="text-lg font-light flex flex-row gap-2 items-center">
+      <div className="text-lg font-light flex flex-row gap-2 items-center mb-1">
         Focus
-        <div className="flex flex-row gap-1">
+        <div className="flex flex-row flex-1 gap-1">
           {playerCharacter
             .getCharacter()
             .player_state.focus_points.map((value, index) => (
@@ -62,7 +78,18 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
               ></SpellSlot>
             ))}
         </div>
+        <RefocusButton
+          disabled={playerCharacter
+            .getCharacter()
+            .player_state.focus_points.every((val) => !val)}
+          onClick={handleRefocus}
+        ></RefocusButton>
       </div>
+      <Separator.Root
+        className="w-full bg-stone-400 h-px mb-1"
+        style={{ margin: '5px 0' }}
+      />
+
       <span className="text-xs">
         {spells &&
           spells.length > 0 &&
@@ -70,12 +97,9 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
             <div key={`${spell}-${index}`} className="mb-3">
               <SpellInlineDisplay
                 spell={spell}
-                castDisabled={
-                  playerCharacter
-                    .getCharacter()
-                    .player_state.focus_points.filter((value) => !value)
-                    .length === 0
-                }
+                castDisabled={playerCharacter
+                  .getCharacter()
+                  .player_state.focus_points.every((val) => val)}
                 onCast={handleCast}
               ></SpellInlineDisplay>
             </div>
