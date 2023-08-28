@@ -11,6 +11,7 @@ import {
   PlayerCharacterProvider,
 } from './player-character-context'
 import CalculatedDisplay from '../calculated-display/calculated-display'
+import { Button } from '../base/button'
 
 export function CharacterHeader({
   onBuilderClose,
@@ -34,14 +35,7 @@ export function CharacterHeader({
               <span className="align-bottom">
                 <PlayerCharacterProvider>
                   <CharacterBuilderModal
-                    trigger={
-                      <button
-                        className="text-[9px] px-2 border rounded-md bg-stone-800 hover:bg-stone-600"
-                        tabIndex={0}
-                      >
-                        MANAGE
-                      </button>
-                    }
+                    trigger={<Button label="MANAGE" />}
                     initialValue={playerCharacter}
                     onClose={onBuilderClose}
                   ></CharacterBuilderModal>
