@@ -14,6 +14,7 @@ import styles from './card.module.css'
 import SourceDisplay from './source-display'
 import { TraitsList } from './traits-list'
 import { Separator } from '../base/separator'
+import { Button } from '../base/button'
 
 export default function Card<T extends EntityModel>({
   reference,
@@ -136,12 +137,7 @@ export default function Card<T extends EntityModel>({
           <br />
           <div className="flex justify-between align-middle text-[10px]">
             {onRemoved && (
-              <button
-                className="border rounded-md border-stone-500 p-1 hover:bg-stone-600 bg-stone-900"
-                onClick={() => onRemoved(data)}
-              >
-                Remove
-              </button>
+              <Button label="REMOVE" onClick={() => onRemoved(data)} />
             )}
             <div className="flex place-self-center">
               <SourceDisplay value={data.source}></SourceDisplay>
