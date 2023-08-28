@@ -1,56 +1,45 @@
 import { CharacterEntity } from '@/models/db/character-entity'
 import { Spell } from '@/models/db/spell'
-import { PlayerCharacter } from '@/models/player-character'
+import * as Separator from '@radix-ui/react-separator'
 import { cloneDeep } from 'lodash'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { SpellInlineDisplay } from '../../spells/spell-inline-display'
 import { PlayerCharacterContext } from '../player-character-context'
-import { SpellSlot } from './spell-slot'
-import * as Separator from '@radix-ui/react-separator'
 import { RefocusButton } from './refocus-button'
+import { SpellSlot } from './spell-slot'
 
 export function FocusSpells({ spells }: { spells: Spell[] }) {
-  const { playerCharacter, updateAndSavePlayerCharacter } = useContext(
+  const { playerCharacter, updateAndSaveCharacterEntity } = useContext(
     PlayerCharacterContext
   )
 
-  reconcileFocusPoints(
-    spells,
-    playerCharacter.getCharacter(),
-    updateAndSavePlayerCharacter
+  const [character, setCharacter] = useState<CharacterEntity>(
+    playerCharacter.getCharacter()
   )
 
+  useEffect(() => {
+    setCharacter(playerCharacter.getCharacter())
+  }, [playerCharacter])
+
+  reconcileFocusPoints(spells, character, updateAndSaveCharacterEntity)
+
   const handleCast = () => {
-    for (
-      let i = 0;
-      i < playerCharacter.getCharacter().player_state.focus_points.length;
-      i++
-    ) {
-      if (
-        playerCharacter.getCharacter().player_state.focus_points[i] === false
-      ) {
-        const updated = cloneDeep(playerCharacter.getCharacter())
+    for (let i = 0; i < character.player_state.focus_points.length; i++) {
+      if (character.player_state.focus_points[i] === false) {
+        const updated = cloneDeep(character)
         updated.player_state.focus_points[i] = true
-        PlayerCharacter.build(updated).then((val) =>
-          updateAndSavePlayerCharacter(val)
-        )
+        updateAndSaveCharacterEntity(updated)
         break
       }
     }
   }
 
   const handleRefocus = () => {
-    const updated = cloneDeep(playerCharacter.getCharacter())
-    for (
-      let i = 0;
-      i < playerCharacter.getCharacter().player_state.focus_points.length;
-      i++
-    ) {
+    const updated = cloneDeep(character)
+    for (let i = 0; i < character.player_state.focus_points.length; i++) {
       updated.player_state.focus_points[i] = false
     }
-    PlayerCharacter.build(updated).then((val) =>
-      updateAndSavePlayerCharacter(val)
-    )
+    updateAndSaveCharacterEntity(updated)
   }
 
   return (
@@ -58,30 +47,20 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
       <div className="text-lg font-light flex flex-row gap-2 items-center mb-1">
         Focus
         <div className="flex flex-row flex-1 gap-1">
-          {playerCharacter
-            .getCharacter()
-            .player_state.focus_points.map((value, index) => (
-              <SpellSlot
-                key={index}
-                initial={
-                  playerCharacter.getCharacter().player_state.focus_points[
-                    index
-                  ]
-                }
-                onClick={(checked: boolean) => {
-                  const updated = cloneDeep(playerCharacter.getCharacter())
-                  updated.player_state.focus_points[index] = checked
-                  PlayerCharacter.build(updated).then((val) =>
-                    updateAndSavePlayerCharacter(val)
-                  )
-                }}
-              ></SpellSlot>
-            ))}
+          {character.player_state.focus_points.map((value, index) => (
+            <SpellSlot
+              key={index}
+              initial={character.player_state.focus_points[index]}
+              onClick={(checked: boolean) => {
+                const updated = cloneDeep(character)
+                updated.player_state.focus_points[index] = checked
+                updateAndSaveCharacterEntity(updated)
+              }}
+            ></SpellSlot>
+          ))}
         </div>
         <RefocusButton
-          disabled={playerCharacter
-            .getCharacter()
-            .player_state.focus_points.every((val) => !val)}
+          disabled={character.player_state.focus_points.every((val) => !val)}
           onClick={handleRefocus}
         ></RefocusButton>
       </div>
@@ -97,9 +76,9 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
             <div key={`${spell}-${index}`} className="mb-3">
               <SpellInlineDisplay
                 spell={spell}
-                castDisabled={playerCharacter
-                  .getCharacter()
-                  .player_state.focus_points.every((val) => val)}
+                castDisabled={character.player_state.focus_points.every(
+                  (val) => val
+                )}
                 onCast={handleCast}
               ></SpellInlineDisplay>
             </div>
@@ -112,7 +91,7 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
 function reconcileFocusPoints(
   focusSpells: Spell[],
   characterEntity: CharacterEntity,
-  updateAndSavePlayerCharacter: (val: PlayerCharacter) => void
+  updateAndSaveCharacterEntity: (val: CharacterEntity) => void
 ) {
   const focusPool: number = Math.min(focusSpells.length, 3)
 
@@ -125,17 +104,13 @@ function reconcileFocusPoints(
     for (let i = 0; i < toAdd; i++) {
       updated.player_state.focus_points.push(false)
     }
-    PlayerCharacter.build(updated).then((val) =>
-      updateAndSavePlayerCharacter(val)
-    )
+    updateAndSaveCharacterEntity(updated)
   } else if (currentNumber > focusPool) {
     let removalCounter = currentNumber - focusPool
     updated.player_state.focus_points.splice(
       updated.player_state.focus_points.length - removalCounter,
       removalCounter
     )
-    PlayerCharacter.build(updated).then((val) =>
-      updateAndSavePlayerCharacter(val)
-    )
+    updateAndSaveCharacterEntity(updated)
   }
 }
