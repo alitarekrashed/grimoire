@@ -16,6 +16,7 @@ import { PlayerCharacterContext } from './player-character-context'
 import { SkillDisplay } from './skill-display'
 import { SpellInlineDisplay } from '../spells/spell-inline-display'
 import { Spells } from './spells-display/spells'
+import { Button } from '../base/button'
 
 export function FeaturesTabs() {
   const { playerCharacter, updateAndSavePlayerCharacter } = useContext(
@@ -133,26 +134,24 @@ export function FeaturesTabs() {
                       {value[0] === 'Armor' &&
                         item.id !==
                           playerCharacter.getCharacter().equipped_armor && (
-                          <button
+                          <Button
                             onClick={() => {
                               updateEquippedArmor(item.id)
                             }}
-                            className="ml-2 rounded border border-stone-300 p-0.5"
-                          >
-                            Equip
-                          </button>
+                            label="EQUIP"
+                            className="ml-2"
+                          />
                         )}
                       {value[0] === 'Armor' &&
                         item.id ===
                           playerCharacter.getCharacter().equipped_armor && (
-                          <button
+                          <Button
                             onClick={() => {
                               updateEquippedArmor('')
                             }}
-                            className="ml-2 rounded border border-stone-300 p-0.5"
-                          >
-                            Remove
-                          </button>
+                            label="REMOVE"
+                            className="ml-2 border-rose-600"
+                          />
                         )}
                     </span>
                   ))}
