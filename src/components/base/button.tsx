@@ -1,17 +1,8 @@
 import { roboto_flex } from '@/utils/fonts'
-import { useEffect, useState } from 'react'
+import { forwardRef, useEffect, useState } from 'react'
 
-export function Button({
-  label,
-  onClick,
-  disabled,
-  className,
-}: {
-  label: string
-  onClick?: () => void
-  disabled?: boolean
-  className?: string
-}) {
+export const Button = forwardRef(function Button(props: any, ref) {
+  const { label, onClick, disabled, className, ...otherProps } = props
   const [isDisabled, setIsDisabled] = useState<boolean>(disabled ?? false)
 
   useEffect(() => {
@@ -24,8 +15,9 @@ export function Button({
       onClick={onClick}
       className={`${roboto_flex.className} text-[9px] font-light px-2 border rounded-md bg-stone-800 hover:bg-stone-600 disabled:border-stone-500 disabled:text-stone-500 disabled:hover:bg-transparent ${className}`}
       tabIndex={0}
+      {...otherProps}
     >
       {label}
     </button>
   )
-}
+})
