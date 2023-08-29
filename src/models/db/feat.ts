@@ -29,5 +29,6 @@ export interface PrerequisiteSkillValue {
 
 export interface FeatConfiguration {
   title: string
-  options: string[]
+  type?: 'SPELL_SELECTION'
+  options: string[] | any
 }

@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from 'react'
 import { FeatureChoiceModal } from '../feature-choice-modal'
 import { cloneDeep } from 'lodash'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
-import { FeatSubChoiceModal } from './feat-subchoice-modal'
+import { FeatSubChoiceSelect } from './feat-subchoice-select'
 import { CharacterLevelContext } from '../character-level-context'
 import { isGreaterThanOrEqualTo } from '@/utils/services/gear-proficiency-manager'
 import { CalculatedProficiency, SkillType } from '@/models/statistic'
@@ -109,14 +109,17 @@ export function FeatChoiceModal({
           onChange(updated)
         }}
       ></FeatureChoiceModal>
-      {featWithSubChoice && (
+      {featWithSubChoice && !featWithSubChoice.configuration!.type && (
         <div className="mt-1">
-          <FeatSubChoiceModal
+          <FeatSubChoiceSelect
             feat={featWithSubChoice}
             choice={feat.feature.context ? feat.feature.context[0] : ''}
             onChange={handleSubChoiceChange}
-          ></FeatSubChoiceModal>
+          ></FeatSubChoiceSelect>
         </div>
+      )}
+      {featWithSubChoice && featWithSubChoice.configuration!.type && (
+        <div className="mt-1">banan!</div>
       )}
     </>
   )

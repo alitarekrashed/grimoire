@@ -7,7 +7,7 @@ import { cloneDeep } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
 import { FeatureChoiceModal } from '../feature-choice-modal'
-import { FeatSubChoiceModal } from '../level/feat-subchoice-modal'
+import { FeatSubChoiceSelect } from '../level/feat-subchoice-select'
 
 export function BackgroundChoiceModal({
   onUpdate,
@@ -104,11 +104,11 @@ export function BackgroundChoiceModal({
       ></FeatureChoiceModal>
       {featWithSubChoice && (
         <div className="mt-1">
-          <FeatSubChoiceModal
+          <FeatSubChoiceSelect
             feat={featWithSubChoice}
             choice={getBackgroundFeatFromCharacter().feature.context![0]}
             onChange={handleSubChoiceChange}
-          ></FeatSubChoiceModal>
+          ></FeatSubChoiceSelect>
         </div>
       )}
     </>

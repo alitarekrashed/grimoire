@@ -5,7 +5,7 @@ import { useDebounce } from '@/utils/debounce'
 import { useContext, useState } from 'react'
 import { ChoiceSelect } from '../../choice-select/choice-select'
 
-export function FeatSubChoiceModal({
+export function FeatSubChoiceSelect({
   feat,
   choice,
   onChange,
