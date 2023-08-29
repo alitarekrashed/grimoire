@@ -1,8 +1,8 @@
-import { inter } from '@/utils/fonts'
 import { Activation, SavingThrow } from './activation'
 import { ProficiencyRank } from './background'
 import { EntityModel } from './entity-model'
 import { Feature } from './feature'
+import { Tradition } from './spell'
 
 export interface Feat extends EntityModel {
   traits: string[]
@@ -31,4 +31,9 @@ export interface FeatConfiguration {
   title: string
   type?: 'SPELL_SELECTION'
   options: string[] | any
+}
+
+export interface SpellSelectionOption {
+  tradition: Tradition
+  rank: number
 }

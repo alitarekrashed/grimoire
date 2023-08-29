@@ -13,6 +13,7 @@ import {
 import { EntityModel, ModelType } from '@/models/db/entity-model'
 import clientPromise from '../mongodb'
 import { CharacterEntity } from '@/models/db/character-entity'
+import { Spell, Tradition } from '@/models/db/spell'
 
 async function getDatabase(): Promise<Db> {
   const client: MongoClient = await clientPromise
@@ -84,6 +85,48 @@ export async function getEntitiesByNames<T extends EntityModel>(
     }
   }
   return collection.find(search).sort('name', 1).toArray()
+}
+
+export async function getSpells(
+  names?: string[],
+  traditions?: string[],
+  ranks?: string[]
+): Promise<WithId<Spell>[]> {
+  const collection = await getEntitiesCollection<Spell>()
+
+  let search: Filter<Spell> = {}
+  search = {
+    ...search,
+    entity_type: 'SPELL',
+  }
+
+  if (traditions && traditions.length > 0) {
+    console.log(traditions)
+    search = {
+      ...search,
+      traditions: {
+        $in: traditions as Tradition[],
+      },
+    }
+  }
+
+  if (ranks && ranks.length > 0) {
+    search = {
+      ...search,
+      rank: {
+        $in: ranks.map((val) => Number(val)),
+      },
+    }
+  }
+
+  if (names && names.length > 0) {
+    search = {
+      ...search,
+      name: { $in: names },
+    }
+  }
+
+  return collection.find(search).sort('name', 1).sort('rank', 1).toArray()
 }
 
 export async function getSubclasses(

@@ -23,3 +23,16 @@ export function retrieveEntityByNames(
     return entities ?? []
   })()
 }
+
+export function retrieveSpellsByTraditionAndRank(
+  traditions: string[],
+  ranks: string[]
+): Promise<EntityModel[]> {
+  return (async () => {
+    const url: string = baseApiRouteFactory('SPELL')!
+    const entities = await (
+      await fetch(`${url}?traditions=${traditions}&ranks=${ranks}`)
+    ).json()
+    return entities ?? []
+  })()
+}

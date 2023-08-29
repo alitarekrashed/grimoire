@@ -8,6 +8,7 @@ import { FeatSubChoiceSelect } from './feat-subchoice-select'
 import { CharacterLevelContext } from '../character-level-context'
 import { isGreaterThanOrEqualTo } from '@/utils/services/gear-proficiency-manager'
 import { CalculatedProficiency, SkillType } from '@/models/statistic'
+import { FeatSpellModal } from './feat-spell-modal'
 
 export function FeatChoiceModal({
   name,
@@ -119,7 +120,11 @@ export function FeatChoiceModal({
         </div>
       )}
       {featWithSubChoice && featWithSubChoice.configuration!.type && (
-        <div className="mt-1">banan!</div>
+        <FeatSpellModal
+          feat={featWithSubChoice}
+          choice={feat.feature.context ? feat.feature.context[0] : ''}
+          onChange={handleSubChoiceChange}
+        ></FeatSpellModal>
       )}
     </>
   )
