@@ -1,5 +1,6 @@
 import { EntityModel, ModelType } from '@/models/db/entity-model'
 import { baseApiRouteFactory } from '../entity-url.factory'
+import { Spell } from '@/models/db/spell'
 
 export function retrieveEntity(
   key: string,
@@ -27,7 +28,7 @@ export function retrieveEntityByNames(
 export function retrieveSpellsByTraditionAndRank(
   traditions: string[],
   ranks: string[]
-): Promise<EntityModel[]> {
+): Promise<Spell[]> {
   return (async () => {
     const url: string = baseApiRouteFactory('SPELL')!
     const entities = await (

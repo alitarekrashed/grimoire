@@ -101,7 +101,6 @@ export async function getSpells(
   }
 
   if (traditions && traditions.length > 0) {
-    console.log(traditions)
     search = {
       ...search,
       traditions: {

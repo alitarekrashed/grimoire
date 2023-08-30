@@ -27,44 +27,6 @@ export function FeatChoiceModal({
   const [featWithSubChoice, setFeatWithSubChoice] = useState<Feat>()
   const [feats, setFeats] = useState<Feat[]>([])
 
-  const matchFeat = () => {
-    const matched = feats.find((val) => val.name === feat.feature.value)
-    if (matched && matched.configuration) {
-      setFeatWithSubChoice(matched)
-    } else {
-      setFeatWithSubChoice(undefined)
-    }
-  }
-
-  const filterFeats = (feats: Feat[]): Feat[] => {
-    let filtered = feats
-      .filter((feat: Feat) => feat.level <= level)
-      .filter((feat: Feat) => {
-        if (feat.prerequisites) {
-          return feat.prerequisites.every((prerequisite: Prerequisite) =>
-            evaluatePrerequisite(
-              prerequisite,
-              playerCharacter.getSkillProfciencyManager().getSkills(),
-              playerCharacter.getFeatNames(),
-              playerCharacter.getActions()
-            )
-          )
-        }
-        return true
-      })
-      // TODO instead of filtering them out, should these be disabled??
-      .filter((feat: Feat) => {
-        if (feat.name === existingFeat.feature.value) {
-          return true
-        }
-        return (
-          playerCharacter.getFeatNames().includes(feat.name) === false ||
-          feat.repeatable
-        )
-      })
-    return filtered
-  }
-
   useEffect(() => {
     setFeat(existingFeat)
   }, [existingFeat])
@@ -75,13 +37,50 @@ export function FeatChoiceModal({
     })
       .then((result) => result.json())
       .then((feats) => {
+        const filterFeats = (feats: Feat[]): Feat[] => {
+          let filtered = feats
+            .filter((feat: Feat) => feat.level <= level)
+            .filter((feat: Feat) => {
+              if (feat.prerequisites) {
+                return feat.prerequisites.every((prerequisite: Prerequisite) =>
+                  evaluatePrerequisite(
+                    prerequisite,
+                    playerCharacter.getSkillProfciencyManager().getSkills(),
+                    playerCharacter.getFeatNames(),
+                    playerCharacter.getActions()
+                  )
+                )
+              }
+              return true
+            })
+            // TODO instead of filtering them out, should these be disabled??
+            .filter((feat: Feat) => {
+              if (feat.name === existingFeat.feature.value) {
+                return true
+              }
+              return (
+                playerCharacter.getFeatNames().includes(feat.name) === false ||
+                feat.repeatable
+              )
+            })
+          return filtered
+        }
+
         let filtered: Feat[] = filterFeats(feats)
         filtered.sort((a, b) => b.level - a.level)
         setFeats(filtered)
       })
-  }, [playerCharacter.getTraits()])
+  }, [traits, existingFeat, level, playerCharacter])
 
   useEffect(() => {
+    const matchFeat = () => {
+      const matched = feats.find((val) => val.name === feat.feature.value)
+      if (matched && matched.configuration) {
+        setFeatWithSubChoice(matched)
+      } else {
+        setFeatWithSubChoice(undefined)
+      }
+    }
     matchFeat()
   }, [feat, feats])
 
@@ -93,31 +92,31 @@ export function FeatChoiceModal({
 
   return (
     <>
-      <FeatureChoiceModal
-        label={`${name} Feat`}
-        entities={feats}
-        initialId={existingFeat.feature.value ?? ''}
-        idField="name"
-        onSave={(val: Feat) => {
-          const updated = cloneDeep(feat)
-          updated.feature.value = val.name
-          updated.feature.context = []
-          onChange(updated)
-        }}
-        onClear={() => {
-          const updated = cloneDeep(feat)
-          updated.feature.value = null!
-          onChange(updated)
-        }}
-      ></FeatureChoiceModal>
+      <div className="mb-1">
+        <FeatureChoiceModal
+          label={`${name} Feat`}
+          entities={feats}
+          initialId={existingFeat.feature.value ?? ''}
+          idField="name"
+          onSave={(val: Feat) => {
+            const updated = cloneDeep(feat)
+            updated.feature.value = val.name
+            updated.feature.context = []
+            onChange(updated)
+          }}
+          onClear={() => {
+            const updated = cloneDeep(feat)
+            updated.feature.value = null!
+            onChange(updated)
+          }}
+        ></FeatureChoiceModal>
+      </div>
       {featWithSubChoice && !featWithSubChoice.configuration!.type && (
-        <div className="mt-1">
-          <FeatSubChoiceSelect
-            feat={featWithSubChoice}
-            choice={feat.feature.context ? feat.feature.context[0] : ''}
-            onChange={handleSubChoiceChange}
-          ></FeatSubChoiceSelect>
-        </div>
+        <FeatSubChoiceSelect
+          feat={featWithSubChoice}
+          choice={feat.feature.context ? feat.feature.context[0] : ''}
+          onChange={handleSubChoiceChange}
+        ></FeatSubChoiceSelect>
       )}
       {featWithSubChoice && featWithSubChoice.configuration!.type && (
         <FeatSpellModal
