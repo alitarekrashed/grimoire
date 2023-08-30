@@ -1,5 +1,5 @@
 export type RangeUnit = 'feet' | 'touch'
-export type DurationUnit = 'minutes'
+export type DurationUnit = 'minutes' | 'sustained'
 export type AreaUnit = 'emanataion'
 export type Targets = '1 or 2 creatures' | '1 creature'
 export type SavingThrowType = 'basic Reflex'
