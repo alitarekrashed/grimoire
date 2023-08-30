@@ -65,7 +65,7 @@ export function ActivationDescription({
     {
       label: 'Duration',
       value: value?.duration
-        ? `${value!.duration.value} ${value!.duration.unit}`
+        ? `${value!.duration.value ?? ''} ${value!.duration.unit}`
         : undefined,
     },
   ]
