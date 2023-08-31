@@ -41,6 +41,7 @@ import {
   CalculatedProficiency,
   SavingThrowAttributes,
   SavingThrowType,
+  SkillAttributes,
 } from './statistic'
 import { Feat } from './db/feat'
 
@@ -450,6 +451,27 @@ export class PlayerCharacter {
 
   public getSpells(): SourcedFeature[] {
     return this.features.filter((feature) => feature.feature.type === 'SPELL')
+  }
+
+  // TODO right now this is setup for innate spells only, we'll need something more versatile in the future...
+  public getSpellProficiencies(): {
+    attack: CalculatedProficiency
+    savingThrow: CalculatedProficiency
+  } {
+    // i think eventually i'll need tradition-specific DCs probably?
+    // and innate spells will use the highest
+    return {
+      attack: {
+        rank: 'trained',
+        modifier:
+          RankModifierMap['trained'] + this.level + this.attributes['Charisma'],
+      },
+      savingThrow: {
+        rank: 'trained',
+        modifier:
+          RankModifierMap['trained'] + this.level + this.attributes['Charisma'],
+      },
+    }
   }
 
   public getProficiencies(exclude?: Feature[]): {

@@ -1,7 +1,7 @@
 import { EntityModel } from '@/models/db/entity-model'
 import { roboto_condensed } from '@/utils/fonts'
 import { CardFactory } from '@/utils/services/card-factory'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Modal } from '../base/modal'
 import { OptionInlineIndicator } from '../indicators/indicator'
 
@@ -23,7 +23,10 @@ export function FeatureChoiceModal<T extends EntityModel>({
   const [saved, setSaved] = useState<T>()
   const [selected, setSelected] = useState<T>()
 
-  const resolveIdField: () => keyof EntityModel = () => idField ?? '_id'
+  const resolveIdField: () => keyof EntityModel = useCallback(
+    () => idField ?? '_id',
+    [idField]
+  )
 
   useEffect(() => {
     const entity = entities.find(
@@ -45,7 +48,7 @@ export function FeatureChoiceModal<T extends EntityModel>({
     ) {
       onClear()
     }
-  }, [entities, initialId])
+  }, [entities, initialId, onClear, resolveIdField])
 
   return (
     <>

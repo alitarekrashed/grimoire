@@ -57,6 +57,7 @@ export interface ModifierFeatureValue {
 
 export interface SpellFeatureValue {
   name: string
+  innate: boolean
 }
 
 export interface ResistanceFeatureValue {

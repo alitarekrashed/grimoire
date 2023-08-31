@@ -17,6 +17,7 @@ import { SkillDisplay } from './skill-display'
 import { SpellInlineDisplay } from '../spells/spell-inline-display'
 import { Spells } from './spells-display/spells'
 import { Button } from '../base/button'
+import { SpellFeatureValue } from '@/models/db/feature'
 
 export function FeaturesTabs() {
   const { playerCharacter, updateAndSavePlayerCharacter } = useContext(
@@ -105,9 +106,9 @@ export function FeaturesTabs() {
         </Tabs.Content>
         <Tabs.Content value="spells">
           <Spells
-            spellNames={playerCharacter
+            features={playerCharacter
               .getSpells()
-              .map((sourced) => sourced.feature.value.name)}
+              .map((sourced) => sourced.feature.value as SpellFeatureValue)}
           ></Spells>
         </Tabs.Content>
         <Tabs.Content value="features">
