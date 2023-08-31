@@ -42,6 +42,16 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
     updateAndSaveCharacterEntity(updated)
   }
 
+  // TODO eventually we'll also need a dedicated spell casting modifier + tradition for each of these
+  const mappedSpells: any = {}
+  spells.forEach((spell) => {
+    if (!mappedSpells[spell.focus!]) {
+      mappedSpells[spell.focus!] = [spell]
+    } else {
+      mappedSpells[spell.focus!].push(spell)
+    }
+  })
+
   return (
     <div>
       <div className="text-lg font-light flex flex-row gap-2 items-center mb-1">
@@ -65,21 +75,26 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
         ></RefocusButton>
       </div>
       <Separator className="my-2"></Separator>
-      <span className="text-xs">
-        {spells &&
-          spells.length > 0 &&
-          spells.map((spell, index) => (
-            <div key={`${spell}-${index}`} className="mb-3">
-              <SpellInlineDisplay
-                spell={spell}
-                castDisabled={character.player_state.focus_points.every(
-                  (val) => val
-                )}
-                onCast={handleCast}
-              ></SpellInlineDisplay>
-            </div>
-          ))}
-      </span>
+      {Object.entries(mappedSpells).map((val: any) => (
+        <div className="flex flex-col gap-1" key={val[0]}>
+          <span className="text-sm capitalize">{val[0]} spells</span>
+          <span className="text-xs">
+            {val[1] &&
+              (val[1] as Spell[]).length > 0 &&
+              (val[1] as Spell[]).map((spell, index) => (
+                <div key={`${spell}-${index}`} className="mb-3">
+                  <SpellInlineDisplay
+                    spell={spell}
+                    castDisabled={character.player_state.focus_points.every(
+                      (val) => val
+                    )}
+                    onCast={handleCast}
+                  ></SpellInlineDisplay>
+                </div>
+              ))}
+          </span>
+        </div>
+      ))}
     </div>
   )
 }
