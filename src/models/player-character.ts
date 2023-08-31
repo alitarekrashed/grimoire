@@ -458,6 +458,8 @@ export class PlayerCharacter {
     attack: CalculatedProficiency
     savingThrow: CalculatedProficiency
   } {
+    // i think eventually i'll need tradition-specific DCs probably?
+    // and innate spells will use the highest
     return {
       attack: {
         rank: 'trained',
