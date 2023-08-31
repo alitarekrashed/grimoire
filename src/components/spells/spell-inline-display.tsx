@@ -7,6 +7,7 @@ import { TraitsList } from '../card/traits-list'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 import { Button } from '../base/button'
 import { PlayerCharacterContext } from '../character-display/player-character-context'
+import React from 'react'
 
 export function SpellInlineDisplay({
   spell,
@@ -15,7 +16,7 @@ export function SpellInlineDisplay({
 }: {
   spell: Spell
   castDisabled?: boolean
-  onCast: () => void
+  onCast?: () => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [disabled, setDisabled] = useState<boolean>(false)
@@ -27,13 +28,18 @@ export function SpellInlineDisplay({
     <>
       {spell && (
         <div className="flex flex-row gap-2 items-center relative">
-          <Button
-            className="absolute top-0 flew-grow-0 py-0.5"
-            label="CAST"
-            disabled={disabled}
-            onClick={onCast}
-          />
-          <div className="flex-1 ml-12">
+          {onCast && (
+            <>
+              <Button
+                className="absolute top-0 flew-grow-0 py-0.5"
+                label="CAST"
+                disabled={disabled}
+                onClick={onCast}
+              />
+              <div className="mr-12"></div>
+            </>
+          )}
+          <div className="flex-1">
             <Collapsible.Root defaultOpen={false}>
               <Collapsible.Trigger className="w-full py-0.5 flex justify-start rounded-sm bg-stone-300/40 hover:bg-stone-500/40">
                 <span className="flex-0 ml-1 mr-1">{spell.name}</span>
