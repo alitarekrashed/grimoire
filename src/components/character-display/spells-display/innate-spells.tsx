@@ -2,13 +2,16 @@ import { useContext } from 'react'
 import { PlayerCharacterContext } from '../player-character-context'
 import { Separator } from '@/components/base/separator'
 import { SpellInlineDisplay } from '@/components/spells/spell-inline-display'
+import { SpellcastingProficiencies } from '@/utils/services/spellcasting-manager'
 
 export function InnateSpells({ spells }: { spells: Spell[] }) {
   const { playerCharacter, updateAndSaveCharacterEntity } = useContext(
     PlayerCharacterContext
   )
 
-  const proficiencies = playerCharacter.getSpellProficiencies()
+  const proficiencies: SpellcastingProficiencies = playerCharacter
+    .getSpellcastingManager()
+    .getSpellcasting('innate')
 
   return (
     <div>

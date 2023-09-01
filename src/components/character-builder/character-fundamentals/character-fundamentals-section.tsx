@@ -10,6 +10,11 @@ import { BackgroundChoiceModal } from './background-choice-modal'
 import { ClassChoiceModal } from './class-choice-modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LevelSelect } from './level-select'
+import { ChoiceSelect } from '@/components/choice-select/choice-select'
+import { Tradition } from '@/models/db/spell'
+import { SpellcastingDefinition } from '@/models/db/class-entity'
+import { SpellFeatureValue } from '@/models/db/feature'
+import { SpellcastingTraditionChoice } from './spellcasting-tradition-choice'
 
 export function CharacterFundamentalsSection({
   wrapCharacterUpdate,
@@ -47,17 +52,9 @@ export function CharacterFundamentalsSection({
     loadCharacter(updated)
   }
 
-  const handleAsyncUpdate = (
-    updateFunction: (
-      playerCharacter: PlayerCharacter
-    ) => Promise<PlayerCharacter>
-  ) => {
-    const load: Promise<void> = (async () => {
-      const updated = await updateFunction(playerCharacter)
-      updatePlayerCharacter(updated)
-    })()
-    wrapCharacterUpdate(load)
-  }
+  const spellcastingChoice = playerCharacter
+    .getCharacter()
+    .spellcasting.find((val) => val.value?.tradition?.options)
 
   return (
     <div className="mb-2 grid grid-cols-7 gap-2">
@@ -96,6 +93,12 @@ export function CharacterFundamentalsSection({
       </div>
       <div>
         <LevelSelect onUpdate={handleUpdate}></LevelSelect>
+      </div>
+      <div>
+        <SpellcastingTraditionChoice
+          spellcastingDefinition={spellcastingChoice?.value!}
+          onUpdate={handleUpdate}
+        ></SpellcastingTraditionChoice>
       </div>
     </div>
   )

@@ -52,6 +52,7 @@ export function NewCharacterButton({ onSave }: { onSave: () => void }) {
             }
             return { source: 'CLASS', feature: feature }
           }),
+          spellcasting: [],
         }
         characterEntity.features.push({
           source: 'ANCESTRY',
