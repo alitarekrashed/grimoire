@@ -25,7 +25,10 @@ const fallback: SpellcastingConfiguration = {
 
 export class SpellcastingManager {
   private spellcasting: Map<string, SpellcastingProficiencies> = new Map()
-  private typeToTradition: Map<string, Tradition> = new Map()
+  private typeToTradition: Map<
+    string,
+    { tradition: Tradition; attribute: Attribute }
+  > = new Map()
 
   constructor(
     private attributes: Attributes,
@@ -45,7 +48,10 @@ export class SpellcastingManager {
         )!.rank,
       }
 
-      this.typeToTradition.set(value.type, value.tradition.value)
+      this.typeToTradition.set(value.type, {
+        tradition: value.tradition.value,
+        attribute: value.attribute.value,
+      })
       this.spellcasting.set(
         value.tradition.value.toLowerCase(),
         this.buildSpellcasting(configuration)
@@ -59,6 +65,10 @@ export class SpellcastingManager {
     }
 
     this.spellcasting.set('innate', this.buildSpellcasting(innateCasting))
+    this.typeToTradition.set('innate', {
+      tradition: null!,
+      attribute: 'Charisma',
+    })
   }
 
   public getSpellcasting(type: string): SpellcastingProficiencies {
@@ -68,7 +78,7 @@ export class SpellcastingManager {
     return this.buildSpellcasting(fallback)
   }
 
-  public mapTypeToTradition(type: string) {
+  public getTypeDefinition(type: string) {
     return this.typeToTradition.get(type)
   }
 
