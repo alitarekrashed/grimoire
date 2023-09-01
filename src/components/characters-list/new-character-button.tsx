@@ -75,13 +75,48 @@ export function NewCharacterButton({ onSave }: { onSave: () => void }) {
           }),
           spellcasting: [],
         }
-        characterEntity.features.push({
-          source: 'ANCESTRY',
-          feature: {
-            type: 'ANCESTRY_FEAT_SELECTION',
-            value: null,
+        characterEntity.features.push(
+          {
+            source: 'ANCESTRY',
+            feature: {
+              level: 1,
+              type: 'ANCESTRY_FEAT_SELECTION',
+              value: null,
+            },
           },
-        })
+          {
+            source: 'ANCESTRY',
+            feature: {
+              level: 5,
+              type: 'ANCESTRY_FEAT_SELECTION',
+              value: null,
+            },
+          },
+          {
+            source: 'ANCESTRY',
+            feature: {
+              level: 9,
+              type: 'ANCESTRY_FEAT_SELECTION',
+              value: null,
+            },
+          },
+          {
+            source: 'ANCESTRY',
+            feature: {
+              level: 13,
+              type: 'ANCESTRY_FEAT_SELECTION',
+              value: null,
+            },
+          },
+          {
+            source: 'ANCESTRY',
+            feature: {
+              level: 17,
+              type: 'ANCESTRY_FEAT_SELECTION',
+              value: null,
+            },
+          }
+        )
         PlayerCharacter.build(characterEntity).then((val) =>
           setPlayerCharacter(val)
         )
