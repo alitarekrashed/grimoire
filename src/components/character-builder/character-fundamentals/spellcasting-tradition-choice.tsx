@@ -15,11 +15,11 @@ export function SpellcastingTraditionChoice({
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [meetsCondition, setMeetsCondition] = useState<boolean>(
-    spellcastingDefinition.condition ? false : true
+    spellcastingDefinition?.condition ? false : true
   )
 
   useEffect(() => {
-    if (spellcastingDefinition.condition) {
+    if (spellcastingDefinition?.condition) {
       retrieveEntityByNames(
         playerCharacter.getSpells().map((val) => val.feature.value.name),
         'SPELL'
@@ -36,7 +36,7 @@ export function SpellcastingTraditionChoice({
         }
       })
     }
-  }, [playerCharacter, spellcastingDefinition.condition])
+  }, [playerCharacter, spellcastingDefinition?.condition])
 
   return (
     <>

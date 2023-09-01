@@ -25,6 +25,7 @@ const fallback: SpellcastingConfiguration = {
 
 export class SpellcastingManager {
   private spellcasting: Map<string, SpellcastingProficiencies> = new Map()
+  private allTypes: string[] = []
   private typeToTradition: Map<
     string,
     { tradition: Tradition; attribute: Attribute }
@@ -36,26 +37,31 @@ export class SpellcastingManager {
     private spellcastingDefinitions: SpellcastingDefinition[]
   ) {
     spellcastingDefinitions.forEach((value) => {
-      let configuration: SpellcastingConfiguration = {
-        attribute: value.attribute.value,
-        attack: value.progression.findLast(
-          (progression) =>
-            progression.level <= level && progression.type === 'attack'
-        )!.rank,
-        savingThrow: value.progression.findLast(
-          (progression) =>
-            progression.level <= level && progression.type === 'saving_throw'
-        )!.rank,
-      }
+      if (value) {
+        let configuration: SpellcastingConfiguration = {
+          attribute: value.attribute.value,
+          attack: value.progression.findLast(
+            (progression) =>
+              progression.level <= level && progression.type === 'attack'
+          )!.rank,
+          savingThrow: value?.progression.findLast(
+            (progression) =>
+              progression.level <= level && progression.type === 'saving_throw'
+          )!.rank,
+        }
 
-      this.typeToTradition.set(value.type, {
-        tradition: value.tradition.value,
-        attribute: value.attribute.value,
-      })
-      this.spellcasting.set(
-        value.tradition.value.toLowerCase(),
-        this.buildSpellcasting(configuration)
-      )
+        if (value.tradition.value) {
+          this.typeToTradition.set(value.type, {
+            tradition: value.tradition.value,
+            attribute: value.attribute.value,
+          })
+          this.spellcasting.set(
+            value.tradition.value.toLowerCase(),
+            this.buildSpellcasting(configuration)
+          )
+          this.allTypes.push(value.type)
+        }
+      }
     })
 
     const innateCasting: SpellcastingConfiguration = {
@@ -69,6 +75,7 @@ export class SpellcastingManager {
       tradition: null!,
       attribute: 'Charisma',
     })
+    this.allTypes.push('innate')
   }
 
   public getSpellcasting(type: string): SpellcastingProficiencies {
@@ -80,6 +87,10 @@ export class SpellcastingManager {
 
   public getTypeDefinition(type: string) {
     return this.typeToTradition.get(type)
+  }
+
+  public getTypes() {
+    return this.allTypes
   }
 
   private buildSpellcasting(
