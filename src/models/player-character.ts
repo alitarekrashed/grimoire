@@ -9,7 +9,7 @@ import {
   SkillProficiencyManager,
   createManagerFromFeatures,
 } from '@/utils/services/skill-proficiency-manager'
-import { cloneDeep, over } from 'lodash'
+import { cloneDeep } from 'lodash'
 import { Ancestry, Attribute } from './db/ancestry'
 import {
   Background,
@@ -41,9 +41,8 @@ import {
   CalculatedProficiency,
   SavingThrowAttributes,
   SavingThrowType,
-  SkillAttributes,
 } from './statistic'
-import { Feat } from './db/feat'
+import { SpellcastingManager } from '@/utils/services/spellcasting-manager'
 
 export interface CharacterAttack {
   attackBonus: ModifierValue[][]
@@ -238,6 +237,7 @@ export class PlayerCharacter {
   private features: SourcedFeature[] = []
   private gearProficienyManager!: GearProficiencyManager
   private skillProficiencyManager!: SkillProficiencyManager
+  private spellcastingManager!: SpellcastingManager
 
   private constructor(
     private character: CharacterEntity,
@@ -283,6 +283,8 @@ export class PlayerCharacter {
       this.attributes,
       this.features
     )
+
+    this.spellcastingManager = new SpellcastingManager(this.attributes)
   }
 
   public getCharacter(): CharacterEntity {
@@ -453,25 +455,8 @@ export class PlayerCharacter {
     return this.features.filter((feature) => feature.feature.type === 'SPELL')
   }
 
-  // TODO right now this is setup for innate spells only, we'll need something more versatile in the future...
-  public getSpellProficiencies(): {
-    attack: CalculatedProficiency
-    savingThrow: CalculatedProficiency
-  } {
-    // i think eventually i'll need tradition-specific DCs probably?
-    // and innate spells will use the highest
-    return {
-      attack: {
-        rank: 'trained',
-        modifier:
-          RankModifierMap['trained'] + this.level + this.attributes['Charisma'],
-      },
-      savingThrow: {
-        rank: 'trained',
-        modifier:
-          RankModifierMap['trained'] + this.level + this.attributes['Charisma'],
-      },
-    }
+  public getSpellcastingManager(): SpellcastingManager {
+    return this.spellcastingManager
   }
 
   public getProficiencies(exclude?: Feature[]): {
