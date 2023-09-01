@@ -15,7 +15,12 @@ export interface Feat extends EntityModel {
   saving_throw?: SavingThrow
 }
 
-export type PrerequisiteType = 'SKILL' | 'FEAT' | 'ACTION' | 'OTHER'
+export type PrerequisiteType =
+  | 'SKILL'
+  | 'FEAT'
+  | 'ACTION'
+  | 'OTHER'
+  | 'SPELL_TYPE'
 
 export interface Prerequisite {
   type: PrerequisiteType

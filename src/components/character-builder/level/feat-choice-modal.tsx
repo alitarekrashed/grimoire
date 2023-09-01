@@ -9,6 +9,7 @@ import { CharacterLevelContext } from '../character-level-context'
 import { isGreaterThanOrEqualTo } from '@/utils/services/gear-proficiency-manager'
 import { CalculatedProficiency, SkillType } from '@/models/statistic'
 import { FeatSpellModal } from './feat-spell-modal'
+import { SpellcastingManager } from '@/utils/services/spellcasting-manager'
 
 export function FeatChoiceModal({
   name,
@@ -47,7 +48,8 @@ export function FeatChoiceModal({
                     prerequisite,
                     playerCharacter.getSkillProfciencyManager().getSkills(),
                     playerCharacter.getFeatNames(),
-                    playerCharacter.getActions()
+                    playerCharacter.getActions(),
+                    playerCharacter.getSpellcastingManager()
                   )
                 )
               }
@@ -133,7 +135,8 @@ function evaluatePrerequisite(
   prerequisite: Prerequisite,
   skillMap: Map<string, CalculatedProficiency>,
   featNames: string[],
-  actions: SourcedFeature[]
+  actions: SourcedFeature[],
+  spellcastingManager: SpellcastingManager
 ): boolean {
   switch (prerequisite.type) {
     case 'SKILL':
@@ -147,6 +150,8 @@ function evaluatePrerequisite(
       return actions
         .map((sourced) => sourced.feature.value)
         .includes(prerequisite.value)
+    case 'SPELL_TYPE':
+      return spellcastingManager.getTypes().includes(prerequisite.value)
     default:
       return true
   }

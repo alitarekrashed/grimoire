@@ -82,6 +82,10 @@ export class SpellcastingManager {
     return this.typeToTradition.get(type)
   }
 
+  public getTypes() {
+    return Object.keys(this.typeToTradition)
+  }
+
   private buildSpellcasting(
     configuration: SpellcastingConfiguration
   ): SpellcastingProficiencies {
