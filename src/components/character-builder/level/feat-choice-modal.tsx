@@ -138,6 +138,8 @@ function evaluatePrerequisite(
   actions: SourcedFeature[],
   spellcastingManager: SpellcastingManager
 ): boolean {
+  console.log(spellcastingManager.getTypes())
+  console.log(prerequisite.value)
   switch (prerequisite.type) {
     case 'SKILL':
       return isGreaterThanOrEqualTo(

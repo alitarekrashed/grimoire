@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
-  const names: string[] | undefined = searchParams.getAll('names') ?? undefined
+  const names: string[] | undefined = searchParams.getAll('name') ?? undefined
   const traditions: string[] | undefined =
     searchParams.getAll('traditions') ?? undefined
   const ranks: string[] | undefined = searchParams.getAll('ranks') ?? undefined
