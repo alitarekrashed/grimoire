@@ -216,20 +216,6 @@ function calculateClassAttributeModifications(
   return attributes
 }
 
-function calculateLevelAttributeModifications(character: CharacterEntity) {
-  let attributes: any = {}
-  ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
-
-  character.attributes.levels
-    .filter((val) => val.level <= character.level)
-    .forEach((levelled) =>
-      levelled.attributes
-        .filter((val) => val)
-        .forEach((val) => (attributes[val!] += 1))
-    )
-  return attributes
-}
-
 export class PlayerCharacter {
   private level!: number
   private speed!: ModifierValue[]
@@ -826,8 +812,6 @@ export class PlayerCharacter {
       ? calculateClassAttributeModifications(this.character, this.classEntity)
       : undefined
 
-    const level1Mods: any = calculateLevelAttributeModifications(this.character)
-
     Object.keys(ancestryMods).forEach(
       (attribute: string) => (attributes[attribute] += ancestryMods[attribute])
     )
@@ -841,8 +825,22 @@ export class PlayerCharacter {
       (attribute: string) => (attributes[attribute] += classMods[attribute])
     )
 
-    Object.keys(level1Mods).forEach(
-      (attribute: string) => (attributes[attribute] += level1Mods[attribute])
+    this.character.attributes.levels
+      .filter((val) => val.level <= this.character.level)
+      .forEach((levelled) =>
+        levelled.attributes
+          .filter((val) => val)
+          .forEach((val) => {
+            if (attributes[val] >= 4) {
+              attributes[val] += 0.5
+            } else {
+              attributes[val] += 1
+            }
+          })
+      )
+
+    Object.keys(this.attributes).forEach(
+      (attribute) => (attributes[attribute] = Math.floor(attributes[attribute]))
     )
 
     this.attributes = attributes
