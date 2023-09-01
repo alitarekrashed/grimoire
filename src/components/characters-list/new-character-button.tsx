@@ -32,7 +32,28 @@ export function NewCharacterButton({ onSave }: { onSave: () => void }) {
             ancestry: [],
             background: [],
             class: [],
-            level_1: [null!, null!, null!, null!],
+            levels: [
+              {
+                level: 1,
+                attributes: [null!, null!, null!, null!],
+              },
+              {
+                level: 5,
+                attributes: [null!, null!, null!, null!],
+              },
+              {
+                level: 10,
+                attributes: [null!, null!, null!, null!],
+              },
+              {
+                level: 15,
+                attributes: [null!, null!, null!, null!],
+              },
+              {
+                level: 20,
+                attributes: [null!, null!, null!, null!],
+              },
+            ],
           },
           player_state: {
             focus_points: [],

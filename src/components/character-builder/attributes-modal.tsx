@@ -28,7 +28,7 @@ export interface AttributeOptions {
   ancestry: Attribute[][]
   background: Attribute[][]
   class: Attribute[][]
-  level_1: Attribute[][]
+  levels: { level: number; choices: Attribute[][] }[]
 }
 
 function getAncestryAttributeChoices(
@@ -117,12 +117,18 @@ export function AttributesModal({
     ),
     background: getBackgroundAttributeChoices(playerCharacter.getBackground()),
     class: getClassAttributeChoices(playerCharacter.getClassEntity()),
-    level_1: getLevelAttributeChoices(),
+    levels: [
+      { level: 1, choices: getLevelAttributeChoices() },
+      { level: 5, choices: getLevelAttributeChoices() },
+      { level: 10, choices: getLevelAttributeChoices() },
+      { level: 15, choices: getLevelAttributeChoices() },
+      { level: 20, choices: getLevelAttributeChoices() },
+    ],
   })
 
   let totalCount = 0
   let setCount = 0
-  ;['ancestry', 'background', 'class', 'level_1'].forEach((key) => {
+  ;['ancestry', 'background', 'class'].forEach((key) => {
     ;(
       playerCharacter.getCharacter().attributes[
         key as keyof CharacterAttributes
@@ -132,6 +138,18 @@ export function AttributesModal({
       setCount += attribute ? 1 : 0
     })
   })
+
+  playerCharacter
+    .getCharacter()
+    .attributes.levels.filter(
+      (val) => val.level <= playerCharacter.getCharacter().level
+    )
+    .forEach((levelled) =>
+      levelled.attributes.forEach((attribute) => {
+        totalCount += 1
+        setCount += attribute ? 1 : 0
+      })
+    )
 
   const loadWhileSetting = (modifiedCharacter: CharacterEntity) => {
     setLoading(true)
@@ -162,7 +180,13 @@ export function AttributesModal({
         playerCharacter.getBackground()
       ),
       class: getClassAttributeChoices(playerCharacter.getClassEntity()),
-      level_1: getLevelAttributeChoices(),
+      levels: [
+        { level: 1, choices: getLevelAttributeChoices() },
+        { level: 5, choices: getLevelAttributeChoices() },
+        { level: 10, choices: getLevelAttributeChoices() },
+        { level: 15, choices: getLevelAttributeChoices() },
+        { level: 20, choices: getLevelAttributeChoices() },
+      ],
     })
     setLoading(false)
   }, [modifiedCharacter])
@@ -280,38 +304,56 @@ export function AttributesModal({
               )}
             </div>
           </div>
-          <div className="mb-4">
-            <div>Level 1 Attributes</div>
-            <div className="grid grid-cols-8">
-              {modifiedCharacter.attributes.level_1.map(
-                (choice: any, i: number) => {
-                  return (
-                    <span key={i} className="mr-2">
-                      <ChoiceSelect
-                        value={choice}
-                        title={`Attribute #${i + 1}`}
-                        options={choices.level_1[i].filter((val) => {
-                          if (val === choice) {
-                            return true
-                          }
-                          return (
-                            modifiedCharacter.attributes.level_1.indexOf(
-                              val
-                            ) === -1
-                          )
-                        })}
-                        onChange={(val: string) => {
-                          let updated = cloneDeep(modifiedCharacter)
-                          updated.attributes.level_1[i] = val as Attribute
-                          setModifiedCharacter(updated)
-                        }}
-                      ></ChoiceSelect>
-                    </span>
-                  )
-                }
-              )}
-            </div>
-          </div>
+          {modifiedCharacter.attributes.levels
+            .filter(
+              (levelSpecificAttributes) =>
+                levelSpecificAttributes.level <= modifiedCharacter.level
+            )
+            .map((levelSpecificAttributes) => (
+              <div className="mb-4" key={levelSpecificAttributes.level}>
+                <div>Level {levelSpecificAttributes.level} Attributes</div>
+                <div className="grid grid-cols-8">
+                  {levelSpecificAttributes.attributes.map(
+                    (choice: any, i: number) => {
+                      return (
+                        <span key={i} className="mr-2">
+                          <ChoiceSelect
+                            value={choice}
+                            title={`Attribute #${i + 1}`}
+                            options={choices.levels
+                              .find(
+                                (val) =>
+                                  val.level === levelSpecificAttributes.level
+                              )!
+                              .choices[i].filter((value) => {
+                                if (value === choice) {
+                                  return true
+                                }
+                                return (
+                                  modifiedCharacter.attributes.levels
+                                    .find(
+                                      (i) =>
+                                        i.level ===
+                                        levelSpecificAttributes.level
+                                    )!
+                                    .attributes.indexOf(value) === -1
+                                )
+                              })}
+                            onChange={(value: string) => {
+                              let updated = cloneDeep(modifiedCharacter)
+                              updated.attributes.levels.find(
+                                (i) => i.level === levelSpecificAttributes.level
+                              )!.attributes[i] = value as Attribute
+                              setModifiedCharacter(updated)
+                            }}
+                          ></ChoiceSelect>
+                        </span>
+                      )
+                    }
+                  )}
+                </div>
+              </div>
+            ))}
         </div>
       )}
     </>

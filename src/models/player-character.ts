@@ -220,10 +220,13 @@ function calculateLevelAttributeModifications(character: CharacterEntity) {
   let attributes: any = {}
   ATTRIBUTES.forEach((attribute) => (attributes[attribute] = 0))
 
-  character.attributes.level_1
-    .filter((val) => val)
-    .forEach((val) => (attributes[val!] += 1))
-
+  character.attributes.levels
+    .filter((val) => val.level <= character.level)
+    .forEach((levelled) =>
+      levelled.attributes
+        .filter((val) => val)
+        .forEach((val) => (attributes[val!] += 1))
+    )
   return attributes
 }
 
