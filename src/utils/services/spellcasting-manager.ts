@@ -65,6 +65,10 @@ export class SpellcastingManager {
     }
 
     this.spellcasting.set('innate', this.buildSpellcasting(innateCasting))
+    this.typeToTradition.set('innate', {
+      tradition: null!,
+      attribute: 'Charisma',
+    })
   }
 
   public getSpellcasting(type: string): SpellcastingProficiencies {

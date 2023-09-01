@@ -107,7 +107,7 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
                     .getSpellcasting(
                       playerCharacter
                         .getSpellcastingManager()
-                        .getTypeDefinition(val[0])!
+                        .getTypeDefinition(val[0])!.tradition
                     ).attack.modifier
                 }
               </span>
@@ -120,7 +120,7 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
                     .getSpellcasting(
                       playerCharacter
                         .getSpellcastingManager()
-                        .getTypeDefinition(val[0])!
+                        .getTypeDefinition(val[0])!.tradition
                     ).savingThrow.modifier
                 }
               </span>
