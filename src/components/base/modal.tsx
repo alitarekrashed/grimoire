@@ -31,7 +31,7 @@ export function Modal({
         <div className={`fixed z-[100] ${modalSize()}`}>
           <Dialog.Content
             onInteractOutside={(e) => e.preventDefault()}
-            className={`bg-stone-900 rounded-md focus:outline-none border border-stone-300/20 h-full`}
+            className={`bg-stone-900 rounded-md focus:outline-none border border-stone-300/20 h-full overflow-y-scroll pb-10`}
           >
             <Dialog.Title />
             {body}

@@ -41,7 +41,7 @@ export interface CharacterAttributes {
   ancestry: Attribute[]
   background: Attribute[]
   class: Attribute[]
-  level_1: Attribute[]
+  levels: { level: number; attributes: Attribute[] }[]
 }
 
 export type ArmorCategory = 'unarmored' | 'light' | 'medium' | 'heavy'
