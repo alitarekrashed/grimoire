@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb'
 import { SourcedFeature } from '../player-character'
 import { Attribute } from './ancestry'
+import { SpellcastingDefinition } from './class-entity'
 import { Equipment } from './equipment'
 
 export interface CharacterEntity {
@@ -14,6 +15,10 @@ export interface CharacterEntity {
   class_id: string
   heritage_id: string
   features: SourcedFeature[]
+  spellcasting: {
+    source: string
+    value: SpellcastingDefinition
+  }[]
   player_state: PlayerState
   equipped_armor: string
   equipment: CharacterEquipment[]

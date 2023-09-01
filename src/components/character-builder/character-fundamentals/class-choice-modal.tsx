@@ -44,6 +44,13 @@ export function ClassChoiceModal({
                 return { source: 'CLASS', feature: feature }
               })
             )
+            character.spellcasting = character.spellcasting.filter(
+              (val) => val.source !== 'CLASS'
+            )
+            character.spellcasting.push({
+              source: 'CLASS',
+              value: classEntity.spellcasting,
+            })
           })
         }
       ></FeatureChoiceModal>

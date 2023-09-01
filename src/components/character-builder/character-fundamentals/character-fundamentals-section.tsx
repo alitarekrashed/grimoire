@@ -10,6 +10,8 @@ import { BackgroundChoiceModal } from './background-choice-modal'
 import { ClassChoiceModal } from './class-choice-modal'
 import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LevelSelect } from './level-select'
+import { ChoiceSelect } from '@/components/choice-select/choice-select'
+import { Tradition } from '@/models/db/spell'
 
 export function CharacterFundamentalsSection({
   wrapCharacterUpdate,
@@ -47,17 +49,9 @@ export function CharacterFundamentalsSection({
     loadCharacter(updated)
   }
 
-  const handleAsyncUpdate = (
-    updateFunction: (
-      playerCharacter: PlayerCharacter
-    ) => Promise<PlayerCharacter>
-  ) => {
-    const load: Promise<void> = (async () => {
-      const updated = await updateFunction(playerCharacter)
-      updatePlayerCharacter(updated)
-    })()
-    wrapCharacterUpdate(load)
-  }
+  const spellcastingChoice = playerCharacter
+    .getCharacter()
+    .spellcasting.find((val) => val.value?.tradition?.options)
 
   return (
     <div className="mb-2 grid grid-cols-7 gap-2">
@@ -96,6 +90,23 @@ export function CharacterFundamentalsSection({
       </div>
       <div>
         <LevelSelect onUpdate={handleUpdate}></LevelSelect>
+      </div>
+      <div>
+        {spellcastingChoice && (
+          <ChoiceSelect
+            value={spellcastingChoice.value.tradition.value}
+            title={`${spellcastingChoice.value.type} tradition`}
+            options={spellcastingChoice.value.tradition.options!}
+            onChange={(e) => {
+              const updateFunction = (updated: CharacterEntity) => {
+                updated.spellcasting.find(
+                  (val) => val.value.type === spellcastingChoice.value.type
+                )!.value.tradition.value = e as Tradition
+              }
+              handleUpdate(updateFunction)
+            }}
+          ></ChoiceSelect>
+        )}
       </div>
     </div>
   )

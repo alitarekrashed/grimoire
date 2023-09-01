@@ -1,6 +1,5 @@
 import { ChoiceSelect } from '@/components/choice-select/choice-select'
 import { OtherInput } from '@/components/choice-select/other-input'
-import { BlockIndicator } from '@/components/indicators/indicator'
 import { useDebounce } from '@/utils/debounce'
 import { useState } from 'react'
 
