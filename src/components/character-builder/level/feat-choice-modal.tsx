@@ -49,7 +49,8 @@ export function FeatChoiceModal({
                     playerCharacter.getSkillProfciencyManager().getSkills(),
                     playerCharacter.getFeatNames(),
                     playerCharacter.getActions(),
-                    playerCharacter.getSpellcastingManager()
+                    playerCharacter.getSpellcastingManager(),
+                    playerCharacter.getResolvedFeatures()
                   )
                 )
               }
@@ -136,10 +137,9 @@ function evaluatePrerequisite(
   skillMap: Map<string, CalculatedProficiency>,
   featNames: string[],
   actions: SourcedFeature[],
-  spellcastingManager: SpellcastingManager
+  spellcastingManager: SpellcastingManager,
+  features: SourcedFeature[]
 ): boolean {
-  console.log(spellcastingManager.getTypes())
-  console.log(prerequisite.value)
   switch (prerequisite.type) {
     case 'SKILL':
       return isGreaterThanOrEqualTo(
@@ -147,13 +147,20 @@ function evaluatePrerequisite(
         prerequisite.value.minimum_rank
       )
     case 'FEAT':
-      return featNames.includes(prerequisite.value)
+      return featNames
+        .map((name) => name.toLowerCase())
+        .includes(prerequisite.value.toLowerCase())
     case 'ACTION':
       return actions
         .map((sourced) => sourced.feature.value)
         .includes(prerequisite.value)
     case 'SPELL_TYPE':
       return spellcastingManager.getTypes().includes(prerequisite.value)
+    case 'FEATURE':
+      return !!features.find(
+        (val) =>
+          val.feature.name?.toLowerCase() === prerequisite.value.toLowerCase()
+      )
     default:
       return true
   }

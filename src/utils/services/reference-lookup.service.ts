@@ -20,7 +20,7 @@ export function retrieveEntityByNames(
 ): Promise<EntityModel[]> {
   return (async () => {
     const url: string = baseApiRouteFactory(type)!
-    const entities = await (await fetch(`${url}?names=${names}`)).json()
+    const entities = await (await fetch(`${url}?name=${names}`)).json()
     return entities ?? []
   })()
 }
