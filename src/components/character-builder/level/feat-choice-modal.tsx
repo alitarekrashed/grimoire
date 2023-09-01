@@ -147,7 +147,9 @@ function evaluatePrerequisite(
         prerequisite.value.minimum_rank
       )
     case 'FEAT':
-      return featNames.includes(prerequisite.value)
+      return featNames
+        .map((name) => name.toLowerCase())
+        .includes(prerequisite.value.toLowerCase())
     case 'ACTION':
       return actions
         .map((sourced) => sourced.feature.value)
