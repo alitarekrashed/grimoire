@@ -198,7 +198,7 @@ export function AttributesModal({
         <div className={`${roboto_condensed.className} text-sm p-2 w-full`}>
           <div className="flex flex-col flex-wrap mb-4">
             <div className="">Ancestry</div>
-            <div className="grid grid-cols-8 gap-2 items-center">
+            <div className="grid grid-cols-6 gap-2 items-center">
               {modifiedCharacter.attributes.ancestry.map(
                 (choice: any, i: number) => {
                   return (
@@ -251,7 +251,7 @@ export function AttributesModal({
           </div>
           <div className="mb-4">
             <div>Background</div>
-            <div className="grid grid-cols-8">
+            <div className="grid grid-cols-6">
               {modifiedCharacter.attributes.background.map(
                 (choice: any, i: number) => {
                   return (
@@ -283,7 +283,7 @@ export function AttributesModal({
           </div>
           <div className="mb-4">
             <div>Class Key Attribute</div>
-            <div className="grid grid-cols-8">
+            <div className="grid grid-cols-6">
               {modifiedCharacter.attributes.class.map(
                 (choice: any, i: number) => {
                   return (
@@ -312,7 +312,7 @@ export function AttributesModal({
             .map((levelSpecificAttributes) => (
               <div className="mb-4" key={levelSpecificAttributes.level}>
                 <div>Level {levelSpecificAttributes.level} Attributes</div>
-                <div className="grid grid-cols-8">
+                <div className="grid grid-cols-6">
                   {levelSpecificAttributes.attributes.map(
                     (choice: any, i: number) => {
                       return (
