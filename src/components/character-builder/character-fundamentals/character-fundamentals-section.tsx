@@ -12,6 +12,9 @@ import { HeritageChoiceModal } from './heritage-choice-modal'
 import { LevelSelect } from './level-select'
 import { ChoiceSelect } from '@/components/choice-select/choice-select'
 import { Tradition } from '@/models/db/spell'
+import { SpellcastingDefinition } from '@/models/db/class-entity'
+import { SpellFeatureValue } from '@/models/db/feature'
+import { SpellcastingTraditionChoice } from './spellcasting-tradition-choice'
 
 export function CharacterFundamentalsSection({
   wrapCharacterUpdate,
@@ -92,21 +95,9 @@ export function CharacterFundamentalsSection({
         <LevelSelect onUpdate={handleUpdate}></LevelSelect>
       </div>
       <div>
-        {spellcastingChoice && (
-          <ChoiceSelect
-            value={spellcastingChoice.value.tradition.value}
-            title={`${spellcastingChoice.value.type} tradition`}
-            options={spellcastingChoice.value.tradition.options!}
-            onChange={(e) => {
-              const updateFunction = (updated: CharacterEntity) => {
-                updated.spellcasting.find(
-                  (val) => val.value.type === spellcastingChoice.value.type
-                )!.value.tradition.value = e as Tradition
-              }
-              handleUpdate(updateFunction)
-            }}
-          ></ChoiceSelect>
-        )}
+        <SpellcastingTraditionChoice
+          spellcastingDefinition={spellcastingChoice?.value}
+        ></SpellcastingTraditionChoice>
       </div>
     </div>
   )
