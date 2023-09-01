@@ -14,9 +14,7 @@ export function SpellcastingTraditionChoice({
   onUpdate: (updateFunction: (cloned: CharacterEntity) => void) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
-  const [meetsCondition, setMeetsCondition] = useState<boolean>(
-    spellcastingDefinition?.condition ? false : true
-  )
+  const [meetsCondition, setMeetsCondition] = useState<boolean>(false)
 
   useEffect(() => {
     if (spellcastingDefinition?.condition) {
@@ -24,11 +22,12 @@ export function SpellcastingTraditionChoice({
         playerCharacter.getSpells().map((val) => val.feature.value.name),
         'SPELL'
       ).then((val) => {
+        const focusSpells = (val as unknown as Spell[])
+          .map((spell: Spell) => spell.focus)
+          .filter((focus) => focus)
         if (
-          (val as unknown as Spell[])
-            .map((spell: Spell) => spell.focus)
-            .filter((focus) => focus)
-            .includes(spellcastingDefinition.condition)
+          focusSpells.length > 0 &&
+          focusSpells.includes(spellcastingDefinition.condition)
         ) {
           setMeetsCondition(true)
         } else {

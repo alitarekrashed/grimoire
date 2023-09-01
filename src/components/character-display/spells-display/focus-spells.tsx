@@ -75,74 +75,78 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
         ></RefocusButton>
       </div>
       <Separator className="my-2"></Separator>
-      {Object.entries(mappedSpells).map((val: any) => (
-        <div className="flex flex-col gap-1" key={val[0]}>
-          <div className="flex flex-row gap-1">
-            <div className="flex flex-col gap-0.5 text-center">
-              <span className="text-sm capitalize">{val[0]} spells</span>
-              <div className="flex flex-row gap-0.5 text-[8px] capitalize">
-                <span>
+      {Object.entries(mappedSpells)
+        .filter((val) =>
+          playerCharacter.getSpellcastingManager().getTypeDefinition(val[0])
+        )
+        .map((val: any) => (
+          <div className="flex flex-col gap-1" key={val[0]}>
+            <div className="flex flex-row gap-1">
+              <div className="flex flex-col gap-0.5 text-center">
+                <span className="text-sm capitalize">{val[0]} spells</span>
+                <div className="flex flex-row gap-0.5 text-[8px] capitalize">
+                  <span>
+                    {
+                      playerCharacter
+                        .getSpellcastingManager()
+                        .getTypeDefinition(val[0])?.tradition
+                    }
+                  </span>
+                  -
+                  <span>
+                    {
+                      playerCharacter
+                        .getSpellcastingManager()
+                        .getTypeDefinition(val[0])?.attribute
+                    }
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-row gap-2 h-min">
+                <span className="rounded border py-0.5 px-1 text-xs">
+                  Spell attack: +
                   {
                     playerCharacter
                       .getSpellcastingManager()
-                      .getTypeDefinition(val[0])?.tradition
+                      .getSpellcasting(
+                        playerCharacter
+                          .getSpellcastingManager()
+                          .getTypeDefinition(val[0])!.tradition
+                      ).attack.modifier
                   }
                 </span>
-                -
-                <span>
+
+                <span className="rounded border py-0.5 px-1 text-xs">
+                  Saving throw: +
                   {
                     playerCharacter
                       .getSpellcastingManager()
-                      .getTypeDefinition(val[0])?.attribute
+                      .getSpellcasting(
+                        playerCharacter
+                          .getSpellcastingManager()
+                          .getTypeDefinition(val[0])!.tradition
+                      ).savingThrow.modifier
                   }
                 </span>
               </div>
             </div>
-            <div className="flex flex-row gap-2 h-min">
-              <span className="rounded border py-0.5 px-1 text-xs">
-                Spell attack: +
-                {
-                  playerCharacter
-                    .getSpellcastingManager()
-                    .getSpellcasting(
-                      playerCharacter
-                        .getSpellcastingManager()
-                        .getTypeDefinition(val[0])!.tradition
-                    ).attack.modifier
-                }
-              </span>
-
-              <span className="rounded border py-0.5 px-1 text-xs">
-                Saving throw: +
-                {
-                  playerCharacter
-                    .getSpellcastingManager()
-                    .getSpellcasting(
-                      playerCharacter
-                        .getSpellcastingManager()
-                        .getTypeDefinition(val[0])!.tradition
-                    ).savingThrow.modifier
-                }
-              </span>
-            </div>
+            <span className="text-xs">
+              {val[1] &&
+                (val[1] as Spell[]).length > 0 &&
+                (val[1] as Spell[]).map((spell, index) => (
+                  <div key={`${spell}-${index}`} className="mb-3">
+                    <SpellInlineDisplay
+                      spell={spell}
+                      castDisabled={character.player_state.focus_points.every(
+                        (val) => val
+                      )}
+                      onCast={handleCast}
+                    ></SpellInlineDisplay>
+                  </div>
+                ))}
+            </span>
           </div>
-          <span className="text-xs">
-            {val[1] &&
-              (val[1] as Spell[]).length > 0 &&
-              (val[1] as Spell[]).map((spell, index) => (
-                <div key={`${spell}-${index}`} className="mb-3">
-                  <SpellInlineDisplay
-                    spell={spell}
-                    castDisabled={character.player_state.focus_points.every(
-                      (val) => val
-                    )}
-                    onCast={handleCast}
-                  ></SpellInlineDisplay>
-                </div>
-              ))}
-          </span>
-        </div>
-      ))}
+        ))}
     </div>
   )
 }

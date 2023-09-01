@@ -278,6 +278,7 @@ export class PlayerCharacter {
       this.level,
       this.character.spellcasting.map((val) => val.value)
     )
+    console.log(this.features)
   }
 
   public getCharacter(): CharacterEntity {
