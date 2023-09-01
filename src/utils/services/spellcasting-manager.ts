@@ -14,6 +14,7 @@ export interface SpellcastingConfiguration {
   savingThrow: ProficiencyRank
 }
 
+// fallback uses Charisma + untrained
 const fallback: SpellcastingConfiguration = {
   attribute: 'Charisma',
   attack: 'untrained',
@@ -23,7 +24,17 @@ const fallback: SpellcastingConfiguration = {
 export class SpellcastingManager {
   private spellcasting: Map<string, SpellcastingProficiencies> = new Map()
 
-  constructor(private attributes: Attributes) {}
+  constructor(
+    private attributes: Attributes,
+    private level: number
+  ) {
+    const innateCasting: SpellcastingConfiguration = {
+      attribute: 'Charisma',
+      attack: 'trained',
+      savingThrow: 'trained',
+    }
+    this.spellcasting.set('innate', this.buildSpellcasting(innateCasting))
+  }
 
   public getSpellcasting(type: string): SpellcastingProficiencies {
     if (this.spellcasting.has(type)) {
@@ -40,13 +51,15 @@ export class SpellcastingManager {
         rank: configuration.attack,
         modifier:
           RankModifierMap[configuration.attack] +
-          this.attributes[configuration.attribute],
+          this.attributes[configuration.attribute] +
+          (configuration.attack !== 'untrained' ? this.level : 0),
       },
       savingThrow: {
         rank: configuration.savingThrow,
         modifier:
           RankModifierMap[configuration.savingThrow] +
-          this.attributes[configuration.attribute],
+          this.attributes[configuration.attribute] +
+          (configuration.savingThrow !== 'untrained' ? this.level : 0),
       },
     }
   }

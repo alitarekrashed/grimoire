@@ -284,7 +284,10 @@ export class PlayerCharacter {
       this.features
     )
 
-    this.spellcastingManager = new SpellcastingManager(this.attributes)
+    this.spellcastingManager = new SpellcastingManager(
+      this.attributes,
+      this.level
+    )
   }
 
   public getCharacter(): CharacterEntity {
