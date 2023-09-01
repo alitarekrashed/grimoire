@@ -35,11 +35,13 @@ export function AncestryChoiceModal({
             character.attributes.ancestry = []
             character.languages = []
             character.heritage_id = ''
-            character.features.filter(
-              (val: SourcedFeature) =>
-                val.source === 'ANCESTRY' &&
-                val.feature.type === 'ANCESTRY_FEAT_SELECTION'
-            )[0].feature.value = null
+            character.features
+              .filter(
+                (val: SourcedFeature) =>
+                  val.source === 'ANCESTRY' &&
+                  val.feature.type === 'ANCESTRY_FEAT_SELECTION'
+              )
+              .forEach((val) => (val.feature.value = null))
           })
         }
       ></FeatureChoiceModal>
