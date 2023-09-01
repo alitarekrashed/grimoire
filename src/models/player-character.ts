@@ -286,7 +286,8 @@ export class PlayerCharacter {
 
     this.spellcastingManager = new SpellcastingManager(
       this.attributes,
-      this.level
+      this.level,
+      this.character.spellcasting.map((val) => val.value)
     )
   }
 

@@ -1,4 +1,4 @@
-import { AttributeModifier } from './ancestry'
+import { Attribute, AttributeModifier } from './ancestry'
 import { ProficiencyRank } from './background'
 import { EntityModel } from './entity-model'
 import { Rarity } from './equipment'
@@ -8,6 +8,9 @@ import { Tradition } from './spell'
 export interface SpellcastingDefinition {
   type: string
   condition?: string
+  attribute: {
+    value: Attribute
+  }
   tradition: {
     value: Tradition
     options?: Tradition[]

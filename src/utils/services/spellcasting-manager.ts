@@ -1,5 +1,6 @@
 import { Attribute } from '@/models/db/ancestry'
 import { ProficiencyRank, RankModifierMap } from '@/models/db/background'
+import { SpellcastingDefinition } from '@/models/db/class-entity'
 import { Attributes } from '@/models/player-character'
 import { CalculatedProficiency } from '@/models/statistic'
 
@@ -26,13 +27,33 @@ export class SpellcastingManager {
 
   constructor(
     private attributes: Attributes,
-    private level: number
+    private level: number,
+    private spellcastingDefinitions: SpellcastingDefinition[]
   ) {
+    spellcastingDefinitions.forEach((value) => {
+      let configuration: SpellcastingConfiguration = {
+        attribute: value.attribute.value,
+        attack: value.progression.findLast(
+          (progression) =>
+            progression.level <= level && progression.type === 'attack'
+        )!.rank,
+        savingThrow: value.progression.findLast(
+          (progression) =>
+            progression.level <= level && progression.type === 'saving_throw'
+        )!.rank,
+      }
+      this.spellcasting.set(
+        value.type.toLowerCase(),
+        this.buildSpellcasting(configuration)
+      )
+    })
+
     const innateCasting: SpellcastingConfiguration = {
       attribute: 'Charisma',
       attack: 'trained',
       savingThrow: 'trained',
     }
+
     this.spellcasting.set('innate', this.buildSpellcasting(innateCasting))
   }
 
