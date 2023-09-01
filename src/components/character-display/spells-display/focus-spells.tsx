@@ -78,15 +78,24 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
       {Object.entries(mappedSpells).map((val: any) => (
         <div className="flex flex-col gap-1" key={val[0]}>
           <div className="flex flex-row gap-1">
-            <span className="text-sm capitalize">{val[0]} spells</span>
-            <div className="flex flex-row gap-2">
+            <div className="flex flex-col gap-0.5 text-center">
+              <span className="text-sm capitalize">{val[0]} spells</span>
+              <span className="text-[8px] capitalize">
+                {playerCharacter
+                  .getSpellcastingManager()
+                  .mapTypeToTradition(val[0])}
+              </span>
+            </div>
+            <div className="flex flex-row gap-2 h-min">
               <span className="rounded border py-0.5 px-1 text-xs">
                 Spell attack: +
                 {
                   playerCharacter
                     .getSpellcastingManager()
                     .getSpellcasting(
-                      playerCharacter.getClassEntity().name.toLowerCase()
+                      playerCharacter
+                        .getSpellcastingManager()
+                        .mapTypeToTradition(val[0])!
                     ).attack.modifier
                 }
               </span>
@@ -97,7 +106,9 @@ export function FocusSpells({ spells }: { spells: Spell[] }) {
                   playerCharacter
                     .getSpellcastingManager()
                     .getSpellcasting(
-                      playerCharacter.getClassEntity().name.toLowerCase()
+                      playerCharacter
+                        .getSpellcastingManager()
+                        .mapTypeToTradition(val[0])!
                     ).savingThrow.modifier
                 }
               </span>

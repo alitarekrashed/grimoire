@@ -1,6 +1,7 @@
 import { Attribute } from '@/models/db/ancestry'
 import { ProficiencyRank, RankModifierMap } from '@/models/db/background'
 import { SpellcastingDefinition } from '@/models/db/class-entity'
+import { Tradition } from '@/models/db/spell'
 import { Attributes } from '@/models/player-character'
 import { CalculatedProficiency } from '@/models/statistic'
 
@@ -24,6 +25,7 @@ const fallback: SpellcastingConfiguration = {
 
 export class SpellcastingManager {
   private spellcasting: Map<string, SpellcastingProficiencies> = new Map()
+  private typeToTradition: Map<string, Tradition> = new Map()
 
   constructor(
     private attributes: Attributes,
@@ -42,8 +44,10 @@ export class SpellcastingManager {
             progression.level <= level && progression.type === 'saving_throw'
         )!.rank,
       }
+
+      this.typeToTradition.set(value.type, value.tradition.value)
       this.spellcasting.set(
-        value.type.toLowerCase(),
+        value.tradition.value.toLowerCase(),
         this.buildSpellcasting(configuration)
       )
     })
@@ -62,6 +66,10 @@ export class SpellcastingManager {
       return this.spellcasting.get(type)!
     }
     return this.buildSpellcasting(fallback)
+  }
+
+  public mapTypeToTradition(type: string) {
+    return this.typeToTradition.get(type)
   }
 
   private buildSpellcasting(

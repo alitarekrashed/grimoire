@@ -96,7 +96,8 @@ export function CharacterFundamentalsSection({
       </div>
       <div>
         <SpellcastingTraditionChoice
-          spellcastingDefinition={spellcastingChoice?.value}
+          spellcastingDefinition={spellcastingChoice?.value!}
+          onUpdate={handleUpdate}
         ></SpellcastingTraditionChoice>
       </div>
     </div>
