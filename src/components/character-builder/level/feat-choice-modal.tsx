@@ -10,6 +10,7 @@ import { isGreaterThanOrEqualTo } from '@/utils/services/gear-proficiency-manage
 import { CalculatedProficiency, SkillType } from '@/models/statistic'
 import { FeatSpellModal } from './feat-spell-modal'
 import { SpellcastingManager } from '@/utils/services/spellcasting-manager'
+import { caseInsensitiveMatch } from '@/utils/helpers'
 
 export function FeatChoiceModal({
   name,
@@ -147,9 +148,9 @@ function evaluatePrerequisite(
         prerequisite.value.minimum_rank
       )
     case 'FEAT':
-      return featNames
-        .map((name) => name.toLowerCase())
-        .includes(prerequisite.value.toLowerCase())
+      return featNames.some((name) =>
+        caseInsensitiveMatch(name, prerequisite.value)
+      )
     case 'ACTION':
       return actions
         .map((sourced) => sourced.feature.value)
@@ -157,9 +158,8 @@ function evaluatePrerequisite(
     case 'SPELL_TYPE':
       return spellcastingManager.getTypes().includes(prerequisite.value)
     case 'FEATURE':
-      return !!features.find(
-        (val) =>
-          val.feature.name?.toLowerCase() === prerequisite.value.toLowerCase()
+      return features.some((val) =>
+        caseInsensitiveMatch(val.feature.name, prerequisite.value)
       )
     default:
       return true

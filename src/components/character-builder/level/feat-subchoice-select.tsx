@@ -4,6 +4,7 @@ import { Feat } from '@/models/db/feat'
 import { useDebounce } from '@/utils/debounce'
 import { useContext, useState } from 'react'
 import { ChoiceSelect } from '../../choice-select/choice-select'
+import { caseInsensitiveMatch } from '@/utils/helpers'
 
 export function FeatSubChoiceSelect({
   feat,
@@ -24,7 +25,7 @@ export function FeatSubChoiceSelect({
   })
 
   const options = feat.configuration!.options.filter((option: string) => {
-    if (option === choice || option.toLowerCase() === 'other') {
+    if (option === choice || caseInsensitiveMatch(option, 'other')) {
       return true
     }
 
