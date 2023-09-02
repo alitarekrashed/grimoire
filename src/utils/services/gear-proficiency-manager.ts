@@ -63,7 +63,7 @@ export class GearProficiencyManager {
   }[] {
     const grouped: Map<string, ProficiencyRank[]> = this.defenses.reduce(
       (entryMap, e) =>
-        entryMap.set(`${e.value.category ?? ''}/${e.value.group ?? ''}`, [
+        entryMap.set(JSON.stringify(e.value), [
           ...(entryMap.get(e.value) || []),
           e.rank,
         ]),
@@ -83,13 +83,9 @@ export class GearProficiencyManager {
         value[1].forEach((rank) => {
           resultRank = getGreaterThan(resultRank, rank)
         })
-        const split = value[0].split('/')
 
         result.push({
-          value: {
-            category: split[0] as ArmorCategory,
-            group: split[1] as ArmorGroup,
-          },
+          value: JSON.parse(value[0]),
           rank: resultRank,
         })
       }
@@ -103,10 +99,10 @@ export class GearProficiencyManager {
   }[] {
     const grouped: Map<string, ProficiencyRank[]> = this.attacks.reduce(
       (entryMap, e) =>
-        entryMap.set(
-          `${e.value.category ?? ''}/${e.value.group ?? 'weapons'}`,
-          [...(entryMap.get(e.value) || []), e.rank]
-        ),
+        entryMap.set(JSON.stringify(e.value), [
+          ...(entryMap.get(e.value) || []),
+          e.rank,
+        ]),
       new Map()
     )
 
@@ -121,13 +117,9 @@ export class GearProficiencyManager {
         value[1].forEach((rank) => {
           resultRank = getGreaterThan(resultRank, rank)
         })
-        const split = value[0].split('/')
 
         result.push({
-          value: {
-            category: split[0] as WeaponCategory,
-            group: split[1] as WeaponGroup,
-          },
+          value: JSON.parse(value[0]),
           rank: resultRank,
         })
       }
