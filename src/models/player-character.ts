@@ -764,8 +764,17 @@ export class PlayerCharacter {
     return {
       attackBonus: [
         attackBonus,
-        [...attackBonus, { value: multipleAttackPenalty, source: 'MAP' }],
-        [...attackBonus, { value: multipleAttackPenalty * 2, source: 'MAP' }],
+        [
+          ...attackBonus,
+          { value: multipleAttackPenalty, source: 'Multiple attack penalty' },
+        ],
+        [
+          ...attackBonus,
+          {
+            value: multipleAttackPenalty * 2,
+            source: 'Multiple attack penalty',
+          },
+        ],
       ],
       damageBonus:
         (weapon.definition.type === 'melee' ? this.attributes.Strength : 0) +
