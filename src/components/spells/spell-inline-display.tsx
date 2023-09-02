@@ -8,6 +8,7 @@ import { ParsedDescription } from '../parsed-description/parsed-description'
 import { Button } from '../base/button'
 import { PlayerCharacterContext } from '../character-display/player-character-context'
 import React from 'react'
+import { FaLongArrowAltRight } from 'react-icons/fa'
 
 export function SpellInlineDisplay({
   spell,
@@ -49,12 +50,15 @@ export function SpellInlineDisplay({
                     size={14}
                   ></ActionRenderer>
                 </span>
-                <span className="font-bold flex-0 mr-2">
+                <div className="flex flex-row font-bold flex-0 mr-2">
                   <span className="mr-1">{getType(spell)}</span>
                   {spell.focus || spell.rank === 0
-                    ? Math.ceil(playerCharacter.getCharacter().level / 2)
+                    ? getAlwaysHeightenedSpell(
+                        spell.rank,
+                        playerCharacter.getCharacter().level
+                      )
                     : spell.rank}
-                </span>
+                </div>
               </Collapsible.Trigger>
               <Collapsible.Content className="overflow-hidden">
                 <div className="my-1">
@@ -87,6 +91,21 @@ export function SpellInlineDisplay({
         </div>
       )}
     </>
+  )
+}
+
+function getAlwaysHeightenedSpell(rank: number, characterLevel: number) {
+  const heightened = Math.ceil(characterLevel / 2)
+  const spellRank = Math.max(rank, 1)
+  if (spellRank >= heightened) {
+    return spellRank
+  }
+  return (
+    <span className="flex flex-row items-center">
+      {spellRank}
+      <FaLongArrowAltRight />
+      {heightened}
+    </span>
   )
 }
 
