@@ -760,11 +760,12 @@ export class PlayerCharacter {
     // TODO ALI -- this should be a list of modifiers so it's clear where bonuses and stuff come from
     const additionalBonus = damageModifiers.reduce((prev, sum) => prev + sum, 0)
 
+    const multipleAttackPenalty = weapon.traits.includes('agile') ? -4 : -5
     return {
       attackBonus: [
         attackBonus,
-        [...attackBonus, { value: -4, source: 'MAP' }],
-        [...attackBonus, { value: -8, source: 'MAP' }],
+        [...attackBonus, { value: multipleAttackPenalty, source: 'MAP' }],
+        [...attackBonus, { value: multipleAttackPenalty * 2, source: 'MAP' }],
       ],
       damageBonus:
         (weapon.definition.type === 'melee' ? this.attributes.Strength : 0) +
