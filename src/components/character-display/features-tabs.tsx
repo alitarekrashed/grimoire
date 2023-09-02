@@ -206,7 +206,7 @@ export function FeaturesTabs() {
                       <div className="mb-1" key={`${proficiency}-${index}`}>
                         <SkillDisplay
                           name={`${proficiency.value.category ?? ''} ${
-                            proficiency.value.group ?? 'weapons'
+                            proficiency.value.group ?? ''
                           }`}
                           rank={proficiency.rank}
                         ></SkillDisplay>
