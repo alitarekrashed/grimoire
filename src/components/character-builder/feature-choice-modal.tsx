@@ -4,6 +4,9 @@ import { CardFactory } from '@/utils/services/card-factory'
 import { useCallback, useEffect, useState } from 'react'
 import { Modal } from '../base/modal'
 import { OptionInlineIndicator } from '../indicators/indicator'
+import { caseInsensitiveMatch } from '@/utils/helpers'
+import { init } from 'next/dist/compiled/@vercel/og/satori'
+import { initial } from 'lodash'
 
 export function FeatureChoiceModal<T extends EntityModel>({
   label,
@@ -29,10 +32,11 @@ export function FeatureChoiceModal<T extends EntityModel>({
   )
 
   useEffect(() => {
-    const entity = entities.find(
-      (entity: EntityModel) =>
-        entity[resolveIdField()].toString().toLowerCase() ===
-        initialId.toString().toLowerCase()
+    const entity = entities.find((entity: EntityModel) =>
+      caseInsensitiveMatch(
+        entity[resolveIdField()].toString(),
+        initialId.toString()
+      )
     )
     setSelected(entity)
     setSaved(entity)
@@ -116,10 +120,11 @@ export function FeatureChoiceModal<T extends EntityModel>({
             label: 'Cancel',
             onClick: () => {
               setSelected(
-                entities.find(
-                  (entity: T) =>
-                    entity[resolveIdField()].toString().toLowerCase() ===
-                    initialId.toString().toLowerCase()
+                entities.find((entity: T) =>
+                  caseInsensitiveMatch(
+                    entity[resolveIdField()].toString(),
+                    initialId.toString()
+                  )
                 )
               )
             },
