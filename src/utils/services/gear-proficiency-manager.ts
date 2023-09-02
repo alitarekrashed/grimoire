@@ -4,7 +4,14 @@ import {
   ProficiencyType,
   WeaponProficiencyValue,
 } from '@/models/db/background'
-import { CharacterEquipment, WithNameAndId } from '@/models/db/character-entity'
+import {
+  ArmorCategory,
+  ArmorGroup,
+  CharacterEquipment,
+  WeaponCategory,
+  WeaponGroup,
+  WithNameAndId,
+} from '@/models/db/character-entity'
 import { Armor, Weapon } from '@/models/db/equipment'
 import { CharacterArmor, CharacterWeapon } from '@/models/player-character'
 
@@ -21,6 +28,7 @@ export const FIST_WEAPON: CharacterWeapon = {
         dice: '1d4',
       },
     ],
+    additional: [],
   },
 }
 
@@ -53,26 +61,35 @@ export class GearProficiencyManager {
     value: ArmorProficiencyValue
     rank: ProficiencyRank
   }[] {
-    const grouped: Map<ArmorProficiencyValue, ProficiencyRank[]> =
-      this.defenses.reduce(
-        (entryMap, e) =>
-          entryMap.set(e.value, [...(entryMap.get(e.value) || []), e.rank]),
-        new Map()
-      )
+    const grouped: Map<string, ProficiencyRank[]> = this.defenses.reduce(
+      (entryMap, e) =>
+        entryMap.set(`${e.value.category ?? ''}/${e.value.group ?? ''}`, [
+          ...(entryMap.get(e.value) || []),
+          e.rank,
+        ]),
+      new Map()
+    )
+
+    console.log(this.defenses)
 
     const result: {
       value: ArmorProficiencyValue
       rank: ProficiencyRank
     }[] = []
     Array.from(grouped.entries()).forEach(
-      (value: [ArmorProficiencyValue, ProficiencyRank[]]) => {
+      (value: [string, ProficiencyRank[]]) => {
         let resultRank: ProficiencyRank = 'untrained'
 
         value[1].forEach((rank) => {
           resultRank = getGreaterThan(resultRank, rank)
         })
+        const split = value[0].split('/')
+
         result.push({
-          value: value[0],
+          value: {
+            category: split[0] as ArmorCategory,
+            group: split[1] as ArmorGroup,
+          },
           rank: resultRank,
         })
       }
@@ -84,26 +101,33 @@ export class GearProficiencyManager {
     value: WeaponProficiencyValue
     rank: ProficiencyRank
   }[] {
-    const grouped: Map<WeaponProficiencyValue, ProficiencyRank[]> =
-      this.attacks.reduce(
-        (entryMap, e) =>
-          entryMap.set(e.value, [...(entryMap.get(e.value) || []), e.rank]),
-        new Map()
-      )
+    const grouped: Map<string, ProficiencyRank[]> = this.attacks.reduce(
+      (entryMap, e) =>
+        entryMap.set(
+          `${e.value.category ?? ''}/${e.value.group ?? 'weapons'}`,
+          [...(entryMap.get(e.value) || []), e.rank]
+        ),
+      new Map()
+    )
 
     const result: {
       value: WeaponProficiencyValue
       rank: ProficiencyRank
     }[] = []
     Array.from(grouped.entries()).forEach(
-      (value: [WeaponProficiencyValue, ProficiencyRank[]]) => {
+      (value: [string, ProficiencyRank[]]) => {
         let resultRank: ProficiencyRank = 'untrained'
 
         value[1].forEach((rank) => {
           resultRank = getGreaterThan(resultRank, rank)
         })
+        const split = value[0].split('/')
+
         result.push({
-          value: value[0],
+          value: {
+            category: split[0] as WeaponCategory,
+            group: split[1] as WeaponGroup,
+          },
           rank: resultRank,
         })
       }

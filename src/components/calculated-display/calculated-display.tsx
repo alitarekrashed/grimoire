@@ -20,6 +20,7 @@ export default function CalculatedDisplay({
 
   return (
     <HoverDisplay
+      size="small"
       title={
         <span className="underline decoration-dotted" tabIndex={0}>
           {includeOperator && reduced > 0 && '+'}
@@ -27,12 +28,19 @@ export default function CalculatedDisplay({
         </span>
       }
       content={
-        <div>
+        <div className="flex flex-col">
           {values.map((value: ModifierValue, index: number) => (
-            <span key={`${value.source}-${value.type}`}>
-              {index > 0 && (value.value >= 0 ? ' + ' : ' - ')}
-              {Math.abs(value.value)}
-              &nbsp;[{value.source}]
+            <span
+              className="grid grid-cols-6"
+              key={`${value.source}-${value.type}`}
+            >
+              <span className="col-span-1">
+                {value.value >= 0 ? ' + ' : ' - '}
+                {Math.abs(value.value)}
+              </span>
+              <span className="col-span-5 text-[10px]">
+                &nbsp;{value.source}
+              </span>
             </span>
           ))}
         </div>
