@@ -9,6 +9,7 @@ import { IoSparklesSharp } from 'react-icons/io5'
 import { HoverDisplay } from '../base/hover-display'
 import { Separator } from '../base/separator'
 import { WeaponGroup } from '@/models/weapon-models'
+import { ParsedDescription } from '../parsed-description/parsed-description'
 
 export function Attacks() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
@@ -45,19 +46,21 @@ export function Attacks() {
                     <span className="col-span-3">
                       <span className="flex flex-row gap-1 items-center">
                         {attack.weapon.name}
-                        {attack.weapon.definition.additional &&
-                          attack.weapon.definition.additional.map(
-                            (value, index) => (
-                              <span key={index}>
-                                <HoverDisplay
-                                  title={
-                                    <IoSparklesSharp className="text-emerald-300" />
-                                  }
-                                  content={value.value}
-                                ></HoverDisplay>
-                              </span>
-                            )
-                          )}
+                        {attack.additionalContent.length > 0 && (
+                          <HoverDisplay
+                            title={
+                              <IoSparklesSharp className="text-emerald-300" />
+                            }
+                            content={attack.additionalContent.map(
+                              (value, index) => (
+                                <ParsedDescription
+                                  description={value}
+                                  key={index}
+                                ></ParsedDescription>
+                              )
+                            )}
+                          ></HoverDisplay>
+                        )}
                       </span>
                     </span>
                     <span className="col-span-1">

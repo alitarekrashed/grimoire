@@ -6,7 +6,9 @@ import {
 } from '@/models/db/background'
 import { CharacterEquipment, WithNameAndId } from '@/models/db/character-entity'
 import { Armor } from '@/models/db/equipment'
+import { SpecializationFeatureValue } from '@/models/db/feature'
 import { CharacterArmor, CharacterWeapon } from '@/models/player-character'
+import { WeaponCriticalSpecialization } from '@/models/weapon-critical-specialization'
 import { WeaponCategory } from '@/models/weapon-models'
 
 export const FIST_WEAPON: CharacterWeapon = {
@@ -49,7 +51,8 @@ export class GearProficiencyManager {
       value: ArmorProficiencyValue
       rank: ProficiencyRank
     }[],
-    private downgradeTraits: string[]
+    private downgradeTraits: string[],
+    private specializations: SpecializationFeatureValue[]
   ) {}
 
   public getArmorProficiencies(): {
@@ -152,6 +155,36 @@ export class GearProficiencyManager {
       )
 
     return minimumRank
+  }
+
+  public getSpecialization(weapon: CharacterWeapon): string | undefined {
+    const matchedTraits = this.specializations
+      .filter((specialization) => specialization.value.trait)
+      .map((specialization) => specialization.value.trait)
+    const matchedSpecialization = this.specializations.filter(
+      (specialization) => {
+        if (
+          weapon.item_name &&
+          specialization.value.weapon === weapon.item_name
+        ) {
+          return true
+        }
+        if (weapon.traits.some((val) => matchedTraits.includes(val))) {
+          return true
+        }
+        return false
+      }
+    )
+
+    console.log(weapon)
+
+    if (matchedSpecialization.length > 0) {
+      return WeaponCriticalSpecialization.getCriticalSpecialiation(
+        weapon.definition.group
+      ).getSpecialization()
+    }
+
+    return undefined
   }
 
   public getArmorProficiency(armor: CharacterArmor): ProficiencyRank {
