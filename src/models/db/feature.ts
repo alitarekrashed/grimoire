@@ -90,6 +90,14 @@ export interface SkillSelectionConfiguration {
   formula?: (number | Attribute)[]
 }
 
+export interface SpecializationFeatureValue {
+  type: 'Weapon'
+  value: {
+    weapon?: string
+    trait?: string
+  }
+}
+
 export function featureMatcher(other: SourcedFeature) {
   switch (other.feature.type) {
     case 'RESISTANCE':
