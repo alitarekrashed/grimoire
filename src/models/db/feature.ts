@@ -21,6 +21,7 @@ export type FeatureType =
   | 'GENERAL_FEAT_SELECTION'
   | 'ANCESTRY_FEAT_SELECTION'
   | 'ATTRIBUTE_INCREASE'
+  | 'SPECIALIZATION'
   | 'SUBCLASS'
   | 'SUBCLASS_FEATURE'
   | 'ATTACK'
@@ -88,6 +89,14 @@ export interface SkillSelectionConfiguration {
   options: string[] | 'Free'
   max_rank: ProficiencyRank
   formula?: (number | Attribute)[]
+}
+
+export interface SpecializationFeatureValue {
+  type: 'Weapon'
+  value: {
+    weapon?: string
+    trait?: string
+  }
 }
 
 export function featureMatcher(other: SourcedFeature) {

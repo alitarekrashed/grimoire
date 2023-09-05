@@ -22,7 +22,6 @@ import {
   ArmorDefinition,
   CharacterEntity,
   CharacterEquipment,
-  WeaponDefinition,
   WithNameAndId,
 } from './db/character-entity'
 import { ClassEntity } from './db/class-entity'
@@ -34,6 +33,7 @@ import {
   ModifierFeatureValue,
   OverrideFeatureValue,
   ResistanceFeatureValue,
+  SpecializationFeatureValue,
   featureMatcher,
 } from './db/feature'
 import { Heritage } from './db/heritage'
@@ -43,11 +43,13 @@ import {
   SavingThrowType,
 } from './statistic'
 import { SpellcastingManager } from '@/utils/services/spellcasting-manager'
+import { WeaponDefinition } from './weapon-models'
 
 export interface CharacterAttack {
   attackBonus: ModifierValue[][]
   damageBonus: number
   weapon: CharacterWeapon
+  additionalContent: string[]
 }
 
 export interface CharacterArmor {
@@ -267,7 +269,14 @@ export class PlayerCharacter {
         .map((val) => val.feature.value),
       this.features
         .filter((feature) => feature.feature.type === 'PROFICIENCY_DOWNGRADE')
-        .map((feature) => feature.feature.value.trait)
+        .map((feature) => feature.feature.value.trait),
+      this.features
+        .filter(
+          (feature) =>
+            feature.feature.type === 'SPECIALIZATION' &&
+            feature.feature.value.type === 'Weapon'
+        )
+        .map((feature) => feature.feature.value as SpecializationFeatureValue)
     )
 
     this.skillProficiencyManager = createManagerFromFeatures(
@@ -762,6 +771,16 @@ export class PlayerCharacter {
     // TODO ALI -- this should be a list of modifiers so it's clear where bonuses and stuff come from
     const additionalBonus = damageModifiers.reduce((prev, sum) => prev + sum, 0)
 
+    const extraContent: string[] = []
+    weapon.definition.additional &&
+      weapon.definition.additional.forEach((val) =>
+        extraContent.push(val.value)
+      )
+    const specialization = this.gearProficienyManager.getSpecialization(weapon)
+    if (specialization) {
+      extraContent.push(specialization)
+    }
+
     const multipleAttackPenalty = weapon.traits.includes('agile') ? -4 : -5
     return {
       attackBonus: [
@@ -782,6 +801,7 @@ export class PlayerCharacter {
         (weapon.definition.type === 'melee' ? this.attributes.Strength : 0) +
         additionalBonus,
       weapon: weapon,
+      additionalContent: extraContent,
     }
   }
 

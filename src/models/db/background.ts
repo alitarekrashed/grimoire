@@ -1,10 +1,6 @@
+import { WeaponCategory, WeaponGroup } from '../weapon-models'
 import { AttributeModifier } from './ancestry'
-import {
-  ArmorCategory,
-  ArmorGroup,
-  WeaponCategory,
-  WeaponGroup,
-} from './character-entity'
+import { ArmorCategory, ArmorGroup } from './character-entity'
 import { EntityModel } from './entity-model'
 
 export interface Background extends EntityModel {

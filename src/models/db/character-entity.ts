@@ -56,23 +56,3 @@ export interface ArmorDefinition {
   check_penalty?: number
   speed_penalty?: number
 }
-
-export type WeaponCategory = 'unarmed' | 'simple' | 'martial' | 'advanced'
-export type WeaponGroup = 'brawling' | 'sword' | 'firearm'
-export type WeaponType = 'melee' | 'ranged'
-export type DamageType = 'bludgeoning' | 'piercing' | 'persistent bleed'
-
-export interface WeaponDefinition {
-  category: WeaponCategory
-  group: WeaponGroup
-  type: WeaponType
-  additional: { value: string }[]
-  damage: WeaponDamageDefinition[]
-  reload?: number
-  range?: number
-}
-
-export interface WeaponDamageDefinition {
-  type: DamageType
-  dice: string
-}
