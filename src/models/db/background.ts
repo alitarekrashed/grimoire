@@ -38,6 +38,7 @@ export interface ProficiencyFeatureValue {
 export interface WeaponProficiencyValue {
   category?: WeaponCategory
   group?: WeaponGroup
+  weapon?: string
 }
 
 export interface ArmorProficiencyValue {
