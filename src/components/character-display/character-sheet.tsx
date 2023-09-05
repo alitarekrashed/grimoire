@@ -68,7 +68,7 @@ export function CharacterSheet({ id }: { id: string }) {
             <div className="col-span-1 row-span-full">
               <ProficiencyModifiersColumn></ProficiencyModifiersColumn>
             </div>
-            <div className="col-span-3 row-span-full grid grid-rows-4 gap-1">
+            <div className="col-span-4 row-span-full grid grid-rows-4 gap-1">
               <div className="row-span-1">
                 <Defenses></Defenses>
               </div>
@@ -76,7 +76,7 @@ export function CharacterSheet({ id }: { id: string }) {
                 <Attacks></Attacks>
               </div>
             </div>
-            <div className="col-span-6 row-span-full">
+            <div className="col-span-5 row-span-full">
               <CharacterSheetBox>
                 <FeaturesTabs></FeaturesTabs>
               </CharacterSheetBox>
