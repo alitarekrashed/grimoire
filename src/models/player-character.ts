@@ -46,7 +46,7 @@ import { SpellcastingManager } from '@/utils/services/spellcasting-manager'
 import { WeaponDefinition } from './weapon-models'
 
 export interface AdditionalAttackModifier {
-  type: 'MISC' | 'CRITICAL_SPECIALIZATION'
+  type: 'MISC' | 'CRITICAL'
   value: string
 }
 
@@ -783,6 +783,10 @@ export class PlayerCharacter {
     // TODO ALI -- this should be a list of modifiers so it's clear where bonuses and stuff come from
     const additionalBonus = damageModifiers.reduce((prev, sum) => prev + sum, 0)
 
+    const damageBonus =
+      (weapon.definition.type === 'melee' ? this.attributes.Strength : 0) +
+      additionalBonus
+
     const additional: AdditionalAttackModifier[] = []
     weapon.definition.additional &&
       weapon.definition.additional.forEach((val) =>
@@ -791,10 +795,22 @@ export class PlayerCharacter {
     const specialization = this.gearProficienyManager.getSpecialization(weapon)
     if (specialization) {
       additional.push({
-        type: 'CRITICAL_SPECIALIZATION',
+        type: 'CRITICAL',
         value: specialization,
       })
     }
+
+    weapon.traits.forEach((trait) => {
+      const split = trait.split(' ')
+      if (split.includes('fatal')) {
+        const onCrit: string = `2${split[1]} + ${2 * damageBonus} + ${split[1]}`
+        // can weapons have multiple damage types? how does that interact with the fatal trait?
+        additional.push({
+          type: 'CRITICAL',
+          value: `Instead of your normal weapon damage, you deal: ${onCrit} ${weapon.definition.damage[0].type}`,
+        })
+      }
+    })
 
     const multipleAttackPenalty = weapon.traits.includes('agile') ? -4 : -5
     return {
@@ -812,9 +828,7 @@ export class PlayerCharacter {
           },
         ],
       ],
-      damageBonus:
-        (weapon.definition.type === 'melee' ? this.attributes.Strength : 0) +
-        additionalBonus,
+      damageBonus: damageBonus,
       weapon: weapon,
       additional: additional,
     }

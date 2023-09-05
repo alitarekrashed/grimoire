@@ -58,18 +58,16 @@ export function Attacks() {
                               <IoSparklesSharp className="text-emerald-300" />
                             }
                             content={
-                              <div className="flex gap-1">
+                              <div className="flex flex-col gap-1">
                                 {attack.additional.map((value, index) => (
-                                  <div>
-                                    {value.type ===
-                                      'CRITICAL_SPECIALIZATION' && (
+                                  <div key={index}>
+                                    {value.type === 'CRITICAL' && (
                                       <span className="font-semibold">
                                         On critical:{' '}
                                       </span>
                                     )}
                                     <ParsedDescription
                                       description={value.value}
-                                      key={index}
                                     ></ParsedDescription>
                                   </div>
                                 ))}
