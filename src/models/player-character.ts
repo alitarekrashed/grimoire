@@ -45,11 +45,16 @@ import {
 import { SpellcastingManager } from '@/utils/services/spellcasting-manager'
 import { WeaponDefinition } from './weapon-models'
 
+export interface AdditionalAttackModifier {
+  type: 'MISC' | 'CRITICAL_SPECIALIZATION'
+  value: string
+}
+
 export interface CharacterAttack {
   attackBonus: ModifierValue[][]
   damageBonus: number
   weapon: CharacterWeapon
-  additionalContent: string[]
+  additional: AdditionalAttackModifier[]
 }
 
 export interface CharacterArmor {
@@ -771,14 +776,17 @@ export class PlayerCharacter {
     // TODO ALI -- this should be a list of modifiers so it's clear where bonuses and stuff come from
     const additionalBonus = damageModifiers.reduce((prev, sum) => prev + sum, 0)
 
-    const extraContent: string[] = []
+    const additional: AdditionalAttackModifier[] = []
     weapon.definition.additional &&
       weapon.definition.additional.forEach((val) =>
-        extraContent.push(val.value)
+        additional.push({ type: 'MISC', value: val.value })
       )
     const specialization = this.gearProficienyManager.getSpecialization(weapon)
     if (specialization) {
-      extraContent.push(specialization)
+      additional.push({
+        type: 'CRITICAL_SPECIALIZATION',
+        value: specialization,
+      })
     }
 
     const multipleAttackPenalty = weapon.traits.includes('agile') ? -4 : -5
@@ -801,7 +809,7 @@ export class PlayerCharacter {
         (weapon.definition.type === 'melee' ? this.attributes.Strength : 0) +
         additionalBonus,
       weapon: weapon,
-      additionalContent: extraContent,
+      additional: additional,
     }
   }
 

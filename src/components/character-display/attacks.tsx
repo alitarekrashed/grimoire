@@ -46,19 +46,29 @@ export function Attacks() {
                     <span className="col-span-3">
                       <span className="flex flex-row gap-1 items-center">
                         {attack.weapon.name}
-                        {attack.additionalContent.length > 0 && (
+                        {attack.additional.length > 0 && (
                           <HoverDisplay
                             title={
                               <IoSparklesSharp className="text-emerald-300" />
                             }
-                            content={attack.additionalContent.map(
-                              (value, index) => (
-                                <ParsedDescription
-                                  description={value}
-                                  key={index}
-                                ></ParsedDescription>
-                              )
-                            )}
+                            content={
+                              <div className="flex gap-1">
+                                {attack.additional.map((value, index) => (
+                                  <div>
+                                    {value.type ===
+                                      'CRITICAL_SPECIALIZATION' && (
+                                      <span className="font-semibold">
+                                        On critical:{' '}
+                                      </span>
+                                    )}
+                                    <ParsedDescription
+                                      description={value.value}
+                                      key={index}
+                                    ></ParsedDescription>
+                                  </div>
+                                ))}
+                              </div>
+                            }
                           ></HoverDisplay>
                         )}
                       </span>
