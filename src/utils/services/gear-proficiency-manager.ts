@@ -5,8 +5,9 @@ import {
   WeaponProficiencyValue,
 } from '@/models/db/background'
 import { CharacterEquipment, WithNameAndId } from '@/models/db/character-entity'
-import { Armor, Weapon } from '@/models/db/equipment'
+import { Armor } from '@/models/db/equipment'
 import { CharacterArmor, CharacterWeapon } from '@/models/player-character'
+import { WeaponCategory } from '@/models/weapon-models'
 
 export const FIST_WEAPON: CharacterWeapon = {
   name: 'fist',

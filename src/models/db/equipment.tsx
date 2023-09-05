@@ -1,5 +1,6 @@
+import { WeaponDefinition } from '../weapon-models'
 import { Activation, SavingThrow } from './activation'
-import { ArmorDefinition, WeaponDefinition } from './character-entity'
+import { ArmorDefinition } from './character-entity'
 import { EntityModel } from './entity-model'
 
 export type EquipmentCategory =

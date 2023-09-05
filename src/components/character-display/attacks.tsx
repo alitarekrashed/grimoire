@@ -1,4 +1,3 @@
-import { WeaponGroup } from '@/models/db/character-entity'
 import { useContext, useState } from 'react'
 import { GiBroadsword, GiMailedFist, GiPistolGun } from 'react-icons/gi'
 import { TraitsList } from '../card/traits-list'
@@ -9,6 +8,7 @@ import { Switch } from '../base/switch'
 import { IoSparklesSharp } from 'react-icons/io5'
 import { HoverDisplay } from '../base/hover-display'
 import { Separator } from '../base/separator'
+import { WeaponGroup } from '@/models/weapon-models'
 
 export function Attacks() {
   const { playerCharacter } = useContext(PlayerCharacterContext)

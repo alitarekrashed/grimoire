@@ -22,7 +22,6 @@ import {
   ArmorDefinition,
   CharacterEntity,
   CharacterEquipment,
-  WeaponDefinition,
   WithNameAndId,
 } from './db/character-entity'
 import { ClassEntity } from './db/class-entity'
@@ -43,6 +42,7 @@ import {
   SavingThrowType,
 } from './statistic'
 import { SpellcastingManager } from '@/utils/services/spellcasting-manager'
+import { WeaponDefinition } from './weapon-models'
 
 export interface CharacterAttack {
   attackBonus: ModifierValue[][]
