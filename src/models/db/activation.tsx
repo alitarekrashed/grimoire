@@ -8,6 +8,7 @@ export type ActionName = 'Interact' | 'Cast a Spell' | 'Downtime'
 export type ActionType =
   | 'one'
   | 'one-to-three'
+  | 'one-or-two'
   | 'two'
   | 'three'
   | 'reaction'

@@ -25,7 +25,9 @@ function getRendererByType(activation: Activation, size: number): ReactNode {
         size
       )
     case 'one-to-three':
-      return renderWithMultipleImages(activation, size)
+      return renderWithMultipleImages('one', 'to', 'three', activation, size)
+    case 'one-or-two':
+      return renderWithMultipleImages('one', 'or', 'two', activation, size)
     default:
       return renderWithoutImage(activation)
   }
@@ -51,9 +53,15 @@ function renderWithImage(
   )
 }
 
-function renderWithMultipleImages(activation: Activation, size: number) {
-  const firstValue = getActionValues('one')
-  const lastValue = getActionValues('three')
+function renderWithMultipleImages(
+  first: ActionType,
+  preposition: string,
+  last: ActionType,
+  activation: Activation,
+  size: number
+) {
+  const firstValue = getActionValues(first)
+  const lastValue = getActionValues(last)
   return (
     <>
       <Image
@@ -63,7 +71,7 @@ function renderWithMultipleImages(activation: Activation, size: number) {
         alt={firstValue.alt}
         className="inline"
       ></Image>
-      &nbsp;to&nbsp;
+      &nbsp;{preposition}&nbsp;
       <Image
         src={`/${lastValue.file}dark.png`}
         width={size}
