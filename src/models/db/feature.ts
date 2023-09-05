@@ -10,6 +10,7 @@ export type FeatureType =
   | 'ACTION'
   | 'CONDITIONAL'
   | 'PROFICIENCY'
+  | 'PROFICIENCY_DOWNGRADE'
   | 'LANGUAGE'
   | 'MODIFIER'
   | 'OVERRIDE'

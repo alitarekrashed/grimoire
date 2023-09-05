@@ -4,14 +4,7 @@ import {
   ProficiencyType,
   WeaponProficiencyValue,
 } from '@/models/db/background'
-import {
-  ArmorCategory,
-  ArmorGroup,
-  CharacterEquipment,
-  WeaponCategory,
-  WeaponGroup,
-  WithNameAndId,
-} from '@/models/db/character-entity'
+import { CharacterEquipment, WithNameAndId } from '@/models/db/character-entity'
 import { Armor, Weapon } from '@/models/db/equipment'
 import { CharacterArmor, CharacterWeapon } from '@/models/player-character'
 
@@ -54,7 +47,8 @@ export class GearProficiencyManager {
       type: ProficiencyType
       value: ArmorProficiencyValue
       rank: ProficiencyRank
-    }[]
+    }[],
+    private downgradeTraits: string[]
   ) {}
 
   public getArmorProficiencies(): {
@@ -126,7 +120,11 @@ export class GearProficiencyManager {
   }
 
   public getProficiency(weapon: CharacterWeapon): ProficiencyRank {
-    const category = weapon.definition.category
+    let category = weapon.definition.category
+
+    if (this.downgradeTraits.some((trait) => weapon.traits.includes(trait))) {
+      category = downgradeCategory(category)
+    }
     const group = weapon.definition.group
 
     let minimumRank: ProficiencyRank = 'untrained'
@@ -231,5 +229,16 @@ export function isLessThanOrEqual(
       return other !== 'untrained'
     case 'expert':
       return other === 'expert'
+  }
+}
+
+export function downgradeCategory(category: WeaponCategory) {
+  switch (category) {
+    case 'advanced':
+      return 'martial'
+    case 'martial':
+      return 'simple'
+    default:
+      return category
   }
 }
