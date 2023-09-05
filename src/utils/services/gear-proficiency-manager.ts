@@ -5,11 +5,16 @@ import {
   WeaponProficiencyValue,
 } from '@/models/db/background'
 import { CharacterEquipment, WithNameAndId } from '@/models/db/character-entity'
-import { Armor } from '@/models/db/equipment'
+import { Armor, Weapon } from '@/models/db/equipment'
 import { SpecializationFeatureValue } from '@/models/db/feature'
-import { CharacterArmor, CharacterWeapon } from '@/models/player-character'
+import {
+  CharacterArmor,
+  CharacterWeapon,
+  SourcedFeature,
+} from '@/models/player-character'
 import { WeaponCriticalSpecialization } from '@/models/weapon-critical-specialization'
 import { WeaponCategory } from '@/models/weapon-models'
+import { inter } from '../fonts'
 
 export const FIST_WEAPON: CharacterWeapon = {
   name: 'fist',
@@ -40,21 +45,51 @@ export const UNARMORED_DEFENSE: CharacterArmor = {
 }
 
 export class GearProficiencyManager {
-  constructor(
-    private attacks: {
-      type: ProficiencyType
-      value: WeaponProficiencyValue
-      rank: ProficiencyRank
-    }[],
-    private defenses: {
-      type: ProficiencyType
-      value: ArmorProficiencyValue
-      rank: ProficiencyRank
-    }[],
-    private downgradeTraits: string[],
-    private specializations: SpecializationFeatureValue[],
-    private expertises: SpecializationFeatureValue[]
-  ) {}
+  private attacks: {
+    type: ProficiencyType
+    value: WeaponProficiencyValue
+    rank: ProficiencyRank
+  }[]
+  private defenses: {
+    type: ProficiencyType
+    value: ArmorProficiencyValue
+    rank: ProficiencyRank
+  }[]
+  private downgradeTraits: string[]
+  private specializations: SpecializationFeatureValue[]
+  private expertises: SpecializationFeatureValue[]
+
+  constructor(features: SourcedFeature[]) {
+    this.attacks = features
+      .filter((feature) => feature.feature.type === 'PROFICIENCY')
+      .filter((feature) => feature.feature.value.type === 'Weapon')
+      .map((val) => val.feature.value)
+
+    this.defenses = features
+      .filter((feature) => feature.feature.type === 'PROFICIENCY')
+      .filter((feature) => feature.feature.value.type === 'Defense')
+      .map((val) => val.feature.value)
+
+    this.downgradeTraits = features
+      .filter((feature) => feature.feature.type === 'PROFICIENCY_DOWNGRADE')
+      .map((feature) => feature.feature.value.trait)
+
+    this.specializations = features
+      .filter(
+        (feature) =>
+          feature.feature.type === 'SPECIALIZATION' &&
+          feature.feature.value.type === 'Weapon'
+      )
+      .map((feature) => feature.feature.value as SpecializationFeatureValue)
+
+    this.expertises = features
+      .filter(
+        (feature) =>
+          feature.feature.type === 'EXPERTISE' &&
+          feature.feature.value.type === 'Weapon'
+      )
+      .map((feature) => feature.feature.value as SpecializationFeatureValue)
+  }
 
   public getArmorProficiencies(): {
     value: ArmorProficiencyValue

@@ -263,33 +263,7 @@ export class PlayerCharacter {
     this.initializeHitpoints(ancestry)
 
     this.allFeatures.forEach((feature) => this.addFeatureToCharacter(feature))
-    this.gearProficienyManager = new GearProficiencyManager(
-      this.features
-        .filter((feature) => feature.feature.type === 'PROFICIENCY')
-        .filter((feature) => feature.feature.value.type === 'Weapon')
-        .map((val) => val.feature.value),
-      this.features
-        .filter((feature) => feature.feature.type === 'PROFICIENCY')
-        .filter((feature) => feature.feature.value.type === 'Defense')
-        .map((val) => val.feature.value),
-      this.features
-        .filter((feature) => feature.feature.type === 'PROFICIENCY_DOWNGRADE')
-        .map((feature) => feature.feature.value.trait),
-      this.features
-        .filter(
-          (feature) =>
-            feature.feature.type === 'SPECIALIZATION' &&
-            feature.feature.value.type === 'Weapon'
-        )
-        .map((feature) => feature.feature.value as SpecializationFeatureValue),
-      this.features
-        .filter(
-          (feature) =>
-            feature.feature.type === 'EXPERTISE' &&
-            feature.feature.value.type === 'Weapon'
-        )
-        .map((feature) => feature.feature.value as SpecializationFeatureValue)
-    )
+    this.gearProficienyManager = new GearProficiencyManager(this.features)
 
     this.skillProficiencyManager = createManagerFromFeatures(
       this.level,
