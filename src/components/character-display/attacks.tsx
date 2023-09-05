@@ -1,5 +1,11 @@
 import { useContext, useState } from 'react'
-import { GiBroadsword, GiMailedFist, GiPistolGun } from 'react-icons/gi'
+import {
+  GiBroadsword,
+  GiFlail,
+  GiFlatHammer,
+  GiMailedFist,
+  GiPistolGun,
+} from 'react-icons/gi'
 import { TraitsList } from '../card/traits-list'
 import { CharacterSheetBox } from './character-sheet-box'
 import { PlayerCharacterContext } from './player-character-context'
@@ -42,9 +48,9 @@ export function Attacks() {
                   className="flex flex-col gap-1 "
                 >
                   <div className="grid grid-cols-12">
-                    {getIcon(attack.weapon.definition.group)}
-                    <span className="col-span-3">
+                    <span className="col-span-4">
                       <span className="flex flex-row gap-1 items-center">
+                        {getIcon(attack.weapon.definition.group)}
                         {attack.weapon.name}
                         {attack.additional.length > 0 && (
                           <HoverDisplay
@@ -130,12 +136,17 @@ export function Attacks() {
 }
 
 function getIcon(group: WeaponGroup) {
+  const size = '15px'
   switch (group) {
     case 'brawling':
-      return <GiMailedFist size={'15px'} />
+      return <GiMailedFist size={size} />
     case 'sword':
-      return <GiBroadsword size={'15px'} />
+      return <GiBroadsword size={size} />
     case 'firearm':
-      return <GiPistolGun size={'15px'} />
+      return <GiPistolGun size={size} />
+    case 'hammer':
+      return <GiFlatHammer size={size} />
+    case 'flail':
+      return <GiFlail size={size} />
   }
 }
