@@ -281,6 +281,13 @@ export class PlayerCharacter {
             feature.feature.type === 'SPECIALIZATION' &&
             feature.feature.value.type === 'Weapon'
         )
+        .map((feature) => feature.feature.value as SpecializationFeatureValue),
+      this.features
+        .filter(
+          (feature) =>
+            feature.feature.type === 'EXPERTISE' &&
+            feature.feature.value.type === 'Weapon'
+        )
         .map((feature) => feature.feature.value as SpecializationFeatureValue)
     )
 

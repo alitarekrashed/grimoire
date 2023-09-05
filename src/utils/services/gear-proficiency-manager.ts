@@ -52,7 +52,8 @@ export class GearProficiencyManager {
       rank: ProficiencyRank
     }[],
     private downgradeTraits: string[],
-    private specializations: SpecializationFeatureValue[]
+    private specializations: SpecializationFeatureValue[],
+    private expertises: SpecializationFeatureValue[]
   ) {}
 
   public getArmorProficiencies(): {
@@ -133,8 +134,22 @@ export class GearProficiencyManager {
 
     let minimumRank: ProficiencyRank = 'untrained'
 
-    this.attacks
-      .filter((proficiency) => {
+    const matchedTraits = this.expertises
+      .filter((epertise) => epertise.value.trait)
+      .map((epertise) => epertise.value.trait)
+    const matchedExpertises = this.expertises.filter((expertise) => {
+      if (weapon.item_name && expertise.value.weapon === weapon.item_name) {
+        return true
+      }
+      if (weapon.traits.some((val) => matchedTraits.includes(val))) {
+        return true
+      }
+      return false
+    })
+
+    let attacks = this.attacks
+    if (matchedExpertises.length === 0) {
+      attacks = this.attacks.filter((proficiency) => {
         if (proficiency.value.weapon === weapon.item_name) {
           return true
         }
@@ -149,10 +164,12 @@ export class GearProficiencyManager {
           proficiency.value.group === group
         )
       })
-      .forEach(
-        (proficiency) =>
-          (minimumRank = getGreaterThan(minimumRank, proficiency.rank))
-      )
+    }
+
+    attacks.forEach(
+      (proficiency) =>
+        (minimumRank = getGreaterThan(minimumRank, proficiency.rank))
+    )
 
     return minimumRank
   }
@@ -175,8 +192,6 @@ export class GearProficiencyManager {
         return false
       }
     )
-
-    console.log(weapon)
 
     if (matchedSpecialization.length > 0) {
       return WeaponCriticalSpecialization.getCriticalSpecialiation(
