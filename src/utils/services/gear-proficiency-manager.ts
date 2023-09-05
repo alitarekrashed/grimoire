@@ -70,8 +70,6 @@ export class GearProficiencyManager {
       new Map()
     )
 
-    console.log(this.defenses)
-
     const result: {
       value: ArmorProficiencyValue
       rank: ProficiencyRank
@@ -135,6 +133,9 @@ export class GearProficiencyManager {
 
     this.attacks
       .filter((proficiency) => {
+        if (proficiency.value.weapon === weapon.item_name) {
+          return true
+        }
         if (proficiency.value.category && proficiency.value.group) {
           return (
             proficiency.value.category === category &&
