@@ -757,6 +757,9 @@ export class PlayerCharacter {
             val.context.group === weapon.definition.group
           )
         }
+        if (val.context.rank) {
+          return val.context.rank === rank.getName()
+        }
         return (
           val.context.category === weapon.definition.category ||
           val.context.group === weapon.definition.group
@@ -1028,7 +1031,7 @@ export class PlayerCharacter {
 
     const subclassFeatures = character.features
       .map((val) => val.feature)
-      .filter((val) => val.type === 'SUBCLASS')
+      .filter((val) => val.type === 'SUBCLASS' && val.value)
       .map((val) => val.value)
       .map((val) => PlayerCharacter.getSubclass(val))
     const subclasses = (
