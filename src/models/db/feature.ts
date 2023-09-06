@@ -1,6 +1,5 @@
 import { SourcedFeature } from '../player-character'
 import { Attribute } from './ancestry'
-import { ProficiencyRank } from './background'
 
 export type FeatureType =
   | 'SENSE'
@@ -88,7 +87,7 @@ export interface SkillSelectionFeatureValue {
 
 export interface SkillSelectionConfiguration {
   options: string[] | 'Free'
-  max_rank: ProficiencyRank
+  max_rank: string
   formula?: (number | Attribute)[]
 }
 

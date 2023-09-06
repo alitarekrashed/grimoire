@@ -1,5 +1,4 @@
 import { Activation, SavingThrow } from './activation'
-import { ProficiencyRank } from './background'
 import { EntityModel } from './entity-model'
 import { Feature } from './feature'
 import { Tradition } from './spell'
@@ -30,7 +29,7 @@ export interface Prerequisite {
 
 export interface PrerequisiteSkillValue {
   skill: string
-  minimum_rank: ProficiencyRank
+  minimum_rank: string
 }
 
 export interface FeatConfiguration {

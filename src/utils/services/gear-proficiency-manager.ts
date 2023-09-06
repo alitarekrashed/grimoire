@@ -1,6 +1,5 @@
 import {
   ArmorProficiencyValue,
-  ProficiencyRank,
   ProficiencyType,
   WeaponProficiencyValue,
 } from '@/models/db/background'
@@ -15,6 +14,7 @@ import {
 import { WeaponCriticalSpecialization } from '@/models/weapon-critical-specialization'
 import { WeaponCategory } from '@/models/weapon-models'
 import { inter } from '../fonts'
+import { ProficiencyRank } from '@/models/proficiency-rank'
 
 export const FIST_WEAPON: CharacterWeapon = {
   name: 'fist',
@@ -48,12 +48,12 @@ export class GearProficiencyManager {
   private attacks: {
     type: ProficiencyType
     value: WeaponProficiencyValue
-    rank: ProficiencyRank
+    rank: string
   }[]
   private defenses: {
     type: ProficiencyType
     value: ArmorProficiencyValue
-    rank: ProficiencyRank
+    rank: string
   }[]
   private downgradeTraits: string[]
   private specializations: SpecializationFeatureValue[]
@@ -99,7 +99,7 @@ export class GearProficiencyManager {
       (entryMap, e) =>
         entryMap.set(JSON.stringify(e.value), [
           ...(entryMap.get(e.value) || []),
-          e.rank,
+          ProficiencyRank.get(e.rank),
         ]),
       new Map()
     )
@@ -110,10 +110,10 @@ export class GearProficiencyManager {
     }[] = []
     Array.from(grouped.entries()).forEach(
       (value: [string, ProficiencyRank[]]) => {
-        let resultRank: ProficiencyRank = 'untrained'
+        let resultRank: ProficiencyRank = ProficiencyRank.UNTRAINED
 
         value[1].forEach((rank) => {
-          resultRank = getGreaterThan(resultRank, rank)
+          resultRank = ProficiencyRank.getGreaterThan(resultRank, rank)
         })
 
         result.push({
@@ -133,7 +133,7 @@ export class GearProficiencyManager {
       (entryMap, e) =>
         entryMap.set(JSON.stringify(e.value), [
           ...(entryMap.get(e.value) || []),
-          e.rank,
+          ProficiencyRank.get(e.rank),
         ]),
       new Map()
     )
@@ -144,10 +144,10 @@ export class GearProficiencyManager {
     }[] = []
     Array.from(grouped.entries()).forEach(
       (value: [string, ProficiencyRank[]]) => {
-        let resultRank: ProficiencyRank = 'untrained'
+        let resultRank: ProficiencyRank = ProficiencyRank.UNTRAINED
 
         value[1].forEach((rank) => {
-          resultRank = getGreaterThan(resultRank, rank)
+          resultRank = ProficiencyRank.getGreaterThan(resultRank, rank)
         })
 
         result.push({
@@ -167,7 +167,7 @@ export class GearProficiencyManager {
     }
     const group = weapon.definition.group
 
-    let minimumRank: ProficiencyRank = 'untrained'
+    let minimumRank: ProficiencyRank = ProficiencyRank.UNTRAINED
 
     const matchedTraits = this.expertises
       .filter((epertise) => epertise.value.trait)
@@ -203,7 +203,10 @@ export class GearProficiencyManager {
 
     attacks.forEach(
       (proficiency) =>
-        (minimumRank = getGreaterThan(minimumRank, proficiency.rank))
+        (minimumRank = ProficiencyRank.getGreaterThan(
+          minimumRank,
+          ProficiencyRank.get(proficiency.rank)
+        ))
     )
 
     return minimumRank
@@ -249,7 +252,7 @@ export class GearProficiencyManager {
     const category = armor.definition.category
     const group = armor.definition.group
 
-    let minimumRank: ProficiencyRank = 'untrained'
+    let minimumRank: ProficiencyRank = ProficiencyRank.UNTRAINED
 
     this.defenses
       .filter(
@@ -259,7 +262,10 @@ export class GearProficiencyManager {
       )
       .forEach(
         (proficiency) =>
-          (minimumRank = getGreaterThan(minimumRank, proficiency.rank))
+          (minimumRank = ProficiencyRank.getGreaterThan(
+            minimumRank,
+            ProficiencyRank.get(proficiency.rank)
+          ))
       )
 
     return minimumRank
@@ -288,39 +294,6 @@ export class GearProficiencyManager {
           definition: equipped.item.properties,
         }
       : UNARMORED_DEFENSE
-  }
-}
-
-export function getGreaterThan(
-  thisRank: ProficiencyRank,
-  other: ProficiencyRank
-): ProficiencyRank {
-  return isGreaterThanOrEqualTo(thisRank, other) ? thisRank : other
-}
-
-export function isGreaterThanOrEqualTo(
-  thisRank: ProficiencyRank,
-  other: ProficiencyRank
-): boolean {
-  if (other === 'untrained') {
-    return true
-  } else if (other === 'trained') {
-    return thisRank === 'trained' || thisRank === 'expert'
-  }
-  return false
-}
-
-export function isLessThanOrEqual(
-  thisRank: ProficiencyRank,
-  other: ProficiencyRank
-): boolean {
-  switch (thisRank) {
-    case 'untrained':
-      return true
-    case 'trained':
-      return other !== 'untrained'
-    case 'expert':
-      return other === 'expert'
   }
 }
 
