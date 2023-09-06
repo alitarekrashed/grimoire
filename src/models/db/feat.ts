@@ -21,6 +21,7 @@ export type PrerequisiteType =
   | 'OTHER'
   | 'SPELL_TYPE'
   | 'FEATURE'
+  | 'SUBCLASS'
 
 export interface Prerequisite {
   type: PrerequisiteType

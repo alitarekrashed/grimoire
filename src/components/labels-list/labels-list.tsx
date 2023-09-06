@@ -40,7 +40,7 @@ export function LabelsList({
         if (separator === 'new-line') {
           labels.push(
             <React.Fragment key={`${field.label} + ${separator}`}>
-              <br />
+              <div className="mb-1" />
             </React.Fragment>
           )
         } else {

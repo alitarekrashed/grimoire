@@ -42,6 +42,7 @@ import {
 import { SpellcastingManager } from '@/utils/services/spellcasting-manager'
 import { WeaponDefinition } from './weapon-models'
 import { ProficiencyRank } from './proficiency-rank'
+import { Subclass } from './db/subclass'
 
 export interface AdditionalAttackModifier {
   type: 'MISC' | 'CRITICAL'
@@ -238,6 +239,7 @@ export class PlayerCharacter {
     private ancestry: Ancestry,
     private allFeatures: SourcedFeature[],
     private featManager: FeatManager,
+    private subclassNames: string[],
     private heritage?: Heritage,
     private background?: Background,
     private classEntity?: ClassEntity
@@ -284,6 +286,10 @@ export class PlayerCharacter {
     return this.character.features
       .map((val) => val.feature)
       .find((val) => val.type === 'SUBCLASS')
+  }
+
+  public getSubclassNames(): string[] {
+    return this.subclassNames
   }
 
   public updateName(name: string): PlayerCharacter {
@@ -1002,6 +1008,16 @@ export class PlayerCharacter {
       : undefined
   }
 
+  static async getSubclass(id: string) {
+    return id
+      ? await (
+          await fetch(`http://localhost:3000/api/subclasses/${id}`, {
+            cache: 'no-store',
+          })
+        ).json()
+      : undefined
+  }
+
   static async build(character: CharacterEntity): Promise<PlayerCharacter> {
     const [ancestry, heritage, background, classEntity] = await Promise.all([
       PlayerCharacter.getAncestry(character.ancestry_id),
@@ -1009,6 +1025,15 @@ export class PlayerCharacter {
       PlayerCharacter.getBackground(character.background_id),
       PlayerCharacter.getClass(character.class_id),
     ])
+
+    const subclassFeatures = character.features
+      .map((val) => val.feature)
+      .filter((val) => val.type === 'SUBCLASS')
+      .map((val) => val.value)
+      .map((val) => PlayerCharacter.getSubclass(val))
+    const subclasses = (
+      subclassFeatures.length > 0 ? await Promise.all(subclassFeatures) : []
+    ).map((subclass: Subclass) => subclass.name)
 
     let feats: Feature[] = []
     const allFeatures: SourcedFeature[] = []
@@ -1098,6 +1123,7 @@ export class PlayerCharacter {
       ancestry,
       allFeatures,
       featManager,
+      subclasses,
       heritage,
       background,
       classEntity
