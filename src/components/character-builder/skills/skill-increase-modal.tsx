@@ -2,17 +2,16 @@ import { OptionInlineIndicator } from '@/components/indicators/indicator'
 import { Feature } from '@/models/db/feature'
 import { SkillAttributes, SkillType } from '@/models/statistic'
 import { roboto_condensed } from '@/utils/fonts'
-import { isGreaterThanOrEqualTo } from '@/utils/services/gear-proficiency-manager'
 import {
   SkillProficiencyManager,
   createManagerFromPlayerCharacter,
-  getNextRank,
 } from '@/utils/services/skill-proficiency-manager'
 import { cloneDeep } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
 import { FaCheck } from 'react-icons/fa'
 import { Modal } from '../../base/modal'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
+import { ProficiencyRank } from '@/models/proficiency-rank'
 
 export function SkillIncreaseModal({
   name,
@@ -73,9 +72,9 @@ export function SkillIncreaseModal({
             // is increasing the proficiency later on not sure if we should handle this differently
             // (i.e. remove the 'disabled' attribute, or if we should have some third state)
             const isSelected: boolean = updatedFeature.value.value.includes(val)
-            const isDisabled: boolean = isGreaterThanOrEqualTo(
+            const isDisabled: boolean = ProficiencyRank.isGreaterThanOrEqualTo(
               manager.getSkills().get(val)!.rank,
-              updatedFeature.value.configuration.max_rank
+              ProficiencyRank.get(updatedFeature.value.configuration.max_rank)
             )
               ? true
               : isSelected === false &&
@@ -120,8 +119,12 @@ export function SkillIncreaseModal({
                     <span>
                       <span className="text-xs">
                         {isSelected
-                          ? getNextRank(manager.getSkills().get(val)!.rank)
-                          : manager.getSkills().get(val)!.rank}
+                          ? manager
+                              .getSkills()
+                              .get(val)!
+                              .rank.getNext()
+                              .getName()
+                          : manager.getSkills().get(val)!.rank.getName()}
                       </span>
                     </span>
                   </div>

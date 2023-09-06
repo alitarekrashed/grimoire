@@ -1,6 +1,9 @@
 import React from 'react'
 import { FieldDefinition, LabelsList } from '../labels-list/labels-list'
-import { ParsedToken } from '../parsed-description/parsed-description'
+import {
+  ParsedDescription,
+  ParsedToken,
+} from '../parsed-description/parsed-description'
 import { ActionRenderer } from './action-renderer'
 import { Activation, SavingThrow } from '@/models/db/activation'
 
@@ -124,19 +127,31 @@ export function SavingThrowDisplay({ value }: { value: SavingThrow }) {
   const fields: FieldDefinition[] = [
     {
       label: 'Critical Success',
-      value: value.critical_success,
+      value: value.critical_success && (
+        <ParsedDescription
+          description={value.critical_success}
+        ></ParsedDescription>
+      ),
     },
     {
       label: 'Success',
-      value: value.success,
+      value: value.success && (
+        <ParsedDescription description={value.success}></ParsedDescription>
+      ),
     },
     {
       label: 'Failure',
-      value: value.failure,
+      value: value.failure && (
+        <ParsedDescription description={value.failure}></ParsedDescription>
+      ),
     },
     {
       label: 'Critical Failure',
-      value: value.critical_failure,
+      value: value.critical_failure && (
+        <ParsedDescription
+          description={value.critical_failure}
+        ></ParsedDescription>
+      ),
     },
   ]
 

@@ -1,5 +1,5 @@
 import { Attribute } from './db/ancestry'
-import { ProficiencyRank } from './db/background'
+import { ProficiencyRank } from './proficiency-rank'
 
 export type SavingThrowType = 'Reflex' | 'Will' | 'Fortitude'
 export type SkillType =
@@ -61,7 +61,7 @@ export interface CalculatedProficiency {
 export function generateUntrainedSkillMap(): Map<SkillType, ProficiencyRank> {
   const result = new Map()
   skillAttributes.forEach((value) => {
-    result.set(value[0], 'untrained')
+    result.set(value[0], ProficiencyRank.UNTRAINED)
   })
   return result
 }

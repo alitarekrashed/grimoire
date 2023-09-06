@@ -3,7 +3,6 @@ import { FeatManager } from '@/utils/services/feat-manager'
 import {
   FIST_WEAPON,
   GearProficiencyManager,
-  getGreaterThan,
 } from '@/utils/services/gear-proficiency-manager'
 import {
   SkillProficiencyManager,
@@ -14,9 +13,7 @@ import { Ancestry, Attribute } from './db/ancestry'
 import {
   Background,
   ProficiencyFeatureValue,
-  ProficiencyRank,
   ProficiencyType,
-  RankModifierMap,
 } from './db/background'
 import {
   ArmorDefinition,
@@ -44,6 +41,8 @@ import {
 } from './statistic'
 import { SpellcastingManager } from '@/utils/services/spellcasting-manager'
 import { WeaponDefinition } from './weapon-models'
+import { ProficiencyRank } from './proficiency-rank'
+import { Subclass } from './db/subclass'
 
 export interface AdditionalAttackModifier {
   type: 'MISC' | 'CRITICAL'
@@ -240,6 +239,7 @@ export class PlayerCharacter {
     private ancestry: Ancestry,
     private allFeatures: SourcedFeature[],
     private featManager: FeatManager,
+    private subclassNames: string[],
     private heritage?: Heritage,
     private background?: Background,
     private classEntity?: ClassEntity
@@ -286,6 +286,10 @@ export class PlayerCharacter {
     return this.character.features
       .map((val) => val.feature)
       .find((val) => val.type === 'SUBCLASS')
+  }
+
+  public getSubclassNames(): string[] {
+    return this.subclassNames
   }
 
   public updateName(name: string): PlayerCharacter {
@@ -499,12 +503,18 @@ export class PlayerCharacter {
           proficency.value &&
           proficiencyMap[type].has(proficency.value) == false
         ) {
-          proficiencyMap[type].set(proficency.value, proficency.rank)
+          proficiencyMap[type].set(
+            proficency.value,
+            ProficiencyRank.get(proficency.rank)
+          )
         } else {
           let existingRank = proficiencyMap[type].get(proficency.value)
           proficiencyMap[type].set(
             proficency.value,
-            getGreaterThan(proficency.rank, existingRank ?? 'untrained')
+            ProficiencyRank.getGreaterThan(
+              ProficiencyRank.get(proficency.rank),
+              existingRank ?? ProficiencyRank.UNTRAINED
+            )
           )
         }
       })
@@ -523,7 +533,7 @@ export class PlayerCharacter {
       result.set(type, {
         rank: rank,
         modifier:
-          RankModifierMap[rank] +
+          rank.getValue() +
           this.level +
           this.attributes[SavingThrowAttributes.get(type) as Attribute],
       })
@@ -538,7 +548,7 @@ export class PlayerCharacter {
       result.set(type, {
         rank: rank,
         modifier:
-          RankModifierMap[rank] + this.level + this.attributes['Intelligence'],
+          rank.getValue() + this.level + this.attributes['Intelligence'],
       })
     })
     return result
@@ -549,7 +559,7 @@ export class PlayerCharacter {
     return {
       rank: classDC.get('class DC')!,
       modifier:
-        RankModifierMap[classDC.get('class DC')!] +
+        classDC.get('class DC')!.getValue() +
         this.level +
         this.attributes[this.character.attributes.class[0]],
     }
@@ -560,7 +570,7 @@ export class PlayerCharacter {
     return {
       rank: perception.get('Perception')!,
       modifier:
-        RankModifierMap[perception.get('Perception')!] +
+        perception.get('Perception')!.getValue() +
         this.level +
         this.attributes.Wisdom,
     }
@@ -609,9 +619,9 @@ export class PlayerCharacter {
 
     const rank = this.gearProficienyManager.getArmorProficiency(armor)
 
-    if (rank && rank !== 'untrained') {
+    if (rank && rank.getName() !== 'untrained') {
       result.push({
-        value: RankModifierMap[rank] + this.level,
+        value: rank.getValue() + this.level,
         // TODO use the actual set one, not always the category
         source: `Proficiency (${armor.definition.category})`,
       })
@@ -725,11 +735,11 @@ export class PlayerCharacter {
 
     const rank: ProficiencyRank =
       this.gearProficienyManager.getProficiency(weapon)
-    if (rank !== 'untrained') {
+    if (rank.getName() !== 'untrained') {
       attackBonus.push({
-        value: RankModifierMap[rank] + this.level,
+        value: rank.getValue() + this.level,
         // TODO use the actual set one, not always the category
-        source: `Proficiency (${weapon.definition.category})`,
+        source: `Proficiency (${rank.getName()})`,
       })
     }
 
@@ -746,6 +756,9 @@ export class PlayerCharacter {
             val.context.category === weapon.definition.category &&
             val.context.group === weapon.definition.group
           )
+        }
+        if (val.context.rank) {
+          return val.context.rank === rank.getName()
         }
         return (
           val.context.category === weapon.definition.category ||
@@ -998,6 +1011,16 @@ export class PlayerCharacter {
       : undefined
   }
 
+  static async getSubclass(id: string) {
+    return id
+      ? await (
+          await fetch(`http://localhost:3000/api/subclasses/${id}`, {
+            cache: 'no-store',
+          })
+        ).json()
+      : undefined
+  }
+
   static async build(character: CharacterEntity): Promise<PlayerCharacter> {
     const [ancestry, heritage, background, classEntity] = await Promise.all([
       PlayerCharacter.getAncestry(character.ancestry_id),
@@ -1005,6 +1028,15 @@ export class PlayerCharacter {
       PlayerCharacter.getBackground(character.background_id),
       PlayerCharacter.getClass(character.class_id),
     ])
+
+    const subclassFeatures = character.features
+      .map((val) => val.feature)
+      .filter((val) => val.type === 'SUBCLASS' && val.value)
+      .map((val) => val.value)
+      .map((val) => PlayerCharacter.getSubclass(val))
+    const subclasses = (
+      subclassFeatures.length > 0 ? await Promise.all(subclassFeatures) : []
+    ).map((subclass: Subclass) => subclass.name)
 
     let feats: Feature[] = []
     const allFeatures: SourcedFeature[] = []
@@ -1066,7 +1098,8 @@ export class PlayerCharacter {
           sourced.feature.type === 'MISC' ||
           sourced.feature.type === 'MODIFIER' ||
           sourced.feature.type === 'OVERRIDE' ||
-          sourced.feature.type === 'SKILL_SELECTION'
+          sourced.feature.type === 'SKILL_SELECTION' ||
+          sourced.feature.type === 'SPECIALIZATION'
         ) {
           allFeatures.push({
             source: classEntity.name,
@@ -1093,6 +1126,7 @@ export class PlayerCharacter {
       ancestry,
       allFeatures,
       featManager,
+      subclasses,
       heritage,
       background,
       classEntity

@@ -1,6 +1,5 @@
 import {
   ArmorProficiencyValue,
-  ProficiencyRank,
   WeaponProficiencyValue,
 } from '@/models/db/background'
 import { CharacterEquipment } from '@/models/db/character-entity'
@@ -18,6 +17,7 @@ import { SpellInlineDisplay } from '../spells/spell-inline-display'
 import { Spells } from './spells-display/spells'
 import { Button } from '../base/button'
 import { SpellFeatureValue } from '@/models/db/feature'
+import { ProficiencyRank } from '@/models/proficiency-rank'
 
 export function FeaturesTabs() {
   const { playerCharacter, updateAndSavePlayerCharacter } = useContext(

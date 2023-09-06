@@ -1,5 +1,4 @@
 import { Attribute, AttributeModifier } from './ancestry'
-import { ProficiencyRank } from './background'
 import { EntityModel } from './entity-model'
 import { Rarity } from './equipment'
 import { Feature } from './feature'
@@ -18,7 +17,7 @@ export interface SpellcastingDefinition {
   progression: {
     level: number
     type: 'attack' | 'saving_throw'
-    rank: ProficiencyRank
+    rank: string
   }[]
 }
 

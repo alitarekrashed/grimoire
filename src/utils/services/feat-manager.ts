@@ -82,6 +82,23 @@ async function resolveFeats(feats: Feature[]): Promise<SourcedFeature[]> {
                 )
               modifiedFeature.context = featWithContext.context
             }
+
+            if (
+              feature.type === 'PROFICIENCY_DOWNGRADE' &&
+              featWithContext.context &&
+              featWithContext.context.length === 1 &&
+              feature.context &&
+              feature.context.length === 1 &&
+              feature.value.group
+            ) {
+              modifiedFeature.value.group =
+                modifiedFeature.value.group.replaceAll(
+                  '{0}',
+                  featWithContext.context[0]
+                )
+              modifiedFeature.context = featWithContext.context
+            }
+
             return {
               source: featWithContext.feat.name,
               feature: modifiedFeature,

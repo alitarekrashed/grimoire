@@ -1,8 +1,8 @@
 import { Attribute } from '@/models/db/ancestry'
-import { ProficiencyRank, RankModifierMap } from '@/models/db/background'
 import { SpellcastingDefinition } from '@/models/db/class-entity'
 import { Tradition } from '@/models/db/spell'
 import { Attributes } from '@/models/player-character'
+import { ProficiencyRank } from '@/models/proficiency-rank'
 import { CalculatedProficiency } from '@/models/statistic'
 
 export interface SpellcastingProficiencies {
@@ -19,8 +19,8 @@ export interface SpellcastingConfiguration {
 // fallback uses Charisma + untrained
 const fallback: SpellcastingConfiguration = {
   attribute: 'Charisma',
-  attack: 'untrained',
-  savingThrow: 'untrained',
+  attack: ProficiencyRank.UNTRAINED,
+  savingThrow: ProficiencyRank.UNTRAINED,
 }
 
 export class SpellcastingManager {
@@ -40,14 +40,19 @@ export class SpellcastingManager {
       if (value) {
         let configuration: SpellcastingConfiguration = {
           attribute: value.attribute.value,
-          attack: value.progression.findLast(
-            (progression) =>
-              progression.level <= level && progression.type === 'attack'
-          )!.rank,
-          savingThrow: value?.progression.findLast(
-            (progression) =>
-              progression.level <= level && progression.type === 'saving_throw'
-          )!.rank,
+          attack: ProficiencyRank.get(
+            value.progression.findLast(
+              (progression) =>
+                progression.level <= level && progression.type === 'attack'
+            )!.rank
+          ),
+          savingThrow: ProficiencyRank.get(
+            value?.progression.findLast(
+              (progression) =>
+                progression.level <= level &&
+                progression.type === 'saving_throw'
+            )!.rank
+          ),
         }
 
         if (value.tradition.value) {
@@ -66,8 +71,8 @@ export class SpellcastingManager {
 
     const innateCasting: SpellcastingConfiguration = {
       attribute: 'Charisma',
-      attack: 'trained',
-      savingThrow: 'trained',
+      attack: ProficiencyRank.TRAINED,
+      savingThrow: ProficiencyRank.TRAINED,
     }
 
     this.spellcasting.set('innate', this.buildSpellcasting(innateCasting))
@@ -100,16 +105,18 @@ export class SpellcastingManager {
       attack: {
         rank: configuration.attack,
         modifier:
-          RankModifierMap[configuration.attack] +
+          configuration.attack.getValue() +
           this.attributes[configuration.attribute] +
-          (configuration.attack !== 'untrained' ? this.level : 0),
+          (configuration.attack.getName() !== 'untrained' ? this.level : 0),
       },
       savingThrow: {
         rank: configuration.savingThrow,
         modifier:
-          RankModifierMap[configuration.savingThrow] +
+          configuration.savingThrow.getValue() +
           this.attributes[configuration.attribute] +
-          (configuration.savingThrow !== 'untrained' ? this.level : 0),
+          (configuration.savingThrow.getName() !== 'untrained'
+            ? this.level
+            : 0),
       },
     }
   }

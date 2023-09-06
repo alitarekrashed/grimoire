@@ -11,6 +11,8 @@ import { CalculatedProficiency, SkillType } from '@/models/statistic'
 import { FeatSpellModal } from './feat-spell-modal'
 import { SpellcastingManager } from '@/utils/services/spellcasting-manager'
 import { caseInsensitiveMatch } from '@/utils/helpers'
+import { ProficiencyRank } from '@/models/proficiency-rank'
+import { Feature } from '@/models/db/feature'
 
 export function FeatChoiceModal({
   name,
@@ -51,7 +53,8 @@ export function FeatChoiceModal({
                     playerCharacter.getFeatNames(),
                     playerCharacter.getActions(),
                     playerCharacter.getSpellcastingManager(),
-                    playerCharacter.getResolvedFeatures()
+                    playerCharacter.getResolvedFeatures(),
+                    playerCharacter.getSubclassNames()
                   )
                 )
               }
@@ -139,13 +142,14 @@ function evaluatePrerequisite(
   featNames: string[],
   actions: SourcedFeature[],
   spellcastingManager: SpellcastingManager,
-  features: SourcedFeature[]
+  features: SourcedFeature[],
+  subclasses: string[]
 ): boolean {
   switch (prerequisite.type) {
     case 'SKILL':
-      return isGreaterThanOrEqualTo(
+      return ProficiencyRank.isGreaterThanOrEqualTo(
         skillMap.get(prerequisite.value.skill)!.rank,
-        prerequisite.value.minimum_rank
+        ProficiencyRank.get(prerequisite.value.minimum_rank)
       )
     case 'FEAT':
       return featNames.some((name) =>
@@ -160,6 +164,10 @@ function evaluatePrerequisite(
     case 'FEATURE':
       return features.some((val) =>
         caseInsensitiveMatch(val.feature.name, prerequisite.value)
+      )
+    case 'SUBCLASS':
+      return subclasses.some((val) =>
+        caseInsensitiveMatch(val, prerequisite.value)
       )
     default:
       return true

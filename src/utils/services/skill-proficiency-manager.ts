@@ -11,12 +11,8 @@ import {
   SkillType,
   generateUntrainedSkillMap,
 } from '@/models/statistic'
-import {
-  ProficiencyFeatureValue,
-  ProficiencyRank,
-  RankModifierMap,
-} from '../../models/db/background'
-import { getGreaterThan, isLessThanOrEqual } from './gear-proficiency-manager'
+import { ProficiencyFeatureValue } from '../../models/db/background'
+import { ProficiencyRank } from '@/models/proficiency-rank'
 
 export class SkillProficiencyManager {
   private skillProficiencies: Map<string, ProficiencyRank>
@@ -41,7 +37,7 @@ export class SkillProficiencyManager {
         result.set(type, {
           rank: rank,
           modifier:
-            RankModifierMap[rank] +
+            rank.getValue() +
             this.level +
             this.attributes[
               (SkillAttributes.get(type as SkillType) as Attribute) ??
@@ -75,10 +71,14 @@ export class SkillProficiencyManager {
       })
       proficiencies.forEach((value) => {
         let existingRank =
-          this.skillProficiencies.get(value.value.value) ?? 'untrained'
+          this.skillProficiencies.get(value.value.value) ??
+          ProficiencyRank.UNTRAINED
         this.skillProficiencies.set(
           value.value.value,
-          getGreaterThan(value.value.rank, existingRank)
+          ProficiencyRank.getGreaterThan(
+            ProficiencyRank.get(value.value.rank),
+            existingRank
+          )
         )
       })
     }
@@ -145,27 +145,18 @@ export class SkillProficiencyManager {
         } else {
           let existingRank = this.skillProficiencies.get(skill)
           if (
-            isLessThanOrEqual(
+            ProficiencyRank.isLessThanOrEqualTo(
               existingRank!,
-              skillSelection.value.configuration.max_rank
+              ProficiencyRank.get(skillSelection.value.configuration.max_rank)
             )
           ) {
-            this.skillProficiencies.set(skill, getNextRank(existingRank!)!)
+            this.skillProficiencies.set(skill, existingRank!.getNext())
           } else {
             skillSelection.value.value[index] = null!
           }
         }
       })
     }
-  }
-}
-
-export function getNextRank(rank: ProficiencyRank) {
-  switch (rank) {
-    case 'untrained':
-      return 'trained'
-    case 'trained':
-      return 'expert'
   }
 }
 

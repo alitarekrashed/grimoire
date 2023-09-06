@@ -1,4 +1,4 @@
-import { ProficiencyRank } from '@/models/db/background'
+import { ProficiencyRank } from '@/models/proficiency-rank'
 
 export function SkillDisplay({
   name,
@@ -36,13 +36,15 @@ function getRankDisplay(rank: ProficiencyRank): {
   symbol: string
   color: string
 } {
-  switch (rank) {
+  switch (rank.getName()) {
     case 'untrained':
       return { symbol: 'U', color: '' }
     case 'trained':
       return { symbol: 'T', color: 'bg-stone-400/50' }
     case 'expert':
       return { symbol: 'E', color: 'bg-green-400/50' }
+    case 'master':
+      return { symbol: 'M', color: 'bg-purple-400/50' }
     default:
       return { symbol: 'N/A', color: 'bg-red-400/50' }
   }

@@ -1,3 +1,4 @@
+import { ProficiencyRank } from '../proficiency-rank'
 import { WeaponCategory, WeaponGroup } from '../weapon-models'
 import { AttributeModifier } from './ancestry'
 import { ArmorCategory, ArmorGroup } from './character-entity'
@@ -17,18 +18,11 @@ export type ProficiencyType =
   | 'Weapon'
   | 'Defense'
   | 'DifficultyClass'
-export type ProficiencyRank = 'untrained' | 'trained' | 'expert'
-
-export const RankModifierMap = {
-  untrained: 0,
-  trained: 2,
-  expert: 4,
-}
 
 export interface ProficiencyFeatureValue {
   type: ProficiencyType
   value: string
-  rank: ProficiencyRank
+  rank: string
 }
 
 export interface WeaponProficiencyValue {
@@ -71,28 +65,28 @@ export interface WeaponGroupProficiencies {
 export function getUntrainedWeaponProficiences(): WeaponProficiencies {
   const getProfs = () => {
     return {
-      sword: 'untrained' as ProficiencyRank,
-      spear: 'untrained' as ProficiencyRank,
-      sling: 'untrained' as ProficiencyRank,
-      shield: 'untrained' as ProficiencyRank,
-      polearm: 'untrained' as ProficiencyRank,
-      pick: 'untrained' as ProficiencyRank,
-      knife: 'untrained' as ProficiencyRank,
-      hammer: 'untrained' as ProficiencyRank,
-      flail: 'untrained' as ProficiencyRank,
-      firearm: 'untrained' as ProficiencyRank,
-      dart: 'untrained' as ProficiencyRank,
-      club: 'untrained' as ProficiencyRank,
-      brawling: 'untrained' as ProficiencyRank,
-      bow: 'untrained' as ProficiencyRank,
-      bomb: 'untrained' as ProficiencyRank,
-      axe: 'untrained' as ProficiencyRank,
+      sword: ProficiencyRank.UNTRAINED,
+      spear: ProficiencyRank.UNTRAINED,
+      sling: ProficiencyRank.UNTRAINED,
+      shield: ProficiencyRank.UNTRAINED,
+      polearm: ProficiencyRank.UNTRAINED,
+      pick: ProficiencyRank.UNTRAINED,
+      knife: ProficiencyRank.UNTRAINED,
+      hammer: ProficiencyRank.UNTRAINED,
+      flail: ProficiencyRank.UNTRAINED,
+      firearm: ProficiencyRank.UNTRAINED,
+      dart: ProficiencyRank.UNTRAINED,
+      club: ProficiencyRank.UNTRAINED,
+      brawling: ProficiencyRank.UNTRAINED,
+      bow: ProficiencyRank.UNTRAINED,
+      bomb: ProficiencyRank.UNTRAINED,
+      axe: ProficiencyRank.UNTRAINED,
     }
   }
   return {
     simple: getProfs(),
     martial: getProfs(),
     advanced: getProfs(),
-    unarmed: 'untrained',
+    unarmed: ProficiencyRank.UNTRAINED,
   }
 }
