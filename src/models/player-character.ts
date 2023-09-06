@@ -45,11 +45,16 @@ import {
 import { SpellcastingManager } from '@/utils/services/spellcasting-manager'
 import { WeaponDefinition } from './weapon-models'
 
+export interface AdditionalAttackModifier {
+  type: 'MISC' | 'CRITICAL'
+  value: string
+}
+
 export interface CharacterAttack {
   attackBonus: ModifierValue[][]
   damageBonus: number
   weapon: CharacterWeapon
-  additionalContent: string[]
+  additional: AdditionalAttackModifier[]
 }
 
 export interface CharacterArmor {
@@ -258,26 +263,7 @@ export class PlayerCharacter {
     this.initializeHitpoints(ancestry)
 
     this.allFeatures.forEach((feature) => this.addFeatureToCharacter(feature))
-    this.gearProficienyManager = new GearProficiencyManager(
-      this.features
-        .filter((feature) => feature.feature.type === 'PROFICIENCY')
-        .filter((feature) => feature.feature.value.type === 'Weapon')
-        .map((val) => val.feature.value),
-      this.features
-        .filter((feature) => feature.feature.type === 'PROFICIENCY')
-        .filter((feature) => feature.feature.value.type === 'Defense')
-        .map((val) => val.feature.value),
-      this.features
-        .filter((feature) => feature.feature.type === 'PROFICIENCY_DOWNGRADE')
-        .map((feature) => feature.feature.value.trait),
-      this.features
-        .filter(
-          (feature) =>
-            feature.feature.type === 'SPECIALIZATION' &&
-            feature.feature.value.type === 'Weapon'
-        )
-        .map((feature) => feature.feature.value as SpecializationFeatureValue)
-    )
+    this.gearProficienyManager = new GearProficiencyManager(this.features)
 
     this.skillProficiencyManager = createManagerFromFeatures(
       this.level,
@@ -771,15 +757,34 @@ export class PlayerCharacter {
     // TODO ALI -- this should be a list of modifiers so it's clear where bonuses and stuff come from
     const additionalBonus = damageModifiers.reduce((prev, sum) => prev + sum, 0)
 
-    const extraContent: string[] = []
+    const damageBonus =
+      (weapon.definition.type === 'melee' ? this.attributes.Strength : 0) +
+      additionalBonus
+
+    const additional: AdditionalAttackModifier[] = []
     weapon.definition.additional &&
       weapon.definition.additional.forEach((val) =>
-        extraContent.push(val.value)
+        additional.push({ type: 'MISC', value: val.value })
       )
     const specialization = this.gearProficienyManager.getSpecialization(weapon)
     if (specialization) {
-      extraContent.push(specialization)
+      additional.push({
+        type: 'CRITICAL',
+        value: specialization,
+      })
     }
+
+    weapon.traits.forEach((trait) => {
+      const split = trait.split(' ')
+      if (split.includes('fatal')) {
+        const onCrit: string = `2${split[1]} + ${2 * damageBonus} + ${split[1]}`
+        // can weapons have multiple damage types? how does that interact with the fatal trait?
+        additional.push({
+          type: 'CRITICAL',
+          value: `Instead of your normal weapon damage, you deal: ${onCrit} ${weapon.definition.damage[0].type}`,
+        })
+      }
+    })
 
     const multipleAttackPenalty = weapon.traits.includes('agile') ? -4 : -5
     return {
@@ -797,11 +802,9 @@ export class PlayerCharacter {
           },
         ],
       ],
-      damageBonus:
-        (weapon.definition.type === 'melee' ? this.attributes.Strength : 0) +
-        additionalBonus,
+      damageBonus: damageBonus,
       weapon: weapon,
-      additionalContent: extraContent,
+      additional: additional,
     }
   }
 
