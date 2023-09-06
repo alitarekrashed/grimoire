@@ -11,6 +11,7 @@ import { CalculatedProficiency, SkillType } from '@/models/statistic'
 import { FeatSpellModal } from './feat-spell-modal'
 import { SpellcastingManager } from '@/utils/services/spellcasting-manager'
 import { caseInsensitiveMatch } from '@/utils/helpers'
+import { ProficiencyRank } from '@/models/proficiency-rank'
 
 export function FeatChoiceModal({
   name,
@@ -143,9 +144,9 @@ function evaluatePrerequisite(
 ): boolean {
   switch (prerequisite.type) {
     case 'SKILL':
-      return isGreaterThanOrEqualTo(
+      return ProficiencyRank.isGreaterThanOrEqualTo(
         skillMap.get(prerequisite.value.skill)!.rank,
-        prerequisite.value.minimum_rank
+        ProficiencyRank.get(prerequisite.value.minimum_rank)
       )
     case 'FEAT':
       return featNames.some((name) =>
