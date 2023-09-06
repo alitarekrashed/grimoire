@@ -15,6 +15,8 @@ import { WeaponCriticalSpecialization } from '@/models/weapon-critical-specializ
 import { WeaponCategory } from '@/models/weapon-models'
 import { inter } from '../fonts'
 import { ProficiencyRank } from '@/models/proficiency-rank'
+import { caseInsensitiveMatch } from '../helpers'
+import { cloneDeep } from 'lodash'
 
 export const FIST_WEAPON: CharacterWeapon = {
   name: 'fist',
@@ -55,7 +57,7 @@ export class GearProficiencyManager {
     value: ArmorProficiencyValue
     rank: string
   }[]
-  private downgradeTraits: string[]
+  private downgrade: { trait?: string; group?: string }[]
   private specializations: SpecializationFeatureValue[]
   private expertises: SpecializationFeatureValue[]
 
@@ -70,9 +72,9 @@ export class GearProficiencyManager {
       .filter((feature) => feature.feature.value.type === 'Defense')
       .map((val) => val.feature.value)
 
-    this.downgradeTraits = features
+    this.downgrade = features
       .filter((feature) => feature.feature.type === 'PROFICIENCY_DOWNGRADE')
-      .map((feature) => feature.feature.value.trait)
+      .map((feature) => feature.feature.value)
 
     this.specializations = features
       .filter(
@@ -162,7 +164,14 @@ export class GearProficiencyManager {
   public getProficiency(weapon: CharacterWeapon): ProficiencyRank {
     let category = weapon.definition.category
 
-    if (this.downgradeTraits.some((trait) => weapon.traits.includes(trait))) {
+    if (
+      this.downgrade.some(
+        (downgrade: { trait?: string; group?: string }) =>
+          (downgrade.trait && weapon.traits.includes(downgrade.trait)) ||
+          (downgrade.group &&
+            caseInsensitiveMatch(weapon.definition.group, downgrade.group))
+      )
+    ) {
       category = downgradeCategory(category)
     }
     const group = weapon.definition.group
