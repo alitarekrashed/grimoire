@@ -1066,7 +1066,8 @@ export class PlayerCharacter {
           sourced.feature.type === 'MISC' ||
           sourced.feature.type === 'MODIFIER' ||
           sourced.feature.type === 'OVERRIDE' ||
-          sourced.feature.type === 'SKILL_SELECTION'
+          sourced.feature.type === 'SKILL_SELECTION' ||
+          sourced.feature.type === 'SPECIALIZATION'
         ) {
           allFeatures.push({
             source: classEntity.name,

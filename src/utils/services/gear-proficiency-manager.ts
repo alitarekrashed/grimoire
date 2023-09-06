@@ -221,6 +221,14 @@ export class GearProficiencyManager {
         ) {
           return true
         }
+
+        if (
+          weapon.definition.group &&
+          weapon.definition.group === specialization.value.group
+        ) {
+          return true
+        }
+
         if (weapon.traits.some((val) => matchedTraits.includes(val))) {
           return true
         }

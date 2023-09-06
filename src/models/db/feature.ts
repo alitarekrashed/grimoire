@@ -95,6 +95,7 @@ export interface SkillSelectionConfiguration {
 export interface SpecializationFeatureValue {
   type: 'Weapon'
   value: {
+    group?: string
     weapon?: string
     trait?: string
   }
