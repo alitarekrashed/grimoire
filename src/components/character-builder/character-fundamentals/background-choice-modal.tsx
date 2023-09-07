@@ -1,4 +1,4 @@
-import { Background } from '@/models/db/background'
+import { Background, ProficiencyFeatureValue } from '@/models/db/background'
 import { CharacterEntity } from '@/models/db/character-entity'
 import { Feat } from '@/models/db/feat'
 import { SourcedFeature } from '@/models/player-character'
@@ -7,6 +7,7 @@ import { cloneDeep } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
 import { FeatureChoiceModal } from '../feature-choice-modal'
+import { FeatureType } from '@/models/db/feature'
 import { FeatSubChoiceSelect } from '../level/feat-subchoice-select'
 
 export function BackgroundChoiceModal({

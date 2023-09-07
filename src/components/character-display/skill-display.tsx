@@ -45,6 +45,8 @@ function getRankDisplay(rank: ProficiencyRank): {
       return { symbol: 'E', color: 'bg-green-400/50' }
     case 'master':
       return { symbol: 'M', color: 'bg-purple-400/50' }
+    case 'legendary':
+      return { symbol: 'L', color: 'bg-orange-400/50' }
     default:
       return { symbol: 'N/A', color: 'bg-red-400/50' }
   }

@@ -105,11 +105,11 @@ export class SkillProficiencyManager {
       value: SkillSelectionFeatureValue
     }) {
       if (
-        !skillSelection.value.configuration.formula &&
+        !skillSelection.value.configuration?.formula &&
         (!skillSelection.value.value || skillSelection.value.value.length !== 1)
       ) {
         skillSelection.value.value = [null!]
-      } else if (skillSelection.value.configuration.formula) {
+      } else if (skillSelection.value.configuration?.formula) {
         const expectedNumber: number =
           skillSelection.value.configuration.formula.reduce((prev, curr) => {
             if (typeof curr === 'number') {
@@ -162,10 +162,11 @@ export class SkillProficiencyManager {
 
 export function createManagerFromPlayerCharacter(
   playerCharacter: PlayerCharacter,
+  level: number,
   exclusion?: Feature
 ): SkillProficiencyManager {
   return createManagerFromFeatures(
-    playerCharacter.getCharacter().level,
+    level,
     playerCharacter.getAttributes(),
     playerCharacter.getResolvedFeatures(),
     exclusion
@@ -194,19 +195,21 @@ export function createManagerFromFeatures(
   // order of operations here matters, basically this makes the subclass selection the 'default' base, which means that
   // it 'wins' during reconciliation
   sourced
-    .filter((sourced) => sourced.feature.value !== exclusion)
+    .filter((sourced) => sourced.feature !== exclusion)
     .filter(
       (sourced) =>
-        sourced.feature.type === 'SUBCLASS_FEATURE' &&
-        sourced.feature.value!.type === 'SKILL_SELECTION'
+        !sourced.feature.level && sourced.feature.type === 'SKILL_SELECTION'
     )
     .forEach((sourced) => {
-      builder.validateAndApply(sourced.feature.value)
+      builder.validateAndApply(sourced.feature)
     })
 
   sourced
     .filter((sourced) => sourced.feature.type === 'SKILL_SELECTION')
     .filter((sourced) => sourced.feature !== exclusion)
+    .filter(
+      (sourced) => sourced.feature.level && sourced.feature.level <= level
+    )
     .sort((a, b) => a.feature.level! - b.feature.level!)
     .forEach((sourced) => {
       builder.validateAndApply(sourced.feature)
