@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { PlayerCharacter } from '@/models/player-character'
 import { ClassEntity } from '@/models/db/class-entity'
 import { Feature } from '@/models/db/feature'
+import { PlayerCharacterProvider } from '../character-display/player-character-context'
 
 export function NewCharacterButton({ onSave }: { onSave: () => void }) {
   const [playerCharacter, setPlayerCharacter] = useState<PlayerCharacter>()
@@ -117,25 +118,31 @@ export function NewCharacterButton({ onSave }: { onSave: () => void }) {
             },
           }
         )
-        PlayerCharacter.build(characterEntity).then((val) =>
+        PlayerCharacter.build(characterEntity).then((val) => {
+          console.log('made it here')
+          console.log(val)
           setPlayerCharacter(val)
-        )
+        })
       }
     )
   }, [])
 
   return (
     playerCharacter && (
-      <CharacterBuilderModal
-        trigger={
-          <button className="py-1 px-5 rounded-md bg-stone-800 border border-stone-300 hover:bg-stone-600">
-            <FontAwesomeIcon className="mr-1" size="2xs" icon={faPlus} />
-            New
-          </button>
-        }
-        initialValue={playerCharacter}
-        onClose={handleSave}
-      ></CharacterBuilderModal>
+      <>
+        <PlayerCharacterProvider>
+          <CharacterBuilderModal
+            trigger={
+              <button className="py-1 px-5 rounded-md bg-stone-800 border border-stone-300 hover:bg-stone-600">
+                <FontAwesomeIcon className="mr-1" size="2xs" icon={faPlus} />
+                New
+              </button>
+            }
+            initialValue={playerCharacter}
+            onClose={handleSave}
+          ></CharacterBuilderModal>
+        </PlayerCharacterProvider>
+      </>
     )
   )
 }

@@ -2,6 +2,7 @@ import { CharacterEntity } from '@/models/db/character-entity'
 import { PlayerCharacter } from '@/models/player-character'
 import { useEffect, useState } from 'react'
 import CharacterBuilderModal from '../character-builder/character-builder'
+import { PlayerCharacterProvider } from '../character-display/player-character-context'
 
 export function EditCharacterButton({
   onClick,
@@ -32,16 +33,18 @@ export function EditCharacterButton({
 
   useEffect(() => {}, [])
   return playerCharacter ? (
-    <CharacterBuilderModal
-      trigger={
-        <button className="w-full" onClick={onClick}>
-          Manage
-        </button>
-      }
-      initialValue={playerCharacter}
-      onClose={handleSave}
-      onCancel={onCancel}
-    ></CharacterBuilderModal>
+    <PlayerCharacterProvider>
+      <CharacterBuilderModal
+        trigger={
+          <button className="w-full" onClick={onClick}>
+            Manage
+          </button>
+        }
+        initialValue={playerCharacter}
+        onClose={handleSave}
+        onCancel={onCancel}
+      ></CharacterBuilderModal>
+    </PlayerCharacterProvider>
   ) : (
     <span>Manage</span>
   )
