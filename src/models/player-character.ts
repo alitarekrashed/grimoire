@@ -623,7 +623,7 @@ export class PlayerCharacter {
       result.push({
         value: rank.getValue() + this.level,
         // TODO use the actual set one, not always the category
-        source: `Proficiency (${armor.definition.category})`,
+        source: `Proficiency (${rank.getName()})`,
       })
     }
 
