@@ -116,6 +116,36 @@ export function NewCharacterButton({ onSave }: { onSave: () => void }) {
               type: 'ANCESTRY_FEAT_SELECTION',
               value: null,
             },
+          },
+          {
+            source: 'BACKGROUND',
+            feature: {
+              type: 'FEAT',
+              value: 'Steady Balance',
+              context: [],
+            },
+          },
+          {
+            source: 'BACKGROUND',
+            feature: {
+              type: 'PROFICIENCY',
+              value: {
+                type: 'Skill',
+                value: 'Acrobatics',
+                rank: 'trained',
+              },
+            },
+          },
+          {
+            source: 'BACKGROUND',
+            feature: {
+              type: 'PROFICIENCY',
+              value: {
+                type: 'Lore',
+                value: 'Circus',
+                rank: 'trained',
+              },
+            },
           }
         )
         PlayerCharacter.build(characterEntity).then((val) => {
