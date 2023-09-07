@@ -12,6 +12,7 @@ import { FaCheck } from 'react-icons/fa'
 import { Modal } from '../../base/modal'
 import { PlayerCharacterContext } from '../../character-display/player-character-context'
 import { ProficiencyRank } from '@/models/proficiency-rank'
+import { CharacterLevelContext } from '../character-level-context'
 
 export function SkillIncreaseModal({
   name,
@@ -23,20 +24,25 @@ export function SkillIncreaseModal({
   onSkillsUpdate: (feature: Feature) => void
 }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
+  const { level } = useContext(CharacterLevelContext)
   const [updatedFeature, setUpdatedFeature] = useState<Feature>(
     cloneDeep(skillFeature)
   )
   const [manager, setManager] = useState<SkillProficiencyManager>(
-    createManagerFromPlayerCharacter(playerCharacter, skillFeature)
+    createManagerFromPlayerCharacter(playerCharacter, level, skillFeature)
   )
 
   useEffect(() => {
     setUpdatedFeature(cloneDeep(skillFeature))
-    setManager(createManagerFromPlayerCharacter(playerCharacter, skillFeature))
+    setManager(
+      createManagerFromPlayerCharacter(playerCharacter, level, skillFeature)
+    )
   }, [skillFeature])
 
   useEffect(() => {
-    setManager(createManagerFromPlayerCharacter(playerCharacter, skillFeature))
+    setManager(
+      createManagerFromPlayerCharacter(playerCharacter, level, skillFeature)
+    )
   }, [playerCharacter])
 
   let totalCount = skillFeature.value.value.length
