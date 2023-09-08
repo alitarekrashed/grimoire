@@ -9,13 +9,11 @@ interface FeatWithContext {
 }
 
 export class FeatManager {
-  private resolvedFeats!: SourcedFeature[]
-  private featNames: string[] = []
-
-  private constructor(resolved: SourcedFeature[], featNames: string[]) {
-    this.resolvedFeats = resolved
-    this.featNames = featNames
-  }
+  private constructor(
+    private resolvedFeats: SourcedFeature[],
+    private featNames: string[],
+    private featModifications: Map<string, { name: string; value: string }[]>
+  ) {}
 
   public getResolvedFeats(): SourcedFeature[] {
     return this.resolvedFeats
@@ -25,12 +23,34 @@ export class FeatManager {
     return this.featNames
   }
 
+  public getModifications(feat: string): { name: string; value: string }[] {
+    return this.featModifications.get(feat) ?? []
+  }
+
   static async build(feats: Feature[]) {
     const resolved = await resolveFeats(feats)
     const featNames: string[] = resolved.map(
       (sourced: SourcedFeature) => sourced.source
     )
-    return new FeatManager(resolved, featNames)
+    const modifications: Map<string, { name: string; value: string }[]> =
+      new Map()
+
+    resolved.forEach((sourced: SourcedFeature) => {
+      const feature = sourced.feature
+      if (feature.type === 'FEAT_MODIFIER') {
+        if (!modifications.has(feature.value.feat.toLowerCase())) {
+          modifications.set(feature.value.feat.toLowerCase(), [
+            { name: sourced.source, value: feature.value.description },
+          ])
+        } else {
+          modifications
+            .get(feature.value.feat.toLowerCase())!
+            .push({ name: sourced.source, value: feature.value.description })
+        }
+      }
+    })
+
+    return new FeatManager(resolved, featNames, modifications)
   }
 }
 

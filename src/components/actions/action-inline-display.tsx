@@ -3,16 +3,19 @@ import { EntityModel } from '@/models/db/entity-model'
 import { Feat } from '@/models/db/feat'
 import { retrieveEntity } from '@/utils/services/reference-lookup.service'
 import * as Collapsible from '@radix-ui/react-collapsible'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { ActionRenderer } from '../activation-displays/action-renderer'
 import { SavingThrowDisplay } from '../activation-displays/activation-description'
 import { ParsedDescription } from '../parsed-description/parsed-description'
+import { PlayerCharacter } from '@/models/player-character'
+import { PlayerCharacterContext } from '../character-display/player-character-context'
 
 export function ActionInlineDisplay({
   actionName,
 }: {
   actionName: string | Feat
 }) {
+  const { playerCharacter } = useContext(PlayerCharacterContext)
   const [action, setAction] = useState<Action>()
 
   useEffect(() => {
@@ -21,9 +24,17 @@ export function ActionInlineDisplay({
         setAction(value as Action)
       })
     } else {
+      let description = actionName.description
+      playerCharacter
+        .getFeatModifications(actionName.name.toLowerCase())
+        .forEach((val) => {
+          description = description.concat(
+            `<br/><br/><b>${val.name}</b><br/>${val.value}`
+          )
+        })
       // TODO this is a stop gap, really i need a smarter way to render Feat Actions vs regular actions...
       setAction({
-        description: actionName.description,
+        description: description,
         _id: actionName._id,
         activation: actionName.activation!,
         name: actionName.name.toLowerCase(),

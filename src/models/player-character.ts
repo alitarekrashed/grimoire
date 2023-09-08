@@ -307,6 +307,10 @@ export class PlayerCharacter {
     return this.featManager.getResolvedFeats()
   }
 
+  public getFeatModifications(feat: string): { name: string; value: string }[] {
+    return this.featManager.getModifications(feat)
+  }
+
   public getTraits(): string[] {
     return this.traits
   }
@@ -1097,6 +1101,7 @@ export class PlayerCharacter {
           sourced.feature.type === 'ACTION' ||
           sourced.feature.type === 'MISC' ||
           sourced.feature.type === 'MODIFIER' ||
+          sourced.feature.type === 'FEAT_MODIFIER' ||
           sourced.feature.type === 'OVERRIDE' ||
           sourced.feature.type === 'SKILL_SELECTION' ||
           sourced.feature.type === 'SPECIALIZATION'
