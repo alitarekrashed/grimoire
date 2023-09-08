@@ -35,11 +35,9 @@ export class FeatManager {
     const modifications: Map<string, { name: string; value: string }[]> =
       new Map()
 
-    console.log(feats)
     resolved.forEach((sourced: SourcedFeature) => {
       const feature = sourced.feature
       if (feature.type === 'ACTION_MODIFIER') {
-        console.log('found action')
         if (!modifications.has(feature.value.name.toLowerCase())) {
           modifications.set(feature.value.name.toLowerCase(), [
             { name: sourced.source, value: feature.value.description },
@@ -51,7 +49,6 @@ export class FeatManager {
         }
       }
     })
-    console.log(modifications)
 
     return new FeatManager(resolved, featNames, modifications)
   }

@@ -149,8 +149,6 @@ export function NewCharacterButton({ onSave }: { onSave: () => void }) {
           }
         )
         PlayerCharacter.build(characterEntity).then((val) => {
-          console.log('made it here')
-          console.log(val)
           setPlayerCharacter(val)
         })
       }

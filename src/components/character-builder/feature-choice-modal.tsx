@@ -7,8 +7,11 @@ import { OptionInlineIndicator } from '../indicators/indicator'
 import { caseInsensitiveMatch } from '@/utils/helpers'
 import { init } from 'next/dist/compiled/@vercel/og/satori'
 import { initial } from 'lodash'
+import { FaCheck } from 'react-icons/fa'
 
-export function FeatureChoiceModal<T extends EntityModel>({
+type FeatureChoice = EntityModel & { disabled?: boolean; selected?: boolean }
+
+export function FeatureChoiceModal<T extends FeatureChoice>({
   label,
   entities,
   initialId,
@@ -52,6 +55,10 @@ export function FeatureChoiceModal<T extends EntityModel>({
     ) {
       onClear()
     }
+
+    if (onClear && entity?.disabled) {
+      onClear()
+    }
   }, [entities, initialId, onClear, resolveIdField])
 
   return (
@@ -77,13 +84,14 @@ export function FeatureChoiceModal<T extends EntityModel>({
             <div className="col-span-2 grid grid-cols-1 auto-rows-min h-full pb-[42px] border-r border-r-stone-300/25 overflow-y-scroll text-sm">
               {entities.map((entity) => (
                 <div
-                  className={`h-full w-full pl-2 pr-0.5 border-b border-b-stone-300/25 data-[state=active]:text-rose-400 data-[state=active]:border-b-rose-300`}
+                  className={`h-full w-full flex flex-row items-center pl-2 pr-0.5 border-b border-b-stone-300/25 data-[state=active]:text-rose-400 data-[state=active]:border-b-rose-300 data-[disabled=true]:text-stone-500`}
                   key={entity[resolveIdField()].toString()}
                   data-value={entity[resolveIdField()]}
                   data-state={
                     entity[resolveIdField()] ===
                       (selected && selected[resolveIdField()]) && 'active'
                   }
+                  data-disabled={entity.disabled}
                   onClick={(e) => {
                     setSelected(
                       entities.find(
@@ -94,10 +102,11 @@ export function FeatureChoiceModal<T extends EntityModel>({
                     )
                   }}
                 >
-                  <span className="float-left">{entity.name}</span>
-                  <span className="float-right">
-                    {getLevelIfExists(entity)}
+                  <span className="flex-1 flex flex-row items-center">
+                    {entity.name}
+                    {entity.selected && <FaCheck className="ml-1" />}
                   </span>
+                  <span>{getLevelIfExists(entity)}</span>
                 </div>
               ))}
             </div>
@@ -115,6 +124,7 @@ export function FeatureChoiceModal<T extends EntityModel>({
               onSave(selected!)
               setSaved(selected!)
             },
+            disabled: selected?.disabled,
           },
           {
             label: 'Cancel',

@@ -1,18 +1,49 @@
 import { Feat, Prerequisite } from '@/models/db/feat'
-import { SourcedFeature } from '@/models/player-character'
-import { useContext, useEffect, useState } from 'react'
-import { FeatureChoiceModal } from '../feature-choice-modal'
-import { cloneDeep } from 'lodash'
-import { PlayerCharacterContext } from '../../character-display/player-character-context'
-import { FeatSubChoiceSelect } from './feat-subchoice-select'
-import { CharacterLevelContext } from '../character-level-context'
-import { isGreaterThanOrEqualTo } from '@/utils/services/gear-proficiency-manager'
-import { CalculatedProficiency, SkillType } from '@/models/statistic'
-import { FeatSpellModal } from './feat-spell-modal'
-import { SpellcastingManager } from '@/utils/services/spellcasting-manager'
-import { caseInsensitiveMatch } from '@/utils/helpers'
+import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import { ProficiencyRank } from '@/models/proficiency-rank'
-import { Feature } from '@/models/db/feature'
+import { CalculatedProficiency } from '@/models/statistic'
+import { caseInsensitiveMatch } from '@/utils/helpers'
+import { SpellcastingManager } from '@/utils/services/spellcasting-manager'
+import { cloneDeep } from 'lodash'
+import { useContext, useEffect, useState } from 'react'
+import { PlayerCharacterContext } from '../../character-display/player-character-context'
+import { CharacterLevelContext } from '../character-level-context'
+import { FeatureChoiceModal } from '../feature-choice-modal'
+import { FeatSpellModal } from './feat-spell-modal'
+import { FeatSubChoiceSelect } from './feat-subchoice-select'
+
+type FeatChoice = Feat & { disabled: boolean; selected: boolean }
+
+function isDisabled(feat: Feat, playerCharacter: PlayerCharacter) {
+  if (feat.prerequisites) {
+    return !feat.prerequisites.every((prerequisite: Prerequisite) =>
+      evaluatePrerequisite(
+        prerequisite,
+        playerCharacter.getSkillProfciencyManager().getSkills(),
+        playerCharacter.getFeatNames(),
+        playerCharacter.getActions(),
+        playerCharacter.getSpellcastingManager(),
+        playerCharacter.getResolvedFeatures(),
+        playerCharacter.getSubclassNames()
+      )
+    )
+  }
+  return !true
+}
+
+function isSelected(
+  feat: Feat,
+  existingFeat: SourcedFeature,
+  playerCharacter: PlayerCharacter
+) {
+  if (feat.name === existingFeat.feature.value) {
+    return !true
+  }
+  return !(
+    playerCharacter.getFeatNames().includes(feat.name) === false ||
+    feat.repeatable
+  )
+}
 
 export function FeatChoiceModal({
   name,
@@ -29,7 +60,7 @@ export function FeatChoiceModal({
   const { level } = useContext(CharacterLevelContext)
   const [feat, setFeat] = useState<SourcedFeature>(existingFeat)
   const [featWithSubChoice, setFeatWithSubChoice] = useState<Feat>()
-  const [feats, setFeats] = useState<Feat[]>([])
+  const [feats, setFeats] = useState<FeatChoice[]>([])
 
   useEffect(() => {
     setFeat(existingFeat)
@@ -41,40 +72,32 @@ export function FeatChoiceModal({
     })
       .then((result) => result.json())
       .then((feats) => {
-        const filterFeats = (feats: Feat[]): Feat[] => {
+        const filterFeats = (feats: Feat[]): FeatChoice[] => {
           let filtered = feats
             .filter((feat: Feat) => feat.level <= level)
-            .filter((feat: Feat) => {
-              if (feat.prerequisites) {
-                return feat.prerequisites.every((prerequisite: Prerequisite) =>
-                  evaluatePrerequisite(
-                    prerequisite,
-                    playerCharacter.getSkillProfciencyManager().getSkills(),
-                    playerCharacter.getFeatNames(),
-                    playerCharacter.getActions(),
-                    playerCharacter.getSpellcastingManager(),
-                    playerCharacter.getResolvedFeatures(),
-                    playerCharacter.getSubclassNames()
-                  )
-                )
+            .map((feat: Feat) => {
+              return {
+                ...feat,
+                disabled:
+                  isDisabled(feat, playerCharacter) ||
+                  isSelected(feat, existingFeat, playerCharacter),
+                selected: isSelected(feat, existingFeat, playerCharacter),
               }
-              return true
-            })
-            // TODO instead of filtering them out, should these be disabled??
-            .filter((feat: Feat) => {
-              if (feat.name === existingFeat.feature.value) {
-                return true
-              }
-              return (
-                playerCharacter.getFeatNames().includes(feat.name) === false ||
-                feat.repeatable
-              )
             })
           return filtered
         }
 
-        let filtered: Feat[] = filterFeats(feats)
-        filtered.sort((a, b) => b.level - a.level)
+        let filtered: FeatChoice[] = filterFeats(feats)
+
+        filtered.sort((a, b) => a.level - b.level)
+        filtered.sort((a, b) => {
+          if (a.disabled && b.disabled) {
+            return 0
+          } else if (a.disabled) {
+            return 1
+          }
+          return -1
+        })
         setFeats(filtered)
       })
   }, [traits, existingFeat, level, playerCharacter])
@@ -105,7 +128,7 @@ export function FeatChoiceModal({
           entities={feats}
           initialId={existingFeat.feature.value ?? ''}
           idField="name"
-          onSave={(val: Feat) => {
+          onSave={(val: FeatChoice) => {
             const updated = cloneDeep(feat)
             updated.feature.value = val.name
             updated.feature.context = []
