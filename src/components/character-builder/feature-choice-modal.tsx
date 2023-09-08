@@ -79,7 +79,7 @@ export function FeatureChoiceModal<T extends FeatureChoice>({
             <div className="col-span-2 grid grid-cols-1 auto-rows-min h-full pb-[42px] border-r border-r-stone-300/25 overflow-y-scroll text-sm">
               {entities.map((entity) => (
                 <div
-                  className={`h-full w-full pl-2 pr-0.5 border-b border-b-stone-300/25 data-[state=active]:text-rose-400 data-[state=active]:border-b-rose-300 data-[disabled=true]:text-green-400`}
+                  className={`h-full w-full pl-2 pr-0.5 border-b border-b-stone-300/25 data-[state=active]:text-rose-400 data-[state=active]:border-b-rose-300 data-[disabled=true]:text-stone-500`}
                   key={entity[resolveIdField()].toString()}
                   data-value={entity[resolveIdField()]}
                   data-state={
@@ -118,6 +118,7 @@ export function FeatureChoiceModal<T extends FeatureChoice>({
               onSave(selected!)
               setSaved(selected!)
             },
+            disabled: selected?.disabled,
           },
           {
             label: 'Cancel',
