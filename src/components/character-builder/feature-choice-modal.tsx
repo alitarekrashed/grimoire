@@ -8,7 +8,9 @@ import { caseInsensitiveMatch } from '@/utils/helpers'
 import { init } from 'next/dist/compiled/@vercel/og/satori'
 import { initial } from 'lodash'
 
-export function FeatureChoiceModal<T extends EntityModel>({
+type FeatureChoice = EntityModel & { disabled?: boolean; selected?: boolean }
+
+export function FeatureChoiceModal<T extends FeatureChoice>({
   label,
   entities,
   initialId,
@@ -77,13 +79,14 @@ export function FeatureChoiceModal<T extends EntityModel>({
             <div className="col-span-2 grid grid-cols-1 auto-rows-min h-full pb-[42px] border-r border-r-stone-300/25 overflow-y-scroll text-sm">
               {entities.map((entity) => (
                 <div
-                  className={`h-full w-full pl-2 pr-0.5 border-b border-b-stone-300/25 data-[state=active]:text-rose-400 data-[state=active]:border-b-rose-300`}
+                  className={`h-full w-full pl-2 pr-0.5 border-b border-b-stone-300/25 data-[state=active]:text-rose-400 data-[state=active]:border-b-rose-300 data-[disabled=true]:text-green-400`}
                   key={entity[resolveIdField()].toString()}
                   data-value={entity[resolveIdField()]}
                   data-state={
                     entity[resolveIdField()] ===
                       (selected && selected[resolveIdField()]) && 'active'
                   }
+                  data-disabled={entity.disabled}
                   onClick={(e) => {
                     setSelected(
                       entities.find(
