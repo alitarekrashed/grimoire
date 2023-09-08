@@ -51,7 +51,7 @@ export interface AdditionalAttackModifier {
 
 export interface CharacterAttack {
   attackBonus: ModifierValue[][]
-  damageBonus: number
+  damageBonus: ModifierValue[]
   weapon: CharacterWeapon
   additional: AdditionalAttackModifier[]
 }
@@ -753,30 +753,38 @@ export class PlayerCharacter {
           val.feature.type === 'MODIFIER' &&
           val.feature.value.type === 'AttackDamage'
       )
-      .map((val) => val.feature.value as ModifierFeatureValue)
       .filter((val) => {
-        if (val.context.category && val.context.group) {
+        const value = val.feature.value
+        if (value.context.category && value.context.group) {
           return (
-            val.context.category === weapon.definition.category &&
-            val.context.group === weapon.definition.group
+            value.context.category === weapon.definition.category &&
+            value.context.group === weapon.definition.group
           )
         }
-        if (val.context.rank) {
-          return val.context.rank === rank.getName()
+        if (value.context.rank) {
+          return value.context.rank === rank.getName()
         }
         return (
-          val.context.category === weapon.definition.category ||
-          val.context.group === weapon.definition.group
+          value.context.category === weapon.definition.category ||
+          value.context.group === weapon.definition.group
         )
       })
-      .map((val) => val.modifier.value)
+      .map((val) => {
+        return {
+          source: val.feature.name ?? '',
+          type: val.feature.value.type,
+          value: val.feature.value.modifier.value,
+        }
+      })
 
-    // TODO ALI -- this should be a list of modifiers so it's clear where bonuses and stuff come from
-    const additionalBonus = damageModifiers.reduce((prev, sum) => prev + sum, 0)
-
-    const damageBonus =
-      (weapon.definition.type === 'melee' ? this.attributes.Strength : 0) +
-      additionalBonus
+    let damageBonuses: ModifierValue[] = []
+    if (weapon.definition.type === 'melee') {
+      damageBonuses.push({
+        value: this.attributes.Strength,
+        source: 'Strength',
+      })
+    }
+    damageBonuses.push(...damageModifiers)
 
     const additional: AdditionalAttackModifier[] = []
     weapon.definition.additional &&
@@ -794,7 +802,9 @@ export class PlayerCharacter {
     weapon.traits.forEach((trait) => {
       const split = trait.split(' ')
       if (split.includes('fatal')) {
-        const onCrit: string = `2${split[1]} + ${2 * damageBonus} + ${split[1]}`
+        const onCrit: string = `2${split[1]} + ${
+          2 * damageBonuses.reduce((sum, value) => sum + value.value, 0)
+        } + ${split[1]}`
         // can weapons have multiple damage types? how does that interact with the fatal trait?
         additional.push({
           type: 'CRITICAL',
@@ -819,7 +829,7 @@ export class PlayerCharacter {
           },
         ],
       ],
-      damageBonus: damageBonus,
+      damageBonus: damageBonuses,
       weapon: weapon,
       additional: additional,
     }
