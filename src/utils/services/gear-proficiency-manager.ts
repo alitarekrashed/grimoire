@@ -175,7 +175,7 @@ export class GearProficiencyManager {
       category = downgradeCategory(category)
     }
     const group = weapon.definition.group
-    ß
+
     let minimumRank: ProficiencyRank = ProficiencyRank.UNTRAINED
 
     const matchedTraits = this.expertises
