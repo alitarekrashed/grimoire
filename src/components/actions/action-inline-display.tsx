@@ -18,31 +18,37 @@ export function ActionInlineDisplay({
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [action, setAction] = useState<Action>()
 
-  useEffect(() => {
+  const getAction = async (actionName: string | Feat) => {
+    let action: Action = undefined!
     if (typeof actionName === 'string') {
-      retrieveEntity(actionName, 'ACTION').then((value: EntityModel) => {
-        setAction(value as Action)
-      })
+      action = (await retrieveEntity(actionName, 'ACTION')) as Action
     } else {
-      let description = actionName.description
-      playerCharacter
-        .getFeatModifications(actionName.name.toLowerCase())
-        .forEach((val) => {
-          description = description.concat(
-            `<br/><br/><b>${val.name}</b><br/>${val.value}`
-          )
-        })
-      // TODO this is a stop gap, really i need a smarter way to render Feat Actions vs regular actions...
-      setAction({
-        description: description,
+      action = {
+        description: actionName.description,
         _id: actionName._id,
         activation: actionName.activation!,
         name: actionName.name.toLowerCase(),
         source: actionName.source,
         saving_throw: actionName.saving_throw,
         entity_type: 'ACTION',
-      })
+      }
     }
+    return action
+  }
+
+  useEffect(() => {
+    getAction(actionName).then((action) => {
+      let description = action.description
+      playerCharacter
+        .getFeatModifications(action.name.toLowerCase())
+        .forEach((val) => {
+          description = description.concat(
+            `<br/><br/><b>${val.name}</b><br/>${val.value}`
+          )
+        })
+      action.description = description
+      setAction(action)
+    })
   }, [actionName])
 
   return (

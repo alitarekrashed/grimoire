@@ -1101,7 +1101,7 @@ export class PlayerCharacter {
           sourced.feature.type === 'ACTION' ||
           sourced.feature.type === 'MISC' ||
           sourced.feature.type === 'MODIFIER' ||
-          sourced.feature.type === 'FEAT_MODIFIER' ||
+          sourced.feature.type === 'ACTION_MODIFIER' ||
           sourced.feature.type === 'OVERRIDE' ||
           sourced.feature.type === 'SKILL_SELECTION' ||
           sourced.feature.type === 'SPECIALIZATION'

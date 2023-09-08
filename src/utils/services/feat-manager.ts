@@ -37,7 +37,7 @@ export class FeatManager {
 
     resolved.forEach((sourced: SourcedFeature) => {
       const feature = sourced.feature
-      if (feature.type === 'FEAT_MODIFIER') {
+      if (feature.type === 'ACTION_MODIFIER') {
         if (!modifications.has(feature.value.feat.toLowerCase())) {
           modifications.set(feature.value.feat.toLowerCase(), [
             { name: sourced.source, value: feature.value.description },
