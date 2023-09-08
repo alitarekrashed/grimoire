@@ -32,7 +32,7 @@ export default function CalculatedDisplay({
           {values.map((value: ModifierValue, index: number) => (
             <span
               className="grid grid-cols-6"
-              key={`${value.source}-${value.type}`}
+              key={`${value.source}-${value.type}-${index}`}
             >
               <span className="col-span-1">
                 {value.value >= 0 ? ' + ' : ' - '}

@@ -194,7 +194,7 @@ export class GearProficiencyManager {
     let attacks = this.attacks
     if (matchedExpertises.length === 0) {
       attacks = this.attacks.filter((proficiency) => {
-        if (proficiency.value.weapon === weapon.item_name) {
+        if (weapon.item_name && proficiency.value.weapon === weapon.item_name) {
           return true
         }
         if (proficiency.value.category && proficiency.value.group) {

@@ -99,8 +99,14 @@ export function Attacks() {
                           (damage, index) => (
                             <span key={index}>
                               {damage.dice}
-                              {attack.damageBonus !== 0 &&
-                                ' + ' + attack.damageBonus}
+                              {attack.damageBonus.length > 0 && (
+                                <span>
+                                  <span>&nbsp;+&nbsp;</span>
+                                  <CalculatedDisplay
+                                    values={attack.damageBonus}
+                                  ></CalculatedDisplay>
+                                </span>
+                              )}
                               {` ${damage.type}`}
                             </span>
                           )
