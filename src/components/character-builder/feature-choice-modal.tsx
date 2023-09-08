@@ -55,6 +55,10 @@ export function FeatureChoiceModal<T extends FeatureChoice>({
     ) {
       onClear()
     }
+
+    if (onClear && entity?.disabled) {
+      onClear()
+    }
   }, [entities, initialId, onClear, resolveIdField])
 
   return (
