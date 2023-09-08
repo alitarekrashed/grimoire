@@ -76,9 +76,11 @@ export function ActionInlineDisplay({
                 description={action.description}
               ></ParsedDescription>
               {action.saving_throw && (
-                <SavingThrowDisplay
-                  value={action.saving_throw}
-                ></SavingThrowDisplay>
+                <div className="mt-1">
+                  <SavingThrowDisplay
+                    value={action.saving_throw}
+                  ></SavingThrowDisplay>
+                </div>
               )}
             </div>
           </Collapsible.Content>
