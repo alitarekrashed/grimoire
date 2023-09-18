@@ -4,20 +4,19 @@ import {
 } from '@/models/db/background'
 import { CharacterEquipment } from '@/models/db/character-entity'
 import { EquipmentCategory } from '@/models/db/equipment'
+import { SpellFeatureValue } from '@/models/db/feature'
 import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
+import { ProficiencyRank } from '@/models/proficiency-rank'
 import * as Tabs from '@radix-ui/react-tabs'
 import { cloneDeep } from 'lodash'
 import { useContext } from 'react'
-import { ActionInlineDisplay } from '../actions/action-inline-display'
+import { Button } from '../base/button'
 import { ParsedDescription } from '../parsed-description/parsed-description'
+import { ActionDisplay } from './actions-display/actions-display'
 import styles from './features-tabs.module.css'
 import { PlayerCharacterContext } from './player-character-context'
 import { SkillDisplay } from './skill-display'
-import { SpellInlineDisplay } from '../spells/spell-inline-display'
 import { Spells } from './spells-display/spells'
-import { Button } from '../base/button'
-import { SpellFeatureValue } from '@/models/db/feature'
-import { ProficiencyRank } from '@/models/proficiency-rank'
 
 export function FeaturesTabs() {
   const { playerCharacter, updateAndSavePlayerCharacter } = useContext(
@@ -94,15 +93,7 @@ export function FeaturesTabs() {
           </Tabs.Trigger>
         </Tabs.List>
         <Tabs.Content value="actions">
-          <span className="text-xs">
-            {playerCharacter.getActions().map((action, index) => (
-              <div key={`${action}-${index}`} className="mb-1">
-                <ActionInlineDisplay
-                  actionName={action.feature.value}
-                ></ActionInlineDisplay>
-              </div>
-            ))}
-          </span>
+          <ActionDisplay></ActionDisplay>
         </Tabs.Content>
         <Tabs.Content value="spells">
           <Spells
