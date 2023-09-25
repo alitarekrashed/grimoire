@@ -62,10 +62,10 @@ export function CharacterSheet({ id }: { id: string }) {
         </div>
       )}
       {playerCharacter && (
-        <div className="bg-stone-900">
+        <div className="bg-stone-900 h-full">
           <CharacterHeader onBuilderClose={handleClose}></CharacterHeader>
-          <div className="grid grid-rows-4 grid-cols-10 p-2 gap-1">
-            <div className="col-span-1 row-span-full">
+          <div className="grid grid-rows-4 grid-cols-10 p-2 gap-1 h-[90%]">
+            <div className="col-span-1 row-span-full h-full">
               <ProficiencyModifiersColumn></ProficiencyModifiersColumn>
             </div>
             <div className="col-span-4 row-span-full grid grid-rows-4 gap-1">
@@ -76,7 +76,7 @@ export function CharacterSheet({ id }: { id: string }) {
                 <Attacks></Attacks>
               </div>
             </div>
-            <div className="col-span-5 row-span-full">
+            <div className="col-span-5 row-span-full h-full">
               <CharacterSheetBox>
                 <FeaturesTabs></FeaturesTabs>
               </CharacterSheetBox>

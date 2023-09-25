@@ -10,14 +10,14 @@ export function ProficiencyModifiersColumn() {
 
   return (
     playerCharacter && (
-      <div className="h-fit grid grid-rows-4 gap-1">
+      <div className="grid grid-rows-4 gap-1 h-full">
         <div className="row-span-1">
-          <div className="h-fit mb-1">
+          <div className="mb-1">
             <PerceptionAndClassDCDisplay
               character={playerCharacter}
             ></PerceptionAndClassDCDisplay>
           </div>
-          <div className="h-fit">
+          <div className="">
             <SavingThrowsDisplay
               character={playerCharacter}
             ></SavingThrowsDisplay>
