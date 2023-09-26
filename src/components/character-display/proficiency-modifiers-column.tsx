@@ -1,4 +1,4 @@
-import { PlayerCharacter } from '@/models/player-character'
+import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import { CharacterSheetBox } from './character-sheet-box'
 import { SkillDisplay } from './skill-display'
 import { useContext } from 'react'
@@ -15,20 +15,20 @@ export function ProficiencyModifiersColumn() {
 
   return (
     playerCharacter && (
-      <div className="grid grid-rows-4 gap-1 h-full">
-        <div className="row-span-1">
+      <div className="grid grid-rows-8 gap-1 h-full">
+        <div className="row-span-3 flex flex-col">
           <div className="mb-1">
             <PerceptionAndClassDCDisplay
               character={playerCharacter}
             ></PerceptionAndClassDCDisplay>
           </div>
-          <div className="">
+          <div className="flex-1">
             <SavingThrowsDisplay
               character={playerCharacter}
             ></SavingThrowsDisplay>
           </div>
         </div>
-        <div className="row-span-3">
+        <div className="row-span-5">
           <SkillsDisplay character={playerCharacter}></SkillsDisplay>
         </div>
       </div>
@@ -71,9 +71,9 @@ function SavingThrowsDisplay({ character }: { character: PlayerCharacter }) {
           <SavingThrowDisplay
             key={entry[0]}
             entry={entry}
-            modifiers={savingThrowModifiers.filter(
-              (value) => value.feature.value.type === entry[0]
-            )}
+            modifiers={savingThrowModifiers
+              .filter((value) => value.feature.value.type === entry[0])
+              .map((value) => value.feature.value)}
           ></SavingThrowDisplay>
         ))}
       </div>
@@ -86,14 +86,14 @@ function SavingThrowDisplay({
   modifiers,
 }: {
   entry: [SavingThrowType, CalculatedProficiency]
-  modifiers: SourcedFeature[]
+  modifiers: { description: string; name: string }[]
 }) {
-  console.log(modifiers)
   return (
     <SkillDisplay
       name={entry[0]}
       rank={entry[1].rank}
       modifier={entry[1].modifier}
+      additional={modifiers}
     ></SkillDisplay>
   )
 }

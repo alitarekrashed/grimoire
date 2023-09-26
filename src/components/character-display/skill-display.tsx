@@ -1,4 +1,7 @@
 import { ProficiencyRank } from '@/models/proficiency-rank'
+import { HoverDisplay } from '../base/hover-display'
+import { IoSparklesSharp } from 'react-icons/io5'
+import { ParsedDescription } from '../parsed-description/parsed-description'
 
 export function SkillDisplay({
   name,
@@ -6,12 +9,14 @@ export function SkillDisplay({
   modifier,
   value,
   prefix,
+  additional,
 }: {
   name: string
   rank: ProficiencyRank
   value?: number
   modifier?: number
   prefix?: string
+  additional?: { description: string; name: string }[]
 }) {
   const rankDisplay = getRankDisplay(rank)
   return (
@@ -22,9 +27,14 @@ export function SkillDisplay({
         {rankDisplay.symbol}
       </span>
       <div className="flex hover:text-rose-400 w-full">
-        <div className="pr-2 mr-auto">{`${
-          prefix ? prefix + ': ' : ''
-        }${name}`}</div>
+        <div className="pr-2 mr-auto">
+          <div className="flex flex-row w-full items-center">
+            <span className="mr-1">{`${
+              prefix ? prefix + ': ' : ''
+            }${name}`}</span>
+            {getAdditionalDisplay(additional)}
+          </div>
+        </div>
         {value && <div>{value}</div>}
         {modifier && <div>{(modifier >= 0 ? ' +' : ' -') + modifier}</div>}
       </div>
@@ -50,4 +60,29 @@ function getRankDisplay(rank: ProficiencyRank): {
     default:
       return { symbol: 'N/A', color: 'bg-red-400/50' }
   }
+}
+
+function getAdditionalDisplay(
+  additional: { description: string; name: string }[] | undefined
+) {
+  return (
+    additional &&
+    additional.length > 0 && (
+      <HoverDisplay
+        title={<IoSparklesSharp className="text-emerald-300" />}
+        content={
+          <div className="flex flex-col gap-1">
+            {additional.map((value, index) => (
+              <div key={index}>
+                <span className="font-semibold">{value.name}: </span>
+                <ParsedDescription
+                  description={value.description}
+                ></ParsedDescription>
+              </div>
+            ))}
+          </div>
+        }
+      ></HoverDisplay>
+    )
+  )
 }
