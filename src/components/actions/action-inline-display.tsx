@@ -82,7 +82,7 @@ function getAdditional(action: Action | undefined) {
 
   if (action && action.activation.requirements) {
     additional.push(
-      <div>
+      <div key={`${action.name}-requirements`}>
         <span className="font-semibold">Requirements </span>
         <ParsedDescription
           description={action.activation.requirements}
@@ -93,7 +93,7 @@ function getAdditional(action: Action | undefined) {
 
   if (action && action.activation.trigger) {
     additional.push(
-      <div>
+      <div key={`${action.name}-trigger`}>
         <span className="font-semibold">Trigger </span>
         <ParsedDescription
           description={action.activation.trigger}

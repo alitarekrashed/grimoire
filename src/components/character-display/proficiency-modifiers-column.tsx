@@ -3,7 +3,12 @@ import { CharacterSheetBox } from './character-sheet-box'
 import { SkillDisplay } from './skill-display'
 import { useContext } from 'react'
 import { PlayerCharacterContext } from './player-character-context'
-import { SkillAttributes, SkillType } from '@/models/statistic'
+import {
+  CalculatedProficiency,
+  SavingThrowType,
+  SkillAttributes,
+  SkillType,
+} from '@/models/statistic'
 
 export function ProficiencyModifiersColumn() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
@@ -55,20 +60,41 @@ function PerceptionAndClassDCDisplay({
 }
 
 function SavingThrowsDisplay({ character }: { character: PlayerCharacter }) {
+  const savingThrowModifiers = character
+    .getResolvedFeatures()
+    .filter((value) => value.feature.type === 'SAVING_THROW_MODIFIER')
   return (
     <CharacterSheetBox>
       <div className="flex flex-col gap-1">
         <div className="mb-1 font-semibold text-center">Saving Throws</div>
         {[...character.getSavingThrows().entries()].map((entry) => (
-          <SkillDisplay
+          <SavingThrowDisplay
             key={entry[0]}
-            name={entry[0]}
-            rank={entry[1].rank}
-            modifier={entry[1].modifier}
-          ></SkillDisplay>
+            entry={entry}
+            modifiers={savingThrowModifiers.filter(
+              (value) => value.feature.value.type === entry[0]
+            )}
+          ></SavingThrowDisplay>
         ))}
       </div>
     </CharacterSheetBox>
+  )
+}
+
+function SavingThrowDisplay({
+  entry,
+  modifiers,
+}: {
+  entry: [SavingThrowType, CalculatedProficiency]
+  modifiers: SourcedFeature[]
+}) {
+  console.log(modifiers)
+  return (
+    <SkillDisplay
+      name={entry[0]}
+      rank={entry[1].rank}
+      modifier={entry[1].modifier}
+    ></SkillDisplay>
   )
 }
 
