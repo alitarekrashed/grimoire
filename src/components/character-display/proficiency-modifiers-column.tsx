@@ -1,29 +1,34 @@
-import { PlayerCharacter } from '@/models/player-character'
+import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
 import { CharacterSheetBox } from './character-sheet-box'
 import { SkillDisplay } from './skill-display'
 import { useContext } from 'react'
 import { PlayerCharacterContext } from './player-character-context'
-import { SkillAttributes, SkillType } from '@/models/statistic'
+import {
+  CalculatedProficiency,
+  SavingThrowType,
+  SkillAttributes,
+  SkillType,
+} from '@/models/statistic'
 
 export function ProficiencyModifiersColumn() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
 
   return (
     playerCharacter && (
-      <div className="grid grid-rows-4 gap-1 h-full">
-        <div className="row-span-1">
+      <div className="grid grid-rows-8 gap-1 h-full">
+        <div className="row-span-3 flex flex-col">
           <div className="mb-1">
             <PerceptionAndClassDCDisplay
               character={playerCharacter}
             ></PerceptionAndClassDCDisplay>
           </div>
-          <div className="">
+          <div className="flex-1">
             <SavingThrowsDisplay
               character={playerCharacter}
             ></SavingThrowsDisplay>
           </div>
         </div>
-        <div className="row-span-3">
+        <div className="row-span-5">
           <SkillsDisplay character={playerCharacter}></SkillsDisplay>
         </div>
       </div>
@@ -55,20 +60,41 @@ function PerceptionAndClassDCDisplay({
 }
 
 function SavingThrowsDisplay({ character }: { character: PlayerCharacter }) {
+  const savingThrowModifiers = character
+    .getResolvedFeatures()
+    .filter((value) => value.feature.type === 'SAVING_THROW_MODIFIER')
   return (
     <CharacterSheetBox>
       <div className="flex flex-col gap-1">
         <div className="mb-1 font-semibold text-center">Saving Throws</div>
         {[...character.getSavingThrows().entries()].map((entry) => (
-          <SkillDisplay
+          <SavingThrowDisplay
             key={entry[0]}
-            name={entry[0]}
-            rank={entry[1].rank}
-            modifier={entry[1].modifier}
-          ></SkillDisplay>
+            entry={entry}
+            modifiers={savingThrowModifiers
+              .filter((value) => value.feature.value.type === entry[0])
+              .map((value) => value.feature.value)}
+          ></SavingThrowDisplay>
         ))}
       </div>
     </CharacterSheetBox>
+  )
+}
+
+function SavingThrowDisplay({
+  entry,
+  modifiers,
+}: {
+  entry: [SavingThrowType, CalculatedProficiency]
+  modifiers: { description: string; name: string }[]
+}) {
+  return (
+    <SkillDisplay
+      name={entry[0]}
+      rank={entry[1].rank}
+      modifier={entry[1].modifier}
+      additional={modifiers}
+    ></SkillDisplay>
   )
 }
 
