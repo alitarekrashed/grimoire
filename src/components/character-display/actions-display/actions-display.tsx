@@ -5,10 +5,13 @@ import { retrieveEntity } from '@/utils/services/reference-lookup.service'
 import { useContext, useEffect, useState } from 'react'
 import { PlayerCharacterContext } from '../player-character-context'
 import { ActionFilters } from './action-filters'
+import { cloneDeep } from 'lodash'
 
 export function ActionDisplay() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [actions, setActions] = useState<Action[]>([])
+  const [displayed, setDisplayed] = useState<Action[]>([])
+  const [activeFilters, setActiveFilters] = useState<string[]>([])
 
   useEffect(() => {
     getActions(
@@ -18,13 +21,32 @@ export function ActionDisplay() {
     })
   }, [])
 
+  useEffect(() => {
+    let toDisplay = cloneDeep(actions)
+    console.log(activeFilters)
+    if (activeFilters.length > 0) {
+      toDisplay = toDisplay.filter((action: Action) => {
+        console.log(action)
+        return (
+          action.activation.tags &&
+          action.activation.tags.some((tag: string) =>
+            activeFilters.includes(tag)
+          )
+        )
+      })
+    }
+    setDisplayed(toDisplay)
+  }, [actions, activeFilters])
+
   return (
     <div>
       <div className="mb-2">
-        <ActionFilters></ActionFilters>
+        <ActionFilters
+          onFilter={(value) => setActiveFilters(value)}
+        ></ActionFilters>
       </div>
       <span className="text-xs">
-        {actions.map((action, index) => (
+        {displayed.map((action, index) => (
           <div key={`${action}-${index}`} className="mb-1">
             <ActionInlineDisplay initial={action}></ActionInlineDisplay>
           </div>
