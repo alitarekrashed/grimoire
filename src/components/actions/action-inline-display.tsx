@@ -54,7 +54,7 @@ export function ActionInlineDisplay({ initial }: { initial: Action }) {
               <TraitsList traits={action.traits ?? []}></TraitsList>
               {action.activation.tags && (
                 <div className="flex-1 text-right mr-1">
-                  {action.activation.tags.join(', ')}
+                  {action.activation.tags.sort().join(', ')}
                 </div>
               )}
             </div>
