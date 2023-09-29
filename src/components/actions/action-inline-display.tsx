@@ -38,14 +38,21 @@ export function ActionInlineDisplay({ initial }: { initial: Action }) {
     setAction(value)
   }, [initial])
 
+  const backgrounds =
+    modifications.length > 0
+      ? 'bg-blue-500/40 hover:bg-blue-700/40'
+      : 'bg-emerald-500/40 hover:bg-emerald-700/40'
+
   return (
     <>
       {action && (
         <Collapsible.Root defaultOpen={false} onOpenChange={setExpanded}>
-          <Collapsible.Trigger className="w-full flex flex-col pl-1 pb-1 justify-start rounded-sm bg-stone-300/40 hover:bg-stone-500/40">
+          <Collapsible.Trigger
+            className={`w-full flex flex-col pt-1 pl-1 pb-1 justify-start rounded-md border ${backgrounds}`}
+          >
             <div className="w-full h-full flex flex-row items-center">
               <div className="flex-1">
-                <div className="float-left">
+                <div className="float-left mb-1">
                   <span className="mr-1">{action.name}</span>
                   <ActionRenderer
                     activation={action.activation}
@@ -86,7 +93,7 @@ export function ActionInlineDisplay({ initial }: { initial: Action }) {
               </div>
               <div className="flex flex-col gap-1 p-1">
                 {modifications.map((modification) => (
-                  <div className="border rounded p-1">
+                  <div className="border rounded bg-orange-500/40 p-1">
                     <div className="font-semibold italic mb-1">
                       {modification.name}
                     </div>
