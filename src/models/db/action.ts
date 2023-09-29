@@ -5,4 +5,5 @@ export interface Action extends EntityModel {
   activation: Activation
   saving_throw?: SavingThrow
   traits?: string[]
+  tags?: string[]
 }
