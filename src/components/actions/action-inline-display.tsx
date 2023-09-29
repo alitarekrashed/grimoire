@@ -2,32 +2,39 @@ import { Action } from '@/models/db/action'
 import * as Collapsible from '@radix-ui/react-collapsible'
 import { cloneDeep } from 'lodash'
 import { ReactNode, useContext, useEffect, useState } from 'react'
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
 import { ActionRenderer } from '../activation-displays/action-renderer'
 import { SavingThrowDisplay } from '../activation-displays/activation-description'
 import { Separator } from '../base/separator'
-import { Badge, TraitsList } from '../card/traits-list'
+import { TraitsList } from '../card/traits-list'
 import { PlayerCharacterContext } from '../character-display/player-character-context'
 import { ParsedDescription } from '../parsed-description/parsed-description'
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
+
+interface Modification {
+  name: string
+  description: string
+}
 
 export function ActionInlineDisplay({ initial }: { initial: Action }) {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [action, setAction] = useState<Action>()
+  const [modifications, setModifications] = useState<Modification[]>([])
   const [expanded, setExpanded] = useState<boolean>(false)
 
   const additional: ReactNode[] = getAdditional(action)
 
   useEffect(() => {
     const value = cloneDeep(initial)
-    let description = value.description
-    playerCharacter
-      .getFeatModifications(value.name.toLowerCase())
-      .forEach((val) => {
-        description = description.concat(
-          `<br/><br/><i>${val.name}</i><br/>${val.value}`
-        )
-      })
-    value.description = description
+    setModifications(
+      playerCharacter
+        .getFeatModifications(value.name.toLowerCase())
+        .map((value) => {
+          return {
+            name: value.name,
+            description: value.value,
+          }
+        })
+    )
     setAction(value)
   }, [initial])
 
@@ -64,18 +71,31 @@ export function ActionInlineDisplay({ initial }: { initial: Action }) {
             )}
           </Collapsible.Trigger>
           <Collapsible.Content className="overflow-hidden">
-            <div className="pl-1 pt-1 rounded-b-sm bg-stone-500/40">
-              <ParsedDescription
-                description={action.description}
-              ></ParsedDescription>
-              {action.saving_throw && (
-                <div className="mt-2">
-                  <span className="font-semibold">Effect</span>
-                  <SavingThrowDisplay
-                    value={action.saving_throw}
-                  ></SavingThrowDisplay>
-                </div>
-              )}
+            <div className="pl-1 pt-1 rounded-b-sm bg-stone-500/40 flex flex-col gap-1">
+              <div>
+                <ParsedDescription
+                  description={action.description}
+                ></ParsedDescription>
+                {action.saving_throw && (
+                  <div className="mt-2">
+                    <SavingThrowDisplay
+                      value={action.saving_throw}
+                    ></SavingThrowDisplay>
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col gap-1 p-1">
+                {modifications.map((modification) => (
+                  <div className="border rounded p-1">
+                    <div className="font-semibold italic mb-1">
+                      {modification.name}
+                    </div>
+                    <ParsedDescription
+                      description={modification.description}
+                    ></ParsedDescription>
+                  </div>
+                ))}
+              </div>
             </div>
           </Collapsible.Content>
         </Collapsible.Root>
