@@ -1,28 +1,58 @@
+import { ActionInlineDisplay } from '@/components/actions/action-inline-display'
 import { Action } from '@/models/db/action'
 import { Feat } from '@/models/db/feat'
 import { retrieveEntity } from '@/utils/services/reference-lookup.service'
 import { useContext, useEffect, useState } from 'react'
 import { PlayerCharacterContext } from '../player-character-context'
-import { ActionInlineDisplay } from '@/components/actions/action-inline-display'
+import { ActionFilters } from './action-filters'
+import { cloneDeep } from 'lodash'
 
 export function ActionDisplay() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
   const [actions, setActions] = useState<Action[]>([])
+  const [displayed, setDisplayed] = useState<Action[]>([])
+  const [activeFilters, setActiveFilters] = useState<string[]>([])
 
   useEffect(() => {
     getActions(
       playerCharacter.getActions().map((val) => val.feature.value)
-    ).then((result: Action[]) => setActions(result))
-  }, [playerCharacter.getActions()])
+    ).then((result: Action[]) => {
+      setActions(result)
+    })
+  }, [])
+
+  useEffect(() => {
+    let toDisplay = cloneDeep(actions)
+    console.log(activeFilters)
+    if (activeFilters.length > 0) {
+      toDisplay = toDisplay.filter((action: Action) => {
+        console.log(action)
+        return (
+          action.activation.tags &&
+          action.activation.tags.some((tag: string) =>
+            activeFilters.includes(tag)
+          )
+        )
+      })
+    }
+    setDisplayed(toDisplay)
+  }, [actions, activeFilters])
 
   return (
-    <span className="text-xs">
-      {actions.map((action, index) => (
-        <div key={`${action}-${index}`} className="mb-1">
-          <ActionInlineDisplay initial={action}></ActionInlineDisplay>
-        </div>
-      ))}
-    </span>
+    <div>
+      <div className="mb-2">
+        <ActionFilters
+          onFilter={(value) => setActiveFilters(value)}
+        ></ActionFilters>
+      </div>
+      <span className="text-xs">
+        {displayed.map((action, index) => (
+          <div key={`${action}-${index}`} className="mb-1">
+            <ActionInlineDisplay initial={action}></ActionInlineDisplay>
+          </div>
+        ))}
+      </span>
+    </div>
   )
 }
 

@@ -5,7 +5,7 @@ import { ReactNode, useContext, useEffect, useState } from 'react'
 import { ActionRenderer } from '../activation-displays/action-renderer'
 import { SavingThrowDisplay } from '../activation-displays/activation-description'
 import { Separator } from '../base/separator'
-import { TraitsList } from '../card/traits-list'
+import { Badge, TraitsList } from '../card/traits-list'
 import { PlayerCharacterContext } from '../character-display/player-character-context'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
@@ -50,7 +50,14 @@ export function ActionInlineDisplay({ initial }: { initial: Action }) {
                 {expanded ? <FaChevronUp /> : <FaChevronDown />}
               </div>
             </div>
-            <TraitsList traits={action.traits ?? []}></TraitsList>
+            <div className="flex flex-row items-center w-full">
+              <TraitsList traits={action.traits ?? []}></TraitsList>
+              {action.activation.tags && (
+                <div className="flex-1 text-right mr-1">
+                  {action.activation.tags.sort().join(', ')}
+                </div>
+              )}
+            </div>
             {additional.length > 0 && <Separator className="w-full my-0.5" />}
             {additional.length > 0 && (
               <div className="text-left flex flex-col w-full">{additional}</div>

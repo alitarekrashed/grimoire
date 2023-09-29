@@ -15,6 +15,17 @@ export type ActionType =
   | 'free'
   | '10 minutes'
   | ''
+export type Tag =
+  | 'Augment' // Increases you or an ally's bonus
+  | 'Debilitate' // Decreases an enemy's bonuses
+  | 'Defensive' // Increases AC or saving throw bonuses
+  | 'Downtime' // used in downtime
+  | 'Encounter' // used in encounters
+  | 'Healing' // heals HP
+  | 'Interaction' // interacts with objects
+  | 'Movement' // allows you to move or increase your movement
+  | 'Offensive' // involves making strikes or attacks
+  | 'Support' // supports your allies
 
 export function isActionLongerThanTurn(type: ActionType) {
   switch (type) {
@@ -37,6 +48,7 @@ export interface Activation {
   defense?: DefenseType
   area?: AreaDefinition
   duration?: DurationDefinition
+  tags?: Tag[]
   requirements?: string
   override_label?: string
 }
