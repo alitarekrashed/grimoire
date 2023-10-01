@@ -15,7 +15,10 @@ export function ActionDisplay() {
 
   useEffect(() => {
     getActions(
-      playerCharacter.getActions().map((val) => val.feature.value)
+      playerCharacter
+        .getActions()
+        .map((val) => val.feature.value)
+        .concat('demoralize') // TODO extract the basic actions somewhere else
     ).then((result: Action[]) => {
       setActions(result)
     })
