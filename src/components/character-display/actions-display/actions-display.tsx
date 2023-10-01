@@ -1,11 +1,14 @@
 import { ActionInlineDisplay } from '@/components/actions/action-inline-display'
 import { Action } from '@/models/db/action'
-import { Feat } from '@/models/db/feat'
+import { Feat, Prerequisite } from '@/models/db/feat'
 import { retrieveEntity } from '@/utils/services/reference-lookup.service'
 import { useContext, useEffect, useState } from 'react'
 import { PlayerCharacterContext } from '../player-character-context'
 import { ActionFilters } from './action-filters'
 import { cloneDeep } from 'lodash'
+import { ProficiencyRank } from '@/models/proficiency-rank'
+import { CalculatedProficiency } from '@/models/statistic'
+import { PlayerCharacter } from '@/models/player-character'
 
 export function ActionDisplay() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
@@ -18,7 +21,21 @@ export function ActionDisplay() {
       playerCharacter
         .getActions()
         .map((val) => val.feature.value)
-        .concat('demoralize') // TODO extract the basic actions somewhere else
+        .concat(
+          'demoralize',
+          'grapple',
+          'feint',
+          'escape',
+          'shove',
+          'trip',
+          'disarm',
+          'avert gaze',
+          'take cover',
+          'raise a shield',
+          'dismiss',
+          'identify magic'
+        ), // TODO extract the basic actions somewhere else
+      playerCharacter
     ).then((result: Action[]) => {
       setActions(result)
     })
@@ -57,11 +74,24 @@ export function ActionDisplay() {
   )
 }
 
-const getActions = async (actions: (string | Feat)[]): Promise<Actionp[]> => {
+const getActions = async (
+  actions: (string | Feat)[],
+  playerCharacter: PlayerCharacter
+): Promise<Actionp[]> => {
   const result = []
 
   for (let i = 0; i < actions.length; i++) {
-    result.push(await getAction(actions[i]))
+    const action = await getAction(actions[i])
+
+    if (
+      !action.prerequisites ||
+      action.prerequisites.length === 0 ||
+      evaluatePrerequisite(
+        action.prerequisites[0],
+        playerCharacter.getSkillProfciencyManager().getSkills()
+      )
+    )
+      result.push(action)
   }
   result.sort((a, b) => a.name.localeCompare(b.name))
   return result
@@ -84,4 +114,19 @@ const getAction = async (actionName: string | Feat) => {
     }
   }
   return action
+}
+
+function evaluatePrerequisite(
+  prerequisite: Prerequisite,
+  skillMap: Map<string, CalculatedProficiency>
+): boolean {
+  switch (prerequisite.type) {
+    case 'SKILL':
+      return ProficiencyRank.isGreaterThanOrEqualTo(
+        skillMap.get(prerequisite.value.skill)!.rank,
+        ProficiencyRank.get(prerequisite.value.minimum_rank)
+      )
+    default:
+      return true
+  }
 }
