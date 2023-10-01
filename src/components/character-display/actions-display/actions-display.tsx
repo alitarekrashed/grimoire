@@ -23,10 +23,8 @@ export function ActionDisplay() {
 
   useEffect(() => {
     let toDisplay = cloneDeep(actions)
-    console.log(activeFilters)
     if (activeFilters.length > 0) {
       toDisplay = toDisplay.filter((action: Action) => {
-        console.log(action)
         return (
           action.activation.tags &&
           action.activation.tags.some((tag: string) =>
