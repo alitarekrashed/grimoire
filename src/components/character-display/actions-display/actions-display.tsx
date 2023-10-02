@@ -33,7 +33,11 @@ export function ActionDisplay() {
           'take cover',
           'raise a shield',
           'dismiss',
-          'identify magic'
+          'identify magic',
+          'seek',
+          'point out',
+          'hide',
+          'sneak'
         ), // TODO extract the basic actions somewhere else
       playerCharacter
     ).then((result: Action[]) => {

@@ -89,6 +89,21 @@ async function resolveFeats(feats: Feature[]): Promise<SourcedFeature[]> {
             }
 
             if (
+              feature.type === 'ACTION_MODIFIER' &&
+              featWithContext.context &&
+              feature.value.description
+            ) {
+              featWithContext.context.forEach((val, index) => {
+                modifiedFeature.value.description =
+                  modifiedFeature.value.description.replaceAll(
+                    `{${index}}`,
+                    val
+                  )
+              })
+              modifiedFeature.context = featWithContext.context
+            }
+
+            if (
               feature.type === 'SPELL' &&
               featWithContext.context &&
               featWithContext.context.length === 1 &&
