@@ -37,7 +37,20 @@ export function ActionDisplay() {
           'seek',
           'point out',
           'hide',
-          'sneak'
+          'sneak',
+          'conceal an object',
+          'palm an object',
+          'steal',
+          'lie',
+          'stride',
+          'step',
+          'tumble through',
+          'drop prone',
+          'crawl',
+          'stand',
+          'leap',
+          'high jump',
+          'long jump'
         ), // TODO extract the basic actions somewhere else
       playerCharacter
     ).then((result: Action[]) => {

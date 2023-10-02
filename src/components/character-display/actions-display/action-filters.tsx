@@ -20,6 +20,8 @@ export function ActionFilters({
     { name: 'Magical', active: false },
     { name: 'Movement', active: false },
     { name: 'Offensive', active: false },
+    { name: 'Skill', active: false },
+    { name: 'Social', active: false },
     { name: 'Specialty', active: false },
     { name: 'Stealth', active: false },
     { name: 'Support', active: false },
