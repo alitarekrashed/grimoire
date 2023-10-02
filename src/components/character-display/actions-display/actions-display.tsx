@@ -50,7 +50,24 @@ export function ActionDisplay() {
           'stand',
           'leap',
           'high jump',
-          'long jump'
+          'long jump',
+          'swim',
+          'climb',
+          'balance',
+          'grab an edge',
+          'arrest a fall',
+          'interact',
+          'release',
+          'disable a device',
+          'pick a lock',
+          'force open',
+          'administer first aid',
+          'treat wounds',
+          'treat poison',
+          'treat disease',
+          'aid',
+          'recall knowledge',
+          'request'
         ), // TODO extract the basic actions somewhere else
       playerCharacter
     ).then((result: Action[]) => {
