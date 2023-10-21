@@ -1,6 +1,11 @@
 'use client'
 
-import { Feat, Prerequisite, PrerequisiteSkillValue } from '@/models/db/feat'
+import {
+  Feat,
+  Prerequisite,
+  PrerequisiteAttributeValue,
+  PrerequisiteSkillValue,
+} from '@/models/db/feat'
 import { RefObject } from 'react'
 import Card from '../card/card'
 import { LabelsList } from '../labels-list/labels-list'
@@ -62,6 +67,11 @@ function renderPrerequisite(prerequisite: Prerequisite): string {
   if (prerequisite.type === 'SKILL') {
     const skillPrereq = prerequisite.value as PrerequisiteSkillValue
     return `${skillPrereq.minimum_rank} in ${skillPrereq.skill}`
+  } else if (prerequisite.type === 'ATTRIBUTE') {
+    const attributePrereq = prerequisite.value as PrerequisiteAttributeValue
+    return `${attributePrereq.attribute}   ${
+      attributePrereq.modifier >= 0 ? '+' : '-'
+    }${attributePrereq.modifier}`
   } else {
     return prerequisite.value
   }

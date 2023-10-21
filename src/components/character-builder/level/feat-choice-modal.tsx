@@ -1,5 +1,9 @@
 import { Feat, Prerequisite } from '@/models/db/feat'
-import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
+import {
+  Attributes,
+  PlayerCharacter,
+  SourcedFeature,
+} from '@/models/player-character'
 import { ProficiencyRank } from '@/models/proficiency-rank'
 import { CalculatedProficiency } from '@/models/statistic'
 import { caseInsensitiveMatch } from '@/utils/helpers'
@@ -24,7 +28,8 @@ function isDisabled(feat: Feat, playerCharacter: PlayerCharacter) {
         playerCharacter.getActions(),
         playerCharacter.getSpellcastingManager(),
         playerCharacter.getResolvedFeatures(),
-        playerCharacter.getSubclassNames()
+        playerCharacter.getSubclassNames(),
+        playerCharacter.getAttributes()
       )
     )
   }
@@ -166,7 +171,8 @@ function evaluatePrerequisite(
   actions: SourcedFeature[],
   spellcastingManager: SpellcastingManager,
   features: SourcedFeature[],
-  subclasses: string[]
+  subclasses: string[],
+  attributes: Attributes
 ): boolean {
   switch (prerequisite.type) {
     case 'SKILL':
@@ -191,6 +197,11 @@ function evaluatePrerequisite(
     case 'SUBCLASS':
       return subclasses.some((val) =>
         caseInsensitiveMatch(val, prerequisite.value)
+      )
+    case 'ATTRIBUTE':
+      return (
+        attributes[prerequisite.value.attribute as keyof Attributes] >=
+        prerequisite.value.modifier
       )
     default:
       return true

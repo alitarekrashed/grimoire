@@ -9,6 +9,7 @@ export function ActionFilters({
   onFilter: (value: string[]) => void
 }) {
   const [filters, setFilters] = useState<FilterState[]>([
+    { name: 'Basic', active: false },
     { name: 'Augment', active: false },
     { name: 'Debilitate', active: false },
     { name: 'Defensive', active: false },
@@ -16,8 +17,13 @@ export function ActionFilters({
     { name: 'Encounter', active: false },
     { name: 'Healing', active: false },
     { name: 'Interaction', active: false },
+    { name: 'Magical', active: false },
     { name: 'Movement', active: false },
     { name: 'Offensive', active: false },
+    { name: 'Skill', active: false },
+    { name: 'Social', active: false },
+    { name: 'Specialty', active: false },
+    { name: 'Stealth', active: false },
     { name: 'Support', active: false },
   ])
 

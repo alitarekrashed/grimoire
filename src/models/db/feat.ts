@@ -1,4 +1,5 @@
 import { Activation, SavingThrow } from './activation'
+import { Attribute } from './ancestry'
 import { EntityModel } from './entity-model'
 import { Feature } from './feature'
 import { Tradition } from './spell'
@@ -22,6 +23,7 @@ export type PrerequisiteType =
   | 'SPELL_TYPE'
   | 'FEATURE'
   | 'SUBCLASS'
+  | 'ATTRIBUTE'
 
 export interface Prerequisite {
   type: PrerequisiteType
@@ -31,6 +33,11 @@ export interface Prerequisite {
 export interface PrerequisiteSkillValue {
   skill: string
   minimum_rank: string
+}
+
+export interface PrerequisiteAttributeValue {
+  attribute: Attribute
+  modifier: number
 }
 
 export interface FeatConfiguration {

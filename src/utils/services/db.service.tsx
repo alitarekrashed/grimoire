@@ -52,7 +52,7 @@ export async function getAllEntities<T extends EntityModel>(
   if (name) {
     search = {
       ...search,
-      name: { $regex: name, $options: 'i' },
+      name: { $regex: '^' + name, $options: 'i' },
     }
   }
   if (traits && traits.length > 0) {
