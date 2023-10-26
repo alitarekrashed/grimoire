@@ -32,46 +32,57 @@ export default function MoneyDisplay() {
   )
 
   const manage = (
-    <div
-      className={`p-2 ${roboto_flex.className} flex flex-col gap-2 text-xs w-128`}
-    >
-      {['pp', 'gp', 'sp', 'cp'].map((currency: string) => (
-        <div key={currency}>
-          <div className="flex flex-row items-start">
-            <div className="mr-2">
-              {getImageFromCurrency(currency as CurrencyType)}
-            </div>
-            <div className="pr-2 flex-1">
-              <div>
-                <span>
-                  {getCurrencyMetadata(currency as CurrencyType)!.name}
-                </span>
-                <span>&nbsp;({currency})</span>
+    <div className={`${roboto_flex.className} w-128 flex flex-row`}>
+      <div className="w-44 h-full border-r border-stone-300/20 text-xs flex flex-col gap-2">
+        {['pp', 'gp', 'sp', 'cp'].map((currency: string) => (
+          <div key={currency}>
+            <div className="p-1 flex flex-row items-start">
+              <div className="mr-2">
+                {getImageFromCurrency(currency as CurrencyType)}
               </div>
-              <div className="text-[8px] flex flex-col leading-3 text-stone-400">
-                {getCurrencyMetadata(currency as CurrencyType)!.additional.map(
-                  (val, index) => (
+              <div className="pr-2 flex-1">
+                <div>
+                  <span>
+                    {getCurrencyMetadata(currency as CurrencyType)!.name}
+                  </span>
+                  <span>&nbsp;({currency})</span>
+                </div>
+                <div className="text-[8px] flex flex-col leading-3 text-stone-400">
+                  {getCurrencyMetadata(
+                    currency as CurrencyType
+                  )!.additional.map((val, index) => (
                     <span key={index}>{val}</span>
-                  )
-                )}
+                  ))}
+                </div>
+              </div>
+              <div>
+                {
+                  playerCharacter.getCharacter().player_state.money[
+                    currency as keyof CharacterMoney
+                  ]
+                }
               </div>
             </div>
-            <div>
-              {
-                playerCharacter.getCharacter().player_state.money[
-                  currency as keyof CharacterMoney
-                ]
-              }
-            </div>
+            <Separator className="mt-2 bg-stone-300/20"></Separator>
           </div>
-          <Separator className="mt-2"></Separator>
-        </div>
-      ))}
+        ))}
+      </div>
+      <div className="bg-red-400 flex-1">currency management goes here</div>
     </div>
   )
 
   return (
-    <Modal trigger={display} body={manage} closeButtons={[]} size="fit"></Modal>
+    <Modal
+      trigger={display}
+      body={manage}
+      closeButtons={[
+        {
+          label: 'Close',
+          onClick: () => {},
+        },
+      ]}
+      size="fit"
+    ></Modal>
   )
 }
 
