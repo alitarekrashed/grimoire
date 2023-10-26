@@ -58,6 +58,12 @@ export function NewCharacterButton({ onSave }: { onSave: () => void }) {
           },
           player_state: {
             focus_points: [],
+            money: {
+              pp: 0,
+              gp: 15,
+              sp: 0,
+              cp: 0,
+            },
           },
           languages: [],
           ancestry_id: '64c86dc6ce00a34d75caa80f',
