@@ -65,11 +65,11 @@ export default function CharactersPage() {
           <NewCharacterButton onSave={handleRefresh}></NewCharacterButton>
         </div>
         {playerCharacters && (
-          <div className="inline-flex gap-2 bg-stone-900 h-full w-full rounded border border-bg-stone-300 p-4">
+          <div className="inline-flex gap-2 bg-stone-900 h-full w-full rounded border border-stone-300 p-4">
             {playerCharacters.map((playerCharacter) => (
               <div
                 key={playerCharacter.getCharacter()._id.toString()}
-                className="w-1/5 h-1/4 overflow-scroll relative bg-stone-800 rounded border border-bg-stone-300"
+                className="w-1/5 h-1/4 overflow-scroll relative bg-stone-800 rounded border border-stone-300"
               >
                 <CharacterContextMenu
                   character={playerCharacter.getCharacter()}

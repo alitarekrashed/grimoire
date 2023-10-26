@@ -7,11 +7,21 @@ export function HoverDisplay({
   size,
   content,
 }: {
-  size?: 'small'
+  size?: 'fit' | 'small'
   title: ReactNode
   content: ReactNode
 }) {
-  const width = size === 'small' ? 'w-56' : 'w-128'
+  const width: string = (() => {
+    switch (size) {
+      case 'fit':
+        return ''
+      case 'small':
+        return 'w-56'
+      default:
+        return 'w-128'
+    }
+  })()
+
   return (
     <>
       <HoverCard.Root openDelay={200} closeDelay={100}>

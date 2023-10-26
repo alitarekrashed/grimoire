@@ -1,13 +1,13 @@
+import HoverableImage from '@/components/base/hoverable-image'
+import { CurrencyType } from '@/models/db/equipment'
 import { useContext } from 'react'
 import { PlayerCharacterContext } from '../player-character-context'
-import Image from 'next/image'
-import { CurrencyType } from '@/models/db/equipment'
 
 export default function MoneyDisplay() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
 
   return (
-    <div className="flex flex-row gap-2">
+    <div className="p-2 border border-stone-500 rounded mx-auto w-fit flex flex-row gap-2 hover:bg-stone-500 hover:cursor-pointer">
       {Object.entries(playerCharacter.getCharacter().player_state.money).map(
         (value: [string, any]) => (
           <div className="flex flex-row items-center" key={value[0]}>
@@ -38,15 +38,16 @@ function getImageFromCurrency(type: CurrencyType) {
     }
   })()
 
+  // what i really want to do is make the alt text hoverable...
   if (currency) {
     return (
-      <Image
+      <HoverableImage
         src={`/${currency.file}.png`}
-        width={25}
-        height={25}
+        width={20}
+        height={20}
         alt={currency.alt}
         className="inline"
-      ></Image>
+      ></HoverableImage>
     )
   }
   return undefined
