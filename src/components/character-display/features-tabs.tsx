@@ -85,8 +85,8 @@ export function FeaturesTabs() {
           <Tabs.Trigger value="features" className={styles.tabHeader}>
             Features
           </Tabs.Trigger>
-          <Tabs.Trigger value="equipment" className={styles.tabHeader}>
-            Equipment
+          <Tabs.Trigger value="Inventory" className={styles.tabHeader}>
+            Inventory
           </Tabs.Trigger>
           <Tabs.Trigger value="proficiencies" className={styles.tabHeader}>
             Proficiencies
@@ -111,7 +111,7 @@ export function FeaturesTabs() {
               )}
           </span>
         </Tabs.Content>
-        <Tabs.Content value="equipment">
+        <Tabs.Content value="inventory">
           <div className="flex flex-col">
             {Array.from(groupedEquipment.entries()).map(
               (value: [EquipmentCategory, CharacterEquipment[]]) => (
