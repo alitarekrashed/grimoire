@@ -37,7 +37,7 @@ export default function MoneyDisplay() {
       <div className="w-44 h-full border-r border-stone-300/20 text-xs flex flex-col gap-2">
         {['pp', 'gp', 'sp', 'cp'].map((currency: string) => (
           <div key={currency}>
-            <div className="p-1 flex flex-row items-start">
+            <div className="p-2 flex flex-row items-start">
               <div className="mr-2">
                 {getImageFromCurrency(currency as CurrencyType, false)}
               </div>
@@ -68,7 +68,13 @@ export default function MoneyDisplay() {
           </div>
         ))}
       </div>
-      <div className="bg-red-400 flex-1">currency management goes here</div>
+      <div className="flex-1 p-2">
+        <div className="flex flex-col items-center text-sm">
+          <span>Adjust coins</span>
+          <div>adjustment boxes go here</div>
+          <div>buttons to add or subtract go here</div>
+        </div>
+      </div>
     </div>
   )
 
