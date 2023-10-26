@@ -6,6 +6,7 @@ import { Modal } from '@/components/base/modal'
 import { roboto_flex } from '@/utils/fonts'
 import { CharacterMoney } from '@/models/db/character-entity'
 import { Separator } from '@/components/base/separator'
+import Image from 'next/image'
 
 interface CurrencyMetadata {
   file: string
@@ -22,7 +23,7 @@ export default function MoneyDisplay() {
         (value: [string, any]) => (
           <div className="flex flex-row items-center" key={value[0]}>
             <span className="mr-1">
-              {getImageFromCurrency(value[0] as CurrencyType)}
+              {getImageFromCurrency(value[0] as CurrencyType, true)}
             </span>
             <span>{value[1]}</span>
           </div>
@@ -38,7 +39,7 @@ export default function MoneyDisplay() {
           <div key={currency}>
             <div className="p-1 flex flex-row items-start">
               <div className="mr-2">
-                {getImageFromCurrency(currency as CurrencyType)}
+                {getImageFromCurrency(currency as CurrencyType, false)}
               </div>
               <div className="pr-2 flex-1">
                 <div>
@@ -86,20 +87,32 @@ export default function MoneyDisplay() {
   )
 }
 
-function getImageFromCurrency(type: CurrencyType) {
+function getImageFromCurrency(type: CurrencyType, hoverable: boolean) {
   const currency: CurrencyMetadata | undefined = getCurrencyMetadata(type)
 
   // what i really want to do is make the alt text hoverable...
   if (currency) {
-    return (
-      <HoverableImage
-        src={`/${currency.file}.png`}
-        width={20}
-        height={20}
-        alt={currency.name}
-        className="inline"
-      ></HoverableImage>
-    )
+    if (hoverable) {
+      return (
+        <HoverableImage
+          src={`/${currency.file}.png`}
+          width={20}
+          height={20}
+          alt={currency.name}
+          className="inline"
+        ></HoverableImage>
+      )
+    } else {
+      return (
+        <Image
+          src={`/${currency.file}.png`}
+          width={20}
+          height={20}
+          alt={currency.name}
+          className="inline"
+        ></Image>
+      )
+    }
   }
   return undefined
 }
