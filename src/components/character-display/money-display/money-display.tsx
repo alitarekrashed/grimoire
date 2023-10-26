@@ -33,7 +33,7 @@ export default function MoneyDisplay() {
 
   const manage = (
     <div
-      className={`p-2 ${roboto_flex.className} flex flex-col gap-2 text-xs w-fit`}
+      className={`p-2 ${roboto_flex.className} flex flex-col gap-2 text-xs w-128`}
     >
       {['pp', 'gp', 'sp', 'cp'].map((currency: string) => (
         <div key={currency}>
@@ -71,12 +71,7 @@ export default function MoneyDisplay() {
   )
 
   return (
-    <Modal
-      trigger={display}
-      body={manage}
-      closeButtons={[]}
-      size="small"
-    ></Modal>
+    <Modal trigger={display} body={manage} closeButtons={[]} size="fit"></Modal>
   )
 }
 
