@@ -2,11 +2,21 @@ import HoverableImage from '@/components/base/hoverable-image'
 import { CurrencyType } from '@/models/db/equipment'
 import { useContext } from 'react'
 import { PlayerCharacterContext } from '../player-character-context'
+import { Modal } from '@/components/base/modal'
+import { roboto_flex } from '@/utils/fonts'
+import { CharacterMoney } from '@/models/db/character-entity'
+import { Separator } from '@/components/base/separator'
+
+interface CurrencyMetadata {
+  file: string
+  name: string
+  additional: string[]
+}
 
 export default function MoneyDisplay() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
 
-  return (
+  const display = (
     <div className="p-2 border border-stone-500 rounded mx-auto w-fit flex flex-row gap-2 hover:bg-stone-500 hover:cursor-pointer">
       {Object.entries(playerCharacter.getCharacter().player_state.money).map(
         (value: [string, any]) => (
@@ -20,23 +30,58 @@ export default function MoneyDisplay() {
       )}
     </div>
   )
+
+  const manage = (
+    <div
+      className={`p-2 ${roboto_flex.className} flex flex-col gap-2 text-xs w-fit`}
+    >
+      {['pp', 'gp', 'sp', 'cp'].map((currency: string) => (
+        <div key={currency}>
+          <div className="flex flex-row items-start">
+            <div className="mr-2">
+              {getImageFromCurrency(currency as CurrencyType)}
+            </div>
+            <div className="pr-2 flex-1">
+              <div>
+                <span>
+                  {getCurrencyMetadata(currency as CurrencyType)!.name}
+                </span>
+                <span>&nbsp;({currency})</span>
+              </div>
+              <div className="text-[8px] flex flex-col leading-3 text-stone-400">
+                {getCurrencyMetadata(currency as CurrencyType)!.additional.map(
+                  (val, index) => (
+                    <span key={index}>{val}</span>
+                  )
+                )}
+              </div>
+            </div>
+            <div>
+              {
+                playerCharacter.getCharacter().player_state.money[
+                  currency as keyof CharacterMoney
+                ]
+              }
+            </div>
+          </div>
+          <Separator className="mt-2"></Separator>
+        </div>
+      ))}
+    </div>
+  )
+
+  return (
+    <Modal
+      trigger={display}
+      body={manage}
+      closeButtons={[]}
+      size="small"
+    ></Modal>
+  )
 }
 
 function getImageFromCurrency(type: CurrencyType) {
-  const currency: { file: string; alt: string } | undefined = (() => {
-    switch (type) {
-      case 'cp':
-        return { file: 'copper-coin', alt: 'Copper' }
-      case 'sp':
-        return { file: 'silver-coin', alt: 'Silver' }
-      case 'gp':
-        return { file: 'gold-coin', alt: 'Gold' }
-      case 'pp':
-        return { file: 'platinum-coin', alt: 'Platinum' }
-      default:
-        return undefined
-    }
-  })()
+  const currency: CurrencyMetadata | undefined = getCurrencyMetadata(type)
 
   // what i really want to do is make the alt text hoverable...
   if (currency) {
@@ -45,10 +90,37 @@ function getImageFromCurrency(type: CurrencyType) {
         src={`/${currency.file}.png`}
         width={20}
         height={20}
-        alt={currency.alt}
+        alt={currency.name}
         className="inline"
       ></HoverableImage>
     )
   }
   return undefined
+}
+
+function getCurrencyMetadata(type: CurrencyType): CurrencyMetadata | undefined {
+  switch (type) {
+    case 'cp':
+      return {
+        file: 'copper-coin',
+        name: 'Copper',
+        additional: ['1 sp = 10 cp', '1 gp = 100 cp', '1 pp = 1000 cp'],
+      }
+    case 'sp':
+      return {
+        file: 'silver-coin',
+        name: 'Silver',
+        additional: ['1 gp = 10 sp', '1 pp = 100 sp'],
+      }
+    case 'gp':
+      return { file: 'gold-coin', name: 'Gold', additional: [] }
+    case 'pp':
+      return {
+        file: 'platinum-coin',
+        name: 'Platinum',
+        additional: ['1 pp = 10 gp'],
+      }
+    default:
+      return undefined
+  }
 }
