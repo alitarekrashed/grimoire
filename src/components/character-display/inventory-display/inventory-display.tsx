@@ -9,7 +9,9 @@ import { PlayerCharacterContext } from '../player-character-context'
 export default function InventoryDisplay() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
 
-  const totalBulk = Math.max(0, playerCharacter.getAttributes().Strength) + 5
+  const encumberanceLimit =
+    Math.max(0, playerCharacter.getAttributes().Strength) + 5
+  const maxBulk = Math.max(0, playerCharacter.getAttributes().Strength) + 10
   const totalLightItems = playerCharacter
     .getCharacter()
     .equipment.filter((value) => value.item.bulk === 'L').length
@@ -24,11 +26,19 @@ export default function InventoryDisplay() {
     <>
       <div className="flex flex-row w-full items-center">
         <div className="flex-1">
-          <div className="flex flex-col w-fit items-center text-sm py-1 px-6 border border-stone-500 rounded">
-            <span className="text-xs">
-              {calculatedBulk} / {totalBulk}
-            </span>
-            <span className="font-light">Bulk</span>
+          <div className="flex flex-col w-fit items-start text-xs py-1 px-1 border border-stone-500 rounded">
+            <div className="flex flex-row text-sm justify-center w-full">
+              <span className="mr-2">Bulk</span>
+              <span>{calculatedBulk}</span>
+            </div>
+            <div className="flex flex-row font-extralight w-full text-[10px]">
+              <span className="font-light flex-1 pr-2">Encumbered</span>
+              <span>{encumberanceLimit}+</span>
+            </div>
+            <div className="flex flex-row font-extralight w-full text-[10px]">
+              <span className="font-light flex-1 pr-2">Max</span>
+              <span>{maxBulk}+</span>
+            </div>
           </div>
         </div>
         <div className="">
