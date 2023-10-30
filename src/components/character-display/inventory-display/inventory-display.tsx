@@ -6,6 +6,7 @@ import { CharacterEquipment } from '@/models/db/character-entity'
 import { cloneDeep } from 'lodash'
 import { PlayerCharacter } from '@/models/player-character'
 import { Button } from '@/components/base/button'
+import { Separator } from '@/components/base/separator'
 
 export default function InventoryDisplay() {
   const { playerCharacter, updateAndSavePlayerCharacter } = useContext(
@@ -35,44 +36,28 @@ export default function InventoryDisplay() {
   return (
     <>
       <MoneyDisplay></MoneyDisplay>
+      <Separator className="mt-3 mb-1"></Separator>
       <div className="flex flex-col">
-        {Array.from(groupedEquipment.entries()).map(
-          (value: [EquipmentCategory, CharacterEquipment[]]) => (
-            <div
-              className="flex flex-col text-base font-extralight"
-              key={value[0]}
-            >
-              {value[0]}
-              {value[1].map((item) => (
-                <span className="text-xs font-light" key={`${item.id}`}>
-                  {item.name}
-                  {value[0] === 'Armor' &&
-                    item.id !==
-                      playerCharacter.getCharacter().equipped_armor && (
-                      <Button
-                        onClick={() => {
-                          updateEquippedArmor(item.id)
-                        }}
-                        label="EQUIP"
-                        className="ml-2"
-                      />
-                    )}
-                  {value[0] === 'Armor' &&
-                    item.id ===
-                      playerCharacter.getCharacter().equipped_armor && (
-                      <Button
-                        onClick={() => {
-                          updateEquippedArmor('')
-                        }}
-                        label="REMOVE"
-                        className="ml-2 border-rose-600"
-                      />
-                    )}
+        {playerCharacter
+          .getCharacter()
+          .equipment.map((value: CharacterEquipment) => (
+            <>
+              <div className="flex flex-col" key={value.id}>
+                <span className="text-xs font-semibold capitalize">
+                  {value.name ?? value.item.name}
                 </span>
-              ))}
-            </div>
-          )
-        )}
+                {value.name !== null && (
+                  <span className="text-[10px] font-extralight italic">
+                    {value.item.name}
+                  </span>
+                )}
+                <span className="text-[10px] font-extralight">
+                  {value.item.category}
+                </span>
+              </div>
+              <Separator className="my-1"></Separator>
+            </>
+          ))}
       </div>
     </>
   )
