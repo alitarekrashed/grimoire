@@ -4,9 +4,9 @@ import CurrencyImage from './currency-image'
 import { CurrencyType } from '@/models/db/equipment'
 import { getCurrencyMetadata } from './money-utils'
 import { CharacterMoney } from '@/models/db/character-entity'
-import { Separator } from '@radix-ui/react-separator'
 import { Button } from '@/components/base/button'
 import { cloneDeep } from 'lodash'
+import { Separator } from '@/components/base/separator'
 
 export default function MoneyUpdater({
   money,
@@ -59,6 +59,13 @@ export default function MoneyUpdater({
             <Separator className="mt-2 bg-stone-300/20"></Separator>
           </div>
         ))}
+        <div className="p-2 mb-2 flex flex-row items-start">
+          <span className="flex-1">
+            <CurrencyImage type={'gp'} hoverable={false}></CurrencyImage>
+            <span className="ml-2">Total in gp</span>
+          </span>
+          <span>{calculateTotal(updatedMoney)}</span>
+        </div>
       </div>
       <div className="flex-1 p-2 w-full">
         <div className="flex flex-col items-center text-sm w-full">
@@ -106,6 +113,11 @@ export default function MoneyUpdater({
       </div>
     </div>
   )
+}
+
+function calculateTotal(money: CharacterMoney): number {
+  const silverTotal = Math.floor(money.cp / 10) + money.sp
+  return money.gp + money.pp * 10 + Math.floor(silverTotal / 10)
 }
 
 function CurrencyInput({
