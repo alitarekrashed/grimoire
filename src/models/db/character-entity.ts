@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb'
 import { SourcedFeature } from '../player-character'
 import { Attribute } from './ancestry'
 import { SpellcastingDefinition } from './class-entity'
-import { Equipment } from './equipment'
+import { Currency, Equipment } from './equipment'
 
 export interface CharacterEntity {
   _id: string | ObjectId
@@ -26,6 +26,14 @@ export interface CharacterEntity {
 
 export interface PlayerState {
   focus_points: boolean[]
+  money: CharacterMoney
+}
+
+export interface CharacterMoney {
+  pp: number
+  gp: number
+  sp: number
+  cp: number
 }
 
 export type WithNameAndId = { name: string; id: string }

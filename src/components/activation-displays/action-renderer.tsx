@@ -1,6 +1,7 @@
 import { ActionType, Activation } from '@/models/db/activation'
 import Image from 'next/image'
 import { ReactNode } from 'react'
+import HoverableImage from '../base/hoverable-image'
 
 export function ActionRenderer({
   activation,
@@ -40,13 +41,13 @@ function renderWithImage(
 ) {
   return (
     <>
-      <Image
+      <HoverableImage
         src={`/${actionValues.file}dark.png`}
         width={size}
         height={size}
         alt={actionValues.alt}
         className="inline"
-      ></Image>
+      ></HoverableImage>
       &nbsp;
       {!activation?.override_label ?? activation.action}
     </>
@@ -64,21 +65,21 @@ function renderWithMultipleImages(
   const lastValue = getActionValues(last)
   return (
     <>
-      <Image
+      <HoverableImage
         src={`/${firstValue.file}dark.png`}
         width={size}
         height={size}
         alt={firstValue.alt}
         className="inline"
-      ></Image>
+      ></HoverableImage>
       &nbsp;{preposition}&nbsp;
-      <Image
+      <HoverableImage
         src={`/${lastValue.file}dark.png`}
         width={size}
         height={size}
         alt={lastValue.alt}
         className="inline"
-      ></Image>
+      ></HoverableImage>
       &nbsp;
       {!activation?.override_label ?? activation.action}
     </>

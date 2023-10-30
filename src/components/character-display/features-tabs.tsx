@@ -17,6 +17,7 @@ import styles from './features-tabs.module.css'
 import { PlayerCharacterContext } from './player-character-context'
 import { SkillDisplay } from './skill-display'
 import { Spells } from './spells-display/spells'
+import MoneyDisplay from './money-display/money-display'
 
 export function FeaturesTabs() {
   const { playerCharacter, updateAndSavePlayerCharacter } = useContext(
@@ -85,8 +86,8 @@ export function FeaturesTabs() {
           <Tabs.Trigger value="features" className={styles.tabHeader}>
             Features
           </Tabs.Trigger>
-          <Tabs.Trigger value="equipment" className={styles.tabHeader}>
-            Equipment
+          <Tabs.Trigger value="inventory" className={styles.tabHeader}>
+            Inventory
           </Tabs.Trigger>
           <Tabs.Trigger value="proficiencies" className={styles.tabHeader}>
             Proficiencies
@@ -111,7 +112,8 @@ export function FeaturesTabs() {
               )}
           </span>
         </Tabs.Content>
-        <Tabs.Content value="equipment">
+        <Tabs.Content value="inventory">
+          <MoneyDisplay></MoneyDisplay>
           <div className="flex flex-col">
             {Array.from(groupedEquipment.entries()).map(
               (value: [EquipmentCategory, CharacterEquipment[]]) => (

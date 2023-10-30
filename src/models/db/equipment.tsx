@@ -20,7 +20,7 @@ export type EquipmentUsage =
   | 'affixed to armor'
   | 'held in 2 hands'
 export type Rarity = 'uncommon' | 'rare'
-export type CurrencyType = 'gp'
+export type CurrencyType = 'pp' | 'gp' | 'sp' | 'cp'
 
 export interface Equipment extends EntityModel {
   category: EquipmentCategory
