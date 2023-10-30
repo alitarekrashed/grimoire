@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { roboto_flex } from '@/utils/fonts'
 import CurrencyImage from './currency-image'
 import { CurrencyType } from '@/models/db/equipment'
@@ -8,7 +8,13 @@ import { Separator } from '@radix-ui/react-separator'
 import { Button } from '@/components/base/button'
 import { cloneDeep } from 'lodash'
 
-export default function MoneyUpdater({ money }: { money: CharacterMoney }) {
+export default function MoneyUpdater({
+  money,
+  onChange,
+}: {
+  money: CharacterMoney
+  onChange: (value: CharacterMoney) => void
+}) {
   const [updatedMoney, setUpdatedMoney] = useState<CharacterMoney>(money)
   const [amountsToChange, setAmountsToChange] = useState<{
     pp: number
@@ -16,6 +22,11 @@ export default function MoneyUpdater({ money }: { money: CharacterMoney }) {
     sp: number
     cp: number
   }>({ pp: 0, gp: 0, sp: 0, cp: 0 })
+
+  useEffect(() => {
+    onChange(updatedMoney)
+  }, [updatedMoney, onChange])
+
   return (
     <div className={`${roboto_flex.className} w-128 flex flex-row`}>
       <div className="w-44 h-full border-r border-stone-300/20 text-xs flex flex-col gap-2">

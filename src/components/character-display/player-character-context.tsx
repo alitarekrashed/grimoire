@@ -7,7 +7,10 @@ const DEFAULT_VALUE: {
   playerCharacter: PlayerCharacter
   updatePlayerCharacter: (val: PlayerCharacter) => void
   updateAndSavePlayerCharacter: (val: PlayerCharacter) => void
-  updateAndSaveCharacterEntity: (val: CharacterEntity) => void
+  updateAndSaveCharacterEntity: (
+    val: CharacterEntity,
+    callback?: () => void
+  ) => void
 } = {
   playerCharacter: undefined!,
   updatePlayerCharacter: () => null,
@@ -31,9 +34,13 @@ export function PlayerCharacterProvider(props: any) {
     debouncedRequest()
   }
 
-  const updateAndSaveCharacterEntity = (val: CharacterEntity) => {
+  const updateAndSaveCharacterEntity = (
+    val: CharacterEntity,
+    callback?: () => void
+  ) => {
     PlayerCharacter.build(val).then((value) => {
       updateAndSavePlayerCharacter(value)
+      callback && callback()
     })
   }
 
