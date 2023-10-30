@@ -4,12 +4,14 @@ import { ParsedToken } from '../parsed-description/parsed-description'
 export function TraitsList({
   traits,
   rarity,
+  className,
 }: {
   traits: string[]
   rarity?: string
+  className?: string
 }) {
   return (
-    <span className="text-xs">
+    <span className={className ?? 'text-xs'}>
       {rarity ? <Rarity rarity={rarity}></Rarity> : null}
       {traits.map((trait, index) => {
         return (
