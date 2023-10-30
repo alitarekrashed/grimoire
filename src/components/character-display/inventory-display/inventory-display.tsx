@@ -5,6 +5,7 @@ import { useContext } from 'react'
 import { PlayerCharacterContext } from '../player-character-context'
 import MoneyDisplay from './money-display/money-display'
 import BulkDisplay from './bulk-display'
+import { Button } from '@/components/base/button'
 
 export default function InventoryDisplay() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
@@ -12,10 +13,11 @@ export default function InventoryDisplay() {
   return (
     <>
       <div className="flex flex-row w-full items-center">
-        <div className="flex-1">
-          <BulkDisplay></BulkDisplay>
+        <div className="flex-1 flex flex-row items-center gap-2">
+          <Button label="+ Add item" className="h-fit text-sm"></Button>
         </div>
-        <div>
+        <div className="flex flex-row gap-2">
+          <BulkDisplay></BulkDisplay>
           <MoneyDisplay></MoneyDisplay>
         </div>
       </div>
