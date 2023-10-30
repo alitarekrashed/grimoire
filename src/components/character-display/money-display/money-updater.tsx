@@ -76,17 +76,18 @@ export default function MoneyUpdater({
                 type={currency as CurrencyType}
                 key={currency}
                 onChange={(amount: number) => {
-                  const updated = amountsToChange
+                  const updated = cloneDeep(amountsToChange)
                   updated[currency as CurrencyType] = amount
                   setAmountsToChange(updated)
                 }}
+                value={amountsToChange[currency as CurrencyType]}
               ></CurrencyInput>
             ))}
           </div>
           <div className="flex flex-row gap-2">
             <Button
               label="+ Add"
-              className="text-sm"
+              className="text-sm bg-green-700 hover:bg-green-700/70"
               onClick={() => {
                 const updated = cloneDeep(updatedMoney)
                 Object.keys(updated).forEach((currency) => {
@@ -94,11 +95,12 @@ export default function MoneyUpdater({
                     amountsToChange[currency as CurrencyType]
                 })
                 setUpdatedMoney(updated)
+                setAmountsToChange({ pp: 0, gp: 0, sp: 0, cp: 0 })
               }}
             ></Button>
             <Button
               label="- Subtract"
-              className="text-sm"
+              className="text-sm bg-red-700 hover:bg-red-700/70"
               onClick={() => {
                 const updated = cloneDeep(updatedMoney)
                 Object.keys(updated).forEach((currency) => {
@@ -106,6 +108,14 @@ export default function MoneyUpdater({
                     amountsToChange[currency as CurrencyType]
                 })
                 setUpdatedMoney(updated)
+                setAmountsToChange({ pp: 0, gp: 0, sp: 0, cp: 0 })
+              }}
+            ></Button>
+            <Button
+              label="Clear"
+              className="text-sm"
+              onClick={() => {
+                setAmountsToChange({ pp: 0, gp: 0, sp: 0, cp: 0 })
               }}
             ></Button>
           </div>
@@ -121,13 +131,19 @@ function calculateTotal(money: CharacterMoney): number {
 }
 
 function CurrencyInput({
+  value,
   type,
   onChange,
 }: {
+  value: number
   type: CurrencyType
   onChange: (amount: number) => void
 }) {
-  const [amount, setAmount] = useState<number>(0)
+  const [amount, setAmount] = useState<number>(value)
+
+  useEffect(() => {
+    setAmount(value)
+  }, [value])
 
   return (
     <div className="flex flex-col items-center gap-1">
