@@ -7,9 +7,12 @@ import { getCurrencyMetadata } from './money-utils'
 import { CharacterMoney } from '@/models/db/character-entity'
 import { Separator } from '@radix-ui/react-separator'
 import { Button } from '@/components/base/button'
+import { cloneDeep } from 'lodash'
 
 export default function MoneyUpdater() {
-  const { playerCharacter } = useContext(PlayerCharacterContext)
+  const { playerCharacter, updateAndSaveCharacterEntity } = useContext(
+    PlayerCharacterContext
+  )
   const [amountsToChange, setAmountsToChange] = useState<{
     pp: number
     gp: number
@@ -72,8 +75,32 @@ export default function MoneyUpdater() {
             ))}
           </div>
           <div className="flex flex-row gap-2">
-            <Button label="+ Add" className="text-sm"></Button>
-            <Button label="- Subtract" className="text-sm"></Button>
+            <Button
+              label="+ Add"
+              className="text-sm"
+              onClick={() => {
+                const updated = cloneDeep(playerCharacter.getCharacter())
+                Object.keys(updated.player_state.money).forEach((currency) => {
+                  updated.player_state.money[currency as CurrencyType] +=
+                    amountsToChange[currency as CurrencyType]
+                })
+                setAmountsToChange({ pp: 0, gp: 0, sp: 0, cp: 0 })
+                updateAndSaveCharacterEntity(updated)
+              }}
+            ></Button>
+            <Button
+              label="- Subtract"
+              className="text-sm"
+              onClick={() => {
+                const updated = cloneDeep(playerCharacter.getCharacter())
+                Object.keys(updated.player_state.money).forEach((currency) => {
+                  updated.player_state.money[currency as CurrencyType] -=
+                    amountsToChange[currency as CurrencyType]
+                })
+                updateAndSaveCharacterEntity(updated)
+                setAmountsToChange({ pp: 0, gp: 0, sp: 0, cp: 0 })
+              }}
+            ></Button>
           </div>
         </div>
       </div>
