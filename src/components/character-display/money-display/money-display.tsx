@@ -26,7 +26,11 @@ export default function MoneyDisplay() {
     </div>
   )
 
-  const manage = <MoneyUpdater></MoneyUpdater>
+  const manage = (
+    <MoneyUpdater
+      money={playerCharacter.getCharacter().player_state.money}
+    ></MoneyUpdater>
+  )
 
   return (
     <Modal

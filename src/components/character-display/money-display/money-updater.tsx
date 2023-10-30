@@ -1,5 +1,4 @@
-import { useContext, useState } from 'react'
-import { PlayerCharacterContext } from '../player-character-context'
+import { useState } from 'react'
 import { roboto_flex } from '@/utils/fonts'
 import CurrencyImage from './currency-image'
 import { CurrencyType } from '@/models/db/equipment'
@@ -9,10 +8,8 @@ import { Separator } from '@radix-ui/react-separator'
 import { Button } from '@/components/base/button'
 import { cloneDeep } from 'lodash'
 
-export default function MoneyUpdater() {
-  const { playerCharacter, updateAndSaveCharacterEntity } = useContext(
-    PlayerCharacterContext
-  )
+export default function MoneyUpdater({ money }: { money: CharacterMoney }) {
+  const [updatedMoney, setUpdatedMoney] = useState<CharacterMoney>(money)
   const [amountsToChange, setAmountsToChange] = useState<{
     pp: number
     gp: number
@@ -46,13 +43,7 @@ export default function MoneyUpdater() {
                   ))}
                 </div>
               </div>
-              <div>
-                {
-                  playerCharacter.getCharacter().player_state.money[
-                    currency as keyof CharacterMoney
-                  ]
-                }
-              </div>
+              <div>{updatedMoney[currency as keyof CharacterMoney]}</div>
             </div>
             <Separator className="mt-2 bg-stone-300/20"></Separator>
           </div>
@@ -79,26 +70,24 @@ export default function MoneyUpdater() {
               label="+ Add"
               className="text-sm"
               onClick={() => {
-                const updated = cloneDeep(playerCharacter.getCharacter())
-                Object.keys(updated.player_state.money).forEach((currency) => {
-                  updated.player_state.money[currency as CurrencyType] +=
+                const updated = cloneDeep(updatedMoney)
+                Object.keys(updated).forEach((currency) => {
+                  updated[currency as CurrencyType] +=
                     amountsToChange[currency as CurrencyType]
                 })
-                setAmountsToChange({ pp: 0, gp: 0, sp: 0, cp: 0 })
-                updateAndSaveCharacterEntity(updated)
+                setUpdatedMoney(updated)
               }}
             ></Button>
             <Button
               label="- Subtract"
               className="text-sm"
               onClick={() => {
-                const updated = cloneDeep(playerCharacter.getCharacter())
-                Object.keys(updated.player_state.money).forEach((currency) => {
-                  updated.player_state.money[currency as CurrencyType] -=
+                const updated = cloneDeep(updatedMoney)
+                Object.keys(updated).forEach((currency) => {
+                  updated[currency as CurrencyType] -=
                     amountsToChange[currency as CurrencyType]
                 })
-                updateAndSaveCharacterEntity(updated)
-                setAmountsToChange({ pp: 0, gp: 0, sp: 0, cp: 0 })
+                setUpdatedMoney(updated)
               }}
             ></Button>
           </div>
