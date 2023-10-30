@@ -80,14 +80,14 @@ export function FeaturesTabs() {
           <Tabs.Trigger value="actions" className={styles.tabHeader}>
             Actions
           </Tabs.Trigger>
+          <Tabs.Trigger value="inventory" className={styles.tabHeader}>
+            Inventory
+          </Tabs.Trigger>
           <Tabs.Trigger value="spells" className={styles.tabHeader}>
             Spells
           </Tabs.Trigger>
           <Tabs.Trigger value="features" className={styles.tabHeader}>
             Features
-          </Tabs.Trigger>
-          <Tabs.Trigger value="inventory" className={styles.tabHeader}>
-            Inventory
           </Tabs.Trigger>
           <Tabs.Trigger value="proficiencies" className={styles.tabHeader}>
             Proficiencies
