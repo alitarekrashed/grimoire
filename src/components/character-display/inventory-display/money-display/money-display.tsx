@@ -1,7 +1,7 @@
 import { Modal } from '@/components/base/modal'
 import { CurrencyType } from '@/models/db/equipment'
 import { useContext, useState } from 'react'
-import { PlayerCharacterContext } from '../player-character-context'
+import { PlayerCharacterContext } from '../../player-character-context'
 import MoneyUpdater from './money-updater'
 import CurrencyImage from './currency-image'
 import { CharacterMoney } from '@/models/db/character-entity'

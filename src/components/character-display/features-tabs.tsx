@@ -2,27 +2,21 @@ import {
   ArmorProficiencyValue,
   WeaponProficiencyValue,
 } from '@/models/db/background'
-import { CharacterEquipment } from '@/models/db/character-entity'
-import { EquipmentCategory } from '@/models/db/equipment'
 import { SpellFeatureValue } from '@/models/db/feature'
-import { PlayerCharacter, SourcedFeature } from '@/models/player-character'
+import { SourcedFeature } from '@/models/player-character'
 import { ProficiencyRank } from '@/models/proficiency-rank'
 import * as Tabs from '@radix-ui/react-tabs'
-import { cloneDeep } from 'lodash'
 import { useContext } from 'react'
-import { Button } from '../base/button'
 import { ParsedDescription } from '../parsed-description/parsed-description'
 import { ActionDisplay } from './actions-display/actions-display'
 import styles from './features-tabs.module.css'
 import { PlayerCharacterContext } from './player-character-context'
 import { SkillDisplay } from './skill-display'
 import { Spells } from './spells-display/spells'
-import MoneyDisplay from './money-display/money-display'
+import InventoryDisplay from './inventory-display/inventory-display'
 
 export function FeaturesTabs() {
-  const { playerCharacter, updateAndSavePlayerCharacter } = useContext(
-    PlayerCharacterContext
-  )
+  const { playerCharacter } = useContext(PlayerCharacterContext)
 
   const parseFeature = (feature: SourcedFeature, index: number) => {
     if (feature.feature.type === 'MISC') {
@@ -53,26 +47,6 @@ export function FeaturesTabs() {
     )
   }
 
-  const groupedEquipment: Map<EquipmentCategory, CharacterEquipment[]> =
-    playerCharacter
-      .getCharacter()
-      .equipment.reduce(
-        (entryMap, e) =>
-          entryMap.set(e.item.category, [
-            ...(entryMap.get(e.item.category) || []),
-            e,
-          ]),
-        new Map()
-      )
-
-  const updateEquippedArmor = (id: string) => {
-    const updated = cloneDeep(playerCharacter.getCharacter())
-    updated.equipped_armor = id
-    PlayerCharacter.build(updated).then((val) =>
-      updateAndSavePlayerCharacter(val)
-    )
-  }
-
   return (
     playerCharacter && (
       <Tabs.Root defaultValue="actions">
@@ -80,14 +54,14 @@ export function FeaturesTabs() {
           <Tabs.Trigger value="actions" className={styles.tabHeader}>
             Actions
           </Tabs.Trigger>
+          <Tabs.Trigger value="inventory" className={styles.tabHeader}>
+            Inventory
+          </Tabs.Trigger>
           <Tabs.Trigger value="spells" className={styles.tabHeader}>
             Spells
           </Tabs.Trigger>
           <Tabs.Trigger value="features" className={styles.tabHeader}>
             Features
-          </Tabs.Trigger>
-          <Tabs.Trigger value="inventory" className={styles.tabHeader}>
-            Inventory
           </Tabs.Trigger>
           <Tabs.Trigger value="proficiencies" className={styles.tabHeader}>
             Proficiencies
@@ -113,46 +87,7 @@ export function FeaturesTabs() {
           </span>
         </Tabs.Content>
         <Tabs.Content value="inventory">
-          <MoneyDisplay></MoneyDisplay>
-          <div className="flex flex-col">
-            {Array.from(groupedEquipment.entries()).map(
-              (value: [EquipmentCategory, CharacterEquipment[]]) => (
-                <div
-                  className="flex flex-col text-base font-extralight"
-                  key={value[0]}
-                >
-                  {value[0]}
-                  {value[1].map((item) => (
-                    <span className="text-xs font-light" key={`${item.id}`}>
-                      {item.name}
-                      {value[0] === 'Armor' &&
-                        item.id !==
-                          playerCharacter.getCharacter().equipped_armor && (
-                          <Button
-                            onClick={() => {
-                              updateEquippedArmor(item.id)
-                            }}
-                            label="EQUIP"
-                            className="ml-2"
-                          />
-                        )}
-                      {value[0] === 'Armor' &&
-                        item.id ===
-                          playerCharacter.getCharacter().equipped_armor && (
-                          <Button
-                            onClick={() => {
-                              updateEquippedArmor('')
-                            }}
-                            label="REMOVE"
-                            className="ml-2 border-rose-600"
-                          />
-                        )}
-                    </span>
-                  ))}
-                </div>
-              )
-            )}
-          </div>
+          <InventoryDisplay></InventoryDisplay>
         </Tabs.Content>
         <Tabs.Content value="proficiencies">
           <span className="text-xs">
