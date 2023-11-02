@@ -68,13 +68,14 @@ function SavingThrowsDisplay({ character }: { character: PlayerCharacter }) {
       <div className="flex flex-col gap-1">
         <div className="mb-1 font-semibold text-center">Saving Throws</div>
         {[...character.getSavingThrows().entries()].map((entry) => (
-          <SavingThrowDisplay
-            key={entry[0]}
-            entry={entry}
-            modifiers={savingThrowModifiers
-              .filter((value) => value.feature.value.type === entry[0])
-              .map((value) => value.feature.value)}
-          ></SavingThrowDisplay>
+          <div key={entry[0]}>
+            <SavingThrowDisplay
+              entry={entry}
+              modifiers={savingThrowModifiers
+                .filter((value) => value.feature.value.type.includes(entry[0]))
+                .map((value) => value.feature.value)}
+            ></SavingThrowDisplay>
+          </div>
         ))}
       </div>
     </CharacterSheetBox>
