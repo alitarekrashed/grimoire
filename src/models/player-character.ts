@@ -263,7 +263,14 @@ export class PlayerCharacter {
     this.initializeHitpoints(ancestry)
 
     this.allFeatures.forEach((feature) => this.addFeatureToCharacter(feature))
-    this.gearProficienyManager = new GearProficiencyManager(this.features)
+    this.gearProficienyManager = new GearProficiencyManager(
+      this.features.filter((value) => {
+        if (value.feature.level) {
+          return value.feature.level <= character.level
+        }
+        return true
+      })
+    )
 
     this.skillProficiencyManager = createManagerFromFeatures(
       this.level,
