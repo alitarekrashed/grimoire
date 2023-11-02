@@ -189,6 +189,12 @@ export function createManagerFromFeatures(
           (sourced.feature.value.type === 'Skill' ||
             sourced.feature.value.type === 'Lore')
       )
+      .filter((sourced) => {
+        if (sourced.feature.level) {
+          return sourced.feature.level <= level
+        }
+        return true
+      })
       .map((sourced) => sourced.feature)
   )
 
