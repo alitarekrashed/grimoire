@@ -203,6 +203,12 @@ function evaluatePrerequisite(
         attributes[prerequisite.value.attribute as keyof Attributes] >=
         prerequisite.value.modifier
       )
+    case 'SENSE':
+      return features.some(
+        (val) =>
+          caseInsensitiveMatch(val.feature.value, prerequisite.value) &&
+          caseInsensitiveMatch(val.feature.type, prerequisite.type)
+      )
     default:
       return true
   }

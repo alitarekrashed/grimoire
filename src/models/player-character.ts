@@ -936,6 +936,24 @@ export class PlayerCharacter {
         })
       }
     }
+
+    const featuresModifyingHP = this.allFeatures.filter(
+      (value) =>
+        value.feature.type === 'MODIFIER' &&
+        (value.feature.value as ModifierFeatureValue).type === 'HitPoints'
+    )
+
+    if (featuresModifyingHP.length > 0) {
+      featuresModifyingHP.forEach((sourced) => {
+        this.hitpoints.push({
+          value:
+            sourced.feature.value.modifier.value === 'level'
+              ? this.level
+              : sourced.feature.value.modifier.value,
+          source: sourced.source,
+        })
+      })
+    }
   }
 
   private initializeSpeed(ancestry: Ancestry) {

@@ -22,6 +22,7 @@ export type PrerequisiteType =
   | 'OTHER'
   | 'SPELL_TYPE'
   | 'FEATURE'
+  | 'SENSE'
   | 'SUBCLASS'
   | 'ATTRIBUTE'
 
