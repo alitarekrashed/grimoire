@@ -1,0 +1,9 @@
+.description h2 {
+  @apply text-lg;
+  @apply mb-1;
+}
+
+.description ul {
+  @apply list-disc;
+  @apply list-inside;
+}
