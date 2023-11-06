@@ -224,7 +224,10 @@ function calculateClassAttributeModifications(
 
 export class PlayerCharacter {
   private level!: number
-  private speed!: ModifierValue[]
+  private speed!: {
+    regular: ModifierValue[]
+    climb: ModifierValue[]
+  }
   private size!: string
   private attributes!: Attributes
   private traits: string[] = []
@@ -363,7 +366,7 @@ export class PlayerCharacter {
     )} ${ancestry}`
   }
 
-  public getSpeed(): ModifierValue[] {
+  public getSpeed(): { regular: ModifierValue[]; climb: ModifierValue[] } {
     return this.speed
   }
 
@@ -957,10 +960,10 @@ export class PlayerCharacter {
   }
 
   private initializeSpeed(ancestry: Ancestry) {
-    this.speed = [
+    const regularSpeed = [
       { value: this.ancestry.speed, source: `Ancestry (${ancestry.name})` },
     ]
-    this.speed.push(
+    regularSpeed.push(
       ...this.allFeatures
         .filter(
           (value) =>
@@ -974,6 +977,26 @@ export class PlayerCharacter {
           }
         })
     )
+
+    const climbSpeed = []
+    climbSpeed.push(
+      ...this.allFeatures
+        .filter(
+          (value) =>
+            value.feature.type === 'MODIFIER' &&
+            (value.feature.value as ModifierFeatureValue).type === 'Climb Speed'
+        )
+        .map((value) => {
+          return {
+            ...value.feature.value.modifier,
+            source: value.source,
+          }
+        })
+    )
+    this.speed = {
+      regular: regularSpeed,
+      climb: climbSpeed,
+    }
   }
 
   private addFeatureToCharacter(feature: SourcedFeature) {

@@ -31,7 +31,12 @@ export type FeatureType =
   | 'SPELL'
 export type CalculationFormula = 'half-level'
 export type ConditionalOperator = 'has'
-export type ModifierType = 'Perception' | 'Speed' | 'AttackDamage' | 'HitPoints'
+export type ModifierType =
+  | 'Perception'
+  | 'Speed'
+  | 'AttackDamage'
+  | 'HitPoints'
+  | 'Climb Speed'
 
 export interface Feature {
   type: FeatureType
