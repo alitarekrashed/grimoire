@@ -48,6 +48,23 @@ function PerceptionAndClassDCDisplay({
           name="Perception"
           rank={character.getPerception().rank}
           modifier={character.getPerception().modifier}
+          additional={character
+            .getResolvedFeatures()
+            .filter(
+              (value) =>
+                value.feature.type === 'MODIFIER' &&
+                value.feature.value.type === 'Perception'
+            )
+            .map((value) => {
+              const modifier = value.feature.value.modifier.value
+              console.log(value)
+              return {
+                description: `${modifier >= 0 ? '+' : '-'}${modifier} (${
+                  value.feature.value.modifier.type
+                }) ${value.feature.value.condition}`,
+                name: value.source,
+              }
+            })}
         ></SkillDisplay>
         <SkillDisplay
           name="Class DC"

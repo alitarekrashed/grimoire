@@ -120,8 +120,13 @@ export function CharacterHeader({
                     return (
                       <React.Fragment key={`${sense}-${index}`}>
                         <ParsedDescription
-                          description={sense.feature.value}
+                          description={sense.feature.value.sense}
                         ></ParsedDescription>
+                        {sense.feature.value.context && (
+                          <span className="ml-1">
+                            ({sense.feature.value.context})
+                          </span>
+                        )}
                         {index < playerCharacter.getSenses().length - 1
                           ? ', '
                           : ''}
