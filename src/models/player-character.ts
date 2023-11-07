@@ -948,13 +948,23 @@ export class PlayerCharacter {
 
     if (featuresModifyingHP.length > 0) {
       featuresModifyingHP.forEach((sourced) => {
-        this.hitpoints.push({
-          value:
-            sourced.feature.value.modifier.value === 'level'
-              ? this.level
-              : sourced.feature.value.modifier.value,
-          source: sourced.source,
-        })
+        if (sourced.feature.value.modifier.value === 'level') {
+          this.hitpoints.push({
+            value: this.level,
+            source: sourced.source,
+          })
+        } else if (sourced.feature.value.modifier.value.includes('level *')) {
+          const value = sourced.feature.value.modifier.value.split(' * ')[1]
+          this.hitpoints.push({
+            value: this.level * Number(value),
+            source: sourced.source,
+          })
+        } else {
+          this.hitpoints.push({
+            value: sourced.feature.value.modifier.value,
+            source: sourced.source,
+          })
+        }
       })
     }
   }
