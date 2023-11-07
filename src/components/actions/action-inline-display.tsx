@@ -43,6 +43,12 @@ export function ActionInlineDisplay({ initial }: { initial: Action }) {
           sourced.feature.type === 'ACTION_MODIFIER' &&
           sourced.feature.value.name === value.name.toLowerCase()
       )
+      .filter((sourced) => {
+        return (
+          playerCharacter.getFeatModifications(value.name.toLowerCase())
+            .length === 0
+        )
+      })
       .map((value) => {
         return {
           name: value.source,
