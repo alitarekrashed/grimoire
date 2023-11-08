@@ -37,6 +37,8 @@ export type ModifierType =
   | 'AttackDamage'
   | 'HitPoints'
   | 'Climb Speed'
+  | 'Swim Speed'
+  | 'Bulk'
 
 export interface Feature {
   type: FeatureType

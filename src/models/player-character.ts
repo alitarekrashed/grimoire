@@ -227,6 +227,7 @@ export class PlayerCharacter {
   private speed!: {
     regular: ModifierValue[]
     climb: ModifierValue[]
+    swim: ModifierValue[]
   }
   private size!: string
   private attributes!: Attributes
@@ -366,7 +367,11 @@ export class PlayerCharacter {
     )} ${ancestry}`
   }
 
-  public getSpeed(): { regular: ModifierValue[]; climb: ModifierValue[] } {
+  public getSpeed(): {
+    regular: ModifierValue[]
+    climb: ModifierValue[]
+    swim: ModifierValue[]
+  } {
     return this.speed
   }
 
@@ -1003,9 +1008,27 @@ export class PlayerCharacter {
           }
         })
     )
+
+    const swimSpeed = []
+    swimSpeed.push(
+      ...this.allFeatures
+        .filter(
+          (value) =>
+            value.feature.type === 'MODIFIER' &&
+            (value.feature.value as ModifierFeatureValue).type === 'Swim Speed'
+        )
+        .map((value) => {
+          return {
+            ...value.feature.value.modifier,
+            source: value.source,
+          }
+        })
+    )
+
     this.speed = {
       regular: regularSpeed,
       climb: climbSpeed,
+      swim: swimSpeed,
     }
   }
 

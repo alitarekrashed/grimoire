@@ -1,12 +1,51 @@
 import { useContext } from 'react'
 import { PlayerCharacterContext } from '../player-character-context'
+import CalculatedDisplay, {
+  ModifierValue,
+} from '@/components/calculated-display/calculated-display'
+import { max } from 'lodash'
 
 export default function BulkDisplay() {
   const { playerCharacter } = useContext(PlayerCharacterContext)
 
-  const encumberanceLimit =
-    Math.max(0, playerCharacter.getAttributes().Strength) + 5
-  const maxBulk = Math.max(0, playerCharacter.getAttributes().Strength) + 10
+  const bulkModifiers = playerCharacter
+    .getResolvedFeatures()
+    .filter(
+      (sourced) =>
+        sourced.feature.type === 'MODIFIER' &&
+        sourced.feature.value.type === 'Bulk'
+    )
+    .map((sourced) => {
+      return {
+        source: sourced.source,
+        value: sourced.feature.value.modifier.value,
+      }
+    })
+
+  const encumberance: ModifierValue[] = [
+    {
+      value: 5,
+      source: 'Encumberance',
+    },
+    {
+      value: Math.max(0, playerCharacter.getAttributes().Strength),
+      source: 'Strength',
+    },
+    ...bulkModifiers,
+  ]
+
+  const maximum: ModifierValue[] = [
+    {
+      value: 10,
+      source: 'Maximum',
+    },
+    {
+      value: Math.max(0, playerCharacter.getAttributes().Strength),
+      source: 'Strength',
+    },
+    ...bulkModifiers,
+  ]
+
   const totalLightItems = playerCharacter
     .getCharacter()
     .equipment.filter((value) => value.item.bulk === 'L').length
@@ -25,11 +64,15 @@ export default function BulkDisplay() {
       </div>
       <div className="flex flex-row font-extralight w-full text-[10px]">
         <span className="font-light flex-1 pr-2">Encumbered</span>
-        <span>{encumberanceLimit}+</span>
+        <span>
+          <CalculatedDisplay values={encumberance}></CalculatedDisplay>+
+        </span>
       </div>
       <div className="flex flex-row font-extralight w-full text-[10px]">
         <span className="font-light flex-1 pr-2">Max</span>
-        <span>{maxBulk}+</span>
+        <span>
+          <CalculatedDisplay values={maximum}></CalculatedDisplay>+
+        </span>
       </div>
     </div>
   )

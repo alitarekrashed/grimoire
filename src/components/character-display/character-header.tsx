@@ -93,6 +93,14 @@ export function CharacterHeader({
                   ></CalculatedDisplay>
                 </div>
               )}
+              {playerCharacter.getSpeed().swim.length > 0 && (
+                <div className="flex">
+                  <span className="mr-auto lowercase font-thin">Swim</span>
+                  <CalculatedDisplay
+                    values={playerCharacter.getSpeed().swim}
+                  ></CalculatedDisplay>
+                </div>
+              )}
             </div>
           </CharacterSheetBox>
         </div>
