@@ -1169,6 +1169,9 @@ export class PlayerCharacter {
           }
         })
       )
+      feats.push(
+        ...heritage.features.filter((val: Feature) => val.type === 'FEAT')
+      )
     }
 
     character.features
