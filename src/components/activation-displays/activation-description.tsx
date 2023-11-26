@@ -39,12 +39,24 @@ export function ActivationDescription({
     },
   ]
 
+  let area = undefined
+  if (value?.area) {
+    if (value!.area.type) {
+      area = `${value!.area.value ?? ''}-${value!.area.unit} ${
+        value!.area.type
+      }`
+    } else {
+      area = `${value!.area.value ?? ''} ${value!.area.unit}`
+    }
+
+    if (value.area.variable) {
+      area = `up to ${area}`
+    }
+  }
   const secondaryFields: FieldDefinition[] = [
     {
       label: 'Area',
-      value: value?.area
-        ? `${value!.area.value} ${value!.area.unit}`
-        : undefined,
+      value: area,
     },
     {
       label: 'Range',
@@ -60,6 +72,17 @@ export function ActivationDescription({
     },
   ]
 
+  let duration = undefined
+  if (value?.duration) {
+    if (value.duration!.sustained) {
+      duration = 'sustained'
+      if (value.duration!.value) {
+        duration = `${duration} up to ${value.duration.value} ${value.duration.unit}`
+      }
+    } else {
+      duration = `${value.duration.value ?? ''} ${value.duration.unit}`
+    }
+  }
   const tertiaryFields: FieldDefinition[] = [
     {
       label: 'Defense',
@@ -67,9 +90,7 @@ export function ActivationDescription({
     },
     {
       label: 'Duration',
-      value: value?.duration
-        ? `${value!.duration.value ?? ''} ${value!.duration.unit}`
-        : undefined,
+      value: duration,
     },
   ]
 

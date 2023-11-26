@@ -5,6 +5,7 @@ export type Tradition = 'arcane' | 'primal' | 'divine' | 'occult'
 export type HeightenedType = 'formula' | 'explicit'
 
 export interface Spell extends EntityModel {
+  short_description?: string
   rank: number
   rarity?: string
   focus?: string

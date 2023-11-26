@@ -1,6 +1,7 @@
 export type RangeUnit = 'feet' | 'touch'
 export type DurationUnit = 'minutes' | 'sustained'
-export type AreaUnit = 'emanataion'
+export type AreaType = 'emanation' | 'burst' | 'line'
+export type AreaUnit = 'foot'
 export type Targets = '1 or 2 creatures' | '1 creature'
 export type SavingThrowType = 'basic Reflex'
 export type DefenseType = SavingThrowType | 'AC'
@@ -14,6 +15,7 @@ export type ActionType =
   | 'reaction'
   | 'free'
   | '10 minutes'
+  | '1 minute'
   | ''
 export type Tag =
   | 'Augment' // Increases you or an ally's bonus
@@ -30,6 +32,8 @@ export type Tag =
 export function isActionLongerThanTurn(type: ActionType) {
   switch (type) {
     case '10 minutes':
+      return true
+    case '1 minute':
       return true
     default:
       return false
@@ -72,9 +76,12 @@ export interface RangeDefinition {
 export interface AreaDefinition {
   value: number
   unit: AreaUnit
+  type?: AreaType
+  variable?: boolean
 }
 
 export interface DurationDefinition {
   value: number
   unit: DurationUnit
+  sustained?: boolean
 }
