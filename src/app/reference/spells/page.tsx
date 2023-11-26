@@ -20,10 +20,13 @@ export default function SpellsPage() {
       filter: true,
       flex: 1,
       valueFormatter: (value: any): string => {
+        if (value.data.traits.includes('cantrip')) {
+          return 'Cantrip'
+        }
         if (value.data.focus) {
           return 'Focus'
         }
-        return value.data.traits.includes('cantrip') ? 'Cantrip' : 'Spell'
+        return 'Spell'
       },
     },
     { field: 'name', filter: true, flex: 1 },

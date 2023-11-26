@@ -114,8 +114,11 @@ function withOrdinalSuffix(i: number): string {
 }
 
 function getType(value: Spell) {
+  if (value.traits.includes('cantrip')) {
+    return 'Cantrip'
+  }
   if (value.focus) {
     return 'Focus'
   }
-  return value.traits.includes('cantrip') ? 'Cantrip' : 'Spell'
+  return 'Spell'
 }
