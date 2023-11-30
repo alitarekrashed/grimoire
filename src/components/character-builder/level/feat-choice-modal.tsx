@@ -29,7 +29,8 @@ function isDisabled(feat: Feat, playerCharacter: PlayerCharacter) {
         playerCharacter.getSpellcastingManager(),
         playerCharacter.getResolvedFeatures(),
         playerCharacter.getSubclassNames(),
-        playerCharacter.getAttributes()
+        playerCharacter.getAttributes(),
+        playerCharacter.getPerception()
       )
     )
   }
@@ -172,12 +173,17 @@ function evaluatePrerequisite(
   spellcastingManager: SpellcastingManager,
   features: SourcedFeature[],
   subclasses: string[],
-  attributes: Attributes
+  attributes: Attributes,
+  perception: CalculatedProficiency
 ): boolean {
   switch (prerequisite.type) {
     case 'SKILL':
+      const rank =
+        prerequisite.value.skill === 'Perception'
+          ? perception.rank
+          : skillMap.get(prerequisite.value.skill)!.rank
       return ProficiencyRank.isGreaterThanOrEqualTo(
-        skillMap.get(prerequisite.value.skill)!.rank,
+        rank,
         ProficiencyRank.get(prerequisite.value.minimum_rank)
       )
     case 'FEAT':
