@@ -197,8 +197,10 @@ function evaluatePrerequisite(
     case 'SPELL_TYPE':
       return spellcastingManager.getTypes().includes(prerequisite.value)
     case 'FEATURE':
-      return features.some((val) =>
-        caseInsensitiveMatch(val.feature.name, prerequisite.value)
+      return features.some(
+        (val) =>
+          caseInsensitiveMatch(val.feature.name, prerequisite.value) ||
+          caseInsensitiveMatch(val.feature.value?.name, prerequisite.value)
       )
     case 'SUBCLASS':
       return subclasses.some((val) =>
