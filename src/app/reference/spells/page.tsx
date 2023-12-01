@@ -15,6 +15,20 @@ export default function SpellsPage() {
       maxWidth: 90,
       flex: 1,
     },
+    {
+      field: 'type',
+      filter: true,
+      flex: 1,
+      valueFormatter: (value: any): string => {
+        if (value.data.traits.includes('cantrip')) {
+          return 'Cantrip'
+        }
+        if (value.data.focus) {
+          return 'Focus'
+        }
+        return 'Spell'
+      },
+    },
     { field: 'name', filter: true, flex: 1 },
     { field: 'traditions', filter: true, flex: 1 },
     {

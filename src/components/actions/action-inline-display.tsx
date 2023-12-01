@@ -9,6 +9,7 @@ import { Separator } from '../base/separator'
 import { TraitsList } from '../card/traits-list'
 import { PlayerCharacterContext } from '../character-display/player-character-context'
 import { ParsedDescription } from '../parsed-description/parsed-description'
+import { describe } from 'node:test'
 
 interface Modification {
   name: string
@@ -25,16 +26,36 @@ export function ActionInlineDisplay({ initial }: { initial: Action }) {
 
   useEffect(() => {
     const value = cloneDeep(initial)
-    setModifications(
-      playerCharacter
-        .getFeatModifications(value.name.toLowerCase())
-        .map((value) => {
-          return {
-            name: value.name,
-            description: value.value,
-          }
-        })
-    )
+
+    const modificationsFromFeats = playerCharacter
+      .getFeatModifications(value.name.toLowerCase())
+      .map((value) => {
+        return {
+          name: value.name,
+          description: value.value,
+        }
+      })
+
+    const modificationsFromFeatures = playerCharacter
+      .getResolvedFeatures()
+      .filter(
+        (sourced) =>
+          sourced.feature.type === 'ACTION_MODIFIER' &&
+          sourced.feature.value.name === value.name.toLowerCase()
+      )
+      .filter((sourced) => {
+        return (
+          playerCharacter.getFeatModifications(value.name.toLowerCase())
+            .length === 0
+        )
+      })
+      .map((value) => {
+        return {
+          name: value.source,
+          description: value.feature.value.description,
+        }
+      })
+    setModifications(modificationsFromFeatures.concat(modificationsFromFeats))
     setAction(value)
   }, [initial])
 

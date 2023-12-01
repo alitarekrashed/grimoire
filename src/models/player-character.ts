@@ -224,7 +224,11 @@ function calculateClassAttributeModifications(
 
 export class PlayerCharacter {
   private level!: number
-  private speed!: ModifierValue[]
+  private speed!: {
+    regular: ModifierValue[]
+    climb: ModifierValue[]
+    swim: ModifierValue[]
+  }
   private size!: string
   private attributes!: Attributes
   private traits: string[] = []
@@ -263,7 +267,14 @@ export class PlayerCharacter {
     this.initializeHitpoints(ancestry)
 
     this.allFeatures.forEach((feature) => this.addFeatureToCharacter(feature))
-    this.gearProficienyManager = new GearProficiencyManager(this.features)
+    this.gearProficienyManager = new GearProficiencyManager(
+      this.features.filter((value) => {
+        if (value.feature.level) {
+          return value.feature.level <= character.level
+        }
+        return true
+      })
+    )
 
     this.skillProficiencyManager = createManagerFromFeatures(
       this.level,
@@ -356,7 +367,11 @@ export class PlayerCharacter {
     )} ${ancestry}`
   }
 
-  public getSpeed(): ModifierValue[] {
+  public getSpeed(): {
+    regular: ModifierValue[]
+    climb: ModifierValue[]
+    swim: ModifierValue[]
+  } {
     return this.speed
   }
 
@@ -929,13 +944,41 @@ export class PlayerCharacter {
         })
       }
     }
+
+    const featuresModifyingHP = this.allFeatures.filter(
+      (value) =>
+        value.feature.type === 'MODIFIER' &&
+        (value.feature.value as ModifierFeatureValue).type === 'HitPoints'
+    )
+
+    if (featuresModifyingHP.length > 0) {
+      featuresModifyingHP.forEach((sourced) => {
+        if (sourced.feature.value.modifier.value === 'level') {
+          this.hitpoints.push({
+            value: this.level,
+            source: sourced.source,
+          })
+        } else if (sourced.feature.value.modifier.value.includes('level *')) {
+          const value = sourced.feature.value.modifier.value.split(' * ')[1]
+          this.hitpoints.push({
+            value: this.level * Number(value),
+            source: sourced.source,
+          })
+        } else {
+          this.hitpoints.push({
+            value: sourced.feature.value.modifier.value,
+            source: sourced.source,
+          })
+        }
+      })
+    }
   }
 
   private initializeSpeed(ancestry: Ancestry) {
-    this.speed = [
+    const regularSpeed = [
       { value: this.ancestry.speed, source: `Ancestry (${ancestry.name})` },
     ]
-    this.speed.push(
+    regularSpeed.push(
       ...this.allFeatures
         .filter(
           (value) =>
@@ -949,6 +992,44 @@ export class PlayerCharacter {
           }
         })
     )
+
+    const climbSpeed = []
+    climbSpeed.push(
+      ...this.allFeatures
+        .filter(
+          (value) =>
+            value.feature.type === 'MODIFIER' &&
+            (value.feature.value as ModifierFeatureValue).type === 'Climb Speed'
+        )
+        .map((value) => {
+          return {
+            ...value.feature.value.modifier,
+            source: value.source,
+          }
+        })
+    )
+
+    const swimSpeed = []
+    swimSpeed.push(
+      ...this.allFeatures
+        .filter(
+          (value) =>
+            value.feature.type === 'MODIFIER' &&
+            (value.feature.value as ModifierFeatureValue).type === 'Swim Speed'
+        )
+        .map((value) => {
+          return {
+            ...value.feature.value.modifier,
+            source: value.source,
+          }
+        })
+    )
+
+    this.speed = {
+      regular: regularSpeed,
+      climb: climbSpeed,
+      swim: swimSpeed,
+    }
   }
 
   private addFeatureToCharacter(feature: SourcedFeature) {
@@ -1087,6 +1168,9 @@ export class PlayerCharacter {
             feature: feature,
           }
         })
+      )
+      feats.push(
+        ...heritage.features.filter((val: Feature) => val.type === 'FEAT')
       )
     }
 

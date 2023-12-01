@@ -65,7 +65,7 @@ async function resolveFeats(feats: Feature[]): Promise<SourcedFeature[]> {
 
   let additionalFeats: Feature[] = []
   resolvedFeats
-    .filter((val) => val)
+    .filter((val) => val && val.feat)
     .forEach((featWithContext: FeatWithContext) => {
       resolvedFeatures.push(
         ...featWithContext.feat.features
@@ -128,6 +128,21 @@ async function resolveFeats(feats: Feature[]): Promise<SourcedFeature[]> {
             ) {
               modifiedFeature.value.group =
                 modifiedFeature.value.group.replaceAll(
+                  '{0}',
+                  featWithContext.context[0]
+                )
+              modifiedFeature.context = featWithContext.context
+            }
+
+            if (
+              feature.type === 'PROFICIENCY' &&
+              featWithContext.context &&
+              featWithContext.context.length === 1 &&
+              feature.context &&
+              feature.context.length === 1
+            ) {
+              modifiedFeature.value.value =
+                modifiedFeature.value.value.replaceAll(
                   '{0}',
                   featWithContext.context[0]
                 )

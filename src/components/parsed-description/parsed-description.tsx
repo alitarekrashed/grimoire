@@ -5,6 +5,7 @@ import {
 } from '@/utils/services/description-parser.service'
 import { isString } from 'lodash'
 import { useEffect, useState } from 'react'
+import styles from './parsed-description.module.css'
 
 export function ParsedDescription({ description }: { description: string }) {
   const [parsed, setParsed] = useState([description])
@@ -26,7 +27,11 @@ export function ParsedDescription({ description }: { description: string }) {
       {/* TODO look into: https://www.npmjs.com/package/react-sanitized-html */}
       {parsed.map((value, index) => {
         return isString(value) ? (
-          <span key={index} dangerouslySetInnerHTML={{ __html: value }}></span>
+          <span
+            className={Object.values(styles).join(' ')}
+            key={index}
+            dangerouslySetInnerHTML={{ __html: value }}
+          ></span>
         ) : (
           <span key={index}>{value}</span>
         )

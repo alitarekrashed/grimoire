@@ -82,10 +82,18 @@ function buildHeightenedFields(
     ]
   } else {
     const explicit = heightenedDefinition.value as HeightenedExplicit[]
-    return explicit.map((val: HeightenedExplicit) => ({
-      label: `Heightened (${withOrdinalSuffix(val.level)})`,
-      value: val.description,
-    }))
+    return explicit.map((val: HeightenedExplicit) => {
+      if (val.level) {
+        return {
+          label: `Heightened (${withOrdinalSuffix(val.level)})`,
+          value: val.description,
+        }
+      }
+      return {
+        label: `Heightened`,
+        value: val.description,
+      }
+    })
   }
 }
 
@@ -106,8 +114,11 @@ function withOrdinalSuffix(i: number): string {
 }
 
 function getType(value: Spell) {
+  if (value.traits.includes('cantrip')) {
+    return 'Cantrip'
+  }
   if (value.focus) {
     return 'Focus'
   }
-  return value.rank === 0 ? 'Cantrip' : 'Spell'
+  return 'Spell'
 }

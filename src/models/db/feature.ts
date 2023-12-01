@@ -21,6 +21,7 @@ export type FeatureType =
   | 'ANCESTRY_FEAT_SELECTION'
   | 'ACTION_MODIFIER'
   | 'SAVING_THROW_MODIFIER'
+  | 'DC_MODIFIER'
   | 'ATTRIBUTE_INCREASE'
   | 'SPECIALIZATION'
   | 'EXPERTISE'
@@ -30,7 +31,14 @@ export type FeatureType =
   | 'SPELL'
 export type CalculationFormula = 'half-level'
 export type ConditionalOperator = 'has'
-export type ModifierType = 'Perception' | 'Speed' | 'AttackDamage'
+export type ModifierType =
+  | 'Perception'
+  | 'Speed'
+  | 'AttackDamage'
+  | 'HitPoints'
+  | 'Climb Speed'
+  | 'Swim Speed'
+  | 'Bulk'
 
 export interface Feature {
   type: FeatureType

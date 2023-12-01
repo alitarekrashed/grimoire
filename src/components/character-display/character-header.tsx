@@ -69,15 +69,38 @@ export function CharacterHeader({
           <CharacterSheetBox>
             <div className="h-full grid grid-flow-col grid-cols-1 grid-rows-2">
               <div className="flex">
-                <span className="mr-auto uppercase font-thin">Speed</span>
-                <CalculatedDisplay
-                  values={playerCharacter.getSpeed()}
-                ></CalculatedDisplay>
-              </div>
-              <div className="flex">
                 <span className="mr-auto uppercase font-thin">Size</span>
                 <span>{playerCharacter.getSize()}</span>
               </div>
+            </div>
+          </CharacterSheetBox>
+        </div>
+        <div className="w-fit">
+          <CharacterSheetBox>
+            <div className="flex flex-col h-full">
+              <span className="self-center uppercase font-thin">Speed</span>
+              <div className="flex">
+                <span className="mr-auto lowercase font-thin">Land</span>
+                <CalculatedDisplay
+                  values={playerCharacter.getSpeed().regular}
+                ></CalculatedDisplay>
+              </div>
+              {playerCharacter.getSpeed().climb.length > 0 && (
+                <div className="flex">
+                  <span className="mr-auto lowercase font-thin">Climb</span>
+                  <CalculatedDisplay
+                    values={playerCharacter.getSpeed().climb}
+                  ></CalculatedDisplay>
+                </div>
+              )}
+              {playerCharacter.getSpeed().swim.length > 0 && (
+                <div className="flex">
+                  <span className="mr-auto lowercase font-thin">Swim</span>
+                  <CalculatedDisplay
+                    values={playerCharacter.getSpeed().swim}
+                  ></CalculatedDisplay>
+                </div>
+              )}
             </div>
           </CharacterSheetBox>
         </div>
@@ -105,8 +128,13 @@ export function CharacterHeader({
                     return (
                       <React.Fragment key={`${sense}-${index}`}>
                         <ParsedDescription
-                          description={sense.feature.value}
+                          description={sense.feature.value.sense}
                         ></ParsedDescription>
+                        {sense.feature.value.context && (
+                          <span className="ml-1">
+                            ({sense.feature.value.context})
+                          </span>
+                        )}
                         {index < playerCharacter.getSenses().length - 1
                           ? ', '
                           : ''}

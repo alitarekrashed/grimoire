@@ -166,10 +166,12 @@ export class GearProficiencyManager {
 
     if (
       this.downgrade.some(
-        (downgrade: { trait?: string; group?: string }) =>
+        (downgrade: { trait?: string; group?: string; weapon?: string }) =>
           (downgrade.trait && weapon.traits.includes(downgrade.trait)) ||
           (downgrade.group &&
-            caseInsensitiveMatch(weapon.definition.group, downgrade.group))
+            caseInsensitiveMatch(weapon.definition.group, downgrade.group)) ||
+          (downgrade.weapon &&
+            caseInsensitiveMatch(weapon.name, downgrade.weapon))
       )
     ) {
       category = downgradeCategory(category)

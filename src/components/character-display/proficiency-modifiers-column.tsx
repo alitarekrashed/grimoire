@@ -48,6 +48,23 @@ function PerceptionAndClassDCDisplay({
           name="Perception"
           rank={character.getPerception().rank}
           modifier={character.getPerception().modifier}
+          additional={character
+            .getResolvedFeatures()
+            .filter(
+              (value) =>
+                value.feature.type === 'MODIFIER' &&
+                value.feature.value.type === 'Perception'
+            )
+            .map((value) => {
+              const modifier = value.feature.value.modifier.value
+              console.log(value)
+              return {
+                description: `${modifier >= 0 ? '+' : '-'}${modifier} (${
+                  value.feature.value.modifier.type
+                }) ${value.feature.value.condition}`,
+                name: value.source,
+              }
+            })}
         ></SkillDisplay>
         <SkillDisplay
           name="Class DC"
@@ -68,13 +85,14 @@ function SavingThrowsDisplay({ character }: { character: PlayerCharacter }) {
       <div className="flex flex-col gap-1">
         <div className="mb-1 font-semibold text-center">Saving Throws</div>
         {[...character.getSavingThrows().entries()].map((entry) => (
-          <SavingThrowDisplay
-            key={entry[0]}
-            entry={entry}
-            modifiers={savingThrowModifiers
-              .filter((value) => value.feature.value.type === entry[0])
-              .map((value) => value.feature.value)}
-          ></SavingThrowDisplay>
+          <div key={entry[0]}>
+            <SavingThrowDisplay
+              entry={entry}
+              modifiers={savingThrowModifiers
+                .filter((value) => value.feature.value.type.includes(entry[0]))
+                .map((value) => value.feature.value)}
+            ></SavingThrowDisplay>
+          </div>
         ))}
       </div>
     </CharacterSheetBox>

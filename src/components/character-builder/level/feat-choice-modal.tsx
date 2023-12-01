@@ -29,7 +29,8 @@ function isDisabled(feat: Feat, playerCharacter: PlayerCharacter) {
         playerCharacter.getSpellcastingManager(),
         playerCharacter.getResolvedFeatures(),
         playerCharacter.getSubclassNames(),
-        playerCharacter.getAttributes()
+        playerCharacter.getAttributes(),
+        playerCharacter.getPerception()
       )
     )
   }
@@ -172,12 +173,17 @@ function evaluatePrerequisite(
   spellcastingManager: SpellcastingManager,
   features: SourcedFeature[],
   subclasses: string[],
-  attributes: Attributes
+  attributes: Attributes,
+  perception: CalculatedProficiency
 ): boolean {
   switch (prerequisite.type) {
     case 'SKILL':
+      const rank =
+        prerequisite.value.skill === 'Perception'
+          ? perception.rank
+          : skillMap.get(prerequisite.value.skill)!.rank
       return ProficiencyRank.isGreaterThanOrEqualTo(
-        skillMap.get(prerequisite.value.skill)!.rank,
+        rank,
         ProficiencyRank.get(prerequisite.value.minimum_rank)
       )
     case 'FEAT':
@@ -191,8 +197,10 @@ function evaluatePrerequisite(
     case 'SPELL_TYPE':
       return spellcastingManager.getTypes().includes(prerequisite.value)
     case 'FEATURE':
-      return features.some((val) =>
-        caseInsensitiveMatch(val.feature.name, prerequisite.value)
+      return features.some(
+        (val) =>
+          caseInsensitiveMatch(val.feature.name, prerequisite.value) ||
+          caseInsensitiveMatch(val.feature.value?.name, prerequisite.value)
       )
     case 'SUBCLASS':
       return subclasses.some((val) =>
@@ -202,6 +210,12 @@ function evaluatePrerequisite(
       return (
         attributes[prerequisite.value.attribute as keyof Attributes] >=
         prerequisite.value.modifier
+      )
+    case 'SENSE':
+      return features.some(
+        (val) =>
+          caseInsensitiveMatch(val.feature.value, prerequisite.value) &&
+          caseInsensitiveMatch(val.feature.type, prerequisite.type)
       )
     default:
       return true

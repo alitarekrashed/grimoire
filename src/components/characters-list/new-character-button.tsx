@@ -66,7 +66,7 @@ export function NewCharacterButton({ onSave }: { onSave: () => void }) {
             },
           },
           languages: [],
-          ancestry_id: '64c86dc6ce00a34d75caa80f',
+          ancestry_id: '654b24d9a1bc7c505ebc2922',
           background_id: '64c87a12ce00a34d75caa812',
           // fighter: 64d24e0ece00a34d75caa847
           // monk: 64d82344de539d6f569f9194
