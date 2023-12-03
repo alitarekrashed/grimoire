@@ -1209,9 +1209,10 @@ export class PlayerCharacter {
           sourced.feature.type === 'SUBCLASS_FEATURE' &&
           sourced.feature.value
         ) {
+          console.log(sourced)
           // TODO ALI make this the subclass name for source?
           allFeatures.push({
-            source: classEntity.name,
+            source: subclasses[0],
             feature: sourced.feature.value,
           })
         }

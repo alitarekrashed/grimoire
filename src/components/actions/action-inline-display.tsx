@@ -113,9 +113,12 @@ export function ActionInlineDisplay({ initial }: { initial: Action }) {
                 )}
               </div>
               <div className="flex flex-col gap-1 p-1">
-                {modifications.map((modification) => (
-                  <div className="border rounded bg-orange-500/40 p-1">
-                    <div className="font-semibold italic mb-1">
+                {modifications.map((modification, idx) => (
+                  <div
+                    key={idx}
+                    className="border rounded bg-orange-500/40 p-1"
+                  >
+                    <div className="font-semibold capitalize italic mb-1">
                       {modification.name}
                     </div>
                     <ParsedDescription
